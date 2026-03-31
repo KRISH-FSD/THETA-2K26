@@ -1,4 +1,6 @@
 import { component$, useSignal, useVisibleTask$ } from "@builder.io/qwik";
+import { type DocumentHead } from "@builder.io/qwik-city";
+import gsap from "gsap";
 
 interface TeamMember {
   name: string;
@@ -42,7 +44,7 @@ interface ContactCopy {
 const defaultContactCopy: ContactCopy = {
   titlePrefix: "Get in",
   titleAccent: "Touch",
-  subtitle: "Have questions? Reach out to the Theta 2026 team.",
+  subtitle: "Have questions? Reach out to the Theta 2026 High Command.",
   webtekLabel: "WebTek Team",
   webtekTitle: "Engineering & Platform",
   webtekDescription:
@@ -50,11 +52,11 @@ const defaultContactCopy: ContactCopy = {
   githubLabel: "GitHub",
   linkedinLabel: "LinkedIn",
   emailLabel: "Email",
-  membersSuffix: "members",
+  membersSuffix: "Operators",
   contactPrefix: "Contact:",
   stillQuestionsTitle: "Still have questions?",
-  stillQuestionsSubtitle: "Feel free to connect with our coordinators.",
-  sendEmailLabel: "Send us an email",
+  stillQuestionsSubtitle: "Feel free to transceive a message to our coordinators.",
+  sendEmailLabel: "Open Comm Channel",
 };
 
 const defaultTeamData: TeamData = {
@@ -76,14 +78,6 @@ const defaultTeamData: TeamData = {
     email: "theta@sastra.edu",
   },
 };
-
-const getInitials = (name: string) =>
-  name
-    .split(" ")
-    .map((part) => part[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
 
 export default component$(() => {
   const teamData = useSignal<TeamData>(defaultTeamData);
@@ -129,74 +123,146 @@ export default component$(() => {
     }
   });
 
-  const TeamCard = ({ member }: { member: TeamMember }) => (
-    <article class="theta-panel group relative overflow-hidden border-black/15 bg-white p-5 transition duration-200 hover:[transform:translateY(-6px)_rotate(-0.5deg)]">
-      <div class="pointer-events-none absolute -top-10 -right-10 h-24 w-24 rounded-full bg-[var(--theta-primary)]/10 blur-2xl"></div>
-      <div class="relative mx-auto flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border-2 border-black/20 bg-white text-2xl font-black text-neutral-900 shadow-[0_0_0_2px_rgba(124,58,237,0.24)]">
-        <img
-          src={member.image || "/team/default-avatar.svg"}
-          alt={member.name}
-          loading="lazy"
-          width={96}
-          height={96}
-          class="h-full w-full object-cover"
-          onError$={(event) => {
-            (event.target as HTMLImageElement).src = "/team/default-avatar.svg";
-          }}
-        />
-        <span class="absolute bottom-1 rounded-md bg-black/80 px-1.5 py-0.5 text-[10px] text-white">
-          {getInitials(member.name)}
-        </span>
-      </div>
-      <h3 class="mt-4 text-center text-lg font-extrabold">{member.name}</h3>
-      <p class="mt-1 text-center text-sm font-semibold text-[var(--theta-primary)]">
-        {member.role}
-      </p>
-      <div class="mt-4 space-y-2 text-sm text-neutral-700">
-        <a
-          href={`tel:${member.phone}`}
-          class="theta-focus flex items-center justify-center rounded-lg border border-black/15 bg-neutral-50 px-3 py-2 hover:border-[var(--theta-primary)]"
-        >
-          {member.phone}
-        </a>
-        <a
-          href={`mailto:${member.email}`}
-          class="theta-focus flex items-center justify-center rounded-lg border border-black/15 bg-neutral-50 px-3 py-2 hover:border-[var(--theta-primary)]"
-        >
-          {member.email}
-        </a>
-      </div>
-    </article>
-  );
+  // Bulletproof interaction animations (removed ScrollTrigger entry animations to avoid layout/hydration crashes)
+  useVisibleTask$(({ track, cleanup }) => {
+    track(() => teamData.value.order);
+    
+    // Slight delay so lazily-hydration mapped nodes are firmly attached to the DOM
+    const timeout = setTimeout(() => {
+        const ctx = gsap.context(() => {
+          
+            // ── Floating Ambient Orbs (Omnitrix Fluid Motion) ──
+            gsap.to(".anim-orb-1", {
+              x: "random(-100, 100)",
+              y: "random(-60, 60)",
+              rotation: "random(-45, 45)",
+              duration: 10,
+              ease: "sine.inOut",
+              repeat: -1,
+              yoyo: true,
+            });
+            
+            gsap.to(".anim-orb-2", {
+              x: "random(-80, 80)",
+              y: "random(-80, 80)",
+              rotation: "random(-30, 30)",
+              duration: 12,
+              ease: "sine.inOut",
+              repeat: -1,
+              yoyo: true,
+              delay: 1.5
+            });
+
+            // Sastra Logo slow hover
+            gsap.to(".anim-float-logo", {
+              y: -8,
+              duration: 2.5,
+              ease: "power1.inOut",
+              yoyo: true,
+              repeat: -1
+            });
+
+            // ── Faux 3D Interactive Card Hover ──
+            const cardsArray = gsap.utils.toArray<HTMLElement>('.anim-card');
+            cardsArray.forEach((card) => {
+               card.addEventListener("mousemove", (e) => {
+                  const rect = card.getBoundingClientRect();
+                  const x = e.clientX - rect.left - rect.width / 2;
+                  const y = e.clientY - rect.top - rect.height / 2;
+                  
+                  gsap.to(card, {
+                     rotationY: 12 * (x / (rect.width / 2)),
+                     rotationX: -12 * (y / (rect.height / 2)),
+                     transformPerspective: 1200,
+                     duration: 0.4,
+                     ease: "power2.out"
+                  });
+                  
+                  const avatar = card.querySelector('.anim-avatar');
+                  if(avatar) {
+                     gsap.to(avatar, {
+                        x: 10 * (x / (rect.width / 2)),
+                        y: 10 * (y / (rect.height / 2)),
+                        duration: 0.4,
+                        ease: "power2.out"
+                     })
+                  }
+               });
+               
+               card.addEventListener("mouseleave", () => {
+                  gsap.to(card, {
+                     rotationY: 0,
+                     rotationX: 0,
+                     duration: 0.7,
+                     ease: "power3.out"
+                  });
+                  const avatar = card.querySelector('.anim-avatar');
+                  if(avatar) {
+                     gsap.to(avatar, { x: 0, y: 0, duration: 0.7, ease: "power3.out" });
+                  }
+               });
+            });
+        });
+
+        cleanup(() => ctx.revert());
+    }, 150);
+
+    return () => clearTimeout(timeout);
+  });
 
   return (
-    <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      <section class="theta-shell relative overflow-hidden p-7 sm:p-10">
-        <div class="pointer-events-none absolute -top-14 -right-16 h-44 w-44 rounded-full bg-[var(--theta-primary)]/12 blur-3xl"></div>
-        <div class="relative flex flex-wrap items-center justify-between gap-5">
-          <div>
-            <h1 class="text-4xl font-extrabold sm:text-5xl">
+    <div class="relative mx-auto min-h-screen w-full px-4 py-32 sm:px-6 lg:px-8 bg-[#050505] text-[#f0fff0] overflow-x-hidden">
+      
+      {/* Animating Dynamic Grid Tech Pattern */}
+      <div 
+        class="fixed inset-0 pointer-events-none z-0 opacity-40 mix-blend-screen"
+        style={{ 
+          backgroundImage: "linear-gradient(to right, rgba(14, 169, 53, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(14, 169, 53, 0.05) 1px, transparent 1px)", 
+          backgroundSize: "3rem 3rem",
+          backgroundPosition: "center center"
+        }}
+      ></div>
+
+      {/* Fluid Floating Ambient Orbs */}
+      <div class="anim-orb-1 pointer-events-none fixed top-[10%] left-[-5%] h-[35rem] w-[35rem] rounded-full bg-[#0ea935] opacity-[0.05] blur-[120px] mix-blend-screen"></div>
+      <div class="anim-orb-2 pointer-events-none fixed bottom-[15%] right-[-5%] h-[40rem] w-[40rem] rounded-full bg-[#077a23] opacity-[0.08] blur-[150px] mix-blend-screen"></div>
+
+      {/* Main Glassmorphic Header */}
+      <section class="relative z-10 overflow-hidden rounded-[3rem] border border-[rgba(255,255,255,0.1)] bg-[rgba(10,10,10,0.6)] backdrop-blur-3xl p-8 sm:p-14 shadow-[inset_0_1px_1px_rgba(255,255,255,0.15),0_12px_45px_rgba(0,0,0,0.6)] mx-auto max-w-6xl transition-transform duration-500 hover:scale-[1.01] hover:border-[#0ea935]/30 group animate-in slide-in-from-bottom-8 fade-in duration-700 ease-out">
+        <div class="pointer-events-none absolute -top-40 -right-40 h-80 w-80 rounded-full bg-[#0ea935] opacity-[0.08] blur-[100px] transition-transform duration-1000 group-hover:scale-110"></div>
+        <div class="relative flex flex-col md:flex-row items-center justify-between gap-12">
+          
+          <div class="text-center md:text-left flex-1">
+             <span class="inline-flex rounded-full border border-[#0ea935]/40 bg-[#0ea935]/10 px-4 py-1.5 text-[0.65rem] font-black text-[#0ea935] tracking-[0.25em] uppercase shadow-[0_0_15px_rgba(14,169,53,0.15)] mb-6 transition-all duration-300 group-hover:bg-[#0ea935]/20 group-hover:shadow-[0_0_20px_rgba(14,169,53,0.25)]">Command Center</span>
+            <h1 class="text-5xl font-black sm:text-7xl text-transparent bg-clip-text bg-gradient-to-br from-[#0ea935] via-[#ffffff] to-[#077a23] leading-[1.1] drop-shadow-[0_0_10px_rgba(14,169,53,0.3)]">
               {copy.value.titlePrefix}{" "}
-              <span class="text-[var(--theta-primary)]">
+              <span class="text-[#f0fff0] drop-shadow-[0_0_20px_rgba(255,255,255,0.3)] block mt-1">
                 {copy.value.titleAccent}
               </span>
             </h1>
-            <p class="mt-3 max-w-2xl text-neutral-600">{copy.value.subtitle}</p>
+            <p class="mt-6 max-w-xl text-base md:text-lg font-semibold text-[#8ca38c] leading-relaxed mx-auto md:mx-0">
+              {copy.value.subtitle}
+            </p>
           </div>
-          <div class="rounded-xl border-2 border-black/15 bg-white p-2 shadow-[6px_6px_0_#111]">
-            <img
-              src="/sponsors/general/sastra-university-logo.jpg"
-              alt="SASTRA University"
-              width={200}
-              height={72}
-              class="h-12 w-auto object-contain"
-            />
+          
+          <div class="rounded-[2.5rem] border border-[rgba(255,255,255,0.08)] bg-[#050505]/70 p-8 md:p-10 backdrop-blur-2xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.1),0_0_40px_rgba(0,0,0,0.5)] flex flex-col items-center">
+             <span class="text-[0.6rem] font-black uppercase tracking-[0.25em] text-[#4d5c4d] mb-5">Secured Location Directive</span>
+             <div class="anim-float-logo">
+               <img
+                 src="/sponsors/general/sastra-university-logo.jpg"
+                 alt="SASTRA University"
+                 width={200}
+                 height={72}
+                 class="h-12 md:h-14 w-auto object-contain [filter:brightness(0)_invert(1)] opacity-70 drop-shadow-[0_0_12px_rgba(255,255,255,0.25)]"
+               />
+             </div>
           </div>
         </div>
       </section>
 
-      <section class="mt-8 space-y-10">
-        {teamData.value.order.map((section) => {
+      {/* Dynamic Team Grid */}
+      <section class="mt-20 space-y-24 mx-auto max-w-7xl relative z-10 px-2 sm:px-4">
+        {teamData.value.order.map((section, sectionIndex) => {
           const members = teamData.value[
             section.key as keyof Omit<TeamData, "order" | "webtek">
           ] as TeamMember[];
@@ -204,16 +270,84 @@ export default component$(() => {
           if (!Array.isArray(members) || members.length === 0) return null;
 
           return (
-            <div key={section.key}>
-              <div class="mb-4 flex items-center justify-between gap-3">
-                <h2 class="text-2xl font-extrabold">{section.label}</h2>
-                <span class="theta-badge border-black/15 text-neutral-700">
-                  {members.length} {copy.value.membersSuffix}
+            <div key={section.key} class="relative" style={{ animationDelay: `${sectionIndex * 150}ms` }}>
+              <div class="mb-10 flex flex-col sm:flex-row sm:items-end justify-between gap-5 border-b-2 border-[rgba(14,169,53,0.15)] pb-6 relative">
+                <div class="absolute -bottom-0.5 left-0 w-32 h-[2px] bg-gradient-to-r from-[#0ea935] to-transparent"></div>
+                <h2 class="text-3xl sm:text-4xl font-black tracking-tight text-[#f0fff0]">
+                  {section.label}
+                </h2>
+                <span class="rounded-[1rem] border border-[rgba(255,255,255,0.1)] bg-[rgba(10,10,10,0.6)] backdrop-blur-md px-5 py-2 text-[0.7rem] font-black uppercase tracking-[0.2em] text-[#8ca38c] shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]">
+                  <span class="text-[#0ea935]">{members.length}</span> {copy.value.membersSuffix}
                 </span>
               </div>
-              <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                {members.map((member) => (
-                  <TeamCard key={member.name} member={member} />
+              
+              {/* Cards Grid */}
+              <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 perspective-[1000px]">
+                {members.map((member, index) => (
+                  <article 
+                    key={member.name} 
+                    style={{ animationDelay: `${index * 100}ms` }}
+                    class="anim-card group relative rounded-[2.5rem] p-[2px] overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.6)] transition-all duration-300 hover:shadow-[0_12px_45px_rgba(14,169,53,0.35)] flex flex-col animate-in slide-in-from-bottom-8 fade-in duration-700 ease-out fill-mode-both"
+                  >
+                    {/* The Animated Sweeping Radar Border */}
+                    <div class="absolute inset-[-100%] z-0 origin-center animate-[spin_4s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,transparent_0%,transparent_60%,#0ea935_100%)] opacity-30 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    
+                    {/* Optional Glow blur for the radar */}
+                    <div class="absolute inset-[-100%] z-0 origin-center animate-[spin_4s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,transparent_0%,transparent_60%,#0ea935_100%)] blur-md opacity-0 group-hover:opacity-80 transition-opacity duration-500"></div>
+
+                    {/* The Actual Inner Glass Card */}
+                    <div class="relative z-10 flex flex-col items-center rounded-[2.4rem] border border-[rgba(255,255,255,0.05)] bg-[rgba(10,10,10,0.85)] group-hover:bg-[#050505]/95 backdrop-blur-2xl p-7 w-full h-full transition-colors duration-500 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]">
+                      
+                      <div class="pointer-events-none absolute -top-10 -right-10 h-36 w-36 rounded-full bg-[#0ea935] opacity-[0.05] blur-3xl transition-opacity duration-500 group-hover:opacity-[0.25]"></div>
+                      
+                      {/* 3D Parallax Avatar Container */}
+                      <div class="anim-avatar relative flex h-32 w-32 items-center justify-center -mt-2">
+                        {/* Avatar Pulsing Scanners */}
+                        <div class="absolute inset-[-6px] rounded-full border border-dashed border-[#0ea935]/50 animate-[spin_6s_linear_infinite] opacity-0 group-hover:opacity-100 transition-opacity duration-500 shadow-[0_0_15px_rgba(14,169,53,0.4)]"></div>
+                        <div class="absolute inset-[-14px] rounded-full border border-[#0ea935]/20 animate-[spin_10s_linear_infinite_reverse] opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+
+                        <div class="relative flex h-full w-full items-center justify-center overflow-hidden rounded-[2rem] border border-[#0ea935]/30 bg-[#050505] shadow-[0_0_25px_rgba(14,169,53,0.15)] transition-transform duration-500 group-hover:scale-105 group-hover:border-[#0ea935]/80">
+                          <img
+                            src={member.image || "/team/default-avatar.svg"}
+                            alt={member.name}
+                            loading="lazy"
+                            width={128}
+                            height={128}
+                            class="h-full w-full object-cover grayscale-[50%] contrast-125 brightness-90 group-hover:grayscale-0 group-hover:brightness-110 group-hover:saturate-150 transition-all duration-500"
+                            onError$={(event) => {
+                              (event.target as HTMLImageElement).src = "/team/default-avatar.svg";
+                            }}
+                          />
+                        </div>
+                      </div>
+                      
+                      <h3 class="mt-8 text-center text-xl font-black text-[#f0fff0] tracking-tight group-hover:text-[#0ea935] transition-colors">{member.name}</h3>
+                      <p class="mt-1.5 text-center text-[0.7rem] font-bold uppercase tracking-[0.2em] text-[#0ea935]">
+                        {member.role}
+                      </p>
+                      
+                      <div class="mt-6 w-full space-y-3 text-xs font-semibold text-[#8ca38c]">
+                        <a
+                          href={`tel:${member.phone}`}
+                          class="flex w-full items-center justify-center gap-3 rounded-2xl border border-[rgba(255,255,255,0.05)] bg-[#111111] px-4 py-3.5 transition-all duration-300 hover:border-[#0ea935]/50 hover:bg-[#0ea935]/10 hover:text-[#0ea935] hover:shadow-[0_0_15px_rgba(14,169,53,0.2)]"
+                        >
+                          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                          </svg>
+                          <span class="tracking-widest">{member.phone}</span>
+                        </a>
+                        <a
+                          href={`mailto:${member.email}`}
+                          class="flex w-full items-center justify-center gap-3 rounded-2xl border border-[rgba(255,255,255,0.05)] bg-[#111111] px-4 py-3.5 transition-all duration-300 hover:border-[#0ea935]/50 hover:bg-[#0ea935]/10 hover:text-[#0ea935] hover:shadow-[0_0_15px_rgba(14,169,53,0.2)] truncate"
+                        >
+                          <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                          </svg>
+                          <span class="truncate tracking-wide">{member.email}</span>
+                        </a>
+                      </div>
+                    </div>
+                  </article>
                 ))}
               </div>
             </div>
@@ -221,64 +355,82 @@ export default component$(() => {
         })}
       </section>
 
-      <section class="mt-12 grid gap-5 lg:grid-cols-2">
-        <div class="theta-shell relative overflow-hidden p-6">
-          <div class="pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-[var(--theta-primary)]/12 blur-3xl"></div>
-          <div class="relative">
-            <span class="theta-badge border-black/20 text-neutral-900">
-              {copy.value.webtekLabel}
-            </span>
-            <h3 class="mt-4 text-2xl font-extrabold text-neutral-900">
-              {copy.value.webtekTitle}
-            </h3>
-            <p class="mt-2 text-sm text-neutral-600">
-              {copy.value.webtekDescription}
-            </p>
-            <div class="mt-4 grid gap-2 sm:grid-cols-3">
-              <a
-                href={teamData.value.webtek.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="theta-focus rounded-xl border border-black/15 bg-white px-4 py-2 text-center text-sm font-bold hover:border-[var(--theta-primary)] hover:text-[var(--theta-primary)]"
-              >
-                {copy.value.githubLabel}
-              </a>
-              <a
-                href={teamData.value.webtek.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="theta-focus rounded-xl border border-black/15 bg-white px-4 py-2 text-center text-sm font-bold hover:border-[var(--theta-primary)] hover:text-[var(--theta-primary)]"
-              >
-                {copy.value.linkedinLabel}
-              </a>
-              <a
-                href={`mailto:${teamData.value.webtek.email}`}
-                class="theta-focus rounded-xl border border-black/15 bg-white px-4 py-2 text-center text-sm font-bold hover:border-[var(--theta-primary)] hover:text-[var(--theta-primary)]"
-              >
-                {copy.value.emailLabel}
-              </a>
-            </div>
+      {/* Tech Footer Section */}
+      <section class="mt-32 grid gap-10 lg:grid-cols-2 mx-auto max-w-6xl relative z-10 animate-in slide-in-from-bottom-8 fade-in duration-700 ease-out delay-500 fill-mode-both">
+        {/* WebTek Panel */}
+        <div class="relative overflow-hidden rounded-[3rem] border border-[rgba(255,255,255,0.1)] bg-[rgba(10,10,10,0.6)] backdrop-blur-3xl p-10 sm:p-14 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1),0_12px_45px_rgba(0,0,0,0.6)] transition-all hover:border-[#0ea935]/40 hover:shadow-[0_12px_60px_rgba(14,169,53,0.15)] flex flex-col group">
+          <div class="pointer-events-none absolute -top-16 -right-16 h-48 w-48 rounded-full bg-[#077a23] opacity-[0.1] blur-[80px] transition-transform duration-700 group-hover:scale-125"></div>
+          
+          <span class="inline-block rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-[0.65rem] font-black uppercase tracking-[0.3em] text-[#8ca38c] mb-6 w-max shadow-[0_4px_10px_rgba(0,0,0,0.3)]">
+            {copy.value.webtekLabel}
+          </span>
+          <h3 class="text-4xl font-black text-[#f0fff0] tracking-tight">
+            {copy.value.webtekTitle}
+          </h3>
+          <p class="mt-5 text-sm font-semibold text-[#8ca38c] leading-relaxed max-w-sm mb-10 flex-1">
+            {copy.value.webtekDescription}
+          </p>
+          
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            <a
+              href={teamData.value.webtek.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="rounded-[1.5rem] border border-[rgba(255,255,255,0.05)] bg-[#111111]/80 px-2 py-4 text-center text-[0.75rem] font-black tracking-widest uppercase text-[#8ca38c] shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] transition-all duration-300 hover:border-[#0ea935]/60 hover:text-[#0ea935] hover:bg-[#0ea935]/15 hover:-translate-y-1"
+            >
+              {copy.value.githubLabel}
+            </a>
+            <a
+              href={teamData.value.webtek.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="rounded-[1.5rem] border border-[rgba(255,255,255,0.05)] bg-[#111111]/80 px-2 py-4 text-center text-[0.75rem] font-black tracking-widest uppercase text-[#8ca38c] shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] transition-all duration-300 hover:border-[#0ea935]/60 hover:text-[#0ea935] hover:bg-[#0ea935]/15 hover:-translate-y-1"
+            >
+              {copy.value.linkedinLabel}
+            </a>
+            <a
+              href={`mailto:${teamData.value.webtek.email}`}
+              class="col-span-2 sm:col-span-1 border border-[#0ea935]/50 bg-[#0ea935] px-2 py-4 text-center text-[0.7rem] font-black tracking-[0.15em] uppercase text-[#050505] shadow-[0_0_25px_rgba(14,169,53,0.5)] transition-all duration-300 hover:bg-[#12cb42] hover:shadow-[0_0_35px_rgba(14,169,53,0.7)] hover:-translate-y-1 rounded-[1.5rem] flex items-center justify-center"
+            >
+              {copy.value.emailLabel}
+            </a>
           </div>
         </div>
 
-        <div class="theta-shell relative overflow-hidden p-6">
-          <div class="pointer-events-none absolute -bottom-18 -left-12 h-40 w-40 rounded-full bg-[var(--theta-primary)]/12 blur-3xl"></div>
-          <div class="relative">
-            <h3 class="text-2xl font-extrabold">
-              {copy.value.stillQuestionsTitle}
-            </h3>
-            <p class="mt-2 text-sm text-neutral-600">
-              {copy.value.stillQuestionsSubtitle}
-            </p>
-            <a
-              href={`mailto:${teamData.value.webtek.email}`}
-              class="theta-focus mt-4 inline-flex rounded-xl border-2 border-[var(--theta-primary)] bg-[var(--theta-primary)] px-5 py-3 text-sm font-bold text-white shadow-[0_8px_20px_rgba(124,58,237,0.32)]"
-            >
-              {copy.value.sendEmailLabel}
-            </a>
+        {/* Message Panel */}
+        <div class="relative overflow-hidden rounded-[3rem] border border-[rgba(255,255,255,0.1)] bg-[rgba(10,10,10,0.6)] backdrop-blur-3xl p-10 sm:p-14 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1),0_12px_45px_rgba(0,0,0,0.6)] transition-all hover:border-[#0ea935]/40 hover:shadow-[0_12px_60px_rgba(14,169,53,0.15)] flex flex-col justify-center">
+          <div class="pointer-events-none absolute -bottom-16 -left-16 h-56 w-56 rounded-full bg-[#0ea935] opacity-[0.08] blur-[100px]"></div>
+          
+          <h3 class="text-4xl font-black text-[#f0fff0] tracking-tight leading-tight">
+            {copy.value.stillQuestionsTitle}
+          </h3>
+          <p class="mt-5 text-sm font-semibold text-[#8ca38c] leading-relaxed max-w-sm">
+            {copy.value.stillQuestionsSubtitle}
+          </p>
+          <div class="mt-10">
+             <a
+               href={`mailto:${teamData.value.webtek.email}`}
+               class="inline-flex items-center justify-center gap-4 rounded-[2rem] border border-[rgba(255,255,255,0.15)] bg-[#050505]/95 px-10 py-5 text-xs font-black uppercase tracking-[0.2em] text-[#0ea935] shadow-[inset_0_1px_1px_rgba(255,255,255,0.1),0_0_25px_rgba(14,169,53,0.2)] transition-all duration-300 hover:border-[#0ea935]/80 hover:bg-[#0ea935]/15 hover:shadow-[0_0_40px_rgba(14,169,53,0.5)] hover:-translate-y-1"
+             >
+               <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+               </svg>
+               {copy.value.sendEmailLabel}
+             </a>
           </div>
         </div>
       </section>
     </div>
   );
 });
+
+export const head: DocumentHead = {
+  title: "Contact | Theta 2026",
+  meta: [
+    {
+      name: "description",
+      content:
+        "Initialize communication with the Theta 2026 High Command. Contact our coordinators and technical operatives.",
+    },
+  ],
+};

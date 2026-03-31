@@ -1,12 +1,17 @@
 import { $, component$, useSignal, useVisibleTask$ } from "@builder.io/qwik";
-import { Link } from "@builder.io/qwik-city";
+import { Link, type DocumentHead } from "@builder.io/qwik-city";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { HeroSlider } from "../components/hero-slider/HeroSlider";
 
+/* ─────────────────────────── types ─────────────────────────── */
 interface ConfigData {
   meta: {
     eventName: string;
     tagline: string;
     dates: string;
     venue: string;
+    startDate?: string;
   };
   stats: {
     events: string;
@@ -30,161 +35,69 @@ interface HomeCopy {
     exploreEvents: string;
     contactUs: string;
   };
-  countdownLabels: {
-    days: string;
-    hours: string;
-    minutes: string;
-    seconds: string;
-  };
-  about: {
-    badge: string;
-    titlePrefix: string;
-    titleAccent: string;
-    titleSuffix: string;
-  };
-  statsLabels: {
-    events: string;
-    participants: string;
-    colleges: string;
-  };
+  countdownLabels: { days: string; hours: string; minutes: string; seconds: string };
+  about: { badge: string; titlePrefix: string; titleAccent: string; titleSuffix: string };
+  statsLabels: { events: string; participants: string; colleges: string };
   sponsors: {
-    badge: string;
-    titlePrefix: string;
-    titleAccent: string;
-    hallBadge: string;
-    hallTitlePrefix: string;
-    hallTitleAccent: string;
-    hallDescription: string;
-    hallSticker: string;
-    platinum: string;
-    gold: string;
-    silver: string;
-    general: string;
-    sponsorPrompt: string;
-    sponsorButton: string;
+    badge: string; titlePrefix: string; titleAccent: string;
+    hallBadge: string; hallTitlePrefix: string; hallTitleAccent: string;
+    hallDescription: string; hallSticker: string;
+    platinum: string; gold: string; silver: string; general: string;
+    sponsorPrompt: string; sponsorButton: string;
   };
-  cta: {
-    titlePrefix: string;
-    titleAccent: string;
-    description: string;
-    browseEvents: string;
-  };
-  dayModal: {
-    scheduleTitle: string;
-    emptyState: string;
-    viewAllEvents: string;
-  };
+  cta: { titlePrefix: string; titleAccent: string; description: string; browseEvents: string };
+  dayModal: { scheduleTitle: string; emptyState: string; viewAllEvents: string };
 }
 
 interface EventItem {
-  id: number;
-  name: string;
-  category: string;
-  cluster?: string;
-  day?: string;
-  timing: string;
-  location: string;
-  fee: string;
-  status: string;
-  description: string;
-  image: string;
-  registrationUrl?: string;
+  id: number; name: string; category: string; cluster?: string; day?: string;
+  timing: string; location: string; fee: string; status: string;
+  description: string; image: string; registrationUrl?: string;
 }
 
 interface DayEvent {
-  day: string;
-  date: string;
-  events: string[];
-  highlight: string;
-  bgImage: string;
+  day: string; date: string; events: string[]; highlight: string; bgImage: string;
 }
 
 interface Sponsor {
-  name: string;
-  logo: string;
-  order?: number;
+  name: string; logo: string; order?: number;
 }
 
 interface SponsorsConfig {
-  platinum: Sponsor[];
-  gold: Sponsor[];
-  silver?: Sponsor[];
-  media?: Sponsor[];
+  platinum: Sponsor[]; gold: Sponsor[]; silver?: Sponsor[]; media?: Sponsor[];
 }
 
+/* ──────────────────────── defaults ──────────────────────────── */
 const defaultHomeCopy: HomeCopy = {
   hero: {
     bannerDate: "March 15-17, 2026",
     titleMain: "THETA",
     titleAccent: "2026",
-    description:
-      "National Level Techno-Management Fest hosted by SASTRA Deemed University.",
+    description: "National Level Techno-Management Fest hosted by SASTRA Deemed University.",
     exploreEvents: "Explore Events",
     contactUs: "Contact Us",
   },
-  countdownLabels: {
-    days: "Days",
-    hours: "Hours",
-    minutes: "Mins",
-    seconds: "Secs",
-  },
-  about: {
-    badge: "About Theta",
-    titlePrefix: "India's Premier",
-    titleAccent: "Techno-Management",
-    titleSuffix: "Fest",
-  },
-  statsLabels: {
-    events: "Events",
-    participants: "Participants",
-    colleges: "Colleges",
-  },
+  countdownLabels: { days: "Days", hours: "Hours", minutes: "Mins", seconds: "Secs" },
+  about: { badge: "About Theta", titlePrefix: "India's Premier", titleAccent: "Techno-Management", titleSuffix: "Fest" },
+  statsLabels: { events: "Events", participants: "Participants", colleges: "Colleges" },
   sponsors: {
-    badge: "Our Sponsors",
-    titlePrefix: "Powered by",
-    titleAccent: "Partners",
-    hallBadge: "Previous Sponsors",
-    hallTitlePrefix: "Past Edition",
-    hallTitleAccent: "Partners",
-    hallDescription:
-      "These brands supported previous editions of Theta and helped build the fest legacy.",
+    badge: "Our Sponsors", titlePrefix: "Powered by", titleAccent: "Partners",
+    hallBadge: "Previous Sponsors", hallTitlePrefix: "Past Edition", hallTitleAccent: "Partners",
+    hallDescription: "These brands supported previous editions of Theta and helped build the fest legacy.",
     hallSticker: "Legacy Wall",
-    platinum: "Platinum",
-    gold: "Gold",
-    silver: "Silver",
-    general: "Media",
-    sponsorPrompt: "Want to sponsor Theta 2026?",
-    sponsorButton: "Become a Sponsor",
+    platinum: "Platinum", gold: "Gold", silver: "Silver", general: "Media",
+    sponsorPrompt: "Want to sponsor Theta 2026?", sponsorButton: "Become a Sponsor",
   },
-  cta: {
-    titlePrefix: "Ready to",
-    titleAccent: "Compete?",
-    description: "Build, ship, and showcase with the brightest teams in India.",
-    browseEvents: "Browse Events",
-  },
-  dayModal: {
-    scheduleTitle: "Day Schedule",
-    emptyState: "Events will be announced soon.",
-    viewAllEvents: "View All Events",
-  },
+  cta: { titlePrefix: "Ready to", titleAccent: "Compete?", description: "Build, ship, and showcase with the brightest teams in India.", browseEvents: "Browse Events" },
+  dayModal: { scheduleTitle: "Day Schedule", emptyState: "Events will be announced soon.", viewAllEvents: "View All Events" },
 };
 
 const defaultConfig: ConfigData = {
-  meta: {
-    eventName: "Theta 2026",
-    tagline: "National Level Techno-Management Fest",
-    dates: "March 15-17, 2026",
-    venue: "SASTRA Deemed University",
-  },
-  stats: {
-    events: "50+",
-    participants: "5000+",
-    colleges: "100+",
-  },
+  meta: { eventName: "Theta 2026", tagline: "National Level Techno-Management Fest", dates: "March 15-17, 2026", venue: "SASTRA Deemed University" },
+  stats: { events: "50+", participants: "5000+", colleges: "100+" },
   about: {
     title: "About Theta",
-    description:
-      "Theta is a national-level techno-management fest organized by SASTRA Deemed University.",
+    description: "Theta is a national-level techno-management fest organized by SASTRA Deemed University.",
     features: [
       { title: "30+ Events", description: "Competitions and workshops." },
       { title: "1000+ Participants", description: "From across India." },
@@ -192,50 +105,26 @@ const defaultConfig: ConfigData = {
     ],
   },
   days: [
-    {
-      day: "Day One",
-      date: "March 15, 2026",
-      events: ["Inauguration"],
-      highlight: "Opening Ceremony",
-      bgImage: "",
-    },
-    {
-      day: "Day Two",
-      date: "March 16, 2026",
-      events: ["Hackathon"],
-      highlight: "Flagship Competitions",
-      bgImage: "",
-    },
-    {
-      day: "Day Three",
-      date: "March 17, 2026",
-      events: ["Finale"],
-      highlight: "Prize Distribution",
-      bgImage: "",
-    },
+    { day: "Day One", date: "March 15, 2026", events: ["Inauguration"], highlight: "Opening Ceremony", bgImage: "" },
+    { day: "Day Two", date: "March 16, 2026", events: ["Hackathon"], highlight: "Flagship Competitions", bgImage: "" },
+    { day: "Day Three", date: "March 17, 2026", events: ["Finale"], highlight: "Prize Distribution", bgImage: "" },
   ],
 };
 
-const defaultSponsors: SponsorsConfig = {
-  platinum: [],
-  gold: [],
-  silver: [],
-  media: [],
-};
+const defaultSponsors: SponsorsConfig = { platinum: [], gold: [], silver: [], media: [] };
 
+/* ──────────────────────── helpers ───────────────────────────── */
 const parseStatNumber = (value: string): number => {
   const parsed = Number(value.replace(/[^\d]/g, ""));
   return Number.isFinite(parsed) ? parsed : 0;
 };
 
-/**
- * Parses a date range like "March 15-17, 2026" and returns the first day.
- * Falls back to Theta 2026 default start if parsing fails.
- */
-const parseFestStart = (datesText: string): Date => {
-  const match = datesText.match(
-    /\b([A-Za-z]+)\s+(\d{1,2})(?:\s*[-–]\s*\d{1,2})?,\s*(\d{4})\b/,
-  );
+const parseFestStart = (datesText: string, isoDate?: string): Date => {
+  if (isoDate) {
+    const parsed = new Date(isoDate);
+    if (!Number.isNaN(parsed.getTime())) return parsed;
+  }
+  const match = datesText.match(/\b([A-Za-z]+)\s+(\d{1,2})(?:\s*[-–]\s*\d{1,2})?,\s*(\d{4})\b/);
   if (match) {
     const [, month, day, year] = match;
     const parsed = new Date(`${month} ${day}, ${year} 09:00:00`);
@@ -251,35 +140,41 @@ const dayAliases: Record<string, string[]> = {
 };
 
 const sponsorTiers = [
-  { key: "platinum", label: "Platinum", large: true },
-  { key: "gold", label: "Gold", large: false },
-  { key: "silver", label: "Silver", large: false },
-  { key: "media", label: "Media", large: false },
+  { key: "platinum", label: "Platinum" },
+  { key: "gold", label: "Gold" },
+  { key: "silver", label: "Silver" },
+  { key: "media", label: "Media" },
 ] as const;
 
-const sponsorTierStyles: Record<
-  (typeof sponsorTiers)[number]["key"],
-  { chip: string; border: string }
-> = {
-  platinum: { chip: "bg-black text-white", border: "border-black" },
-  gold: { chip: "bg-[#fef3c7] text-[#92400e]", border: "border-[#f59e0b]" },
-  silver: { chip: "bg-[#e5e7eb] text-[#1f2937]", border: "border-[#9ca3af]" },
-  media: { chip: "bg-[#ede9fe] text-[#5b21b6]", border: "border-[#7c3aed]" },
-};
+/* Day icons */
+const dayIcons = ["⚡", "🤖", "🚀"];
+const dayColors = [
+  "from-[rgba(124,58,237,0.25)] to-[rgba(76,29,149,0.1)]",
+  "from-[rgba(6,214,240,0.2)] to-[rgba(6,214,240,0.05)]",
+  "from-[rgba(245,200,66,0.2)] to-[rgba(245,200,66,0.05)]",
+];
+const dayBorderColors = [
+  "rgba(124,58,237,0.35)",
+  "rgba(6,214,240,0.25)",
+  "rgba(245,200,66,0.25)",
+];
+const dayAccents = ["#c084fc", "#06d6f0", "#f5c842"];
 
+/* ════════════════════════════════════════════════════════════
+   MAIN COMPONENT
+════════════════════════════════════════════════════════════ */
 export default component$(() => {
   const configData = useSignal<ConfigData>(defaultConfig);
   const homeCopy = useSignal<HomeCopy>(defaultHomeCopy);
   const sponsors = useSignal<SponsorsConfig>(defaultSponsors);
   const events = useSignal<EventItem[]>([]);
-
   const countdown = useSignal({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const counterDisplay = useSignal({ events: 0, participants: 0, colleges: 0 });
   const selectedDay = useSignal<DayEvent | null>(null);
-  const selectedSponsorTier = useSignal<
-    (typeof sponsorTiers)[number]["key"] | null
-  >(null);
+  const selectedTier = useSignal<(typeof sponsorTiers)[number]["key"] | null>(null);
+  const bgSlide = useSignal(0);
 
+  /* ── Fetch data ── */
   useVisibleTask$(async () => {
     try {
       const [cfgRes, sponsorRes, eventRes, contentRes] = await Promise.all([
@@ -288,83 +183,45 @@ export default component$(() => {
         fetch("/data/events.json"),
         fetch("/data/content.json"),
       ]);
+      if (!cfgRes.ok || !sponsorRes.ok || !eventRes.ok || !contentRes.ok) throw new Error();
 
       const cfg = (await cfgRes.json()) as Partial<ConfigData>;
-      const sponsorPayload = (await sponsorRes.json()) as {
-        sponsors?: SponsorsConfig;
-      };
+      const sponsorPayload = (await sponsorRes.json()) as { sponsors?: SponsorsConfig };
       const eventPayload = (await eventRes.json()) as { events?: EventItem[] };
-      const content = (await contentRes.json()) as {
-        home?: Partial<HomeCopy>;
-        seo?: { homeTitle?: string; homeDescription?: string };
-      };
+      const content = (await contentRes.json()) as { home?: Partial<HomeCopy> };
 
       configData.value = {
-        ...defaultConfig,
-        ...cfg,
+        ...defaultConfig, ...cfg,
         meta: { ...defaultConfig.meta, ...(cfg.meta || {}) },
         stats: { ...defaultConfig.stats, ...(cfg.stats || {}) },
-        about: {
-          ...defaultConfig.about,
-          ...(cfg.about || {}),
-          features: cfg.about?.features || defaultConfig.about.features,
-        },
+        about: { ...defaultConfig.about, ...(cfg.about || {}), features: cfg.about?.features || defaultConfig.about.features },
         days: cfg.days || defaultConfig.days,
       };
-
-      sponsors.value = {
-        ...defaultSponsors,
-        ...(sponsorPayload.sponsors || {}),
-      };
+      sponsors.value = { ...defaultSponsors, ...(sponsorPayload.sponsors || {}) };
       events.value = eventPayload.events || [];
 
       if (content.home) {
         homeCopy.value = {
-          ...defaultHomeCopy,
-          ...content.home,
+          ...defaultHomeCopy, ...content.home,
           hero: { ...defaultHomeCopy.hero, ...(content.home.hero || {}) },
-          countdownLabels: {
-            ...defaultHomeCopy.countdownLabels,
-            ...(content.home.countdownLabels || {}),
-          },
+          countdownLabels: { ...defaultHomeCopy.countdownLabels, ...(content.home.countdownLabels || {}) },
           about: { ...defaultHomeCopy.about, ...(content.home.about || {}) },
-          statsLabels: {
-            ...defaultHomeCopy.statsLabels,
-            ...(content.home.statsLabels || {}),
-          },
-          sponsors: {
-            ...defaultHomeCopy.sponsors,
-            ...(content.home.sponsors || {}),
-          },
+          statsLabels: { ...defaultHomeCopy.statsLabels, ...(content.home.statsLabels || {}) },
+          sponsors: { ...defaultHomeCopy.sponsors, ...(content.home.sponsors || {}) },
           cta: { ...defaultHomeCopy.cta, ...(content.home.cta || {}) },
-          dayModal: {
-            ...defaultHomeCopy.dayModal,
-            ...(content.home.dayModal || {}),
-          },
+          dayModal: { ...defaultHomeCopy.dayModal, ...(content.home.dayModal || {}) },
         };
-      }
-
-      if (content.seo?.homeTitle) {
-        document.title = content.seo.homeTitle;
-      }
-      if (content.seo?.homeDescription) {
-        let tag = document.querySelector('meta[name="description"]');
-        if (!tag) {
-          tag = document.createElement("meta");
-          tag.setAttribute("name", "description");
-          document.head.appendChild(tag);
-        }
-        tag.setAttribute("content", content.seo.homeDescription);
       }
     } catch {
       configData.value = defaultConfig;
     }
   });
 
+  /* ── Countdown ── */
   useVisibleTask$(({ track }) => {
     track(() => configData.value.meta.dates);
-    // Keep countdown aligned to the configured festival date string in config.json.
-    const fest = parseFestStart(configData.value.meta.dates).getTime();
+    track(() => configData.value.meta.startDate);
+    const fest = parseFestStart(configData.value.meta.dates, configData.value.meta.startDate).getTime();
     const sync = () => {
       const diff = Math.max(0, fest - Date.now());
       countdown.value = {
@@ -374,934 +231,694 @@ export default component$(() => {
         seconds: Math.floor((diff / 1000) % 60),
       };
     };
-
     sync();
     const id = setInterval(sync, 1000);
     return () => clearInterval(id);
   });
 
+  /* ── Hero background slideshow ── */
+  useVisibleTask$(() => {
+    const id = setInterval(() => {
+      bgSlide.value = (bgSlide.value + 1) % 4;
+    }, 5000);
+    return () => clearInterval(id);
+  });
+
+  /* ── Stats counter ── */
   useVisibleTask$(() => {
     const node = document.getElementById("theta-stats");
     if (!node) return;
-
     const targets = {
       events: parseStatNumber(configData.value.stats.events),
       participants: parseStatNumber(configData.value.stats.participants),
       colleges: parseStatNumber(configData.value.stats.colleges),
     };
-
     const animate = () => {
       const start = performance.now();
-      const duration = 1000;
-
+      const dur = 1800;
+      const ease = (t: number) => t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
       const step = (now: number) => {
-        const progress = Math.min(1, (now - start) / duration);
+        const p = Math.min(1, (now - start) / dur);
         counterDisplay.value = {
-          events: Math.floor(targets.events * progress),
-          participants: Math.floor(targets.participants * progress),
-          colleges: Math.floor(targets.colleges * progress),
+          events: Math.floor(targets.events * ease(p)),
+          participants: Math.floor(targets.participants * ease(p)),
+          colleges: Math.floor(targets.colleges * ease(p)),
         };
-        if (progress < 1) {
-          requestAnimationFrame(step);
-        }
+        if (p < 1) requestAnimationFrame(step);
       };
-
       requestAnimationFrame(step);
     };
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0]?.isIntersecting) {
-          animate();
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.35 },
-    );
-
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0]?.isIntersecting) { animate(); observer.disconnect(); }
+    }, { threshold: 0.3 });
     observer.observe(node);
     return () => observer.disconnect();
   });
 
-  useVisibleTask$(({ track }) => {
-    track(() => selectedDay.value);
-    if (!selectedDay.value) return;
-
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        selectedDay.value = null;
-      }
-    };
-
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  });
-
-  useVisibleTask$(({ track }) => {
-    track(() => selectedSponsorTier.value);
-    if (!selectedSponsorTier.value) return;
-
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        selectedSponsorTier.value = null;
-      }
-    };
-
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  });
-
+  /* ── GSAP ScrollTrigger Reveals ── */
   useVisibleTask$(() => {
-    const lanes = Array.from(
-      document.querySelectorAll<HTMLElement>("[data-marquee-lane='true']"),
-    );
-    if (lanes.length === 0) return;
+    gsap.registerPlugin(ScrollTrigger);
 
-    const cleanups: Array<() => void> = [];
-
-    for (const lane of lanes) {
-      const track = lane.querySelector<HTMLElement>(
-        "[data-marquee-track='true']",
+    // Reveal Up — fromTo ensures explicit opacity:1 target regardless of CSS
+    gsap.utils.toArray<HTMLElement>(".reveal-up").forEach((el) => {
+      gsap.fromTo(
+        el,
+        { y: 40, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: el,
+            start: "top 90%",
+            toggleActions: "play none none none",
+          },
+        }
       );
+    });
+
+    // Reveal Left
+    gsap.utils.toArray<HTMLElement>(".reveal-left").forEach((el) => {
+      gsap.fromTo(
+        el,
+        { x: -50, opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 0.8,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: el,
+            start: "top 90%",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+    });
+
+    // Reveal Right
+    gsap.utils.toArray<HTMLElement>(".reveal-right").forEach((el) => {
+      gsap.fromTo(
+        el,
+        { x: 50, opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 0.8,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: el,
+            start: "top 90%",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+    });
+
+    // Reveal Scale
+    gsap.utils.toArray<HTMLElement>(".reveal-scale").forEach((el) => {
+      gsap.fromTo(
+        el,
+        { scale: 0.9, opacity: 0 },
+        {
+          scale: 1,
+          opacity: 1,
+          duration: 0.8,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: el,
+            start: "top 90%",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+    });
+  });
+
+  /* ── 3D Tilt on day cards ── */
+  useVisibleTask$(() => {
+    const cards = document.querySelectorAll<HTMLElement>("[data-tilt]");
+    const onMove = (e: MouseEvent, card: HTMLElement) => {
+      const rect = card.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - 0.5;
+      const y = (e.clientY - rect.top) / rect.height - 0.5;
+      card.style.transform = `perspective(800px) rotateY(${x * 10}deg) rotateX(${-y * 8}deg) translateY(-6px)`;
+    };
+    const onLeave = (card: HTMLElement) => {
+      card.style.transition = "transform 400ms cubic-bezier(0.34,1.56,0.64,1)";
+      card.style.transform = "perspective(800px) rotateY(0) rotateX(0) translateY(0)";
+    };
+    const onEnter = (card: HTMLElement) => {
+      card.style.transition = "transform 100ms linear";
+    };
+    const cleanups: Array<() => void> = [];
+    cards.forEach((card) => {
+      const mm = (e: MouseEvent) => onMove(e, card);
+      const ml = () => onLeave(card);
+      const me = () => onEnter(card);
+      card.addEventListener("mousemove", mm);
+      card.addEventListener("mouseleave", ml);
+      card.addEventListener("mouseenter", me);
+      cleanups.push(() => {
+        card.removeEventListener("mousemove", mm);
+        card.removeEventListener("mouseleave", ml);
+        card.removeEventListener("mouseenter", me);
+      });
+    });
+    return () => cleanups.forEach((c) => c());
+  });
+
+  /* ── Marquee pause ── */
+  useVisibleTask$(() => {
+    const lanes = Array.from(document.querySelectorAll<HTMLElement>("[data-marquee-lane]"));
+    const cleanups: Array<() => void> = [];
+    for (const lane of lanes) {
+      const track = lane.querySelector<HTMLElement>("[data-marquee-track]");
       if (!track) continue;
-
       let resumeTimer: ReturnType<typeof setTimeout> | undefined;
-
       const pause = () => {
         track.style.animationPlayState = "paused";
         if (resumeTimer) clearTimeout(resumeTimer);
-        resumeTimer = setTimeout(() => {
-          track.style.animationPlayState = "running";
-        }, 1400);
+        resumeTimer = setTimeout(() => { track.style.animationPlayState = "running"; }, 1400);
       };
-
-      const onPointerDown = () => pause();
-      const onTouchStart = () => pause();
-      const onWheel = () => pause();
-      const onScroll = () => pause();
-
-      lane.addEventListener("pointerdown", onPointerDown);
-      lane.addEventListener("touchstart", onTouchStart, { passive: true });
-      lane.addEventListener("wheel", onWheel, { passive: true });
-      lane.addEventListener("scroll", onScroll, { passive: true });
-
+      lane.addEventListener("pointerdown", pause);
+      lane.addEventListener("touchstart", pause, { passive: true });
       cleanups.push(() => {
-        lane.removeEventListener("pointerdown", onPointerDown);
-        lane.removeEventListener("touchstart", onTouchStart);
-        lane.removeEventListener("wheel", onWheel);
-        lane.removeEventListener("scroll", onScroll);
+        lane.removeEventListener("pointerdown", pause);
+        lane.removeEventListener("touchstart", pause);
         if (resumeTimer) clearTimeout(resumeTimer);
       });
     }
-
-    return () => cleanups.forEach((cleanup) => cleanup());
+    return () => cleanups.forEach((c) => c());
   });
 
-  const openDay = $((day: DayEvent) => {
-    selectedDay.value = day;
+  /* ── Modal keyboard close ── */
+  useVisibleTask$(({ track }) => {
+    track(() => selectedDay.value);
+    if (!selectedDay.value) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") selectedDay.value = null; };
+    document.body.style.overflow = "hidden";
+    document.addEventListener("keydown", onKey);
+    return () => { document.removeEventListener("keydown", onKey); document.body.style.overflow = ""; };
   });
 
-  const closeDay = $(() => {
-    selectedDay.value = null;
+  useVisibleTask$(({ track }) => {
+    track(() => selectedTier.value);
+    if (!selectedTier.value) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") selectedTier.value = null; };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
   });
 
-  const openSponsorTierModal = $(
-    (tier: (typeof sponsorTiers)[number]["key"]) => {
-      selectedSponsorTier.value = tier;
-    },
-  );
-
-  const closeSponsorTierModal = $(() => {
-    selectedSponsorTier.value = null;
-  });
+  /* ── Handlers ── */
+  const closeDay = $(() => { selectedDay.value = null; });
+  const closeTier = $(() => { selectedTier.value = null; });
 
   const getDayEvents = (dayName: string) => {
     const variants = dayAliases[dayName] || [dayName];
-    return events.value.filter((item) =>
-      item.day ? variants.includes(item.day) : false,
-    );
+    return events.value.filter((item) => item.day ? variants.includes(item.day) : false);
   };
 
+  /* ──────────────────────── render ───────────────────────── */
   return (
-    <div class="relative overflow-hidden bg-neutral-100 pb-16 text-neutral-900">
-      <div class="theta-noise pointer-events-none absolute inset-0 opacity-20"></div>
+    <div class="relative" style="font-family: var(--font-body);">
 
-      <section class="relative mx-auto mt-8 max-w-7xl px-4 pt-10 pb-14 sm:px-6 lg:px-8 lg:pt-14">
-        <div class="theta-shell theta-hero-grid relative overflow-hidden p-6 sm:p-8 lg:p-10">
-          <div class="pointer-events-none absolute -top-20 -left-16 h-56 w-56 rounded-full bg-[var(--theta-primary)]/14 blur-3xl"></div>
-          <div class="pointer-events-none absolute -right-20 -bottom-20 h-56 w-56 rounded-full bg-black/10 blur-3xl"></div>
+      {/* ═══════════════ HERO SECTION ═══════════════ */}
+      <HeroSlider />
 
-          <div class="relative grid gap-10 lg:grid-cols-[1.15fr_1fr] lg:items-center">
-            <div>
-              <div class="flex flex-wrap items-center gap-2">
-                <span class="theta-badge inline-flex items-center gap-2 border-black/20 text-neutral-900">
-                  <span class="h-2 w-2 rounded-full bg-[var(--theta-primary)]"></span>
-                  {configData.value.meta.dates}
-                </span>
-                <span class="inline-flex items-center rounded-full border border-black/15 bg-white px-2 py-1">
-                  <img
-                    src="/sponsors/general/sastra-university-logo.jpg"
-                    alt="SASTRA University"
-                    width={120}
-                    height={34}
-                    class="h-5 w-auto object-contain"
-                  />
-                </span>
-              </div>
-
-              <h1 class="mt-5 text-5xl leading-[0.84] font-black tracking-tight sm:text-7xl lg:text-8xl">
-                <span class="block text-neutral-900">
-                  {homeCopy.value.hero.titleMain}
-                </span>
-                <span class="theta-gradient-text block">
-                  {homeCopy.value.hero.titleAccent}
-                </span>
-              </h1>
-
-              <p class="mt-4 max-w-2xl text-base text-neutral-600 sm:text-lg">
-                {configData.value.meta.tagline}
-              </p>
-              <p class="mt-1 max-w-2xl text-sm text-neutral-500 sm:text-base">
-                {homeCopy.value.hero.description}
-              </p>
-
-              <div class="mt-6 flex flex-wrap gap-3">
-                <span class="theta-sticker animate-theta-float">
-                  ⚡ Hackathons
-                </span>
-                <span class="theta-sticker animate-theta-float [animation-delay:100ms]">
-                  🤖 Robotics
-                </span>
-                <span class="theta-sticker animate-theta-float [animation-delay:200ms]">
-                  🎨 Design
-                </span>
-                <span class="theta-sticker animate-theta-float [animation-delay:300ms]">
-                  🚀 Aerospace
-                </span>
-              </div>
-
-              <div class="mt-8 flex flex-wrap gap-3">
-                <Link
-                  href="/events"
-                  class="theta-focus rounded-xl border-2 border-[var(--theta-primary)] bg-[var(--theta-primary)] px-6 py-3 text-sm font-bold text-white shadow-[0_10px_22px_rgba(124,58,237,0.35)]"
-                >
-                  Register Now
-                </Link>
-                <Link
-                  href="/events"
-                  class="theta-focus rounded-xl border-2 border-black/20 bg-white px-6 py-3 text-sm font-bold text-black"
-                >
-                  {homeCopy.value.hero.exploreEvents}
-                </Link>
-              </div>
-            </div>
-
-            <div class="relative">
-              <div class="theta-panel relative overflow-hidden bg-gradient-to-b from-white to-neutral-100 p-5 sm:p-6">
-                <div class="absolute top-3 right-3 rounded-full border border-black/15 bg-white px-2.5 py-1 text-[10px] font-bold tracking-[0.12em] text-neutral-600 uppercase">
-                  Festival Pass
-                </div>
-
-                <div class="mb-4 pr-20">
-                  <p class="text-xs font-bold tracking-[0.22em] text-neutral-500 uppercase">
-                    {configData.value.meta.eventName}
-                  </p>
-                  <p class="mt-1 text-lg font-extrabold text-neutral-900">
-                    {configData.value.meta.venue}
-                  </p>
-                  <p class="text-sm font-semibold text-[var(--theta-primary)]">
-                    {configData.value.meta.dates}
-                  </p>
-                </div>
-
-                <p class="mb-3 text-xs font-bold tracking-[0.22em] text-neutral-500 uppercase">
-                  Countdown
-                </p>
-                <div class="grid grid-cols-4 gap-2 sm:gap-3">
-                  {[
-                    {
-                      label: homeCopy.value.countdownLabels.days,
-                      value: countdown.value.days,
-                    },
-                    {
-                      label: homeCopy.value.countdownLabels.hours,
-                      value: countdown.value.hours,
-                    },
-                    {
-                      label: homeCopy.value.countdownLabels.minutes,
-                      value: countdown.value.minutes,
-                    },
-                    {
-                      label: homeCopy.value.countdownLabels.seconds,
-                      value: countdown.value.seconds,
-                    },
-                  ].map((unit, index) => (
-                    <div key={unit.label} class="text-center">
-                      <div
-                        class="theta-count-chip animate-[thetaIdleDrift_3.2s_ease-in-out_infinite]"
-                        style={{ animationDelay: `${index * 110}ms` }}
-                      >
-                        <span
-                          key={`${unit.label}-${unit.value}`}
-                          class="theta-count-value"
-                        >
-                          {String(unit.value).padStart(2, "0")}
-                        </span>
-                      </div>
-                      <p class="mt-2 text-[10px] font-bold tracking-wider text-neutral-600 uppercase">
-                        {unit.label}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-
-                <div class="mt-5 rounded-xl border border-black/10 bg-white p-3">
-                  <p class="text-xs font-bold tracking-[0.12em] text-neutral-500 uppercase">
-                    Theme Pulse
-                  </p>
-                  <p class="mt-1 text-sm font-semibold text-neutral-700">
-                    Build bold ideas. Ship fast. Own the stage at Theta.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div class="mb-7 flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <span class="theta-badge border-black/15 text-neutral-600">
-              Festival Days
-            </span>
-            <h2 class="mt-3 text-4xl leading-tight font-extrabold sm:text-5xl">
-              Build. Battle.{" "}
-              <span class="text-[var(--theta-primary)]">Celebrate.</span>
-            </h2>
-          </div>
-          <span class="theta-sticker">Click Card to View Schedule</span>
+      {/* ═══════════════ DAY CARDS SECTION ═══════════════ */}
+      <section class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+        <div class="reveal-up mb-12 text-center">
+          <span class="t-badge mx-auto">Festival Days</span>
+          <h2 class="t-heading mt-4 text-[clamp(2rem,5vw,3.5rem)] text-[var(--t-text)]">
+            Build. Battle.{" "}
+            <span class="t-gradient">Celebrate.</span>
+          </h2>
+          <p class="mt-3 text-sm text-[var(--t-dim)]">Click a day to explore its full roadmap</p>
         </div>
 
-        <div class="grid gap-5 lg:grid-cols-3">
-          {configData.value.days.map((day, index) => (
-            <button
+        <div class="grid gap-6 lg:grid-cols-3">
+          {configData.value.days.map((day, index) => {
+            const roadmapLinks = ["/roadmap/day1", "/roadmap/day2", "/roadmap/day3"];
+            return (
+            <Link
               key={day.day}
-              onClick$={() => openDay(day)}
-              class="theta-focus group relative overflow-hidden rounded-3xl border-2 border-black/20 bg-white text-left shadow-[8px_8px_0_#111] transition duration-200 hover:-translate-y-1 hover:shadow-[12px_12px_0_#111]"
+              href={roadmapLinks[index] || "/roadmap/day1"}
+              data-tilt
+              class={[
+                "t-day-card group text-left p-6 sm:p-7 block no-underline",
+                `bg-gradient-to-br ${dayColors[index] || dayColors[0]}`,
+                "reveal-up",
+              ]}
+              style={{
+                borderColor: dayBorderColors[index] || dayBorderColors[0],
+                transitionDelay: `${index * 80}ms`,
+                backgroundImage: day.bgImage ? `linear-gradient(rgba(14,10,30,0.85), rgba(14,10,30,0.95)), url(${day.bgImage})` : undefined,
+                backgroundSize: "cover",
+                backgroundPosition: "center"
+              }}
             >
+              {/* Inner glow blob */}
               <div
-                class="absolute inset-0 bg-cover bg-center opacity-25 transition duration-300 group-hover:scale-105"
-                style={{ backgroundImage: `url(${day.bgImage})` }}
+                class="pointer-events-none absolute -top-10 -left-10 h-32 w-32 rounded-full blur-2xl opacity-40"
+                style={{ background: dayAccents[index] || dayAccents[0] }}
               ></div>
-              <div class="absolute inset-0 bg-gradient-to-b from-white/85 via-white/75 to-white/96"></div>
 
-              <div class="relative p-5 sm:p-6">
-                <div class="flex items-start justify-between gap-3">
-                  <span class="inline-flex h-10 w-10 items-center justify-center rounded-full border-2 border-black bg-black text-sm font-black text-white">
-                    {index + 1}
-                  </span>
-                  <span class="theta-badge border-black/20 bg-white text-neutral-700">
-                    {day.date}
-                  </span>
+              {/* Top row */}
+              <div class="relative flex items-start justify-between gap-3 mb-5">
+                <div
+                  class="t-day-number text-xl"
+                  style={{ background: `linear-gradient(135deg, ${dayAccents[index]}, ${dayAccents[index]}88)`, boxShadow: `0 4px 16px ${dayAccents[index]}55` }}
+                >
+                  {dayIcons[index]}
                 </div>
-
-                <h3 class="mt-4 text-3xl font-black tracking-tight text-neutral-900">
-                  {day.day}
-                </h3>
-                <p class="mt-1 text-sm font-semibold text-[var(--theta-primary)]">
-                  {day.highlight}
-                </p>
-
-                <div class="mt-4 flex flex-wrap gap-2">
-                  {day.events.slice(0, 3).map((event) => (
-                    <span
-                      key={`${day.day}-${event}`}
-                      class="rounded-full border border-black/20 bg-white px-3 py-1 text-xs font-bold text-neutral-700"
-                    >
-                      {event}
-                    </span>
-                  ))}
-                  {day.events.length > 3 && (
-                    <span class="rounded-full border border-[var(--theta-primary)]/30 bg-[var(--theta-primary)]/10 px-3 py-1 text-xs font-bold text-[var(--theta-primary)]">
-                      +{day.events.length - 3} more
-                    </span>
-                  )}
-                </div>
-
-                <div class="mt-5 flex items-center justify-between border-t border-black/10 pt-4">
-                  <p class="text-sm font-semibold text-neutral-700">
-                    {day.events.length} Events
-                  </p>
-                  <span class="text-xs font-bold tracking-wider text-neutral-600 uppercase">
-                    Open Schedule →
-                  </span>
-                </div>
+                <span class="t-label text-[var(--t-dim)]">{day.date}</span>
               </div>
-            </button>
-          ))}
+
+              {/* Day name */}
+              <h3
+                class="t-heading relative text-3xl sm:text-4xl"
+                style={{ color: dayAccents[index] || "var(--t-text)" }}
+              >
+                {day.day}
+              </h3>
+              <p class="relative mt-1 text-sm font-medium text-[var(--t-muted)]">{day.highlight}</p>
+
+              {/* Event chips */}
+              <div class="relative mt-5 flex flex-wrap gap-2">
+                {day.events.slice(0, 3).map((event) => (
+                  <span
+                    key={`${day.day}-${event}`}
+                    class="rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.04)] px-3 py-1 text-xs font-medium text-[var(--t-muted)]"
+                  >
+                    {event}
+                  </span>
+                ))}
+                {day.events.length > 3 && (
+                  <span
+                    class="rounded-full px-3 py-1 text-xs font-medium"
+                    style={{ color: dayAccents[index], background: `${dayAccents[index]}15`, border: `1px solid ${dayAccents[index]}30` }}
+                  >
+                    +{day.events.length - 3} more
+                  </span>
+                )}
+              </div>
+
+              {/* Bottom row */}
+              <div class="relative mt-6 flex items-center justify-between border-t border-[rgba(255,255,255,0.06)] pt-4">
+                <span class="text-xs text-[var(--t-dim)]">{day.events.length} Events</span>
+                <span class="text-xs font-bold tracking-widest uppercase group-hover:translate-x-1 transition-transform inline-block" style={{ color: dayAccents[index] }}>
+                  View Roadmap →
+                </span>
+              </div>
+            </Link>
+            );
+          })}
         </div>
       </section>
 
-      <section class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div class="theta-shell relative overflow-hidden p-6 sm:p-8 lg:p-10">
-          <div class="pointer-events-none absolute -top-20 -right-20 h-56 w-56 rounded-full bg-[var(--theta-primary)]/12 blur-3xl"></div>
-          <div class="pointer-events-none absolute bottom-0 -left-16 h-40 w-40 rounded-full bg-black/8 blur-2xl"></div>
+      {/* ═══════════════ ABOUT SECTION ═══════════════ */}
+      <section class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+        <div class="t-glass overflow-hidden p-8 sm:p-10 lg:p-12">
+          {/* Ambient blob inside card */}
+          <div class="pointer-events-none absolute -top-20 -right-20 h-56 w-56 rounded-full bg-[rgba(124,58,237,0.12)] blur-3xl"></div>
 
-          <div class="relative grid gap-8 lg:grid-cols-[1.2fr_1fr] lg:items-start">
-            <div>
-              <span class="theta-badge border-black/20 text-neutral-700">
-                {homeCopy.value.about.badge}
-              </span>
-              <h2 class="mt-4 text-4xl leading-tight font-extrabold sm:text-5xl">
+          <div class="relative grid gap-12 lg:grid-cols-[1.2fr_1fr] lg:items-start">
+            {/* Left */}
+            <div class="reveal-left">
+              <span class="t-badge">{homeCopy.value.about.badge}</span>
+              <h2 class="t-heading mt-5 text-[clamp(2rem,4vw,3rem)] text-[var(--t-text)]">
                 {homeCopy.value.about.titlePrefix}{" "}
-                <span class="text-[var(--theta-primary)]">
-                  {homeCopy.value.about.titleAccent}
-                </span>{" "}
+                <span class="t-gradient">{homeCopy.value.about.titleAccent}</span>{" "}
                 {homeCopy.value.about.titleSuffix}
               </h2>
-              <p class="mt-4 max-w-2xl text-base text-neutral-600 sm:text-lg">
+              <p class="mt-5 max-w-xl text-base text-[var(--t-muted)] leading-relaxed" style="font-weight: 300;">
                 {configData.value.about.description}
               </p>
               <div class="mt-6 flex flex-wrap gap-2">
-                <span class="rounded-full border border-black/15 bg-white px-3 py-1 text-xs font-bold text-neutral-700">
-                  National Level
-                </span>
-                <span class="rounded-full border border-black/15 bg-white px-3 py-1 text-xs font-bold text-neutral-700">
-                  Tech + Management
-                </span>
-                <span class="rounded-full border border-black/15 bg-white px-3 py-1 text-xs font-bold text-neutral-700">
-                  Student Driven
-                </span>
+                {["National Level", "Tech + Management", "Student Driven"].map((tag) => (
+                  <span key={tag} class="t-chip">{tag}</span>
+                ))}
               </div>
             </div>
 
-            <div class="rounded-2xl border-2 border-black/15 bg-white/90 p-5 shadow-[8px_8px_0_#111]">
-              <div class="mb-3 flex items-center justify-between">
-                <p class="text-xs font-bold tracking-[0.2em] text-neutral-500 uppercase">
-                  Why Theta
-                </p>
+            {/* Right — quote card */}
+            <div class="reveal-right t-card p-6 sm:p-7">
+              <div class="flex items-center justify-between mb-5">
+                <p class="t-label text-[var(--t-dim)]">Why Theta</p>
                 <img
                   src="/sponsors/general/sastra-university-logo.jpg"
-                  alt="SASTRA University"
-                  width={120}
-                  height={40}
+                  alt="SASTRA"
+                  width={64} height={32}
+                  class="h-8 w-auto rounded-lg object-contain [filter:brightness(0)_invert(1)_opacity(0.5)]"
                   loading="lazy"
-                  class="h-8 w-auto rounded-md border border-black/10 bg-white object-contain px-1 py-0.5"
                 />
               </div>
-              <p class="mt-3 text-3xl leading-tight font-black text-neutral-900">
-                One stage.
-                <br />
-                Infinite ideas.
+              <p class="t-heading text-3xl text-[var(--t-text)]">
+                One stage.<br />
+                <span class="t-gradient">Infinite ideas.</span>
               </p>
-              <p class="mt-3 text-sm text-neutral-600">
-                Compete, collaborate, and showcase your best work in front of
-                peers, mentors, and industry communities.
+              <p class="mt-4 text-sm text-[var(--t-muted)] leading-relaxed" style="font-weight: 300;">
+                Compete, collaborate, and showcase your best work in front of peers, mentors, and industry communities.
               </p>
+              <div class="t-line-glow mt-5"></div>
             </div>
           </div>
 
-          <div class="relative mt-8 grid gap-4 md:grid-cols-3">
+          {/* Feature cards row */}
+          <div class="relative mt-10 grid gap-5 md:grid-cols-3">
             {configData.value.about.features.slice(0, 3).map((feature, idx) => (
-              <article
-                key={feature.title}
-                class="group rounded-2xl border-2 border-black/20 bg-white p-5 shadow-[6px_6px_0_#111] transition duration-200 hover:-translate-y-1 hover:shadow-[10px_10px_0_#111]"
-              >
-                <span class="inline-flex h-9 w-9 items-center justify-center rounded-full border-2 border-black bg-black text-sm font-black text-white">
-                  {idx + 1}
-                </span>
-                <h3 class="mt-4 text-2xl font-extrabold text-neutral-900">
-                  {feature.title}
-                </h3>
-                <p class="mt-2 text-sm text-neutral-600">
-                  {feature.description}
-                </p>
-                <div class="mt-4 h-1 w-14 rounded-full bg-[var(--theta-primary)]/65 transition-all group-hover:w-20"></div>
+              <article key={feature.title} class="t-feature-card reveal-up" style={{ transitionDelay: `${idx * 100}ms` }}>
+                <span class="t-feature-num">{String(idx + 1).padStart(2, "0")}</span>
+                <p class="t-label text-[rgba(192,132,252,0.7)] mb-3">Feature {idx + 1}</p>
+                <h3 class="t-heading text-xl text-[var(--t-text)]">{feature.title}</h3>
+                <p class="mt-2 text-sm text-[var(--t-muted)]" style="font-weight: 300;">{feature.description}</p>
+                <div class="t-feature-bar"></div>
               </article>
             ))}
           </div>
         </div>
       </section>
 
-      <section
-        id="theta-stats"
-        class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8"
-      >
-        <div class="theta-shell relative overflow-hidden p-6 sm:p-8 lg:p-10">
-          <div class="pointer-events-none absolute -top-16 -left-12 h-40 w-40 rounded-full bg-[var(--theta-primary)]/14 blur-2xl"></div>
-          <div class="pointer-events-none absolute -right-14 -bottom-14 h-44 w-44 rounded-full bg-black/10 blur-3xl"></div>
+      {/* ═══════════════ STATS SECTION ═══════════════ */}
+      <section id="theta-stats" class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+        <div class="reveal-up mb-12 text-center">
+          <span class="t-badge mx-auto">Theta Snapshot</span>
+          <h2 class="t-heading mt-4 text-[clamp(2rem,5vw,3.5rem)] text-[var(--t-text)]">
+            Numbers that{" "}
+            <span class="t-gradient">define the fest</span>
+          </h2>
+        </div>
 
-          <div class="relative mb-7 flex flex-wrap items-end justify-between gap-3">
-            <div>
-              <span class="theta-badge border-black/20 text-neutral-700">
-                Theta Snapshot
-              </span>
-              <h2 class="mt-3 text-4xl font-extrabold sm:text-5xl">
-                Numbers that{" "}
-                <span class="text-[var(--theta-primary)]">define the fest</span>
-              </h2>
-            </div>
-            <span class="theta-sticker">Live Counters</span>
-          </div>
-
-          <div class="relative grid gap-4 md:grid-cols-3">
-            <article class="group rounded-2xl border-2 border-black/20 bg-white p-5 shadow-[6px_6px_0_#111] transition duration-200 hover:-translate-y-1 hover:shadow-[10px_10px_0_#111]">
-              <div class="mb-3 flex items-center justify-between">
-                <span class="inline-flex h-10 w-10 items-center justify-center rounded-full border-2 border-black bg-black text-white">
-                  <svg
-                    class="h-5 w-5"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M8 7V3m8 4V3m-9 8h10m-9 4h6M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                    />
-                  </svg>
-                </span>
-                <span class="text-[11px] font-bold tracking-[0.14em] text-neutral-500 uppercase">
-                  2026
-                </span>
+        <div class="grid gap-5 md:grid-cols-3">
+          {[
+            {
+              icon: (
+                <svg class="w-6 h-6 text-[var(--t-violet)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10m-9 4h6M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              ),
+              num: counterDisplay.value.events,
+              suffix: "+",
+              label: homeCopy.value.statsLabels.events,
+              suffix2: configData.value.stats.events,
+              delay: 0,
+            },
+            {
+              icon: (
+                <svg class="w-6 h-6 text-[var(--t-cyan)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5V4H2v16h5m10 0v-2a4 4 0 00-4-4H9a4 4 0 00-4 4v2m12 0H7m9-12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              ),
+              num: counterDisplay.value.participants,
+              suffix: "+",
+              label: homeCopy.value.statsLabels.participants,
+              suffix2: configData.value.stats.participants,
+              delay: 100,
+              featured: true,
+            },
+            {
+              icon: (
+                <svg class="w-6 h-6 text-[var(--t-gold)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 21h18M4 21V8l8-5 8 5v13M9 21v-6h6v6M9 11h.01M15 11h.01" />
+                </svg>
+              ),
+              num: counterDisplay.value.colleges,
+              suffix: "+",
+              label: homeCopy.value.statsLabels.colleges,
+              suffix2: configData.value.stats.colleges,
+              delay: 200,
+            },
+          ].map((stat) => (
+            <article
+              key={stat.label}
+              class={["t-stat-card reveal-up", stat.featured ? "md:scale-[1.04]" : ""]}
+              style={{ transitionDelay: `${stat.delay}ms` }}
+            >
+              <div class="flex items-center justify-between mb-4">
+                <div class="flex h-11 w-11 items-center justify-center rounded-xl border border-[rgba(120,80,255,0.2)] bg-[rgba(124,58,237,0.08)]">
+                  {stat.icon}
+                </div>
+                <span class="t-label text-[var(--t-dim)]">2026</span>
               </div>
-              <p class="text-5xl font-black text-[var(--theta-primary)] tabular-nums">
-                {counterDisplay.value.events}+
-              </p>
-              <p class="mt-2 text-sm font-semibold text-neutral-700">
-                {homeCopy.value.statsLabels.events}
-              </p>
-              <div class="mt-4 h-1 w-16 rounded-full bg-[var(--theta-primary)]/60 transition-all group-hover:w-24"></div>
+              <div class="t-stat-num">{stat.num}+</div>
+              <div class="t-stat-label">{stat.label}</div>
+              <div class="t-line-glow mt-5 w-3/4"></div>
             </article>
-
-            <article class="group rounded-2xl border-2 border-black/20 bg-white p-5 shadow-[6px_6px_0_#111] transition duration-200 hover:-translate-y-1 hover:shadow-[10px_10px_0_#111] md:scale-[1.03]">
-              <div class="mb-3 flex items-center justify-between">
-                <span class="inline-flex h-10 w-10 items-center justify-center rounded-full border-2 border-black bg-black text-white">
-                  <svg
-                    class="h-5 w-5"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M17 20h5V4H2v16h5m10 0v-2a4 4 0 00-4-4H9a4 4 0 00-4 4v2m12 0H7m9-12a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                  </svg>
-                </span>
-                <span class="text-[11px] font-bold tracking-[0.14em] text-neutral-500 uppercase">
-                  2026
-                </span>
-              </div>
-              <p class="text-5xl font-black text-[var(--theta-primary)] tabular-nums">
-                {counterDisplay.value.participants}+
-              </p>
-              <p class="mt-2 text-sm font-semibold text-neutral-700">
-                {homeCopy.value.statsLabels.participants}
-              </p>
-              <div class="mt-4 h-1 w-16 rounded-full bg-[var(--theta-primary)]/60 transition-all group-hover:w-24"></div>
-            </article>
-
-            <article class="group rounded-2xl border-2 border-black/20 bg-white p-5 shadow-[6px_6px_0_#111] transition duration-200 hover:-translate-y-1 hover:shadow-[10px_10px_0_#111]">
-              <div class="mb-3 flex items-center justify-between">
-                <span class="inline-flex h-10 w-10 items-center justify-center rounded-full border-2 border-black bg-black text-white">
-                  <svg
-                    class="h-5 w-5"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M3 21h18M4 21V8l8-5 8 5v13M9 21v-6h6v6M9 11h.01M15 11h.01"
-                    />
-                  </svg>
-                </span>
-                <span class="text-[11px] font-bold tracking-[0.14em] text-neutral-500 uppercase">
-                  2026
-                </span>
-              </div>
-              <p class="text-5xl font-black text-[var(--theta-primary)] tabular-nums">
-                {counterDisplay.value.colleges}+
-              </p>
-              <p class="mt-2 text-sm font-semibold text-neutral-700">
-                {homeCopy.value.statsLabels.colleges}
-              </p>
-              <div class="mt-4 h-1 w-16 rounded-full bg-[var(--theta-primary)]/60 transition-all group-hover:w-24"></div>
-            </article>
-          </div>
+          ))}
         </div>
       </section>
 
-      <section class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div class="theta-shell relative overflow-hidden p-6 sm:p-8 lg:p-10">
-          <div class="pointer-events-none absolute -top-20 -left-20 h-56 w-56 rounded-full bg-[var(--theta-primary)]/15 blur-3xl"></div>
-          <div class="pointer-events-none absolute -right-20 -bottom-20 h-56 w-56 rounded-full bg-black/10 blur-3xl"></div>
+      {/* ═══════════════ SPONSORS SECTION ═══════════════ */}
+      <section class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+        <div class="t-glass p-8 sm:p-10 lg:p-12">
+          <div class="pointer-events-none absolute -top-20 right-0 h-60 w-60 rounded-full bg-[rgba(14,169,53,0.12)] blur-3xl"></div>
 
-          <div class="relative flex flex-wrap items-end justify-between gap-4">
+          {/* Header */}
+          <div class="relative reveal-up mb-10 flex flex-wrap items-end justify-between gap-4">
             <div>
-              <span class="theta-badge border-black/20 text-neutral-700">
-                {homeCopy.value.sponsors.hallBadge}
-              </span>
-              <h2 class="mt-4 text-4xl font-extrabold sm:text-5xl">
-                {homeCopy.value.sponsors.hallTitlePrefix}{" "}
-                <span class="text-[var(--theta-primary)]">
-                  {homeCopy.value.sponsors.hallTitleAccent}
-                </span>
+              <span class="t-badge">{homeCopy.value.sponsors.badge}</span>
+              <h2 class="t-heading mt-4 text-[clamp(2rem,4vw,3rem)] text-[var(--t-text)]">
+                {homeCopy.value.sponsors.titlePrefix}{" "}
+                <span class="t-gradient">{homeCopy.value.sponsors.titleAccent}</span>
               </h2>
-              <p class="mt-2 max-w-2xl text-sm text-neutral-600 sm:text-base">
+              <p class="mt-4 max-w-xl text-base leading-relaxed text-[var(--t-muted)]" style="font-weight: 300;">
                 {homeCopy.value.sponsors.hallDescription}
               </p>
             </div>
-            <span class="theta-sticker rotate-[-4deg]">
-              {homeCopy.value.sponsors.hallSticker}
-            </span>
+            <span class="t-sticker">🏆 {homeCopy.value.sponsors.hallSticker}</span>
           </div>
 
-          <div class="relative mt-8 space-y-8">
-            {(() => {
-              const availableTiers = sponsorTiers.filter((tier) => {
-                const list = sponsors.value[tier.key] || [];
-                return Array.isArray(list) && list.length > 0;
-              });
-              if (availableTiers.length === 0) return null;
+          {/* Sponsor teaser grid */}
+          <div class="relative grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {sponsorTiers
+              .flatMap((tier) => (sponsors.value[tier.key] || []).slice(0, 2))
+              .slice(0, 6)
+              .map((item, idx) => (
+                <article
+                  key={`home-sponsor-${item.name}-${idx}`}
+                  class="t-sponsor-card flex min-h-[9rem] flex-col items-center justify-center text-center"
+                >
+                  <div class="flex min-h-[4.5rem] items-center justify-center">
+                    <img
+                      src={item.logo}
+                      alt={item.name}
+                      width={180}
+                      height={80}
+                      loading="lazy"
+                      class="t-sponsor-img max-h-12 max-w-[8.5rem]"
+                    />
+                  </div>
+                  <p class="mt-3 text-xs font-medium tracking-[0.2em] text-[var(--t-dim)] uppercase">
+                    {item.name}
+                  </p>
+                </article>
+              ))}
 
-              return (
-                <div class="space-y-4">
-                  {availableTiers.map((tier, tierIndex) => {
-                    const tierStyle = sponsorTierStyles[tier.key];
-                    const list = (sponsors.value[tier.key] || [])
-                      .slice()
-                      .sort((a, b) => (a.order || 999) - (b.order || 999));
-                    const shouldAnimate =
-                      tier.key === "platinum" || list.length > 4;
-                    const visibleItems = shouldAnimate
-                      ? [...list, ...list]
-                      : list;
+            {sponsorTiers.every((tier) => (sponsors.value[tier.key] || []).length === 0) && (
+              <div class="rounded-3xl border border-dashed border-[rgba(120,80,255,0.2)] bg-[rgba(5,5,5,0.32)] px-6 py-12 text-center text-sm text-[var(--t-muted)] sm:col-span-2 xl:col-span-3">
+                Sponsor highlights will appear here once the lineup is published.
+              </div>
+            )}
+          </div>
 
-                    return (
-                      <section
-                        key={`sponsor-lane-${tier.key}`}
-                        class={[
-                          "rounded-2xl border-2 bg-white/70 p-3 sm:p-4",
-                          tierStyle.border,
-                        ]}
-                      >
-                        <div class="flex w-full items-center justify-between gap-3 rounded-xl px-2 py-2 text-left">
-                          <h3 class="text-lg font-extrabold text-neutral-900 sm:text-xl">
-                            {tier.label}
-                          </h3>
-                          <span
-                            class={[
-                              "rounded-full border-2 px-3 py-1 text-[11px] font-bold tracking-wide sm:text-xs",
-                              tierStyle.chip,
-                            ]}
-                          >
-                            {list.length} Partners
-                          </span>
-                        </div>
-
-                        <div
-                          data-marquee-lane={shouldAnimate ? "true" : "false"}
-                          class={[
-                            "-mx-1 mt-3 px-1 pb-2",
-                            shouldAnimate
-                              ? "theta-marquee-lane overflow-x-auto"
-                              : "overflow-x-auto sm:overflow-visible",
-                          ]}
-                        >
-                          <div
-                            data-marquee-track={
-                              shouldAnimate ? "true" : "false"
-                            }
-                            class={[
-                              "flex gap-3 py-2",
-                              shouldAnimate
-                                ? "min-w-max"
-                                : "flex-nowrap sm:flex-wrap sm:w-full sm:justify-center",
-                              shouldAnimate &&
-                                (tierIndex % 2 === 0
-                                  ? "animate-[thetaMarqueeLeft_24s_linear_infinite]"
-                                  : "animate-[thetaMarqueeLeft_28s_linear_infinite]"),
-                            ]}
-                          >
-                            {visibleItems.map((item, index) => (
-                              <article
-                                key={`${tier.key}-${item.name}-${index}`}
-                                onClick$={() => openSponsorTierModal(tier.key)}
-                                class={[
-                                  "theta-sponsor-card theta-focus group min-w-[10.5rem] cursor-pointer p-3 text-center sm:min-w-[12rem]",
-                                  index % 2 === 0
-                                    ? "rotate-[-0.6deg]"
-                                    : "rotate-[0.6deg]",
-                                  !shouldAnimate &&
-                                    "animate-[thetaIdleDrift_3.2s_ease-in-out_infinite]",
-                                ]}
-                                style={
-                                  !shouldAnimate
-                                    ? { animationDelay: `${index * 180}ms` }
-                                    : undefined
-                                }
-                              >
-                                <div class="flex min-h-20 items-center justify-center sm:min-h-24">
-                                  <img
-                                    src={item.logo}
-                                    alt={item.name}
-                                    width={220}
-                                    height={110}
-                                    loading="lazy"
-                                    class="relative z-10 max-h-14 w-auto object-contain transition duration-300 group-hover:scale-105 sm:max-h-16"
-                                  />
-                                </div>
-                                <p class="relative z-10 mt-2 text-[10px] font-bold tracking-[0.06em] text-neutral-700 uppercase sm:text-xs">
-                                  {item.name}
-                                </p>
-                              </article>
-                            ))}
-                          </div>
-                        </div>
-                      </section>
-                    );
-                  })}
-                </div>
-              );
-            })()}
+          {/* Sponsor teaser CTA */}
+          <div class="relative mt-8 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-[rgba(120,80,255,0.2)] bg-[rgba(124,58,237,0.05)] p-6">
+            <div>
+              <p class="text-[var(--t-muted)] text-sm">
+                {homeCopy.value.sponsors.sponsorPrompt}
+              </p>
+              <div class="mt-3 flex flex-wrap gap-3">
+                <span class="t-chip">
+                  {sponsorTiers.reduce((sum, tier) => sum + ((sponsors.value[tier.key] || []).length), 0)} Partners
+                </span>
+                <span class="t-chip">
+                  {sponsorTiers.filter((tier) => (sponsors.value[tier.key] || []).length > 0).length} Active Tiers
+                </span>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-3">
+              <Link href="/sponsors" class="t-btn-primary !py-2 !px-5 !text-sm">
+                Explore Sponsors
+              </Link>
+              <Link href="/contact" class="t-btn-ghost !py-2 !px-5 !text-sm inline-flex">
+                {homeCopy.value.sponsors.sponsorButton}
+              </Link>
+            </div>
           </div>
         </div>
       </section>
 
-      {selectedSponsorTier.value &&
-        (() => {
-          const tier = sponsorTiers.find(
-            (item) => item.key === selectedSponsorTier.value,
-          );
-          if (!tier) return null;
-          const tierStyle = sponsorTierStyles[tier.key];
-          const tierSponsors = (sponsors.value[tier.key] || [])
-            .slice()
-            .sort((a, b) => (a.order || 999) - (b.order || 999));
+      {/* ═══════════════ CTA SECTION ═══════════════ */}
+      <section class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+        <div class="t-cta-wrap p-8 sm:p-10 lg:p-16 text-center">
+          {/* Orbs */}
+          <div class="t-orb pointer-events-none h-64 w-64 bg-[rgba(124,58,237,0.2)] -top-16 -left-16"></div>
+          <div class="t-orb pointer-events-none h-48 w-48 bg-[rgba(6,214,240,0.1)] -bottom-8 -right-8" style="animation-delay: 3s;"></div>
 
-          return (
-            <div class="fixed inset-0 z-[85] flex items-center justify-center p-3 sm:p-5">
-              <button
-                type="button"
-                onClick$={closeSponsorTierModal}
-                class="absolute inset-0 bg-black/50 backdrop-blur-sm"
-                aria-label="Close sponsors modal"
-              ></button>
+          <div class="relative reveal-up">
+            <span class="t-badge mx-auto mb-6">Ready to Shine</span>
+            <h2 class="t-heading text-[clamp(2.5rem,6vw,5rem)] text-[var(--t-text)]">
+              {homeCopy.value.cta.titlePrefix}{" "}
+              <span class="t-gradient">{homeCopy.value.cta.titleAccent}</span>
+            </h2>
+            <p class="mx-auto mt-5 max-w-xl text-base text-[var(--t-muted)]" style="font-weight: 300;">
+              {homeCopy.value.cta.description}
+            </p>
 
-              <div class="theta-shell relative z-10 max-h-[92vh] w-full max-w-5xl animate-[thetaPulse_1.6s_ease-in-out_1] overflow-auto p-5 sm:p-7">
-                <button
-                  type="button"
-                  onClick$={closeSponsorTierModal}
-                  class="theta-focus absolute top-3 right-3 rounded-lg border border-black/20 bg-white px-3 py-1 text-sm font-bold text-neutral-800"
-                >
-                  Close
-                </button>
+            {/* Meta pills */}
+            <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
+              {[configData.value.meta.eventName, configData.value.meta.dates, configData.value.meta.venue].map((tag) => (
+                <span key={tag} class="t-chip">{tag}</span>
+              ))}
+            </div>
 
-                <div class="mb-5 flex flex-wrap items-center justify-between gap-3 pr-16">
-                  <h3 class="text-2xl font-extrabold text-neutral-900 sm:text-3xl">
-                    {tier.label} Sponsors
+            {/* Buttons */}
+            <div class="mt-10 flex flex-wrap items-center justify-center gap-4">
+              <Link href="/events" class="t-btn-primary t-btn-cta-pulse !px-8 !py-4 !text-base">
+                {homeCopy.value.cta.browseEvents}
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </Link>
+              <Link href="/contact" class="t-btn-ghost !px-8 !py-4 !text-base">
+                Contact Team
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════ DAY SCHEDULE MODAL ═══════════════ */}
+      {selectedDay.value && (
+        <div class="t-modal-backdrop">
+          <div
+            class="absolute inset-0"
+            onClick$={closeDay}
+            aria-hidden="true"
+          ></div>
+          <div class="t-modal" role="dialog" aria-modal="true" aria-labelledby="day-modal-title">
+            <div class="p-6 sm:p-8">
+              {/* Header */}
+              <div class="mb-6 flex items-start justify-between gap-4">
+                <div>
+                  <p class="t-label text-[var(--t-dim)] mb-1">{homeCopy.value.dayModal.scheduleTitle}</p>
+                  <h3 id="day-modal-title" class="t-heading text-2xl text-[var(--t-text)]">
+                    {selectedDay.value.day}
                   </h3>
-                  <span
-                    class={[
-                      "rounded-full border-2 px-3 py-1 text-xs font-bold tracking-wide",
-                      tierStyle.chip,
-                    ]}
-                  >
-                    {tierSponsors.length} Partners
-                  </span>
+                  <p class="mt-1 text-sm text-[rgba(192,132,252,0.9)]">
+                    {selectedDay.value.date} — {selectedDay.value.highlight}
+                  </p>
+                </div>
+                <button
+                  onClick$={closeDay}
+                  class="t-btn-ghost !py-1.5 !px-3 !text-xs shrink-0"
+                  aria-label="Close"
+                >
+                  Close ✕
+                </button>
+              </div>
+
+              <div class="t-divider mb-6"></div>
+
+              {/* Event list */}
+              <div class="space-y-3">
+                {getDayEvents(selectedDay.value.day).length > 0 ? (
+                  getDayEvents(selectedDay.value.day).map((event) => (
+                    <div
+                      key={event.id}
+                      class="flex items-center justify-between rounded-xl border border-[rgba(120,80,255,0.12)] bg-[rgba(14,10,30,0.6)] p-4"
+                    >
+                      <div>
+                        <p class="font-semibold text-[var(--t-text)]" style="font-family: var(--font-display);">{event.name}</p>
+                        <p class="mt-0.5 text-xs text-[var(--t-muted)]">{event.timing} · {event.location}</p>
+                      </div>
+                      <Link href="/events" class="text-xs font-semibold text-[rgba(192,132,252,0.9)] hover:text-[var(--t-text)] transition-colors">
+                        Details →
+                      </Link>
+                    </div>
+                  ))
+                ) : (
+                  <p class="py-12 text-center text-sm text-[var(--t-dim)]">
+                    {homeCopy.value.dayModal.emptyState}
+                  </p>
+                )}
+              </div>
+
+              {/* Footer */}
+              <div class="mt-6">
+                <Link
+                  href="/events"
+                  onClick$={closeDay}
+                  class="t-btn-ghost block w-full text-center !py-3"
+                >
+                  {homeCopy.value.dayModal.viewAllEvents}
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ═══════════════ SPONSOR TIER MODAL ═══════════════ */}
+      {selectedTier.value && (() => {
+        const tier = sponsorTiers.find((t) => t.key === selectedTier.value);
+        if (!tier) return null;
+        const tierSponsors = (sponsors.value[tier.key] || [])
+          .slice()
+          .sort((a, b) => (a.order || 999) - (b.order || 999));
+
+        return (
+          <div class="t-modal-backdrop">
+            <div class="absolute inset-0" onClick$={closeTier} aria-hidden="true"></div>
+            <div class="t-modal max-w-4xl" role="dialog" aria-modal="true">
+              <div class="p-6 sm:p-8">
+                {/* Header */}
+                <div class="mb-6 flex items-center justify-between gap-4">
+                  <div>
+                    <p class="t-label text-[var(--t-dim)] mb-1">Sponsors</p>
+                    <h3 class="t-heading text-2xl text-[var(--t-text)]">{tier.label} Partners</h3>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <span class="t-badge">{tierSponsors.length} Partners</span>
+                    <button onClick$={closeTier} class="t-btn-ghost !py-1.5 !px-3 !text-xs">Close ✕</button>
+                  </div>
                 </div>
 
+                <div class="t-divider mb-6"></div>
+
+                {/* Grid */}
                 <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {tierSponsors.map((item, index) => (
-                    <article
-                      key={`modal-${tier.key}-${item.name}`}
-                      class={[
-                        "theta-sponsor-card group flex min-h-36 flex-col items-center justify-center bg-white p-4 text-center",
-                        index % 2 === 0
-                          ? "rotate-[-0.4deg]"
-                          : "rotate-[0.4deg]",
-                      ]}
-                    >
+                  {tierSponsors.map((item, idx) => (
+                    <article key={`${tier.key}-${item.name}-modal-${idx}`} class="t-sponsor-card text-center flex flex-col items-center justify-center min-h-[7rem]">
                       <img
                         src={item.logo}
                         alt={item.name}
-                        width={220}
-                        height={110}
+                        width={180} height={80}
                         loading="lazy"
-                        class="relative z-10 max-h-16 w-auto object-contain transition duration-300 group-hover:scale-105"
+                        class="t-sponsor-img max-h-14 max-w-[9rem]"
                       />
-                      <p class="relative z-10 mt-3 text-xs font-bold tracking-[0.08em] text-neutral-700 uppercase">
-                        {item.name}
-                      </p>
+                      <p class="mt-3 text-xs font-medium tracking-wider text-[var(--t-dim)] uppercase">{item.name}</p>
                     </article>
                   ))}
                 </div>
               </div>
             </div>
-          );
-        })()}
-
-      <section class="mx-auto max-w-7xl px-4 pt-8 pb-8 sm:px-6 lg:px-8">
-        <div class="theta-shell relative overflow-hidden p-6 sm:p-8 lg:p-10">
-          <div class="pointer-events-none absolute -top-14 -left-14 h-40 w-40 rounded-full bg-[var(--theta-primary)]/20 blur-2xl"></div>
-          <div class="pointer-events-none absolute -right-16 -bottom-16 h-44 w-44 rounded-full bg-black/10 blur-3xl"></div>
-
-          <div class="relative grid gap-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
-            <div>
-              <span class="theta-badge border-black/20 text-neutral-700">
-                Ready to Shine
-              </span>
-              <h3 class="mt-4 text-4xl leading-tight font-black sm:text-5xl lg:text-6xl">
-                {homeCopy.value.cta.titlePrefix}{" "}
-                <span class="text-[var(--theta-primary)]">
-                  {homeCopy.value.cta.titleAccent}
-                </span>
-              </h3>
-              <p class="mt-3 max-w-2xl text-sm text-neutral-600 sm:text-base">
-                {homeCopy.value.cta.description}
-              </p>
-
-              <div class="mt-5 flex flex-wrap gap-2">
-                <span class="rounded-full border border-black/15 bg-white px-3 py-1 text-xs font-bold text-neutral-700">
-                  {configData.value.meta.eventName}
-                </span>
-                <span class="rounded-full border border-black/15 bg-white px-3 py-1 text-xs font-bold text-neutral-700">
-                  {configData.value.meta.dates}
-                </span>
-                <span class="rounded-full border border-black/15 bg-white px-3 py-1 text-xs font-bold text-neutral-700">
-                  {configData.value.meta.venue}
-                </span>
-              </div>
-
-              <div class="mt-6 flex flex-wrap gap-3">
-                <Link
-                  href="/events"
-                  class="theta-focus inline-flex items-center justify-center rounded-xl border-2 border-[var(--theta-primary)] bg-[var(--theta-primary)] px-7 py-3 text-sm font-black text-white shadow-[0_10px_22px_rgba(124,58,237,0.35)]"
-                >
-                  {homeCopy.value.cta.browseEvents}
-                </Link>
-                <Link
-                  href="/contact"
-                  class="theta-focus inline-flex items-center justify-center rounded-xl border-2 border-black/20 bg-white px-7 py-3 text-sm font-bold text-neutral-800"
-                >
-                  Contact Team
-                </Link>
-              </div>
-            </div>
-
-            <aside class="theta-panel relative border-2 border-black/15 bg-gradient-to-b from-white to-neutral-100 p-4 sm:p-5">
-              <p class="text-xs font-bold tracking-[0.16em] text-neutral-500 uppercase">
-                Festival Snapshot
-              </p>
-              <div class="mt-3 space-y-3">
-                <div class="rounded-xl border border-black/10 bg-white p-3">
-                  <p class="text-[11px] font-bold tracking-[0.12em] text-neutral-500 uppercase">
-                    Dates
-                  </p>
-                  <p class="mt-1 text-sm font-extrabold text-neutral-900">
-                    {configData.value.meta.dates}
-                  </p>
-                </div>
-                <div class="rounded-xl border border-black/10 bg-white p-3">
-                  <p class="text-[11px] font-bold tracking-[0.12em] text-neutral-500 uppercase">
-                    Venue
-                  </p>
-                  <p class="mt-1 text-sm font-extrabold text-neutral-900">
-                    {configData.value.meta.venue}
-                  </p>
-                </div>
-                <div class="grid grid-cols-3 gap-2">
-                  <div class="rounded-xl border border-black/10 bg-white px-2 py-3 text-center">
-                    <p class="text-lg leading-none font-black text-[var(--theta-primary)]">
-                      {configData.value.stats.events}
-                    </p>
-                    <p class="mt-1 text-[10px] font-bold tracking-[0.08em] text-neutral-500 uppercase">
-                      {homeCopy.value.statsLabels.events}
-                    </p>
-                  </div>
-                  <div class="rounded-xl border border-black/10 bg-white px-2 py-3 text-center">
-                    <p class="text-lg leading-none font-black text-[var(--theta-primary)]">
-                      {configData.value.stats.participants}
-                    </p>
-                    <p class="mt-1 text-[10px] font-bold tracking-[0.08em] text-neutral-500 uppercase">
-                      {homeCopy.value.statsLabels.participants}
-                    </p>
-                  </div>
-                  <div class="rounded-xl border border-black/10 bg-white px-2 py-3 text-center">
-                    <p class="text-lg leading-none font-black text-[var(--theta-primary)]">
-                      {configData.value.stats.colleges}
-                    </p>
-                    <p class="mt-1 text-[10px] font-bold tracking-[0.08em] text-neutral-500 uppercase">
-                      {homeCopy.value.statsLabels.colleges}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </aside>
           </div>
-        </div>
-      </section>
+        );
+      })()}
 
-      {selectedDay.value && (
-        <div class="fixed inset-0 z-[80] flex items-center justify-center p-4">
-          <button
-            class="absolute inset-0 bg-black/45 backdrop-blur-sm"
-            onClick$={closeDay}
-            aria-label="Close day modal"
-          ></button>
-          <div
-            class="theta-shell relative z-10 w-full max-w-2xl p-5 sm:p-7"
-            role="dialog"
-            aria-modal="true"
-            aria-label="Day events"
-          >
-            <button
-              type="button"
-              onClick$={closeDay}
-              class="theta-focus absolute top-3 right-3 rounded-lg border border-black/15 px-3 py-1 text-sm"
-            >
-              Close
-            </button>
-            <h3 class="text-3xl font-extrabold">{selectedDay.value.day}</h3>
-            <p class="mt-1 text-sm text-neutral-600">
-              {selectedDay.value.date}
-            </p>
-            <p class="mt-4 text-sm text-[var(--theta-primary)]">
-              {homeCopy.value.dayModal.scheduleTitle}
-            </p>
-            <div class="mt-4 space-y-3">
-              {getDayEvents(selectedDay.value.day).length > 0 ? (
-                getDayEvents(selectedDay.value.day).map((event) => (
-                  <div key={event.id} class="theta-panel p-4">
-                    <p class="font-bold">{event.name}</p>
-                    <p class="mt-1 text-sm text-neutral-600">
-                      {event.timing} • {event.location}
-                    </p>
-                  </div>
-                ))
-              ) : (
-                <p class="text-sm text-neutral-600">
-                  {homeCopy.value.dayModal.emptyState}
-                </p>
-              )}
-            </div>
-            <Link
-              href="/events"
-              class="theta-focus mt-6 inline-flex rounded-xl border-2 border-[var(--theta-primary)] bg-[var(--theta-primary)] px-5 py-2.5 text-sm font-bold text-white"
-            >
-              {homeCopy.value.dayModal.viewAllEvents}
-            </Link>
-          </div>
-        </div>
-      )}
     </div>
   );
 });
+
+export const head: DocumentHead = {
+  title: "Theta 2026 | National Level Techno-Management Fest",
+  meta: [
+    {
+      name: "description",
+      content: "Theta 2026 is SASTRA's premier national level techno-management fest. Explore hackathons, robotics, workshops, and more. March 15-17, 2026.",
+    },
+  ],
+};

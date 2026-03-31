@@ -1,17 +1,11 @@
 import { $, component$, useSignal, useVisibleTask$ } from "@builder.io/qwik";
-
-interface Cluster {
-  id: string;
-  name: string;
-  color: string;
-}
+import { type DocumentHead } from "@builder.io/qwik-city";
 
 interface Event {
   id: number;
   name: string;
   category: "tech" | "fun" | "quiz" | "workshop" | "pro-night";
-  cluster?: string;
-  day?: string;
+  day: string;
   timing: string;
   location: string;
   fee: string;
@@ -19,119 +13,7 @@ interface Event {
   description: string;
   image: string;
   registrationUrl?: string;
-  registrationCloseAt?: string;
 }
-
-interface EventsPageCopy {
-  title: string;
-  subtitle: string;
-  searchPlaceholder: string;
-  categoryLabels: {
-    all: string;
-    events: string;
-    workshop: string;
-  };
-  statusLabels: {
-    all: string;
-    active: string;
-    "coming-soon": string;
-    over: string;
-    closed: string;
-  };
-  allClustersLabel: string;
-  resultsPrefix: string;
-  singleEvent: string;
-  multipleEvents: string;
-  organizedByPrefix: string;
-  registrationClosed: string;
-  entryFee: string;
-  perParticipant: string;
-  registerNow: string;
-  metrics: {
-    total: string;
-    active: string;
-    soon: string;
-  };
-  filterLabels: {
-    category: string;
-    status: string;
-    cluster: string;
-  };
-  comingSoon: {
-    enabled: boolean;
-    badge: string;
-    title: string;
-    description: string;
-    ctaLabel: string;
-    ctaHref: string;
-  };
-}
-
-const defaultEventsPageCopy: EventsPageCopy = {
-  title: "Events",
-  subtitle: "Discover and register for Theta 2026 events",
-  searchPlaceholder: "Search events...",
-  categoryLabels: {
-    all: "All",
-    events: "Events",
-    workshop: "Workshops",
-  },
-  statusLabels: {
-    all: "All",
-    active: "Active",
-    "coming-soon": "Coming Soon",
-    over: "Over",
-    closed: "Closed",
-  },
-  allClustersLabel: "All Clusters",
-  resultsPrefix: "Showing",
-  singleEvent: "event",
-  multipleEvents: "events",
-  organizedByPrefix: "Organized by",
-  registrationClosed: "Regret registration closed",
-  entryFee: "Entry Fee",
-  perParticipant: "per participant",
-  registerNow: "Register Now",
-  metrics: {
-    total: "Total",
-    active: "Active",
-    soon: "Soon",
-  },
-  filterLabels: {
-    category: "Category",
-    status: "Status",
-    cluster: "Cluster",
-  },
-  comingSoon: {
-    enabled: false,
-    badge: "Events",
-    title: "Coming Soon",
-    description: "The full events lineup will be published shortly.",
-    ctaLabel: "Back to Home",
-    ctaHref: "/",
-  },
-};
-
-const FEST_YEAR = 2026;
-
-const dayCutoffMap: Record<string, string> = {
-  "Day 1": `${FEST_YEAR}-03-15`,
-  "Day 2": `${FEST_YEAR}-03-16`,
-  "Day 3": `${FEST_YEAR}-03-17`,
-  "Day One": `${FEST_YEAR}-03-15`,
-  "Day Two": `${FEST_YEAR}-03-16`,
-  "Day Three": `${FEST_YEAR}-03-17`,
-};
-
-const defaultClusterColors: Record<string, string> = {
-  csi: "#3b82f6",
-  ieee: "#14b8a6",
-  sae: "#f97316",
-  tedx: "#ef4444",
-  robotics: "#8b5cf6",
-  design: "#ec4899",
-  code: "#22c55e",
-};
 
 const difficultyMap: Record<
   Event["category"],
@@ -144,143 +26,172 @@ const difficultyMap: Record<
   "pro-night": "Beginner",
 };
 
-const hasRegistrationLink = (event: Event) =>
-  Boolean(event.registrationUrl && event.registrationUrl.trim().length > 0);
-
-/**
- * Resolves the registration cutoff date for an event.
- * Priority: explicit registrationCloseAt -> mapped day cutoff -> no cutoff.
- */
-const getRegistrationCutoff = (event: Event): Date | null => {
-  if (event.registrationCloseAt) {
-    const explicit = new Date(event.registrationCloseAt);
-    if (!Number.isNaN(explicit.getTime())) {
-      return new Date(
-        explicit.getFullYear(),
-        explicit.getMonth(),
-        explicit.getDate(),
-        0,
-        0,
-        0,
-        0,
-      );
-    }
-  }
-
-  if (event.day && dayCutoffMap[event.day]) {
-    const fallback = new Date(`${dayCutoffMap[event.day]}T00:00:00`);
-    if (!Number.isNaN(fallback.getTime())) return fallback;
-  }
-
-  return null;
-};
-
-/**
- * True when event registration should be considered unavailable in UI.
- */
-const isRegistrationClosed = (event: Event): boolean => {
-  if (!hasRegistrationLink(event)) return true;
-  if (event.status === "over") return true;
-
-  const cutoff = getRegistrationCutoff(event);
-  if (!cutoff) return false;
-
-  return Date.now() >= cutoff.getTime();
-};
-
-/**
- * Converts raw status + cutoff logic into the status shown to users.
- */
-const getEffectiveStatus = (event: Event): Event["status"] => {
-  if (event.status === "coming-soon") return "coming-soon";
-  if (isRegistrationClosed(event)) return "over";
-  return "active";
-};
-
-const defaultClusters: Cluster[] = [
-  { id: "csi", name: "CSI", color: "#3b82f6" },
-  { id: "ieee", name: "IEEE", color: "#14b8a6" },
-  { id: "sae", name: "SAE", color: "#f97316" },
-  { id: "tedx", name: "TEDx", color: "#ef4444" },
-  { id: "robotics", name: "Robotics", color: "#8b5cf6" },
-  { id: "design", name: "Design", color: "#ec4899" },
-  { id: "code", name: "Code", color: "#22c55e" },
-];
-
 export default component$(() => {
-  const activeCategory = useSignal<"all" | "events" | "workshop">("all");
-  const activeStatus = useSignal<"all" | "active" | "coming-soon" | "over">(
-    "all",
-  );
-  const activeCluster = useSignal("all");
-  const searchQuery = useSignal("");
-
-  const events = useSignal<Event[]>([]);
-  const clusters = useSignal<Cluster[]>(defaultClusters);
-  const copy = useSignal<EventsPageCopy>(defaultEventsPageCopy);
-
   const selectedEvent = useSignal<Event | null>(null);
+  const selectedDay = useSignal<string>("Day 1");
 
-  useVisibleTask$(async () => {
-    try {
-      const [eventsRes, contentRes] = await Promise.all([
-        fetch("/data/events.json"),
-        fetch("/data/content.json"),
-      ]);
-
-      const eventData = (await eventsRes.json()) as {
-        events?: Event[];
-        clusters?: Cluster[];
-      };
-      const content = (await contentRes.json()) as {
-        eventsPage?: Partial<EventsPageCopy>;
-        seo?: { eventsTitle?: string; eventsDescription?: string };
-      };
-
-      events.value = eventData.events || [];
-      if (eventData.clusters) clusters.value = eventData.clusters;
-
-      if (content.eventsPage) {
-        copy.value = {
-          ...defaultEventsPageCopy,
-          ...content.eventsPage,
-          categoryLabels: {
-            ...defaultEventsPageCopy.categoryLabels,
-            ...(content.eventsPage.categoryLabels || {}),
-          },
-          statusLabels: {
-            ...defaultEventsPageCopy.statusLabels,
-            ...(content.eventsPage.statusLabels || {}),
-          },
-          metrics: {
-            ...defaultEventsPageCopy.metrics,
-            ...(content.eventsPage.metrics || {}),
-          },
-          filterLabels: {
-            ...defaultEventsPageCopy.filterLabels,
-            ...(content.eventsPage.filterLabels || {}),
-          },
-          comingSoon: {
-            ...defaultEventsPageCopy.comingSoon,
-            ...(content.eventsPage.comingSoon || {}),
-          },
-        };
-      }
-
-      if (content.seo?.eventsTitle) document.title = content.seo.eventsTitle;
-      if (content.seo?.eventsDescription) {
-        let meta = document.querySelector('meta[name="description"]');
-        if (!meta) {
-          meta = document.createElement("meta");
-          meta.setAttribute("name", "description");
-          document.head.appendChild(meta);
-        }
-        meta.setAttribute("content", content.seo.eventsDescription);
-      }
-    } catch {
-      events.value = [];
-    }
-  });
+  // BEN 10 FEATURED EVENTS (3 DAYS)
+  const allEvents: Event[] = [
+    // Day 1
+    {
+      id: 1,
+      name: "Omnitrix Core Calibration",
+      category: "tech",
+      day: "Day 1",
+      timing: "10:00 AM - 01:00 PM",
+      location: "Galvan Prime Lab",
+      fee: "Free",
+      status: "active",
+      description: "Learn the secrets of calibrating Level 20 alien tech without blowing up the universe. A masterclass in Galvanic engineering.",
+      image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000",
+      registrationUrl: "#",
+    },
+    {
+      id: 2,
+      name: "Plumber Tactical Course",
+      category: "workshop",
+      day: "Day 1",
+      timing: "02:00 PM - 05:00 PM",
+      location: "Plumber HQ Base",
+      fee: "150 Credits",
+      status: "active",
+      description: "Basic training on how to handle extra-terrestrial threats. Master the Plumber standard-issue blasters and evasion tactics.",
+      image: "https://images.unsplash.com/photo-1629835775533-31682702c256?q=80&w=1000",
+      registrationUrl: "#",
+    },
+    {
+      id: 3,
+      name: "Null Void Navigation",
+      category: "quiz",
+      day: "Day 1",
+      timing: "05:30 PM - 07:00 PM",
+      location: "Sector 7G",
+      fee: "50 Credits",
+      status: "active",
+      description: "A comprehensive quiz on identifying dimensional rifts, navigating the Null Void, and avoiding its most dangerous inmates.",
+      image: "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1000",
+      registrationUrl: "#",
+    },
+    {
+      id: 4,
+      name: "Vulpimancer Agility Test",
+      category: "fun",
+      day: "Day 1",
+      timing: "08:00 PM - 10:00 PM",
+      location: "Wildmutt's Den",
+      fee: "Free",
+      status: "active",
+      description: "Can you navigate an obstacle course completely blindfolded? Trust your instincts in this physically demanding agility run.",
+      image: "https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?q=80&w=1000",
+      registrationUrl: "#",
+    },
+    // Day 2
+    {
+      id: 5,
+      name: "Galvanic Mechamorph Coding",
+      category: "tech",
+      day: "Day 2",
+      timing: "09:00 AM - 12:00 PM",
+      location: "Upgrade Station",
+      fee: "200 Credits",
+      status: "active",
+      description: "A hackathon where you must dynamically rewrite machine code to upgrade older earth-tech into highly advanced alien machinery.",
+      image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000",
+      registrationUrl: "#",
+    },
+    {
+      id: 6,
+      name: "Anodite Energy Manipulation",
+      category: "workshop",
+      day: "Day 2",
+      timing: "01:00 PM - 03:30 PM",
+      location: "Mana Field",
+      fee: "100 Credits",
+      status: "active",
+      description: "Tap into the latent mana within yourself. A beginner's guide to raw energy constructs and magic-tech integration.",
+      image: "https://images.unsplash.com/photo-1502481851512-e9e2529bfbf9?q=80&w=1000",
+      registrationUrl: "#",
+    },
+    {
+      id: 7,
+      name: "Taydenite Forging",
+      category: "tech",
+      day: "Day 2",
+      timing: "04:00 PM - 07:00 PM",
+      location: "Vulcanus Refinery",
+      fee: "300 Credits",
+      status: "active",
+      description: "Learn how the hardest material in the universe is synthesized and used for cutting-edge structural engineering.",
+      image: "https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?q=80&w=1000",
+      registrationUrl: "#",
+    },
+    {
+      id: 8,
+      name: "Alien X Debate Simulator",
+      category: "fun",
+      day: "Day 2",
+      timing: "08:00 PM - 10:00 PM",
+      location: "Forge of Creation",
+      fee: "Free",
+      status: "active",
+      description: "Convince Bellicus and Serena to agree with you. A philosophical and highly frustrating debate competition.",
+      image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000",
+      registrationUrl: "#",
+    },
+    // Day 3
+    {
+      id: 9,
+      name: "Chronosapien Time Management",
+      category: "tech",
+      day: "Day 3",
+      timing: "10:00 AM - 01:00 PM",
+      location: "Maltruant's ClockTower",
+      fee: "250 Credits",
+      status: "active",
+      description: "An advanced algorithmic contest where runtime is literally measured by how far you can bend the local timeline.",
+      image: "https://images.unsplash.com/photo-1501139083538-0139583c060f?q=80&w=1000",
+      registrationUrl: "#",
+    },
+    {
+      id: 10,
+      name: "Appoplexian Anger Management",
+      category: "fun",
+      day: "Day 3",
+      timing: "02:00 PM - 04:00 PM",
+      location: "Rath's Arena",
+      fee: "Free",
+      status: "active",
+      description: "LET ME TELL YOU SOMETHING! This is an endurance event to see who can maintain their cool under extreme verbal pressure.",
+      image: "https://images.unsplash.com/photo-1544367567-0f2fcb046eeb?q=80&w=1000",
+      registrationUrl: "#",
+    },
+    {
+      id: 11,
+      name: "Tetramand Combat Tournament",
+      category: "pro-night",
+      day: "Day 3",
+      timing: "05:00 PM - 08:00 PM",
+      location: "Khoros Colosseum",
+      fee: "Free",
+      status: "active",
+      description: "The main physical event of the fest. Watch the galaxy's heaviest hitters duke it out in a multi-stage combat bracket.",
+      image: "https://images.unsplash.com/photo-1555597673-b21d5c935865?q=80&w=1000",
+      registrationUrl: "#",
+    },
+    {
+      id: 12,
+      name: "DJ Atomix Concert",
+      category: "pro-night",
+      day: "Day 3",
+      timing: "09:00 PM - 11:59 PM",
+      location: "Main Stage",
+      fee: "500 Credits",
+      status: "active",
+      description: "Nuclear beats and radioactive drops. The grand finale of the fest featuring earth-shattering electronic music.",
+      image: "https://images.unsplash.com/photo-1470229722913-7c090be5c520?q=80&w=1000",
+      registrationUrl: "#",
+    },
+  ];
 
   useVisibleTask$(({ track }) => {
     track(() => selectedEvent.value);
@@ -290,54 +201,16 @@ export default component$(() => {
       if (event.key === "Escape") selectedEvent.value = null;
     };
 
+    if (selectedEvent.value) {
+      document.body.style.overflow = "hidden";
+    }
+
     document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = "";
+    };
   });
-
-  const getClusterName = (id?: string) => {
-    if (!id) return "Open";
-    return clusters.value.find((c) => c.id === id)?.name || id;
-  };
-
-  const getClusterColor = (id?: string) => {
-    if (!id) return "#7c3aed";
-
-    const mapped = defaultClusterColors[id.toLowerCase()];
-    if (mapped) return mapped;
-
-    const fromData = clusters.value.find((c) => c.id === id)?.color;
-    return fromData || "#7c3aed";
-  };
-
-  let filtered = events.value;
-
-  if (activeCategory.value === "events") {
-    filtered = filtered.filter((event) => event.category !== "workshop");
-  } else if (activeCategory.value === "workshop") {
-    filtered = filtered.filter((event) => event.category === "workshop");
-  }
-
-  if (activeStatus.value !== "all") {
-    filtered = filtered.filter(
-      (event) => getEffectiveStatus(event) === activeStatus.value,
-    );
-  }
-
-  if (activeCluster.value !== "all") {
-    filtered = filtered.filter(
-      (event) => event.cluster === activeCluster.value,
-    );
-  }
-
-  if (searchQuery.value.trim()) {
-    const query = searchQuery.value.toLowerCase();
-    filtered = filtered.filter(
-      (event) =>
-        event.name.toLowerCase().includes(query) ||
-        event.description.toLowerCase().includes(query) ||
-        event.location.toLowerCase().includes(query),
-    );
-  }
 
   const openEvent = $((event: Event) => {
     selectedEvent.value = event;
@@ -347,427 +220,178 @@ export default component$(() => {
     selectedEvent.value = null;
   });
 
+  // Filter events based on selected day
+  const filteredEvents = allEvents.filter(e => e.day === selectedDay.value);
+
   return (
-    <div class="relative mx-auto min-h-screen max-w-7xl px-4 py-10 pb-16 sm:px-6 lg:px-8">
-      <div class="theta-noise pointer-events-none absolute inset-0 -z-10 opacity-20"></div>
-      {copy.value.comingSoon.enabled ? (
-        <section class="theta-shell relative mt-4 overflow-hidden p-8 text-center sm:p-12">
-          <div class="pointer-events-none absolute -top-16 -right-20 h-56 w-56 rounded-full bg-[var(--theta-primary)]/12 blur-3xl"></div>
-          <div class="pointer-events-none absolute -bottom-16 -left-20 h-56 w-56 rounded-full bg-black/10 blur-3xl"></div>
-          <div class="relative mx-auto max-w-2xl">
-            <span class="theta-badge border-black/20 text-neutral-700">
-              {copy.value.comingSoon.badge}
-            </span>
-            <h1 class="mt-4 text-4xl font-extrabold sm:text-5xl">
-              {copy.value.comingSoon.title}
-            </h1>
-            <p class="mt-3 text-neutral-600">
-              {copy.value.comingSoon.description}
-            </p>
-            <a
-              href={copy.value.comingSoon.ctaHref}
-              class="theta-focus mt-6 inline-flex rounded-xl border-2 border-[var(--theta-primary)] bg-[var(--theta-primary)] px-6 py-3 text-sm font-bold text-white"
+    <div class="relative mx-auto min-h-screen w-full px-4 py-16 sm:px-6 lg:px-8 font-sans text-[#f0fff0] bg-[#050505]">
+      {/* Background Orbs */}
+      <div class="pointer-events-none fixed top-[10%] left-[-10%] h-[40rem] w-[40rem] rounded-full bg-[#0ea935] opacity-[0.04] blur-[150px]"></div>
+      <div class="pointer-events-none fixed bottom-[10%] right-[-10%] h-[30rem] w-[30rem] rounded-full bg-[#077a23] opacity-[0.06] blur-[120px]"></div>
+
+      <div class="relative z-10 mx-auto max-w-5xl text-center space-y-4 pt-4 mb-16">
+        <p class="text-sm font-black tracking-[0.3em] text-[#0ea935] uppercase drop-shadow-[0_0_8px_rgba(14,169,53,0.6)]">
+          Alien Archive
+        </p>
+        <h1 class="text-5xl font-extrabold sm:text-6xl text-transparent bg-clip-text bg-gradient-to-br from-[#0ea935] via-[#ffffff] to-[#077a23] drop-shadow-[0_0_12px_rgba(14,169,53,0.4)] tracking-tight">
+          Theta Protocols
+        </h1>
+        <p class="text-[#8ca38c] text-lg max-w-2xl mx-auto font-medium">
+          Accessing Galvan Prime database schedules. Initialize your path through the upcoming three days of intensive trials.
+        </p>
+      </div>
+
+      {/* 3-Day Toggle Option */}
+      <div class="relative z-10 flex items-center justify-center gap-2 sm:gap-4 mb-12 flex-wrap">
+        {["Day 1", "Day 2", "Day 3"].map((day) => (
+          <button
+            key={day}
+            onClick$={() => (selectedDay.value = day)}
+            class={[
+              "px-6 sm:px-10 py-3 rounded-full text-sm font-black uppercase tracking-widest transition-all duration-300",
+              selectedDay.value === day
+                ? "bg-[#0ea935] text-[#050505] shadow-[0_0_20px_rgba(14,169,53,0.5)] border-2 border-[#0ea935] scale-105"
+                : "bg-[#0a0a0a] text-[#8ca38c] border-2 border-[#0ea935]/20 hover:border-[#0ea935]/60 hover:text-[#f0fff0] hover:bg-[#0ea935]/5 hover:shadow-[0_0_15px_rgba(14,169,53,0.2)]",
+            ]}
+          >
+            {day}
+          </button>
+        ))}
+      </div>
+
+      {/* Events Grid - Small proper alignment */}
+      <div class="relative z-10 mx-auto max-w-7xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-2">
+        {filteredEvents.map((event) => {
+          return (
+            <div
+              key={event.id}
+              onClick$={() => openEvent(event)}
+              class="group relative overflow-hidden rounded-3xl border border-[#0ea935]/20 bg-[#0a0a0a]/90 backdrop-blur-xl shadow-[0_4px_20px_rgba(0,0,0,0.5)] transition-all duration-300 hover:-translate-y-2 hover:border-[#0ea935]/60 hover:shadow-[0_12px_30px_rgba(14,169,53,0.2)] flex flex-col cursor-pointer"
             >
-              {copy.value.comingSoon.ctaLabel}
-            </a>
-          </div>
-        </section>
-      ) : (
-        <>
-          <section class="theta-shell relative overflow-hidden p-6 sm:p-8">
-            <div class="pointer-events-none absolute -top-14 -right-16 h-44 w-44 rounded-full bg-[var(--theta-primary)]/12 blur-3xl"></div>
-            <div class="pointer-events-none absolute -bottom-16 -left-16 h-40 w-40 rounded-full bg-black/10 blur-3xl"></div>
+              {/* Image Header */}
+              <div class="h-44 w-full overflow-hidden relative border-b border-[#0ea935]/20">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent z-10"></div>
+                <img
+                  src={event.image}
+                  alt={event.name}
+                  class="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-110 filter brightness-[0.7] group-hover:brightness-100 contrast-125 grayscale-[40%] group-hover:grayscale-0"
+                  loading="lazy"
+                />
+                
+                {/* Float badges */}
+                <div class="absolute top-3 left-3 z-20 flex gap-2">
+                  <span class="rounded-full border border-black/40 bg-[#0ea935] px-3 py-1 text-[0.6rem] font-black text-[#050505] tracking-wider uppercase shadow-[0_2px_10px_rgba(14,169,53,0.8)]">
+                    {event.category}
+                  </span>
+                </div>
+              </div>
 
-            <div class="relative">
-              <p class="text-xs font-bold tracking-[0.25em] text-neutral-700 uppercase">
-                Theta 2026
-              </p>
-              <div class="mt-3 flex flex-wrap items-end justify-between gap-3">
+              {/* Content body */}
+              <div class="p-5 flex flex-col flex-1">
+                <h3 class="text-xl font-black text-[#f0fff0] mb-2 leading-tight group-hover:text-[#0ea935] transition-colors line-clamp-2">
+                  {event.name}
+                </h3>
+                
+                <p class="text-[#8ca38c] text-xs leading-relaxed mb-4 line-clamp-3">
+                  {event.description}
+                </p>
+
+                <div class="mt-auto space-y-2">
+                  <div class="flex items-center justify-between text-xs font-bold bg-[#111] rounded-xl p-2.5 border border-[#0ea935]/10">
+                    <span class="text-[#4d5c4d] tracking-widest uppercase text-[0.6rem]">Time</span>
+                    <span class="text-[#f0fff0]">{event.timing.split(' - ')[0]}</span>
+                  </div>
+                  
+                  <div class="flex items-center justify-between text-xs font-bold bg-[#111] rounded-xl p-2.5 border border-[#0ea935]/10">
+                    <span class="text-[#4d5c4d] tracking-widest uppercase text-[0.6rem]">Credit</span>
+                    <span class="text-[#0ea935]">{event.fee}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Event Details Modal */}
+      {selectedEvent.value && (
+        <div class="fixed inset-0 z-[110] flex items-center justify-center p-4 sm:p-6">
+          <div
+            class="absolute inset-0 bg-[#050505]/90 backdrop-blur-xl transition-opacity"
+            onClick$={closeEvent}
+            aria-hidden="true"
+          ></div>
+          <div class="relative z-20 w-full max-w-2xl rounded-[2.5rem] border-2 border-[#0ea935]/50 bg-[#0a0a0a] p-8 md:p-10 shadow-[0_0_80px_rgba(14,169,53,0.25)] scale-100 animate-in fade-in zoom-in duration-300 overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-transparent via-[#0ea935] to-transparent opacity-50"></div>
+            
+            <button
+              onClick$={closeEvent}
+              class="absolute top-6 right-6 text-[#8ca38c] hover:text-[#0ea935] bg-[#111] hover:bg-[#0ea935]/10 rounded-full p-2.5 transition-all duration-200 z-30"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+            
+            <div class="grid grid-cols-1 md:grid-cols-[1.2fr_1fr] gap-8">
+                {/* Left side info */}
                 <div>
-                  <h1 class="text-4xl font-extrabold sm:text-5xl">
-                    {copy.value.title}
-                  </h1>
-                  <p class="mt-2 max-w-2xl text-neutral-600">
-                    {copy.value.subtitle}
-                  </p>
+                   <div class="flex gap-2 mb-4">
+                     <span class="rounded-full border border-[#0ea935]/50 bg-[#0ea935]/10 px-3 py-1 text-[0.6rem] font-bold text-[#0ea935] tracking-widest uppercase shadow-[0_0_10px_rgba(14,169,53,0.2)]">
+                       {selectedEvent.value.day}
+                     </span>
+                     <span class="rounded-full border border-[#8ca38c]/30 bg-[#111] px-3 py-1 text-[0.6rem] font-bold text-[#8ca38c] tracking-widest uppercase">
+                       {difficultyMap[selectedEvent.value.category]}
+                     </span>
+                   </div>
+                   
+                   <h3 class="text-3xl md:text-4xl font-black text-[#0ea935] mb-3 tracking-tight pr-6 leading-none">
+                     {selectedEvent.value.name}
+                   </h3>
+                   
+                   <p class="text-sm text-[#8ca38c] mb-8 font-medium leading-relaxed">
+                     {selectedEvent.value.description}
+                   </p>
                 </div>
-                <div class="rounded-xl border border-black/10 bg-white px-3 py-2 text-xs font-bold text-neutral-600">
-                  {copy.value.resultsPrefix} {filtered.length}{" "}
-                  {filtered.length === 1
-                    ? copy.value.singleEvent
-                    : copy.value.multipleEvents}
+                
+                {/* Right side stats */}
+                <div class="flex flex-col justify-center space-y-3">
+                   <div class="flex flex-col bg-[#111] p-3 rounded-2xl border border-[#0ea935]/10">
+                     <span class="text-[#4d5c4d] uppercase text-[0.6rem] font-black tracking-widest mb-1">Sector (Location)</span>
+                     <span class="font-bold text-[#f0fff0] text-sm tracking-wide">{selectedEvent.value.location}</span>
+                   </div>
+                   <div class="flex flex-col bg-[#111] p-3 rounded-2xl border border-[#0ea935]/10">
+                     <span class="text-[#4d5c4d] uppercase text-[0.6rem] font-black tracking-widest mb-1">Timeframe</span>
+                     <span class="font-bold text-[#f0fff0] text-sm tracking-wide">{selectedEvent.value.timing}</span>
+                   </div>
+                   <div class="flex flex-col bg-[#111] p-3 rounded-2xl border border-[#0ea935]/10">
+                     <span class="text-[#4d5c4d] uppercase text-[0.6rem] font-black tracking-widest mb-1">Required Credits</span>
+                     <span class="font-black text-[#0ea935] text-lg tracking-wide drop-shadow-[0_0_5px_rgba(14,169,53,0.5)]">{selectedEvent.value.fee}</span>
+                   </div>
+                   
+                   <a
+                     href={selectedEvent.value.registrationUrl}
+                     class="mt-4 block w-full text-center rounded-2xl bg-[#0ea935] px-4 py-3.5 text-sm font-black text-[#050505] shadow-[0_0_20px_rgba(14,169,53,0.4)] transition-all duration-300 hover:bg-[#12cb42] hover:shadow-[0_0_30px_rgba(14,169,53,0.6)] hover:-translate-y-1 uppercase tracking-widest"
+                   >
+                     Initialize Access
+                   </a>
                 </div>
-              </div>
-
-              <div class="mt-6 grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
-                <div class="rounded-2xl border-2 border-black/10 bg-white p-3 shadow-[0_8px_18px_rgba(0,0,0,0.08)]">
-                  <label for="events-search" class="sr-only">
-                    Search events
-                  </label>
-                  <div class="flex items-center gap-3 rounded-xl border border-black/10 bg-neutral-50 px-3 py-2.5">
-                    <span class="text-base text-neutral-500">⌕</span>
-                    <input
-                      id="events-search"
-                      type="text"
-                      value={searchQuery.value}
-                      onInput$={(event) =>
-                        (searchQuery.value = (
-                          event.target as HTMLInputElement
-                        ).value)
-                      }
-                      placeholder={copy.value.searchPlaceholder}
-                      class="theta-focus w-full bg-transparent text-sm text-neutral-900 placeholder:text-neutral-500 focus:outline-none"
-                    />
-                  </div>
-                </div>
-
-                <div class="grid grid-cols-3 gap-2 text-xs">
-                  <div class="rounded-xl border border-black/10 bg-white px-3 py-2 text-center">
-                    <p class="text-lg font-black text-[var(--theta-primary)]">
-                      {events.value.length}
-                    </p>
-                    <p class="font-bold text-neutral-600">
-                      {copy.value.metrics.total}
-                    </p>
-                  </div>
-                  <div class="rounded-xl border border-black/10 bg-white px-3 py-2 text-center">
-                    <p class="text-lg font-black text-emerald-600">
-                      {
-                        events.value.filter(
-                          (item) => getEffectiveStatus(item) === "active",
-                        ).length
-                      }
-                    </p>
-                    <p class="font-bold text-neutral-600">
-                      {copy.value.metrics.active}
-                    </p>
-                  </div>
-                  <div class="rounded-xl border border-black/10 bg-white px-3 py-2 text-center">
-                    <p class="text-lg font-black text-amber-600">
-                      {
-                        events.value.filter(
-                          (item) => getEffectiveStatus(item) === "coming-soon",
-                        ).length
-                      }
-                    </p>
-                    <p class="font-bold text-neutral-600">
-                      {copy.value.metrics.soon}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div class="mt-5 grid min-w-0 gap-4 rounded-2xl border-2 border-black/10 bg-white/90 p-4">
-                <div class="min-w-0">
-                  <p class="mb-2 text-[11px] font-extrabold tracking-[0.16em] text-neutral-500 uppercase">
-                    {copy.value.filterLabels.category}
-                  </p>
-                  <div class="flex flex-wrap gap-2">
-                    {(
-                      [
-                        { key: "all", label: copy.value.categoryLabels.all },
-                        {
-                          key: "events",
-                          label: copy.value.categoryLabels.events,
-                        },
-                        {
-                          key: "workshop",
-                          label: copy.value.categoryLabels.workshop,
-                        },
-                      ] as const
-                    ).map((item) => (
-                      <button
-                        key={item.key}
-                        onClick$={() => (activeCategory.value = item.key)}
-                        class={[
-                          "theta-focus rounded-full border-2 px-4 py-2 text-sm font-bold",
-                          activeCategory.value === item.key
-                            ? "border-[var(--theta-primary)] bg-[var(--theta-primary)] text-white"
-                            : "border-black/15 bg-neutral-100 text-neutral-900",
-                        ]}
-                      >
-                        {item.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div class="min-w-0">
-                  <p class="mb-2 text-[11px] font-extrabold tracking-[0.16em] text-neutral-500 uppercase">
-                    {copy.value.filterLabels.status}
-                  </p>
-                  <div class="flex flex-wrap gap-2 overflow-x-auto pb-1">
-                    {(
-                      [
-                        { key: "all", label: copy.value.statusLabels.all },
-                        {
-                          key: "active",
-                          label: copy.value.statusLabels.active,
-                        },
-                        {
-                          key: "coming-soon",
-                          label: copy.value.statusLabels["coming-soon"],
-                        },
-                        { key: "over", label: copy.value.statusLabels.over },
-                      ] as const
-                    ).map((item) => (
-                      <button
-                        key={item.key}
-                        onClick$={() => (activeStatus.value = item.key)}
-                        class={[
-                          "theta-focus rounded-full border-2 px-4 py-2 text-xs font-bold whitespace-nowrap",
-                          activeStatus.value === item.key
-                            ? "border-[var(--theta-primary)] bg-[var(--theta-primary)] text-white"
-                            : "border-black/15 bg-neutral-100 text-neutral-700",
-                        ]}
-                      >
-                        {item.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div class="min-w-0">
-                  <p class="mb-2 text-[11px] font-extrabold tracking-[0.16em] text-neutral-500 uppercase">
-                    {copy.value.filterLabels.cluster}
-                  </p>
-                  <div class="-mx-1 overflow-x-auto px-1 pb-1">
-                    <div class="inline-flex min-w-max gap-2">
-                      <button
-                        onClick$={() => (activeCluster.value = "all")}
-                        class={[
-                          "theta-focus rounded-full border-2 px-4 py-2 text-xs font-bold whitespace-nowrap",
-                          activeCluster.value === "all"
-                            ? "border-[var(--theta-primary)] bg-[var(--theta-primary)] text-white"
-                            : "border-black/15 bg-neutral-100 text-neutral-700",
-                        ]}
-                      >
-                        {copy.value.allClustersLabel}
-                      </button>
-                      {clusters.value.map((cluster) => {
-                        const color = getClusterColor(cluster.id);
-                        return (
-                          <button
-                            key={cluster.id}
-                            onClick$={() => (activeCluster.value = cluster.id)}
-                            class="theta-focus rounded-full border-2 px-4 py-2 text-xs font-bold whitespace-nowrap"
-                            style={{
-                              borderColor:
-                                activeCluster.value === cluster.id
-                                  ? color
-                                  : "rgba(0,0,0,0.16)",
-                              backgroundColor:
-                                activeCluster.value === cluster.id
-                                  ? `${color}33`
-                                  : "#fff",
-                              color:
-                                activeCluster.value === cluster.id
-                                  ? color
-                                  : "#111827",
-                            }}
-                          >
-                            {cluster.name}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
-          </section>
-
-          <section class="mt-5 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-            {filtered.map((event) => {
-              const clusterColor = getClusterColor(event.cluster);
-              const status = getEffectiveStatus(event);
-              const closed = isRegistrationClosed(event);
-
-              return (
-                <article
-                  key={event.id}
-                  class="theta-panel group overflow-hidden border-black/15 bg-white"
-                >
-                  <button
-                    onClick$={() => openEvent(event)}
-                    class="theta-focus block w-full text-left"
-                  >
-                    <img
-                      src={event.image}
-                      alt={event.name}
-                      width={640}
-                      height={360}
-                      loading="lazy"
-                      class="h-48 w-full object-cover grayscale-[25%] transition duration-300 group-hover:scale-[1.02] group-hover:grayscale-0"
-                    />
-                    <div class="p-5">
-                      <div class="mb-3 flex flex-wrap gap-2">
-                        <span class="theta-badge border-black/15 text-neutral-900">
-                          {event.day || "Day TBD"}
-                        </span>
-                        <span
-                          class="theta-badge"
-                          style={{
-                            borderColor: `${clusterColor}88`,
-                            color: clusterColor,
-                          }}
-                        >
-                          {getClusterName(event.cluster)}
-                        </span>
-                        <span class="theta-badge border-black/15 text-neutral-900">
-                          {difficultyMap[event.category]}
-                        </span>
-                        <span
-                          class="theta-badge"
-                          style={{
-                            borderColor:
-                              status === "active"
-                                ? "#22c55e"
-                                : status === "coming-soon"
-                                  ? "#f59e0b"
-                                  : "#737373",
-                            color:
-                              status === "active"
-                                ? "#4ade80"
-                                : status === "coming-soon"
-                                  ? "#fbbf24"
-                                  : "#a3a3a3",
-                          }}
-                        >
-                          {status === "active"
-                            ? copy.value.statusLabels.active
-                            : status === "coming-soon"
-                              ? copy.value.statusLabels["coming-soon"]
-                              : copy.value.statusLabels.closed}
-                        </span>
-                      </div>
-                      <h2 class="text-2xl leading-tight font-extrabold text-neutral-900">
-                        {event.name}
-                      </h2>
-                      <p class="mt-2 line-clamp-2 text-sm text-neutral-600">
-                        {event.description}
-                      </p>
-
-                      <div class="mt-4 rounded-xl border border-black/10 bg-neutral-50 px-3 py-2">
-                        <div class="flex items-center justify-between text-xs font-semibold text-neutral-600">
-                          <p>{event.timing}</p>
-                          <p>{event.location}</p>
-                        </div>
-                        <div class="mt-1 flex items-center justify-between">
-                          <p class="text-sm font-bold text-neutral-800">
-                            {copy.value.entryFee}
-                          </p>
-                          <span class="text-sm font-black text-[var(--theta-primary)]">
-                            {event.fee}
-                          </span>
-                        </div>
-                      </div>
-
-                      <span class="theta-focus mt-4 inline-flex rounded-lg border-2 border-black/15 bg-white px-4 py-2 text-xs font-bold text-black transition group-hover:border-[var(--theta-primary)] group-hover:text-[var(--theta-primary)]">
-                        {closed
-                          ? copy.value.registrationClosed
-                          : copy.value.registerNow}
-                      </span>
-                    </div>
-                  </button>
-                </article>
-              );
-            })}
-          </section>
-
-          {selectedEvent.value && (
-            <div class="fixed inset-0 z-[90] flex items-center justify-center p-4">
-              <button
-                class="absolute inset-0 bg-black/45 backdrop-blur-sm"
-                onClick$={closeEvent}
-                aria-label="Close event modal"
-              ></button>
-              <div
-                class="theta-shell relative z-10 max-h-[92vh] w-full max-w-4xl overflow-auto p-5 sm:p-8"
-                role="dialog"
-                aria-modal="true"
-                aria-label={selectedEvent.value.name}
-              >
-                <button
-                  onClick$={closeEvent}
-                  class="theta-focus absolute top-3 right-3 rounded-lg border border-black/15 px-3 py-1 text-sm"
-                >
-                  Close
-                </button>
-
-                <div class="grid gap-5 md:grid-cols-[1.05fr_1fr]">
-                  <img
-                    src={selectedEvent.value.image}
-                    alt={selectedEvent.value.name}
-                    width={640}
-                    height={420}
-                    class="h-full min-h-64 w-full rounded-xl border-2 border-black/15 object-cover"
-                  />
-                  <div>
-                    <h3 class="text-3xl font-extrabold">
-                      {selectedEvent.value.name}
-                    </h3>
-                    <p class="mt-2 text-sm text-neutral-600">
-                      {selectedEvent.value.description}
-                    </p>
-                    <div class="mt-4 space-y-2 rounded-xl border border-black/10 bg-neutral-50 p-4 text-sm text-neutral-700">
-                      <p>
-                        <span class="text-neutral-700">Day:</span>{" "}
-                        {selectedEvent.value.day || "TBD"}
-                      </p>
-                      <p>
-                        <span class="text-neutral-700">Time:</span>{" "}
-                        {selectedEvent.value.timing}
-                      </p>
-                      <p>
-                        <span class="text-neutral-700">Venue:</span>{" "}
-                        {selectedEvent.value.location}
-                      </p>
-                      <p>
-                        <span class="text-neutral-700">
-                          {copy.value.entryFee}:
-                        </span>{" "}
-                        {selectedEvent.value.fee} {copy.value.perParticipant}
-                      </p>
-                    </div>
-                    <div class="mt-4 flex flex-wrap gap-2">
-                      <span class="theta-badge border-black/15 text-neutral-900">
-                        {difficultyMap[selectedEvent.value.category]}
-                      </span>
-                      {selectedEvent.value.cluster && (
-                        <span
-                          class="theta-badge"
-                          style={{
-                            borderColor: `${getClusterColor(selectedEvent.value.cluster)}88`,
-                            color: getClusterColor(selectedEvent.value.cluster),
-                          }}
-                        >
-                          {copy.value.organizedByPrefix}{" "}
-                          {getClusterName(selectedEvent.value.cluster)}
-                        </span>
-                      )}
-                    </div>
-                    {isRegistrationClosed(selectedEvent.value) ? (
-                      <p class="mt-6 rounded-xl border border-black/15 bg-neutral-100 px-4 py-3 text-sm text-neutral-700">
-                        {copy.value.registrationClosed}
-                      </p>
-                    ) : (
-                      <a
-                        href={selectedEvent.value.registrationUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="theta-focus mt-6 inline-flex rounded-xl border-2 border-[var(--theta-primary)] bg-[var(--theta-primary)] px-5 py-3 text-sm font-bold text-white"
-                      >
-                        {copy.value.registerNow}
-                      </a>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </>
+          </div>
+        </div>
       )}
     </div>
   );
 });
+
+export const head: DocumentHead = {
+  title: "Events | Theta 2026",
+  meta: [
+    {
+      name: "description",
+      content:
+        "Initialize access to the Galvan Prime archives. Browse Ben 10 events over 3 days.",
+    },
+  ],
+};

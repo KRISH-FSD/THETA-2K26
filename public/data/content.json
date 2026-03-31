@@ -25,6 +25,7 @@
       "contactTitle": "Contact",
       "homeLabel": "Home",
       "eventsLabel": "Events",
+      "sponsorsLabel": "Sponsors",
       "contactLabel": "Contact",
       "repoSectionLabel": "Project Repo",
       "repoLabel": "Repository",
@@ -171,6 +172,28 @@
     "stillQuestionsSubtitle": "Feel free to reach out to any of our team members",
     "sendEmailLabel": "Send us an email"
   },
+  "sponsorsPage": {
+    "badge": "Brand Alliances",
+    "titlePrefix": "Sponsors behind",
+    "titleAccent": "Theta",
+    "subtitle": "Explore the partners who amplify Theta's energy, back its vision, and help turn the fest into a larger campus experience.",
+    "primaryCta": "Become a Sponsor",
+    "secondaryCta": "Explore Sponsor Hall",
+    "selectorBadge": "Sponsor Spectrum",
+    "selectorTitle": "Choose a tier, then dive into the partner showcase.",
+    "hallBadge": "Sponsor Hall",
+    "hallTitlePrefix": "Every tier gets",
+    "hallTitleAccent": "its own spotlight",
+    "hallDescription": "From flagship branding to focused campaign visibility, each sponsorship layer is presented with its own visual treatment.",
+    "benefitsBadge": "Why Partner",
+    "benefitsTitlePrefix": "Why brands partner with",
+    "benefitsTitleAccent": "Theta",
+    "benefitsDescription": "Theta brings audience energy, student credibility, and visual presence together in one modern festival experience.",
+    "ctaTitlePrefix": "Want your brand in the",
+    "ctaTitleAccent": "next edition?",
+    "ctaDescription": "Let's build a sponsorship presence that feels premium on-ground and online.",
+    "ctaButton": "Talk to Sponsorship Team"
+  },
   "seo": {
     "defaultDescription": "Theta 2026 techno-management fest website.",
     "homeTitle": "Theta 2026 - Home",
@@ -178,6 +201,8 @@
     "eventsTitle": "Events - Theta 2026",
     "eventsDescription": "Browse Theta 2026 events and workshops, filter by category, status, and cluster, and register online.",
     "contactTitle": "Contact - Theta 2026",
-    "contactDescription": "Contact the Theta 2026 organizing team, coordinators, and WebTek support for event or sponsorship queries."
+    "contactDescription": "Contact the Theta 2026 organizing team, coordinators, and WebTek support for event or sponsorship queries.",
+    "sponsorsTitle": "Sponsors - Theta 2026",
+    "sponsorsDescription": "Explore the Theta 2026 sponsor hall and discover the brands powering the fest across platinum, gold, silver, and media tiers."
   }
 }

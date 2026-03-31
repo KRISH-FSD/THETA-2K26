@@ -1,10 +1,20 @@
-import { component$, isDev } from "@builder.io/qwik";
+import { component$, isDev, useVisibleTask$ } from "@builder.io/qwik";
 import { QwikCityProvider, RouterOutlet } from "@builder.io/qwik-city";
 import { RouterHead } from "./components/router-head/router-head";
+import Lenis from "lenis";
 
 import "./global.css";
 
 export default component$(() => {
+  useVisibleTask$(() => {
+    const lenis = new Lenis();
+    function raf(time: number) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+  });
+
   /**
    * The root of a QwikCity site always start with the <QwikCityProvider> component,
    * immediately followed by the document's <head> and <body>.

@@ -5,7 +5,7 @@ import {
   useSignal,
   useVisibleTask$,
 } from "@builder.io/qwik";
-import { Link } from "@builder.io/qwik-city";
+import { Link, useLocation } from "@builder.io/qwik-city";
 import { Header } from "~/components/header/header";
 
 interface LayoutCopy {
@@ -20,6 +20,7 @@ interface LayoutCopy {
     contactTitle: string;
     homeLabel: string;
     eventsLabel: string;
+    sponsorsLabel: string;
     contactLabel: string;
     repoSectionLabel?: string;
     repoLabel?: string;
@@ -52,6 +53,7 @@ const defaultLayoutCopy: LayoutCopy = {
     contactTitle: "Contact",
     homeLabel: "Home",
     eventsLabel: "Events",
+    sponsorsLabel: "Sponsors",
     contactLabel: "Contact",
     repoSectionLabel: "Project Repo",
     repoLabel: "Repository",
@@ -72,6 +74,7 @@ const defaultLayoutCopy: LayoutCopy = {
 };
 
 export default component$(() => {
+  const loc = useLocation();
   const underDev = useSignal(true);
   const toastOpen = useSignal(false);
   const copy = useSignal<LayoutCopy>(defaultLayoutCopy);
@@ -112,7 +115,18 @@ export default component$(() => {
   });
 
   return (
-    <div class="relative min-h-screen bg-neutral-100 text-neutral-900">
+    <div class="relative min-h-screen bg-[#050505] text-[#f0fff0]">
+      {/* Ambient background orbs */}
+      <div
+        class="pointer-events-none absolute h-56 w-56 rounded-full bg-[#0ea935] opacity-[0.05] blur-[100px]"
+        style="top:-4rem; left:-5rem;"
+      ></div>
+      <div
+        class="pointer-events-none absolute h-72 w-72 rounded-full bg-[#0ea935] opacity-[0.05] blur-[120px]"
+        style="top:18rem; right:-4rem; animation-delay:3s;"
+      ></div>
+
+      {/* SASTRA watermark — reduced opacity so it doesn't compete with content */}
       <div class="pointer-events-none fixed inset-0 z-0 flex items-center justify-center">
         <img
           src="/sponsors/general/sastra-university-logo.jpg"
@@ -120,30 +134,33 @@ export default component$(() => {
           width={1200}
           height={1200}
           aria-hidden="true"
-          class="h-auto w-[72vw] max-w-[920px] opacity-[0.055] grayscale"
+          class="h-auto w-[72vw] max-w-[920px] opacity-[0.02] grayscale"
         />
       </div>
 
-      <div class="relative z-10">
+      <div class="relative z-10 w-full">
         <Header />
-        <main class="pt-20">
+        <main class={["w-full", loc.url.pathname === "/" ? "pt-0" : "pt-[90px]"]}>
           <Slot />
         </main>
 
+        {/* Under-development indicator */}
         {underDev.value && (
-          <div class="fixed right-4 bottom-4 z-[95]">
+          <div class="fixed left-4 bottom-4 z-[95]">
             <button
               type="button"
               onClick$={showDev}
+              class="flex h-10 w-10 items-center justify-center rounded-full bg-[#0ea935]/10 text-xl font-black text-[#0ea935] shadow-[0_0_15px_rgba(14,169,53,0.3)] backdrop-blur-md transition-all hover:scale-110 hover:bg-[#0ea935]/20 hover:shadow-[0_0_25px_rgba(14,169,53,0.5)]"
               aria-label={copy.value.underDevelopment.ariaLabel}
-              class="theta-focus flex h-10 w-10 items-center justify-center rounded-full border border-black/20 bg-neutral-100"
             >
               !
             </button>
             {toastOpen.value && (
-              <div class="theta-shell absolute right-0 bottom-12 w-48 p-3 text-xs">
-                <p>{copy.value.underDevelopment.title}</p>
-                <p class="mt-1 text-neutral-600">
+              <div class="absolute left-0 bottom-12 w-52 p-4 text-xs rounded-xl border border-[#0ea935]/30 bg-[#0a0a0a]/90 backdrop-blur-md shadow-[0_0_20px_rgba(14,169,53,0.2)]">
+                <p class="font-bold text-[#0ea935]">
+                  {copy.value.underDevelopment.title}
+                </p>
+                <p class="mt-1 text-[#8ca38c]">
                   {copy.value.underDevelopment.subtitle}
                 </p>
               </div>
@@ -151,80 +168,114 @@ export default component$(() => {
           </div>
         )}
 
-        <footer class="mx-auto mt-14 max-w-7xl px-4 pb-8 sm:px-6 lg:px-8">
-          <div class="theta-shell relative overflow-hidden p-6 sm:p-8">
-            <div class="pointer-events-none absolute -top-14 -right-16 h-44 w-44 rounded-full bg-[var(--theta-primary)]/12 blur-3xl"></div>
-            <div class="pointer-events-none absolute -bottom-16 -left-16 h-40 w-40 rounded-full bg-black/10 blur-3xl"></div>
+        {/* ── Footer ── */}
+        <footer class="mx-auto mt-20 max-w-7xl px-4 pb-8 sm:px-6 lg:px-8 border-t border-[#0ea935]/20 pt-12">
+          <div class="relative">
+            {/* Ambient blobs inside footer card */}
+            <div class="pointer-events-none absolute -top-14 -right-16 h-44 w-44 rounded-full bg-[#077a23] opacity-[0.1] blur-3xl"></div>
+            <div class="pointer-events-none absolute -bottom-16 -left-16 h-40 w-40 rounded-full bg-[#0ea935] opacity-[0.05] blur-3xl"></div>
 
-            <div class="relative grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+            <div class="relative grid gap-10 md:grid-cols-2 lg:grid-cols-4">
+
+              {/* Brand */}
               <div>
                 <img
                   src="/theta-logo.png"
                   alt="Theta"
                   width={140}
                   height={70}
-                  class="h-12 w-auto invert"
+                  class="h-10 w-auto [filter:brightness(0)_invert(1)] opacity-90"
                 />
-                <p class="mt-3 max-w-xs text-sm text-neutral-600">
+                <p class="mt-4 max-w-xs text-sm text-[#8ca38c] leading-relaxed">
                   {copy.value.footer.description}
                 </p>
-                <div class="mt-4 inline-flex rounded-full border border-black/15 bg-white px-3 py-1 text-[11px] font-bold tracking-[0.12em] text-neutral-600 uppercase">
-                  Theta 2026
+                <div class="mt-5">
+                  <span class="inline-flex rounded-full border border-[#0ea935]/30 bg-[#0ea935]/10 px-3 py-1 text-xs font-bold text-[#0ea935] tracking-widest uppercase shadow-[0_0_10px_rgba(14,169,53,0.1)]">Theta 2026</span>
                 </div>
               </div>
 
+              {/* Quick Links */}
               <div>
-                <h3 class="text-sm font-bold tracking-[0.14em] text-neutral-700 uppercase">
+                <h3 class="text-xs font-black tracking-widest text-[#f0fff0] uppercase mb-5">
                   {copy.value.footer.quickLinksTitle}
                 </h3>
-                <div class="mt-3 space-y-2 text-sm text-neutral-700">
+                <div class="space-y-3 text-sm">
                   <Link
                     href="/"
-                    class="theta-focus block rounded-lg border border-transparent px-2 py-1.5 hover:border-black/10 hover:bg-white hover:text-[var(--theta-primary)]"
+                    class="block text-[#8ca38c] transition-colors hover:text-[#0ea935]"
                   >
                     {copy.value.footer.homeLabel}
                   </Link>
                   <Link
                     href="/events"
-                    class="theta-focus block rounded-lg border border-transparent px-2 py-1.5 hover:border-black/10 hover:bg-white hover:text-[var(--theta-primary)]"
+                    class="block text-[#8ca38c] transition-colors hover:text-[#0ea935]"
                   >
                     {copy.value.footer.eventsLabel}
                   </Link>
                   <Link
+                    href="/sponsors"
+                    class="block text-[#8ca38c] transition-colors hover:text-[#0ea935]"
+                  >
+                    {copy.value.footer.sponsorsLabel}
+                  </Link>
+                  <Link
+                    href="/roadmap/day1"
+                    class="block text-[#0ea935] font-semibold transition-colors hover:text-[#12cb42] flex items-center gap-1.5"
+                  >
+                    <span class="inline-block h-1.5 w-1.5 rounded-full bg-[#0ea935] shadow-[0_0_6px_rgba(14,169,53,1)]" />
+                    Roadmap
+                  </Link>
+                  <Link
                     href="/contact"
-                    class="theta-focus block rounded-lg border border-transparent px-2 py-1.5 hover:border-black/10 hover:bg-white hover:text-[var(--theta-primary)]"
+                    class="block text-[#8ca38c] transition-colors hover:text-[#0ea935]"
                   >
                     {copy.value.footer.contactLabel}
                   </Link>
                 </div>
               </div>
 
+              {/* Contact */}
               <div>
-                <h3 class="text-sm font-bold tracking-[0.14em] text-neutral-700 uppercase">
+                <h3 class="text-xs font-black tracking-widest text-[#f0fff0] uppercase mb-5">
                   {copy.value.footer.contactTitle}
                 </h3>
-                <div class="mt-3 space-y-2 text-sm text-neutral-600">
-                  <p>{copy.value.footer.locationLabel}</p>
-                  <p>{copy.value.footer.dateLabel}</p>
+                <div class="space-y-4 text-sm text-[#8ca38c]">
+                  <p class="flex items-start gap-3">
+                    <svg class="h-5 w-5 shrink-0 text-[#077a23]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span class="leading-tight">{copy.value.footer.locationLabel}</span>
+                  </p>
+                  <p class="flex items-center gap-3">
+                    <svg class="h-5 w-5 shrink-0 text-[#077a23]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span>{copy.value.footer.dateLabel}</span>
+                  </p>
                   <a
                     href={`mailto:${copy.value.footer.emailLabel}`}
-                    class="theta-focus inline-block rounded hover:text-[var(--theta-primary)]"
+                    class="flex items-center gap-3 transition-colors hover:text-[#0ea935]"
                   >
-                    {copy.value.footer.emailLabel}
+                    <svg class="h-5 w-5 shrink-0 text-[#077a23]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    <span>{copy.value.footer.emailLabel}</span>
                   </a>
                 </div>
               </div>
 
+              {/* Connect / Repo */}
               <div>
-                <h3 class="text-sm font-bold tracking-[0.14em] text-neutral-700 uppercase">
+                <h3 class="text-xs font-black tracking-widest text-[#f0fff0] uppercase mb-5">
                   {copy.value.footer.repoSectionLabel || "Connect"}
                 </h3>
-                <div class="mt-3 flex flex-wrap gap-2">
+                <div class="flex flex-col gap-3">
                   <a
                     href="https://github.com/theta-web"
                     target="_blank"
                     rel="noreferrer"
-                    class="theta-focus rounded-full border border-black/15 bg-white px-3 py-1.5 text-xs font-bold text-neutral-700 hover:-translate-y-0.5 hover:border-black/30 hover:text-black"
+                    class="text-sm text-[#8ca38c] hover:text-[#0ea935] transition-colors"
                   >
                     {copy.value.footer.repoLabel || "Repository"}
                   </a>
@@ -232,7 +283,7 @@ export default component$(() => {
                     href="https://github.com/theta-web/issues"
                     target="_blank"
                     rel="noreferrer"
-                    class="theta-focus rounded-full border border-black/15 bg-white px-3 py-1.5 text-xs font-bold text-neutral-700 hover:-translate-y-0.5 hover:border-black/30 hover:text-black"
+                    class="text-sm text-[#8ca38c] hover:text-[#0ea935] transition-colors"
                   >
                     {copy.value.footer.issuesLabel || "Issues"}
                   </a>
@@ -240,27 +291,27 @@ export default component$(() => {
                     href="https://github.com/theta-web"
                     target="_blank"
                     rel="noreferrer"
-                    class="theta-focus rounded-full border border-black/15 bg-white px-3 py-1.5 text-xs font-bold text-neutral-700 hover:-translate-y-0.5 hover:border-black/30 hover:text-black"
+                    class="text-sm text-[#8ca38c] hover:text-[#0ea935] transition-colors"
                   >
                     {copy.value.footer.contributeLabel || "Contribute"}
                   </a>
                 </div>
-                <div class="mt-4 flex flex-wrap gap-2">
+                <div class="mt-6 flex gap-4">
                   <a
                     href="#"
-                    class="theta-focus rounded-full border border-black/15 bg-white px-3 py-1 text-[11px] font-bold text-neutral-600 hover:border-black/30"
+                    class="text-xs text-[#4d5c4d] hover:text-[#0ea935] transition-colors uppercase tracking-widest font-bold"
                   >
                     {copy.value.footer.social?.instagram || "Instagram"}
                   </a>
                   <a
                     href="#"
-                    class="theta-focus rounded-full border border-black/15 bg-white px-3 py-1 text-[11px] font-bold text-neutral-600 hover:border-black/30"
+                    class="text-xs text-[#4d5c4d] hover:text-[#0ea935] transition-colors uppercase tracking-widest font-bold"
                   >
                     {copy.value.footer.social?.twitter || "Twitter"}
                   </a>
                   <a
                     href="#"
-                    class="theta-focus rounded-full border border-black/15 bg-white px-3 py-1 text-[11px] font-bold text-neutral-600 hover:border-black/30"
+                    class="text-xs text-[#4d5c4d] hover:text-[#0ea935] transition-colors uppercase tracking-widest font-bold"
                   >
                     {copy.value.footer.social?.youtube || "YouTube"}
                   </a>
@@ -268,7 +319,8 @@ export default component$(() => {
               </div>
             </div>
 
-            <div class="relative mt-8 border-t border-black/15 pt-4 text-xs text-neutral-700 sm:flex sm:items-center sm:justify-between">
+            {/* Bottom bar */}
+            <div class="mt-12 border-t border-[#0ea935]/10 pt-6 text-xs text-[#4d5c4d] flex flex-col sm:flex-row sm:items-center sm:justify-between font-medium">
               <p>{copy.value.footer.copyright}</p>
               <p class="mt-2 sm:mt-0">
                 {copy.value.footer.madeWithPrefix} Qwik{" "}

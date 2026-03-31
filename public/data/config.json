@@ -3,6 +3,7 @@
     "eventName": "Theta 2026",
     "tagline": "National Level Techno-Management Fest",
     "dates": "April 11-13, 2026",
+    "startDate": "2026-04-11T09:00:00.000Z",
     "venue": "SASTRA Deemed University",
     "underDevelopment": true
   },
@@ -174,21 +175,21 @@
       "date": "April 11, 2026",
       "events": ["Inauguration", "Robotics Workshop", "Tech Quiz"],
       "highlight": "SASTRA Singing Team Performance",
-      "bgImage": "/day/day-1.svg"
+      "bgImage": "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=1200"
     },
     {
       "day": "Day Two",
       "date": "April 12, 2026",
       "events": ["Code Battle", "Hackathon", "Project Expo"],
       "highlight": "SASTRA Dance Team Performance",
-      "bgImage": "/day/day-2.svg"
+      "bgImage": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=1200"
     },
     {
       "day": "Day Three",
       "date": "April 13, 2026",
       "events": ["Prize Distribution", "Valedictory"],
       "highlight": "External Team Pro Nite",
-      "bgImage": "/day/day-3.svg"
+      "bgImage": "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&q=80&w=1200"
     }
   ],
   "cta": {
