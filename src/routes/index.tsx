@@ -146,6 +146,38 @@ const sponsorTiers = [
   { key: "media", label: "Media" },
 ] as const;
 
+const sponsorTierMeta: Record<(typeof sponsorTiers)[number]["key"], {
+  accent: string;
+  glow: string;
+  surface: string;
+  eyebrow: string;
+}> = {
+  platinum: {
+    accent: "#c9ff7a",
+    glow: "rgba(158, 255, 71, 0.22)",
+    surface: "linear-gradient(160deg, rgba(122,255,51,0.18), rgba(8,18,10,0.9))",
+    eyebrow: "Flagship partners",
+  },
+  gold: {
+    accent: "#f6ff8f",
+    glow: "rgba(226, 255, 89, 0.18)",
+    surface: "linear-gradient(160deg, rgba(208,255,66,0.16), rgba(16,18,8,0.9))",
+    eyebrow: "Premium backers",
+  },
+  silver: {
+    accent: "#b7ffd1",
+    glow: "rgba(77, 255, 154, 0.18)",
+    surface: "linear-gradient(160deg, rgba(62,255,139,0.14), rgba(7,16,13,0.92))",
+    eyebrow: "Growth partners",
+  },
+  media: {
+    accent: "#9cffbb",
+    glow: "rgba(61, 214, 160, 0.18)",
+    surface: "linear-gradient(160deg, rgba(38,202,141,0.18), rgba(5,14,12,0.9))",
+    eyebrow: "Broadcast reach",
+  },
+};
+
 /* Day icons */
 const dayIcons = ["⚡", "🤖", "🚀"];
 const dayColors = [
@@ -441,6 +473,20 @@ export default component$(() => {
   };
 
   /* ──────────────────────── render ───────────────────────── */
+  const sponsorShowcaseItems = sponsorTiers
+    .flatMap((tier) =>
+      (sponsors.value[tier.key] || [])
+        .slice(0, tier.key === "silver" ? 1 : 2)
+        .map((item, index) => ({
+          ...item,
+          tierKey: tier.key,
+          tierLabel: tier.label,
+          rank: index + 1,
+          ...sponsorTierMeta[tier.key],
+        }))
+    )
+    .slice(0, 4);
+
   return (
     <div class="relative" style="font-family: var(--font-body);">
 
@@ -462,142 +508,79 @@ export default component$(() => {
           {configData.value.days.map((day, index) => {
             const roadmapLinks = ["/roadmap/day1", "/roadmap/day2", "/roadmap/day3"];
             return (
-            <Link
-              key={day.day}
-              href={roadmapLinks[index] || "/roadmap/day1"}
-              data-tilt
-              class={[
-                "t-day-card group text-left p-6 sm:p-7 block no-underline",
-                `bg-gradient-to-br ${dayColors[index] || dayColors[0]}`,
-                "reveal-up",
-              ]}
-              style={{
-                borderColor: dayBorderColors[index] || dayBorderColors[0],
-                transitionDelay: `${index * 80}ms`,
-                backgroundImage: day.bgImage ? `linear-gradient(rgba(14,10,30,0.85), rgba(14,10,30,0.95)), url(${day.bgImage})` : undefined,
-                backgroundSize: "cover",
-                backgroundPosition: "center"
-              }}
-            >
-              {/* Inner glow blob */}
-              <div
-                class="pointer-events-none absolute -top-10 -left-10 h-32 w-32 rounded-full blur-2xl opacity-40"
-                style={{ background: dayAccents[index] || dayAccents[0] }}
-              ></div>
-
-              {/* Top row */}
-              <div class="relative flex items-start justify-between gap-3 mb-5">
-                <div
-                  class="t-day-number text-xl"
-                  style={{ background: `linear-gradient(135deg, ${dayAccents[index]}, ${dayAccents[index]}88)`, boxShadow: `0 4px 16px ${dayAccents[index]}55` }}
-                >
-                  {dayIcons[index]}
-                </div>
-                <span class="t-label text-[var(--t-dim)]">{day.date}</span>
-              </div>
-
-              {/* Day name */}
-              <h3
-                class="t-heading relative text-3xl sm:text-4xl"
-                style={{ color: dayAccents[index] || "var(--t-text)" }}
+              <Link
+                key={day.day}
+                href={roadmapLinks[index] || "/roadmap/day1"}
+                data-tilt
+                class={[
+                  "t-day-card group text-left p-6 sm:p-7 block no-underline",
+                  `bg-gradient-to-br ${dayColors[index] || dayColors[0]}`,
+                  "reveal-up",
+                ]}
+                style={{
+                  borderColor: dayBorderColors[index] || dayBorderColors[0],
+                  transitionDelay: `${index * 80}ms`,
+                  backgroundImage: day.bgImage ? `linear-gradient(rgba(14,10,30,0.85), rgba(14,10,30,0.95)), url(${day.bgImage})` : undefined,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center"
+                }}
               >
-                {day.day}
-              </h3>
-              <p class="relative mt-1 text-sm font-medium text-[var(--t-muted)]">{day.highlight}</p>
+                {/* Inner glow blob */}
+                <div
+                  class="pointer-events-none absolute -top-10 -left-10 h-32 w-32 rounded-full blur-2xl opacity-40"
+                  style={{ background: dayAccents[index] || dayAccents[0] }}
+                ></div>
 
-              {/* Event chips */}
-              <div class="relative mt-5 flex flex-wrap gap-2">
-                {day.events.slice(0, 3).map((event) => (
-                  <span
-                    key={`${day.day}-${event}`}
-                    class="rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.04)] px-3 py-1 text-xs font-medium text-[var(--t-muted)]"
+                {/* Top row */}
+                <div class="relative flex items-start justify-between gap-3 mb-5">
+                  <div
+                    class="t-day-number text-xl"
+                    style={{ background: `linear-gradient(135deg, ${dayAccents[index]}, ${dayAccents[index]}88)`, boxShadow: `0 4px 16px ${dayAccents[index]}55` }}
                   >
-                    {event}
-                  </span>
-                ))}
-                {day.events.length > 3 && (
-                  <span
-                    class="rounded-full px-3 py-1 text-xs font-medium"
-                    style={{ color: dayAccents[index], background: `${dayAccents[index]}15`, border: `1px solid ${dayAccents[index]}30` }}
-                  >
-                    +{day.events.length - 3} more
-                  </span>
-                )}
-              </div>
+                    {dayIcons[index]}
+                  </div>
+                  <span class="t-label text-[var(--t-dim)]">{day.date}</span>
+                </div>
 
-              {/* Bottom row */}
-              <div class="relative mt-6 flex items-center justify-between border-t border-[rgba(255,255,255,0.06)] pt-4">
-                <span class="text-xs text-[var(--t-dim)]">{day.events.length} Events</span>
-                <span class="text-xs font-bold tracking-widest uppercase group-hover:translate-x-1 transition-transform inline-block" style={{ color: dayAccents[index] }}>
-                  View Roadmap →
-                </span>
-              </div>
-            </Link>
+                {/* Day name */}
+                <h3
+                  class="t-heading relative text-3xl sm:text-4xl"
+                  style={{ color: dayAccents[index] || "var(--t-text)" }}
+                >
+                  {day.day}
+                </h3>
+                <p class="relative mt-1 text-sm font-medium text-[var(--t-muted)]">{day.highlight}</p>
+
+                {/* Event chips */}
+                <div class="relative mt-5 flex flex-wrap gap-2">
+                  {day.events.slice(0, 3).map((event) => (
+                    <span
+                      key={`${day.day}-${event}`}
+                      class="rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.04)] px-3 py-1 text-xs font-medium text-[var(--t-muted)]"
+                    >
+                      {event}
+                    </span>
+                  ))}
+                  {day.events.length > 3 && (
+                    <span
+                      class="rounded-full px-3 py-1 text-xs font-medium"
+                      style={{ color: dayAccents[index], background: `${dayAccents[index]}15`, border: `1px solid ${dayAccents[index]}30` }}
+                    >
+                      +{day.events.length - 3} more
+                    </span>
+                  )}
+                </div>
+
+                {/* Bottom row */}
+                <div class="relative mt-6 flex items-center justify-between border-t border-[rgba(255,255,255,0.06)] pt-4">
+                  <span class="text-xs text-[var(--t-dim)]">{day.events.length} Events</span>
+                  <span class="text-xs font-bold tracking-widest uppercase group-hover:translate-x-1 transition-transform inline-block" style={{ color: dayAccents[index] }}>
+                    View Roadmap →
+                  </span>
+                </div>
+              </Link>
             );
           })}
-        </div>
-      </section>
-
-      {/* ═══════════════ ABOUT SECTION ═══════════════ */}
-      <section class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-        <div class="t-glass overflow-hidden p-8 sm:p-10 lg:p-12">
-          {/* Ambient blob inside card */}
-          <div class="pointer-events-none absolute -top-20 -right-20 h-56 w-56 rounded-full bg-[rgba(124,58,237,0.12)] blur-3xl"></div>
-
-          <div class="relative grid gap-12 lg:grid-cols-[1.2fr_1fr] lg:items-start">
-            {/* Left */}
-            <div class="reveal-left">
-              <span class="t-badge">{homeCopy.value.about.badge}</span>
-              <h2 class="t-heading mt-5 text-[clamp(2rem,4vw,3rem)] text-[var(--t-text)]">
-                {homeCopy.value.about.titlePrefix}{" "}
-                <span class="t-gradient">{homeCopy.value.about.titleAccent}</span>{" "}
-                {homeCopy.value.about.titleSuffix}
-              </h2>
-              <p class="mt-5 max-w-xl text-base text-[var(--t-muted)] leading-relaxed" style="font-weight: 300;">
-                {configData.value.about.description}
-              </p>
-              <div class="mt-6 flex flex-wrap gap-2">
-                {["National Level", "Tech + Management", "Student Driven"].map((tag) => (
-                  <span key={tag} class="t-chip">{tag}</span>
-                ))}
-              </div>
-            </div>
-
-            {/* Right — quote card */}
-            <div class="reveal-right t-card p-6 sm:p-7">
-              <div class="flex items-center justify-between mb-5">
-                <p class="t-label text-[var(--t-dim)]">Why Theta</p>
-                <img
-                  src="/sponsors/general/sastra-university-logo.jpg"
-                  alt="SASTRA"
-                  width={64} height={32}
-                  class="h-8 w-auto rounded-lg object-contain [filter:brightness(0)_invert(1)_opacity(0.5)]"
-                  loading="lazy"
-                />
-              </div>
-              <p class="t-heading text-3xl text-[var(--t-text)]">
-                One stage.<br />
-                <span class="t-gradient">Infinite ideas.</span>
-              </p>
-              <p class="mt-4 text-sm text-[var(--t-muted)] leading-relaxed" style="font-weight: 300;">
-                Compete, collaborate, and showcase your best work in front of peers, mentors, and industry communities.
-              </p>
-              <div class="t-line-glow mt-5"></div>
-            </div>
-          </div>
-
-          {/* Feature cards row */}
-          <div class="relative mt-10 grid gap-5 md:grid-cols-3">
-            {configData.value.about.features.slice(0, 3).map((feature, idx) => (
-              <article key={feature.title} class="t-feature-card reveal-up" style={{ transitionDelay: `${idx * 100}ms` }}>
-                <span class="t-feature-num">{String(idx + 1).padStart(2, "0")}</span>
-                <p class="t-label text-[rgba(192,132,252,0.7)] mb-3">Feature {idx + 1}</p>
-                <h3 class="t-heading text-xl text-[var(--t-text)]">{feature.title}</h3>
-                <p class="mt-2 text-sm text-[var(--t-muted)]" style="font-weight: 300;">{feature.description}</p>
-                <div class="t-feature-bar"></div>
-              </article>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -671,86 +654,99 @@ export default component$(() => {
       </section>
 
       {/* ═══════════════ SPONSORS SECTION ═══════════════ */}
-      <section class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-        <div class="t-glass p-8 sm:p-10 lg:p-12">
-          <div class="pointer-events-none absolute -top-20 right-0 h-60 w-60 rounded-full bg-[rgba(14,169,53,0.12)] blur-3xl"></div>
+      <section class="mx-auto max-w-[100vw] px-3 py-6 sm:px-5 lg:px-6 lg:py-8">
+        <div class="t-glass t-sponsor-showcase mx-auto flex min-h-[calc(100vh-7rem)] max-h-[calc(100vh-7rem)] w-full max-w-7xl flex-col overflow-hidden px-5 py-5 sm:px-7 sm:py-6 lg:px-8 lg:py-7">
+          <div class="t-sponsor-showcase__orb t-sponsor-showcase__orb--a"></div>
+          <div class="t-sponsor-showcase__orb t-sponsor-showcase__orb--b"></div>
+          <div class="t-sponsor-showcase__grid"></div>
+          <div class="t-sponsor-showcase__beam"></div>
+          <div class="t-sponsor-showcase__glyph t-sponsor-showcase__glyph--a"></div>
+          <div class="t-sponsor-showcase__glyph t-sponsor-showcase__glyph--b"></div>
 
-          {/* Header */}
-          <div class="relative reveal-up mb-10 flex flex-wrap items-end justify-between gap-4">
-            <div>
+          <div class="relative mb-5 flex flex-wrap items-start justify-between gap-4 lg:mb-6">
+            <div class="max-w-2xl">
               <span class="t-badge">{homeCopy.value.sponsors.badge}</span>
-              <h2 class="t-heading mt-4 text-[clamp(2rem,4vw,3rem)] text-[var(--t-text)]">
-                {homeCopy.value.sponsors.titlePrefix}{" "}
-                <span class="t-gradient">{homeCopy.value.sponsors.titleAccent}</span>
+              <h2 class="t-heading mt-3 text-[clamp(1.9rem,4vw,3.35rem)] leading-[0.95] text-[var(--t-text)]">
+                Sponsor Power for <span class="t-gradient">Theta 2026</span>
               </h2>
-              <p class="mt-4 max-w-xl text-base leading-relaxed text-[var(--t-muted)]" style="font-weight: 300;">
-                {homeCopy.value.sponsors.hallDescription}
+              <p class="mt-3 max-w-lg text-sm leading-relaxed text-[var(--t-muted)] sm:text-base" style="font-weight: 300;">
+                Four featured partners. Ben 10 energy. Fast access to the full sponsor wall.
               </p>
             </div>
-            <span class="t-sticker">🏆 {homeCopy.value.sponsors.hallSticker}</span>
+
+            <div class="flex items-center gap-3">
+              <span class="t-sticker">Legacy Wall</span>
+              <Link href="/sponsors" class="t-btn-ghost !px-4 !py-2 !text-xs inline-flex">
+                Open All
+              </Link>
+            </div>
           </div>
 
-          {/* Sponsor teaser grid */}
-          <div class="relative grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {sponsorTiers
-              .flatMap((tier) => (sponsors.value[tier.key] || []).slice(0, 2))
-              .slice(0, 6)
-              .map((item, idx) => (
-                <article
-                  key={`home-sponsor-${item.name}-${idx}`}
-                  class="t-sponsor-card flex min-h-[9rem] flex-col items-center justify-center text-center"
-                >
-                  <div class="flex min-h-[4.5rem] items-center justify-center">
-                    <img
-                      src={item.logo}
-                      alt={item.name}
-                      width={180}
-                      height={80}
-                      loading="lazy"
-                      class="t-sponsor-img max-h-12 max-w-[8.5rem]"
-                    />
-                  </div>
-                  <p class="mt-3 text-xs font-medium tracking-[0.2em] text-[var(--t-dim)] uppercase">
-                    {item.name}
-                  </p>
-                </article>
-              ))}
+          <div class="relative mb-5 flex flex-wrap gap-3 lg:mb-6">
+            {sponsorTiers.map((tier) => (
+              <button
+                key={`home-tier-${tier.key}`}
+                type="button"
+                onClick$={() => (selectedTier.value = tier.key)}
+                class="t-sponsor-tier-pill"
+              >
+                <span>{tier.label}</span>
+                <strong>{(sponsors.value[tier.key] || []).length}</strong>
+              </button>
+            ))}
+          </div>
 
-            {sponsorTiers.every((tier) => (sponsors.value[tier.key] || []).length === 0) && (
-              <div class="rounded-3xl border border-dashed border-[rgba(120,80,255,0.2)] bg-[rgba(5,5,5,0.32)] px-6 py-12 text-center text-sm text-[var(--t-muted)] sm:col-span-2 xl:col-span-3">
+          <div class="relative grid flex-1 auto-rows-fr gap-4 sm:grid-cols-2 xl:gap-5">
+            {sponsorShowcaseItems.map((item, idx) => (
+              <article
+                key={`home-sponsor-${item.name}-${idx}`}
+                class="t-sponsor-card t-sponsor-card--showcase reveal-up flex h-full min-h-0 flex-col justify-between"
+                style={`--s-accent:${item.accent}; --s-glow:${item.glow}; --s-surface:${item.surface}; transition-delay:${idx * 80}ms;`}
+              >
+                <div class="flex items-start justify-between gap-4">
+                  <div>
+                    <p class="t-sponsor-card__eyebrow">{item.eyebrow}</p>
+                    <h3 class="mt-2 text-lg font-semibold text-[var(--t-text)]" style="font-family: var(--font-display);">
+                      {item.name}
+                    </h3>
+                  </div>
+                  <span class="t-sponsor-card__tier">{item.tierLabel}</span>
+                </div>
+
+                <div class="t-sponsor-logo-shell">
+                  <img
+                    src={item.logo}
+                    alt={item.name}
+                    width={220}
+                    height={120}
+                    loading="lazy"
+                    class="t-sponsor-img t-sponsor-img--showcase"
+                  />
+                </div>
+
+                <div class="flex items-center justify-between gap-3">
+                  <p class="text-xs font-medium tracking-[0.2em] text-[var(--t-dim)] uppercase">
+                    Slot {String(item.rank).padStart(2, "0")}
+                  </p>
+                  <button
+                    type="button"
+                    onClick$={() => (selectedTier.value = item.tierKey)}
+                    class="t-sponsor-card__link"
+                  >
+                    View Tier
+                  </button>
+                </div>
+              </article>
+            ))}
+
+            {sponsorShowcaseItems.length === 0 && (
+              <div class="rounded-3xl border border-dashed border-[rgba(132,255,135,0.18)] bg-[rgba(5,10,7,0.76)] px-6 py-12 text-center text-sm text-[var(--t-muted)] sm:col-span-2">
                 Sponsor highlights will appear here once the lineup is published.
               </div>
             )}
           </div>
-
-          {/* Sponsor teaser CTA */}
-          <div class="relative mt-8 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-[rgba(120,80,255,0.2)] bg-[rgba(124,58,237,0.05)] p-6">
-            <div>
-              <p class="text-[var(--t-muted)] text-sm">
-                {homeCopy.value.sponsors.sponsorPrompt}
-              </p>
-              <div class="mt-3 flex flex-wrap gap-3">
-                <span class="t-chip">
-                  {sponsorTiers.reduce((sum, tier) => sum + ((sponsors.value[tier.key] || []).length), 0)} Partners
-                </span>
-                <span class="t-chip">
-                  {sponsorTiers.filter((tier) => (sponsors.value[tier.key] || []).length > 0).length} Active Tiers
-                </span>
-              </div>
-            </div>
-            <div class="flex flex-wrap gap-3">
-              <Link href="/sponsors" class="t-btn-primary !py-2 !px-5 !text-sm">
-                Explore Sponsors
-              </Link>
-              <Link href="/contact" class="t-btn-ghost !py-2 !px-5 !text-sm inline-flex">
-                {homeCopy.value.sponsors.sponsorButton}
-              </Link>
-            </div>
-          </div>
         </div>
       </section>
-
-      {/* ═══════════════ CTA SECTION ═══════════════ */}
       <section class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
         <div class="t-cta-wrap p-8 sm:p-10 lg:p-16 text-center">
           {/* Orbs */}

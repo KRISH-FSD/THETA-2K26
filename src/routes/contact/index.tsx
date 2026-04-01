@@ -1,7 +1,9 @@
 import { component$, useSignal, useVisibleTask$ } from "@builder.io/qwik";
 import { type DocumentHead } from "@builder.io/qwik-city";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+/* ─── Types ─────────────────────────────────────────────── */
 interface TeamMember {
   name: string;
   role: string;
@@ -9,7 +11,6 @@ interface TeamMember {
   phone: string;
   image: string;
 }
-
 interface TeamData {
   order: { key: string; label: string }[];
   president: TeamMember[];
@@ -17,13 +18,8 @@ interface TeamData {
   coordinators: TeamMember[];
   sponsorship: TeamMember[];
   publicRelation: TeamMember[];
-  webtek: {
-    github: string;
-    linkedin: string;
-    email: string;
-  };
+  webtek: { github: string; linkedin: string; email: string };
 }
-
 interface ContactCopy {
   titlePrefix: string;
   titleAccent: string;
@@ -35,16 +31,17 @@ interface ContactCopy {
   linkedinLabel: string;
   emailLabel: string;
   membersSuffix: string;
-  contactPrefix: string;
   stillQuestionsTitle: string;
   stillQuestionsSubtitle: string;
   sendEmailLabel: string;
 }
 
-const defaultContactCopy: ContactCopy = {
+/* ─── Defaults ───────────────────────────────────────────── */
+const defaultCopy: ContactCopy = {
   titlePrefix: "Get in",
   titleAccent: "Touch",
-  subtitle: "Have questions? Reach out to the Theta 2026 High Command.",
+  subtitle:
+    "Connect with the Theta 2026 High Command. Our operators are standing by across all active channels.",
   webtekLabel: "WebTek Team",
   webtekTitle: "Engineering & Platform",
   webtekDescription:
@@ -53,9 +50,9 @@ const defaultContactCopy: ContactCopy = {
   linkedinLabel: "LinkedIn",
   emailLabel: "Email",
   membersSuffix: "Operators",
-  contactPrefix: "Contact:",
   stillQuestionsTitle: "Still have questions?",
-  stillQuestionsSubtitle: "Feel free to transceive a message to our coordinators.",
+  stillQuestionsSubtitle:
+    "Feel free to transceive a message to our coordinators.",
   sendEmailLabel: "Open Comm Channel",
 };
 
@@ -72,278 +69,648 @@ const defaultTeamData: TeamData = {
   coordinators: [],
   sponsorship: [],
   publicRelation: [],
-  webtek: {
-    github: "#",
-    linkedin: "#",
-    email: "theta@sastra.edu",
-  },
+  webtek: { github: "#", linkedin: "#", email: "theta@sastra.edu" },
 };
 
+/* ─── Contact Mode Cards ─────────────────────────────────── */
+const MODES = [
+  {
+    icon: "M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z",
+    label: "Direct Call",
+    desc: "Reach coordinators via phone during event hours.",
+    tag: "LIVE",
+    accent: "#6eff5a",
+    glow: "rgba(110,255,90,0.22)",
+  },
+  {
+    icon: "M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z",
+    label: "Email Command",
+    desc: "Send queries to our official contact desk.",
+    tag: "24h",
+    accent: "#4de0ff",
+    glow: "rgba(77,224,255,0.20)",
+  },
+  {
+    icon: "M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z",
+    label: "Live Support",
+    desc: "Real-time assistance from our on-ground team.",
+    tag: "INSTANT",
+    accent: "#ffd54a",
+    glow: "rgba(255,213,74,0.20)",
+  },
+  {
+    icon: "M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4",
+    label: "On-Site Desk",
+    desc: "Visit our physical desk at SASTRA Campus.",
+    tag: "CAMPUS",
+    accent: "#c084fc",
+    glow: "rgba(192,132,252,0.20)",
+  },
+];
+
+/* ─────────────────────────────────────────────────────────── */
 export default component$(() => {
   const teamData = useSignal<TeamData>(defaultTeamData);
-  const copy = useSignal<ContactCopy>(defaultContactCopy);
+  const copy = useSignal<ContactCopy>(defaultCopy);
 
+  /* ── data fetch ── */
   useVisibleTask$(async () => {
     try {
-      const [teamRes, contentRes] = await Promise.all([
+      const [tr, cr] = await Promise.all([
         fetch("/data/team.json"),
         fetch("/data/content.json"),
       ]);
-
-      const team = (await teamRes.json()) as Partial<TeamData>;
-      const content = (await contentRes.json()) as {
+      const team = (await tr.json()) as Partial<TeamData>;
+      const content = (await cr.json()) as {
         contactPage?: Partial<ContactCopy>;
         seo?: { contactTitle?: string; contactDescription?: string };
       };
-
       teamData.value = {
         ...defaultTeamData,
         ...team,
         webtek: { ...defaultTeamData.webtek, ...(team.webtek || {}) },
         order: team.order || defaultTeamData.order,
       };
-
-      if (content.contactPage) {
-        copy.value = { ...defaultContactCopy, ...content.contactPage };
-      }
-
-      if (content.seo?.contactTitle) document.title = content.seo.contactTitle;
-      if (content.seo?.contactDescription) {
-        let meta = document.querySelector('meta[name="description"]');
-        if (!meta) {
-          meta = document.createElement("meta");
-          meta.setAttribute("name", "description");
-          document.head.appendChild(meta);
-        }
-        meta.setAttribute("content", content.seo.contactDescription);
-      }
+      if (content.contactPage)
+        copy.value = { ...defaultCopy, ...content.contactPage };
+      if (content.seo?.contactTitle)
+        document.title = content.seo.contactTitle;
     } catch {
-      teamData.value = defaultTeamData;
-      copy.value = defaultContactCopy;
+      /* use defaults */
     }
   });
 
-  // Bulletproof interaction animations (removed ScrollTrigger entry animations to avoid layout/hydration crashes)
+  /* ── GSAP animations ── */
   useVisibleTask$(({ track, cleanup }) => {
     track(() => teamData.value.order);
-    
-    // Slight delay so lazily-hydration mapped nodes are firmly attached to the DOM
-    const timeout = setTimeout(() => {
-        const ctx = gsap.context(() => {
-          
-            // ── Floating Ambient Orbs (Omnitrix Fluid Motion) ──
-            gsap.to(".anim-orb-1", {
-              x: "random(-100, 100)",
-              y: "random(-60, 60)",
-              rotation: "random(-45, 45)",
-              duration: 10,
-              ease: "sine.inOut",
-              repeat: -1,
-              yoyo: true,
-            });
-            
-            gsap.to(".anim-orb-2", {
-              x: "random(-80, 80)",
-              y: "random(-80, 80)",
-              rotation: "random(-30, 30)",
-              duration: 12,
-              ease: "sine.inOut",
-              repeat: -1,
-              yoyo: true,
-              delay: 1.5
-            });
 
-            // Sastra Logo slow hover
-            gsap.to(".anim-float-logo", {
-              y: -8,
-              duration: 2.5,
-              ease: "power1.inOut",
-              yoyo: true,
-              repeat: -1
-            });
+    const t = setTimeout(() => {
+      gsap.registerPlugin(ScrollTrigger);
 
-            // ── Faux 3D Interactive Card Hover ──
-            const cardsArray = gsap.utils.toArray<HTMLElement>('.anim-card');
-            cardsArray.forEach((card) => {
-               card.addEventListener("mousemove", (e) => {
-                  const rect = card.getBoundingClientRect();
-                  const x = e.clientX - rect.left - rect.width / 2;
-                  const y = e.clientY - rect.top - rect.height / 2;
-                  
-                  gsap.to(card, {
-                     rotationY: 12 * (x / (rect.width / 2)),
-                     rotationX: -12 * (y / (rect.height / 2)),
-                     transformPerspective: 1200,
-                     duration: 0.4,
-                     ease: "power2.out"
-                  });
-                  
-                  const avatar = card.querySelector('.anim-avatar');
-                  if(avatar) {
-                     gsap.to(avatar, {
-                        x: 10 * (x / (rect.width / 2)),
-                        y: 10 * (y / (rect.height / 2)),
-                        duration: 0.4,
-                        ease: "power2.out"
-                     })
-                  }
-               });
-               
-               card.addEventListener("mouseleave", () => {
-                  gsap.to(card, {
-                     rotationY: 0,
-                     rotationX: 0,
-                     duration: 0.7,
-                     ease: "power3.out"
-                  });
-                  const avatar = card.querySelector('.anim-avatar');
-                  if(avatar) {
-                     gsap.to(avatar, { x: 0, y: 0, duration: 0.7, ease: "power3.out" });
-                  }
-               });
-            });
+      const ctx = gsap.context(() => {
+        /* 1 ── Hero word-by-word entry */
+        gsap.fromTo(
+          ".ct-word-1",
+          { y: 90, opacity: 0, filter: "blur(14px)" },
+          { y: 0, opacity: 1, filter: "blur(0px)", duration: 1.1, ease: "power4.out", delay: 0.05 }
+        );
+        gsap.fromTo(
+          ".ct-word-2",
+          { y: 90, opacity: 0, filter: "blur(14px)" },
+          { y: 0, opacity: 1, filter: "blur(0px)", duration: 1.1, ease: "power4.out", delay: 0.28 }
+        );
+        gsap.fromTo(
+          ".ct-hero-sub",
+          { y: 30, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.9, ease: "power3.out", delay: 0.5 }
+        );
+        gsap.fromTo(
+          ".ct-hero-meta",
+          { y: 20, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.8, ease: "power3.out", delay: 0.68 }
+        );
+        gsap.fromTo(
+          ".ct-hero-ctas",
+          { y: 20, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.8, ease: "power3.out", delay: 0.85 }
+        );
+
+        /* 2 ── Right panel cinematic reveal (layer split) */
+        gsap.fromTo(
+          ".ct-panel-top",
+          { y: -60, opacity: 0, scaleY: 0.7 },
+          { y: 0, opacity: 1, scaleY: 1, duration: 1.0, ease: "power4.out", delay: 0.35 }
+        );
+        gsap.fromTo(
+          ".ct-panel-bottom",
+          { y: 60, opacity: 0, scaleY: 0.7 },
+          { y: 0, opacity: 1, scaleY: 1, duration: 1.0, ease: "power4.out", delay: 0.5 }
+        );
+        gsap.fromTo(
+          ".ct-panel-center",
+          { scaleX: 0, opacity: 0 },
+          { scaleX: 1, opacity: 1, duration: 0.8, ease: "power3.out", delay: 0.7 }
+        );
+
+        /* 3 ── Ben10 watermarks — persistent float + slow spin */
+        gsap.to(".ct-ben10-primary img", {
+          y: -18, duration: 7, ease: "sine.inOut", repeat: -1, yoyo: true,
+        });
+        gsap.to(".ct-ben10-secondary img", {
+          y: 14, duration: 9, ease: "sine.inOut", repeat: -1, yoyo: true, delay: 1.5,
+        });
+        gsap.to(".ct-ben10-extra img", {
+          rotation: 360, duration: 80, ease: "none", repeat: -1,
         });
 
-        cleanup(() => ctx.revert());
-    }, 150);
+        /* 4 ── Ambient orbs drift */
+        gsap.to(".ct-orb-a", {
+          x: 50, y: -40, duration: 10, ease: "sine.inOut", repeat: -1, yoyo: true,
+        });
+        gsap.to(".ct-orb-b", {
+          x: -60, y: 50, duration: 13, ease: "sine.inOut", repeat: -1, yoyo: true, delay: 2,
+        });
+        gsap.to(".ct-orb-c", {
+          x: 40, y: 30, duration: 9, ease: "sine.inOut", repeat: -1, yoyo: true, delay: 1,
+        });
 
-    return () => clearTimeout(timeout);
+        /* 5 ── Radar rings pulse */
+        gsap.to(".ct-radar-ring", {
+          scale: 2.6, opacity: 0, duration: 3.0,
+          ease: "power2.out", repeat: -1, stagger: 1.0,
+        });
+
+        /* 6 ── Hero card — scroll-synced scale */
+        gsap.to(".ct-hero-shell", {
+          scale: 1.012, ease: "none",
+          scrollTrigger: {
+            trigger: ".ct-hero-shell",
+            start: "top top",
+            end: "bottom top",
+            scrub: 2,
+          },
+        });
+
+        /* 7 ── Background grid parallax */
+        gsap.to(".ct-grid-bg", {
+          backgroundPositionY: "50%", ease: "none",
+          scrollTrigger: {
+            trigger: "body", start: "top top", end: "bottom bottom", scrub: 2,
+          },
+        });
+
+        /* 8 ── s-reveal: universal scroll reveal (mirrors sponsors page) */
+        gsap.utils.toArray<HTMLElement>(".s-reveal").forEach((node) => {
+          gsap.fromTo(
+            node,
+            { y: 42, opacity: 0 },
+            {
+              y: 0, opacity: 1, duration: 0.9, ease: "power3.out",
+              scrollTrigger: { trigger: node, start: "top 88%", toggleActions: "play none none none" },
+            }
+          );
+        });
+
+        /* 9 ── Contact mode cards: stagger slide-in */
+        gsap.utils.toArray<HTMLElement>(".ct-mode-card").forEach((card, i) => {
+          const fromX = i % 2 === 0 ? -50 : 50;
+          gsap.fromTo(
+            card,
+            { x: fromX, y: 40, opacity: 0, scale: 0.9 },
+            {
+              x: 0, y: 0, opacity: 1, scale: 1,
+              duration: 0.85, ease: "power3.out",
+              scrollTrigger: { trigger: card, start: "top 87%", toggleActions: "play none none none" },
+            }
+          );
+        });
+
+        /* 10 ── Team grid stagger */
+        gsap.utils.toArray<HTMLElement>(".ct-team-grid").forEach((grid) => {
+          const cards = grid.querySelectorAll<HTMLElement>(".ct-member-card");
+          gsap.fromTo(
+            cards,
+            { y: 70, opacity: 0, scale: 0.92 },
+            {
+              y: 0, opacity: 1, scale: 1,
+              duration: 0.7, ease: "power3.out", stagger: 0.08,
+              scrollTrigger: { trigger: grid, start: "top 86%", toggleActions: "play none none none" },
+            }
+          );
+        });
+
+        /* 11 ── Footer CTA panels */
+        gsap.fromTo(
+          ".ct-footer-panel",
+          { y: 80, opacity: 0, scale: 0.94 },
+          {
+            y: 0, opacity: 1, scale: 1,
+            duration: 0.95, ease: "power3.out", stagger: 0.2,
+            scrollTrigger: { trigger: ".ct-footer-grid", start: "top 85%", toggleActions: "play none none none" },
+          }
+        );
+
+        /* 12 ── 3D hero card mouse parallax */
+        const heroShell = document.querySelector<HTMLElement>(".ct-hero-shell");
+        const heroLayout = document.querySelector<HTMLElement>(".ct-hero-layout");
+        const ben10Primary = document.querySelector<HTMLElement>(".ct-ben10-primary");
+        if (heroShell && heroLayout) {
+          heroShell.addEventListener("mousemove", (e: MouseEvent) => {
+            const r = heroShell.getBoundingClientRect();
+            const dx = (e.clientX - r.left - r.width / 2) / (r.width / 2);
+            const dy = (e.clientY - r.top - r.height / 2) / (r.height / 2);
+            gsap.to(heroLayout, {
+              rotationY: 6 * dx, rotationX: -4 * dy,
+              transformPerspective: 1800, duration: 0.45, ease: "power2.out",
+            });
+            if (ben10Primary) {
+              gsap.to(ben10Primary, { x: dx * 25, y: dy * 18, duration: 0.5, ease: "power2.out" });
+            }
+          });
+          heroShell.addEventListener("mouseleave", () => {
+            gsap.to(heroLayout, { rotationY: 0, rotationX: 0, duration: 1.0, ease: "power3.out" });
+            if (ben10Primary) gsap.to(ben10Primary, { x: 0, y: 0, duration: 1.0, ease: "power3.out" });
+          });
+        }
+
+        /* 13 ── Member card 3D tilt */
+        gsap.utils.toArray<HTMLElement>(".ct-member-card").forEach((card) => {
+          const onMove = (e: MouseEvent) => {
+            const r = card.getBoundingClientRect();
+            const x = (e.clientX - r.left) / r.width - 0.5;
+            const y = (e.clientY - r.top) / r.height - 0.5;
+            card.style.transform = `perspective(1200px) rotateY(${x * 14}deg) rotateX(${-y * 14}deg) translateY(-6px)`;
+          };
+          const onLeave = () => {
+            card.style.transition = "transform 520ms cubic-bezier(0.22,1,0.36,1)";
+            card.style.transform = "perspective(1200px) rotateY(0deg) rotateX(0deg) translateY(0)";
+          };
+          const onEnter = () => { card.style.transition = "transform 100ms linear"; };
+          card.addEventListener("mousemove", onMove);
+          card.addEventListener("mouseleave", onLeave);
+          card.addEventListener("mouseenter", onEnter);
+        });
+
+        /* 14 ── SASTRA image slow float */
+        gsap.to(".ct-sastra-img-wrap", {
+          y: -10, duration: 3.5, ease: "power1.inOut", yoyo: true, repeat: -1,
+        });
+      });
+
+      cleanup(() => {
+        ctx.revert();
+        ScrollTrigger.getAll().forEach((t) => t.kill());
+      });
+    }, 250);
+
+    return () => clearTimeout(t);
   });
 
+  /* ─── render ─────────────────────────────────────────── */
   return (
-    <div class="relative mx-auto min-h-screen w-full px-4 py-32 sm:px-6 lg:px-8 bg-[#050505] text-[#f0fff0] overflow-x-hidden">
-      
-      {/* Animating Dynamic Grid Tech Pattern */}
-      <div 
-        class="fixed inset-0 pointer-events-none z-0 opacity-40 mix-blend-screen"
-        style={{ 
-          backgroundImage: "linear-gradient(to right, rgba(14, 169, 53, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(14, 169, 53, 0.05) 1px, transparent 1px)", 
-          backgroundSize: "3rem 3rem",
-          backgroundPosition: "center center"
-        }}
-      ></div>
+    <div class="relative overflow-x-hidden px-4 pt-0 pb-10 sm:px-6 lg:px-8">
 
-      {/* Fluid Floating Ambient Orbs */}
-      <div class="anim-orb-1 pointer-events-none fixed top-[10%] left-[-5%] h-[35rem] w-[35rem] rounded-full bg-[#0ea935] opacity-[0.05] blur-[120px] mix-blend-screen"></div>
-      <div class="anim-orb-2 pointer-events-none fixed bottom-[15%] right-[-5%] h-[40rem] w-[40rem] rounded-full bg-[#077a23] opacity-[0.08] blur-[150px] mix-blend-screen"></div>
+      {/* ══════════════════════════════════════════
+          HERO — full viewport (matches sponsors)
+      ══════════════════════════════════════════ */}
+      <section
+        class="ct-hero-shell relative z-10 mx-auto flex w-full max-w-[1700px] flex-col justify-center overflow-hidden rounded-[3rem] border border-white/10 bg-gradient-to-br from-black/80 via-[#040604] to-black px-6 py-8 shadow-[0_0_120px_rgba(14,169,53,0.15)] ring-1 ring-white/5 backdrop-blur-3xl sm:px-10 lg:px-14"
+        style="height:calc(100vh - 90px);height:calc(100svh - 90px);height:calc(100dvh - 90px);min-height:calc(100vh - 90px);max-height:calc(100dvh - 90px);"
+      >
+        {/* Grid background */}
+        <div
+          class="ct-grid-bg pointer-events-none absolute inset-0 opacity-[0.045]"
+          style="background-image:linear-gradient(#0ea935 1px,transparent 1px),linear-gradient(90deg,#0ea935 1px,transparent 1px);background-size:50px 50px;"
+        />
 
-      {/* Main Glassmorphic Header */}
-      <section class="relative z-10 overflow-hidden rounded-[3rem] border border-[rgba(255,255,255,0.1)] bg-[rgba(10,10,10,0.6)] backdrop-blur-3xl p-8 sm:p-14 shadow-[inset_0_1px_1px_rgba(255,255,255,0.15),0_12px_45px_rgba(0,0,0,0.6)] mx-auto max-w-6xl transition-transform duration-500 hover:scale-[1.01] hover:border-[#0ea935]/30 group animate-in slide-in-from-bottom-8 fade-in duration-700 ease-out">
-        <div class="pointer-events-none absolute -top-40 -right-40 h-80 w-80 rounded-full bg-[#0ea935] opacity-[0.08] blur-[100px] transition-transform duration-1000 group-hover:scale-110"></div>
-        <div class="relative flex flex-col md:flex-row items-center justify-between gap-12">
-          
-          <div class="text-center md:text-left flex-1">
-             <span class="inline-flex rounded-full border border-[#0ea935]/40 bg-[#0ea935]/10 px-4 py-1.5 text-[0.65rem] font-black text-[#0ea935] tracking-[0.25em] uppercase shadow-[0_0_15px_rgba(14,169,53,0.15)] mb-6 transition-all duration-300 group-hover:bg-[#0ea935]/20 group-hover:shadow-[0_0_20px_rgba(14,169,53,0.25)]">Command Center</span>
-            <h1 class="text-5xl font-black sm:text-7xl text-transparent bg-clip-text bg-gradient-to-br from-[#0ea935] via-[#ffffff] to-[#077a23] leading-[1.1] drop-shadow-[0_0_10px_rgba(14,169,53,0.3)]">
-              {copy.value.titlePrefix}{" "}
-              <span class="text-[#f0fff0] drop-shadow-[0_0_20px_rgba(255,255,255,0.3)] block mt-1">
-                {copy.value.titleAccent}
+        {/* ── Ambient orbs ── */}
+        <div class="ct-orb-a pointer-events-none absolute -left-[15%] -top-[10%] h-[55vw] w-[55vw] rounded-full bg-[#0ea935] opacity-[0.07] blur-[160px]" />
+        <div class="ct-orb-b pointer-events-none absolute -right-[12%] bottom-[-8%] h-[48vw] w-[48vw] rounded-full bg-[#077a23] opacity-[0.09] blur-[180px]" />
+        <div class="ct-orb-c pointer-events-none absolute left-[40%] top-[50%] h-[22vw] w-[22vw] rounded-full bg-[#6eff5a] opacity-[0.04] blur-[120px]" />
+
+        {/* ── Ben10 watermarks (exact sponsors pattern) ── */}
+        <div class="ct-ben10-primary s-ben10-mark s-ben10-mark--primary" style={{ zIndex: 0 }}>
+          <span class="s-ben10-mark__glow" />
+          <img
+            src="/ben10/ben10-logo.png"
+            alt=""
+            class="s-ben10-mark__img"
+            style={{ animation: "float 15s ease-in-out infinite" }}
+          />
+        </div>
+        <div class="ct-ben10-secondary s-ben10-mark s-ben10-mark--secondary" style={{ zIndex: 0 }}>
+          <span class="s-ben10-mark__glow" />
+          <img
+            src="/ben10/ben10-logo.png"
+            alt=""
+            class="s-ben10-mark__img"
+            style={{ animation: "float-reverse 20s ease-in-out infinite" }}
+          />
+        </div>
+        {/* Extra centre watermark */}
+        <div
+          class="ct-ben10-extra pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.04]"
+          style={{ zIndex: 0, width: "min(30vw,400px)" }}
+        >
+          <img src="/ben10/ben10-logo.png" alt="" class="w-full" style={{ filter: "grayscale(1) brightness(0.5) drop-shadow(0 0 24px rgba(14,169,53,0.3))" }} />
+        </div>
+
+        {/* Radar pulse rings at centre */}
+        <div class="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" style={{ zIndex: 0 }}>
+          <div class="ct-radar-ring absolute h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#0ea935]/20" style={{ transformOrigin: "center", opacity: 0.5 }} />
+          <div class="ct-radar-ring absolute h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#0ea935]/12" style={{ transformOrigin: "center", opacity: 0.35 }} />
+        </div>
+
+        {/* ── Main hero layout (mirrors sponsors 2-col grid) ── */}
+        <div
+          class="ct-hero-layout relative z-10 grid h-full items-center gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14"
+          style={{ transformStyle: "preserve-3d" }}
+        >
+          {/* LEFT — copy */}
+          <div>
+            {/* Badge */}
+            <div class="ct-hero-meta mb-4 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 backdrop-blur-md" style={{ opacity: 0 }}>
+              <span class="h-1.5 w-1.5 animate-pulse rounded-full bg-[#0ea935] shadow-[0_0_8px_#0ea935]" />
+              <span class="text-[0.6rem] font-bold tracking-[0.2em] text-white/70 uppercase">
+                Command Center
+              </span>
+            </div>
+
+            {/* H1 — staggered words */}
+            <h1 class="t-heading bg-gradient-to-r from-white via-gray-200 to-gray-500 bg-clip-text text-[clamp(2.6rem,5.5vw,5.5rem)] leading-[0.92] font-black tracking-tighter text-transparent drop-shadow-xl">
+              <span class="ct-word-1 block" style={{ opacity: 0 }}>
+                Get in
+              </span>
+              <span
+                class="ct-word-2 mt-1 block"
+                style={{
+                  opacity: 0,
+                  background: "linear-gradient(92deg,#0ea935 0%,#6eff5a 45%,#fff 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                  filter: "drop-shadow(0 0 40px rgba(14,169,53,0.5))",
+                }}
+              >
+                Touch
               </span>
             </h1>
-            <p class="mt-6 max-w-xl text-base md:text-lg font-semibold text-[#8ca38c] leading-relaxed mx-auto md:mx-0">
-              {copy.value.subtitle}
+
+            {/* Subtitle */}
+            <p
+              class="ct-hero-sub mt-5 max-w-xl text-[0.9rem] leading-relaxed font-medium text-[var(--t-muted)] md:pr-10"
+              style={{ opacity: 0 }}
+            >
+              Connect with the Theta 2026 High Command. Our operators are standing by across all active channels.
             </p>
+
+            {/* Stat tiles — mirrors sponsors page pattern */}
+            <div class="ct-hero-meta mt-7 flex flex-wrap gap-3" style={{ opacity: 0 }}>
+              {[
+                { label: "Response", value: "Live" },
+                { label: "Channels", value: "04" },
+                { label: "Status", value: "Online" },
+              ].map((item) => (
+                <div
+                  key={item.label}
+                  class="group relative flex flex-col justify-center rounded-[1rem] border border-white/10 bg-black/40 px-4 py-2.5 backdrop-blur-xl transition-all hover:border-white/20 hover:bg-white/10"
+                >
+                  <p class="text-[0.55rem] font-black tracking-[0.2em] text-[var(--t-dim)] uppercase transition-colors group-hover:text-[#0ea935]">
+                    {item.label}
+                  </p>
+                  <p class="mt-1 font-[var(--font-display)] text-xl font-black text-white drop-shadow-md">
+                    {item.value}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {/* CTAs */}
+            <div class="ct-hero-ctas mt-8 flex flex-wrap items-center gap-4" style={{ opacity: 0 }}>
+              <a
+                href="mailto:theta@sastra.edu"
+                class="rounded-full bg-gradient-to-r from-[#0ea935] to-[#0ba030] px-7 py-3 text-[0.75rem] font-black tracking-widest text-black uppercase shadow-[0_0_24px_rgba(14,169,53,0.45)] transition-all hover:scale-105 hover:shadow-[0_0_36px_rgba(14,169,53,0.65)]"
+              >
+                Open Comm Channel
+              </a>
+              <a
+                href="#ct-team"
+                class="rounded-full border border-white/20 bg-white/5 px-7 py-3 text-[0.75rem] font-bold tracking-widest text-white uppercase transition-all hover:border-white/40 hover:bg-white/10"
+              >
+                View Operators
+              </a>
+            </div>
           </div>
-          
-          <div class="rounded-[2.5rem] border border-[rgba(255,255,255,0.08)] bg-[#050505]/70 p-8 md:p-10 backdrop-blur-2xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.1),0_0_40px_rgba(0,0,0,0.5)] flex flex-col items-center">
-             <span class="text-[0.6rem] font-black uppercase tracking-[0.25em] text-[#4d5c4d] mb-5">Secured Location Directive</span>
-             <div class="anim-float-logo">
-               <img
-                 src="/sponsors/general/sastra-university-logo.jpg"
-                 alt="SASTRA University"
-                 width={200}
-                 height={72}
-                 class="h-12 md:h-14 w-auto object-contain [filter:brightness(0)_invert(1)] opacity-70 drop-shadow-[0_0_12px_rgba(255,255,255,0.25)]"
-               />
-             </div>
+
+          {/* RIGHT — SASTRA panel (cinematic layer reveal) */}
+          <div class="hidden lg:flex lg:flex-col lg:gap-3">
+            {/* TOP layer — status bar */}
+            <div
+              class="ct-panel-top rounded-2xl border border-white/10 bg-black/50 px-5 py-3 backdrop-blur-xl"
+              style={{ opacity: 0, transformOrigin: "top center" }}
+            >
+              <div class="flex items-center justify-between">
+                <span class="text-[0.58rem] font-black tracking-[0.28em] text-white/40 uppercase">
+                  Secured Location Directive
+                </span>
+                <span class="flex items-center gap-1.5 rounded-full border border-[#0ea935]/40 bg-[#0ea935]/12 px-3 py-1 text-[0.58rem] font-black tracking-widest text-[#0ea935] uppercase">
+                  <span class="h-1.5 w-1.5 animate-pulse rounded-full bg-[#0ea935] shadow-[0_0_6px_#0ea935]" />
+                  Verified
+                </span>
+              </div>
+            </div>
+
+            {/* CENTRE layer — SASTRA image (house-split animation) */}
+            <div
+              class="ct-panel-center ct-sastra-img-wrap group relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#070707]/80 shadow-2xl backdrop-blur-3xl"
+              style={{ opacity: 0, transformOrigin: "center", minHeight: "260px" }}
+            >
+              {/* Glass highlight */}
+              <div class="pointer-events-none absolute inset-0 rounded-[1.75rem] bg-gradient-to-br from-white/10 via-transparent to-transparent opacity-20 transition-opacity duration-700 group-hover:opacity-50" />
+              {/* Glow overlay */}
+              <div
+                class="pointer-events-none absolute inset-0 opacity-30 transition-opacity duration-700 group-hover:opacity-70"
+                style={{ background: "radial-gradient(circle at top right,rgba(14,169,53,0.3),transparent 55%),radial-gradient(circle at bottom left,rgba(14,169,53,0.2),transparent 55%)" }}
+              />
+              {/* Top shimmer line */}
+              <div class="pointer-events-none absolute left-[10%] right-[10%] top-0 z-10 h-[1px]"
+                style={{ background: "linear-gradient(90deg,transparent,rgba(14,169,53,0.9),transparent)" }} />
+              {/* Bottom fade */}
+              <div class="pointer-events-none absolute bottom-0 left-0 right-0 z-10 h-20"
+                style={{ background: "linear-gradient(to top,rgba(7,7,7,0.95),transparent)" }} />
+
+              <img
+                src="/sponsors/general/sastra-university-logo.jpg"
+                alt="SASTRA University"
+                class="absolute inset-0 h-full w-full object-cover transition-all duration-700 group-hover:scale-105 group-hover:brightness-110"
+                style={{ filter: "brightness(0.85) contrast(1.08) saturate(0.85)" }}
+              />
+
+              {/* Overlay label */}
+              <div class="absolute bottom-4 left-4 z-20">
+                <p class="text-[0.55rem] font-black tracking-[0.28em] text-white/50 uppercase">
+                  SASTRA University — Thanjavur
+                </p>
+              </div>
+            </div>
+
+            {/* BOTTOM layer — chips */}
+            <div
+              class="ct-panel-bottom grid grid-cols-2 gap-2"
+              style={{ opacity: 0, transformOrigin: "bottom center" }}
+            >
+              {["Theta 2026 Contact Desk", "Omnitrix Command UI"].map((chip) => (
+                <div
+                  key={chip}
+                  class="rounded-xl border border-white/8 bg-black/40 px-3 py-2.5 text-center text-[0.58rem] font-black tracking-widest text-[var(--t-dim)] uppercase backdrop-blur-md transition-all hover:border-[#0ea935]/30 hover:text-[#0ea935]"
+                >
+                  {chip}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Dynamic Team Grid */}
-      <section class="mt-20 space-y-24 mx-auto max-w-7xl relative z-10 px-2 sm:px-4">
-        {teamData.value.order.map((section, sectionIndex) => {
+      {/* ══════════════════════════════════════════
+          CONTACT MODES — scroll story section
+      ══════════════════════════════════════════ */}
+      <section class="relative z-10 mx-auto mt-16 max-w-7xl">
+        <div class="s-reveal mb-10 text-center">
+          <span class="t-badge">Communication Grid</span>
+          <h2 class="t-heading mt-5 text-[clamp(2rem,4vw,3.3rem)] text-[var(--t-text)]">
+            Contact{" "}
+            <span class="t-gradient">Modes</span>
+          </h2>
+          <p class="mx-auto mt-4 max-w-xl text-base leading-relaxed text-[var(--t-muted)]">
+            Choose your preferred communication channel with the operations team.
+          </p>
+        </div>
+
+        {/* Mode cards — mirrors s-benefit-card system */}
+        <div class="s-benefits-stage">
+          <div class="s-benefits-stage__glow" />
+          <div
+            class="relative z-10 grid justify-center gap-4"
+            style={{ gridTemplateColumns: "repeat(4, minmax(0, 17rem))" }}
+          >
+            {MODES.map((mode, i) => (
+              <div
+                key={mode.label}
+                class="ct-mode-card s-benefit-card"
+                style={{
+                  ["--s-benefit-accent" as string]: mode.accent,
+                  ["--s-benefit-glow" as string]: mode.glow,
+                  transitionDelay: `${i * 80}ms`,
+                  opacity: 0,
+                }}
+              >
+                <span class="s-benefit-card__halo" />
+                <span class="s-benefit-card__sheen" />
+
+                <div class="s-benefit-card__top">
+                  <span class="s-benefit-card__index">0{i + 1}</span>
+                  <span class="s-benefit-card__eyebrow">{mode.tag}</span>
+                </div>
+                <div class="s-benefit-card__body">
+                  <div
+                    class="mt-4 flex h-11 w-11 items-center justify-center rounded-xl border"
+                    style={{
+                      borderColor: `color-mix(in srgb,${mode.accent} 30%,rgba(255,255,255,0.08))`,
+                      background: `color-mix(in srgb,${mode.accent} 10%,rgba(255,255,255,0.03))`,
+                      color: mode.accent,
+                    }}
+                  >
+                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d={mode.icon} />
+                    </svg>
+                  </div>
+                  <h3 class="s-benefit-card__title">{mode.label}</h3>
+                  <p class="s-benefit-card__copy">{mode.desc}</p>
+                </div>
+                <div class="s-benefit-card__footer">
+                  <div class="s-benefit-card__metric">
+                    <strong style={{ color: mode.accent }}>⬤</strong>
+                    <span>Active Channel</span>
+                  </div>
+                  <span class="s-benefit-card__chip">Theta 2026</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════
+          TEAM SECTIONS
+      ══════════════════════════════════════════ */}
+      <section id="ct-team" class="relative z-10 mx-auto mt-16 max-w-7xl space-y-16">
+        {teamData.value.order.map((section, si) => {
           const members = teamData.value[
             section.key as keyof Omit<TeamData, "order" | "webtek">
           ] as TeamMember[];
-
           if (!Array.isArray(members) || members.length === 0) return null;
 
           return (
-            <div key={section.key} class="relative" style={{ animationDelay: `${sectionIndex * 150}ms` }}>
-              <div class="mb-10 flex flex-col sm:flex-row sm:items-end justify-between gap-5 border-b-2 border-[rgba(14,169,53,0.15)] pb-6 relative">
-                <div class="absolute -bottom-0.5 left-0 w-32 h-[2px] bg-gradient-to-r from-[#0ea935] to-transparent"></div>
-                <h2 class="text-3xl sm:text-4xl font-black tracking-tight text-[#f0fff0]">
-                  {section.label}
-                </h2>
-                <span class="rounded-[1rem] border border-[rgba(255,255,255,0.1)] bg-[rgba(10,10,10,0.6)] backdrop-blur-md px-5 py-2 text-[0.7rem] font-black uppercase tracking-[0.2em] text-[#8ca38c] shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]">
-                  <span class="text-[#0ea935]">{members.length}</span> {copy.value.membersSuffix}
+            <div key={section.key} class="scroll-mt-28">
+              {/* Section header — sponsors hall-style */}
+              <div class="s-reveal mb-8 flex flex-wrap items-end justify-between gap-4 rounded-[2rem] border border-white/8 bg-black/30 px-6 py-5 backdrop-blur-2xl">
+                <div>
+                  <p class="text-[0.6rem] font-black tracking-[0.28em] text-[var(--t-dim)] uppercase">
+                    Sector {String(si + 1).padStart(2, "0")}
+                  </p>
+                  <h2 class="t-heading mt-2 text-[clamp(1.8rem,3.5vw,2.8rem)] text-[var(--t-text)]">
+                    {section.label}
+                  </h2>
+                </div>
+                <span class="t-badge">
+                  <span class="text-[#0ea935]">{members.length}</span>{" "}
+                  {defaultCopy.membersSuffix}
                 </span>
               </div>
-              
-              {/* Cards Grid */}
-              <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 perspective-[1000px]">
-                {members.map((member, index) => (
-                  <article 
-                    key={member.name} 
-                    style={{ animationDelay: `${index * 100}ms` }}
-                    class="anim-card group relative rounded-[2.5rem] p-[2px] overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.6)] transition-all duration-300 hover:shadow-[0_12px_45px_rgba(14,169,53,0.35)] flex flex-col animate-in slide-in-from-bottom-8 fade-in duration-700 ease-out fill-mode-both"
+
+              {/* Cards grid */}
+              <div
+                class="ct-team-grid grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+                style={{ perspective: "1200px" }}
+              >
+                {members.map((member) => (
+                  <article
+                    key={member.name}
+                    class="ct-member-card group relative flex flex-col overflow-hidden rounded-[1.75rem] border border-white/8 bg-[rgba(5,5,5,0.82)] backdrop-blur-2xl transition-shadow duration-300 hover:shadow-[0_20px_60px_rgba(0,0,0,0.5),0_0_40px_rgba(14,169,53,0.1)]"
                   >
-                    {/* The Animated Sweeping Radar Border */}
-                    <div class="absolute inset-[-100%] z-0 origin-center animate-[spin_4s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,transparent_0%,transparent_60%,#0ea935_100%)] opacity-30 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    
-                    {/* Optional Glow blur for the radar */}
-                    <div class="absolute inset-[-100%] z-0 origin-center animate-[spin_4s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,transparent_0%,transparent_60%,#0ea935_100%)] blur-md opacity-0 group-hover:opacity-80 transition-opacity duration-500"></div>
+                    {/* Conic border sweep on hover */}
+                    <div class="pointer-events-none absolute inset-[-100%] z-0 origin-center animate-[spin_5s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,transparent_0%,transparent_65%,#0ea935_100%)] opacity-0 transition-opacity duration-500 group-hover:opacity-80" />
+                    <div class="pointer-events-none absolute inset-[-100%] z-0 origin-center animate-[spin_5s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,transparent_0%,transparent_65%,#0ea935_100%)] opacity-0 blur-lg transition-opacity duration-500 group-hover:opacity-40" />
 
-                    {/* The Actual Inner Glass Card */}
-                    <div class="relative z-10 flex flex-col items-center rounded-[2.4rem] border border-[rgba(255,255,255,0.05)] bg-[rgba(10,10,10,0.85)] group-hover:bg-[#050505]/95 backdrop-blur-2xl p-7 w-full h-full transition-colors duration-500 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]">
-                      
-                      <div class="pointer-events-none absolute -top-10 -right-10 h-36 w-36 rounded-full bg-[#0ea935] opacity-[0.05] blur-3xl transition-opacity duration-500 group-hover:opacity-[0.25]"></div>
-                      
-                      {/* 3D Parallax Avatar Container */}
-                      <div class="anim-avatar relative flex h-32 w-32 items-center justify-center -mt-2">
-                        {/* Avatar Pulsing Scanners */}
-                        <div class="absolute inset-[-6px] rounded-full border border-dashed border-[#0ea935]/50 animate-[spin_6s_linear_infinite] opacity-0 group-hover:opacity-100 transition-opacity duration-500 shadow-[0_0_15px_rgba(14,169,53,0.4)]"></div>
-                        <div class="absolute inset-[-14px] rounded-full border border-[#0ea935]/20 animate-[spin_10s_linear_infinite_reverse] opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                    <div class="relative z-10 flex h-full flex-col items-center rounded-[1.6rem] p-6">
+                      {/* Corner halo */}
+                      <div class="pointer-events-none absolute -right-6 -top-6 h-28 w-28 rounded-full bg-[#0ea935] opacity-0 blur-3xl transition-opacity duration-500 group-hover:opacity-[0.18]" />
 
-                        <div class="relative flex h-full w-full items-center justify-center overflow-hidden rounded-[2rem] border border-[#0ea935]/30 bg-[#050505] shadow-[0_0_25px_rgba(14,169,53,0.15)] transition-transform duration-500 group-hover:scale-105 group-hover:border-[#0ea935]/80">
+                      {/* Avatar */}
+                      <div class="relative flex h-24 w-24 shrink-0 items-center justify-center">
+                        <div class="absolute inset-[-5px] animate-[spin_6s_linear_infinite] rounded-full border border-dashed border-[#0ea935]/50 opacity-0 transition-opacity duration-400 group-hover:opacity-100" />
+                        <div class="relative flex h-full w-full overflow-hidden rounded-2xl border border-white/10 bg-black shadow-[0_0_20px_rgba(14,169,53,0.1)] transition-all duration-400 group-hover:border-[#0ea935]/60 group-hover:shadow-[0_0_28px_rgba(14,169,53,0.28)]">
                           <img
                             src={member.image || "/team/default-avatar.svg"}
                             alt={member.name}
                             loading="lazy"
-                            width={128}
-                            height={128}
-                            class="h-full w-full object-cover grayscale-[50%] contrast-125 brightness-90 group-hover:grayscale-0 group-hover:brightness-110 group-hover:saturate-150 transition-all duration-500"
-                            onError$={(event) => {
-                              (event.target as HTMLImageElement).src = "/team/default-avatar.svg";
-                            }}
+                            class="h-full w-full object-cover brightness-90 grayscale-[30%] transition-all duration-500 group-hover:brightness-110 group-hover:grayscale-0 group-hover:saturate-150"
+                            onError$={(e) => { (e.target as HTMLImageElement).src = "/team/default-avatar.svg"; }}
                           />
                         </div>
                       </div>
-                      
-                      <h3 class="mt-8 text-center text-xl font-black text-[#f0fff0] tracking-tight group-hover:text-[#0ea935] transition-colors">{member.name}</h3>
-                      <p class="mt-1.5 text-center text-[0.7rem] font-bold uppercase tracking-[0.2em] text-[#0ea935]">
+
+                      {/* Name + role */}
+                      <h3 class="mt-5 text-center text-[1rem] font-black tracking-tight text-[var(--t-text)] transition-colors group-hover:text-[#0ea935]">
+                        {member.name}
+                      </h3>
+                      <p class="mt-1 text-center text-[0.6rem] font-bold tracking-[0.22em] text-[#0ea935] uppercase">
                         {member.role}
                       </p>
-                      
-                      <div class="mt-6 w-full space-y-3 text-xs font-semibold text-[#8ca38c]">
+
+                      {/* Divider */}
+                      <div class="my-4 h-px w-3/4 rounded-full bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
+                      {/* Contact links */}
+                      <div class="w-full space-y-2 text-xs text-[var(--t-muted)]">
                         <a
                           href={`tel:${member.phone}`}
-                          class="flex w-full items-center justify-center gap-3 rounded-2xl border border-[rgba(255,255,255,0.05)] bg-[#111111] px-4 py-3.5 transition-all duration-300 hover:border-[#0ea935]/50 hover:bg-[#0ea935]/10 hover:text-[#0ea935] hover:shadow-[0_0_15px_rgba(14,169,53,0.2)]"
+                          class="flex w-full items-center justify-center gap-2 rounded-xl border border-white/6 bg-white/4 px-4 py-3 font-semibold transition-all duration-300 hover:border-[#0ea935]/40 hover:bg-[#0ea935]/8 hover:text-[#0ea935]"
                         >
-                          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                          <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                           </svg>
                           <span class="tracking-widest">{member.phone}</span>
                         </a>
                         <a
                           href={`mailto:${member.email}`}
-                          class="flex w-full items-center justify-center gap-3 rounded-2xl border border-[rgba(255,255,255,0.05)] bg-[#111111] px-4 py-3.5 transition-all duration-300 hover:border-[#0ea935]/50 hover:bg-[#0ea935]/10 hover:text-[#0ea935] hover:shadow-[0_0_15px_rgba(14,169,53,0.2)] truncate"
+                          class="flex w-full items-center justify-center gap-2 truncate rounded-xl border border-white/6 bg-white/4 px-4 py-3 font-semibold transition-all duration-300 hover:border-[#0ea935]/40 hover:bg-[#0ea935]/8 hover:text-[#0ea935]"
                         >
-                          <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                          <svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                           </svg>
-                          <span class="truncate tracking-wide">{member.email}</span>
+                          <span class="truncate">{member.email}</span>
                         </a>
                       </div>
                     </div>
@@ -355,71 +722,115 @@ export default component$(() => {
         })}
       </section>
 
-      {/* Tech Footer Section */}
-      <section class="mt-32 grid gap-10 lg:grid-cols-2 mx-auto max-w-6xl relative z-10 animate-in slide-in-from-bottom-8 fade-in duration-700 ease-out delay-500 fill-mode-both">
-        {/* WebTek Panel */}
-        <div class="relative overflow-hidden rounded-[3rem] border border-[rgba(255,255,255,0.1)] bg-[rgba(10,10,10,0.6)] backdrop-blur-3xl p-10 sm:p-14 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1),0_12px_45px_rgba(0,0,0,0.6)] transition-all hover:border-[#0ea935]/40 hover:shadow-[0_12px_60px_rgba(14,169,53,0.15)] flex flex-col group">
-          <div class="pointer-events-none absolute -top-16 -right-16 h-48 w-48 rounded-full bg-[#077a23] opacity-[0.1] blur-[80px] transition-transform duration-700 group-hover:scale-125"></div>
-          
-          <span class="inline-block rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-[0.65rem] font-black uppercase tracking-[0.3em] text-[#8ca38c] mb-6 w-max shadow-[0_4px_10px_rgba(0,0,0,0.3)]">
-            {copy.value.webtekLabel}
-          </span>
-          <h3 class="text-4xl font-black text-[#f0fff0] tracking-tight">
-            {copy.value.webtekTitle}
-          </h3>
-          <p class="mt-5 text-sm font-semibold text-[#8ca38c] leading-relaxed max-w-sm mb-10 flex-1">
-            {copy.value.webtekDescription}
-          </p>
-          
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            <a
-              href={teamData.value.webtek.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="rounded-[1.5rem] border border-[rgba(255,255,255,0.05)] bg-[#111111]/80 px-2 py-4 text-center text-[0.75rem] font-black tracking-widest uppercase text-[#8ca38c] shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] transition-all duration-300 hover:border-[#0ea935]/60 hover:text-[#0ea935] hover:bg-[#0ea935]/15 hover:-translate-y-1"
-            >
-              {copy.value.githubLabel}
-            </a>
-            <a
-              href={teamData.value.webtek.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="rounded-[1.5rem] border border-[rgba(255,255,255,0.05)] bg-[#111111]/80 px-2 py-4 text-center text-[0.75rem] font-black tracking-widest uppercase text-[#8ca38c] shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] transition-all duration-300 hover:border-[#0ea935]/60 hover:text-[#0ea935] hover:bg-[#0ea935]/15 hover:-translate-y-1"
-            >
-              {copy.value.linkedinLabel}
-            </a>
-            <a
-              href={`mailto:${teamData.value.webtek.email}`}
-              class="col-span-2 sm:col-span-1 border border-[#0ea935]/50 bg-[#0ea935] px-2 py-4 text-center text-[0.7rem] font-black tracking-[0.15em] uppercase text-[#050505] shadow-[0_0_25px_rgba(14,169,53,0.5)] transition-all duration-300 hover:bg-[#12cb42] hover:shadow-[0_0_35px_rgba(14,169,53,0.7)] hover:-translate-y-1 rounded-[1.5rem] flex items-center justify-center"
-            >
-              {copy.value.emailLabel}
-            </a>
+      {/* ══════════════════════════════════════════
+          FOOTER CTA — s-cta-shell (exact sponsors pattern)
+      ══════════════════════════════════════════ */}
+      <section class="relative z-10 mx-auto mt-16 max-w-7xl pb-6">
+        <div class="ct-footer-grid s-reveal grid gap-6 lg:grid-cols-2">
+          {/* WebTek panel */}
+          <div
+            class="ct-footer-panel s-cta-shell"
+            style={{ opacity: 0, maxWidth: "none" }}
+          >
+            <div class="s-cta-shell__grid" />
+            <div class="s-cta-shell__orb s-cta-shell__orb--left" />
+            <div class="s-cta-shell__orb s-cta-shell__orb--right" />
+            <div class="s-cta-shell__inner" style={{ gridTemplateColumns: "1fr" }}>
+              <div class="s-cta-copy">
+                <div class="s-cta-copy__meta">
+                  <span class="t-badge s-cta-copy__badge">WebTek Team</span>
+                  <div class="s-cta-copy__logo">
+                    <span class="s-cta-copy__logo-glow" />
+                    <img src="/ben10/ben10-logo.png" alt="" class="s-cta-copy__logo-img" />
+                  </div>
+                </div>
+                <h3 class="s-cta-copy__title">
+                  Engineering &{" "}
+                  <span class="s-cta-copy__accent">Platform</span>
+                </h3>
+                <p class="s-cta-copy__desc">
+                  Build, deployment, and experience optimization powered by WebTek.
+                </p>
+                <div class="s-cta-copy__actions">
+                  <a href={teamData.value.webtek.github} target="_blank" rel="noopener noreferrer" class="t-btn-ghost">
+                    GitHub
+                  </a>
+                  <a href={teamData.value.webtek.linkedin} target="_blank" rel="noopener noreferrer" class="t-btn-ghost">
+                    LinkedIn
+                  </a>
+                  <a href={`mailto:${teamData.value.webtek.email}`} class="t-btn-primary">
+                    Email Team
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
 
-        {/* Message Panel */}
-        <div class="relative overflow-hidden rounded-[3rem] border border-[rgba(255,255,255,0.1)] bg-[rgba(10,10,10,0.6)] backdrop-blur-3xl p-10 sm:p-14 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1),0_12px_45px_rgba(0,0,0,0.6)] transition-all hover:border-[#0ea935]/40 hover:shadow-[0_12px_60px_rgba(14,169,53,0.15)] flex flex-col justify-center">
-          <div class="pointer-events-none absolute -bottom-16 -left-16 h-56 w-56 rounded-full bg-[#0ea935] opacity-[0.08] blur-[100px]"></div>
-          
-          <h3 class="text-4xl font-black text-[#f0fff0] tracking-tight leading-tight">
-            {copy.value.stillQuestionsTitle}
-          </h3>
-          <p class="mt-5 text-sm font-semibold text-[#8ca38c] leading-relaxed max-w-sm">
-            {copy.value.stillQuestionsSubtitle}
-          </p>
-          <div class="mt-10">
-             <a
-               href={`mailto:${teamData.value.webtek.email}`}
-               class="inline-flex items-center justify-center gap-4 rounded-[2rem] border border-[rgba(255,255,255,0.15)] bg-[#050505]/95 px-10 py-5 text-xs font-black uppercase tracking-[0.2em] text-[#0ea935] shadow-[inset_0_1px_1px_rgba(255,255,255,0.1),0_0_25px_rgba(14,169,53,0.2)] transition-all duration-300 hover:border-[#0ea935]/80 hover:bg-[#0ea935]/15 hover:shadow-[0_0_40px_rgba(14,169,53,0.5)] hover:-translate-y-1"
-             >
-               <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-               </svg>
-               {copy.value.sendEmailLabel}
-             </a>
+          {/* Questions panel */}
+          <div
+            class="ct-footer-panel s-cta-shell"
+            style={{ opacity: 0, maxWidth: "none" }}
+          >
+            <div class="s-cta-shell__grid" />
+            <div class="s-cta-shell__orb s-cta-shell__orb--left" />
+            <div class="s-cta-shell__orb s-cta-shell__orb--right" />
+            <div class="s-cta-shell__inner" style={{ gridTemplateColumns: "1fr" }}>
+              <div class="s-cta-copy">
+                <div class="s-cta-copy__meta">
+                  <span class="t-badge s-cta-copy__badge">Support Line</span>
+                  <div class="s-cta-copy__logo">
+                    <span class="s-cta-copy__logo-glow" />
+                    <svg class="s-cta-copy__logo-img" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                  </div>
+                </div>
+                <h3 class="s-cta-copy__title">
+                  Still have{" "}
+                  <span class="s-cta-copy__accent">questions?</span>
+                </h3>
+                <p class="s-cta-copy__desc">
+                  Feel free to transceive a message to our coordinators. We respond to all queries within 24 hours.
+                </p>
+                <div class="s-cta-copy__actions">
+                  <a href={`mailto:${teamData.value.webtek.email}`} class="t-btn-primary">
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    Open Comm Channel
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
+
+      {/* Float keyframes (mirrors sponsors page) */}
+      <style>{`
+        @keyframes float {
+          0%,100% { transform: translateY(0) rotate(0deg); }
+          33%      { transform: translateY(-22px) rotate(3deg); }
+          66%      { transform: translateY(10px) rotate(-2deg); }
+        }
+        @keyframes float-reverse {
+          0%,100% { transform: translateY(0) rotate(0deg); }
+          33%      { transform: translateY(18px) rotate(-3deg); }
+          66%      { transform: translateY(-12px) rotate(2deg); }
+        }
+        @media (max-width:1024px) {
+          .s-benefits-grid,
+          [style*="grid-template-columns: repeat(4"] {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+          }
+        }
+        @media (max-width:640px) {
+          .s-benefits-grid,
+          [style*="grid-template-columns: repeat(4"] {
+            grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+          }
+        }
+      `}</style>
     </div>
   );
 });

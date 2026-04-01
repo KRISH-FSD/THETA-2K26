@@ -44,7 +44,8 @@ const sponsorTierMeta = [
     key: "platinum",
     label: "Platinum",
     eyebrow: "Flagship visibility",
-    description: "High-impact branding for partners who want the boldest Theta footprint.",
+    description:
+      "High-impact branding for partners who want the boldest Theta footprint.",
     accent: "#0ea935",
     glow: "rgba(14, 169, 53, 0.4)",
   },
@@ -52,7 +53,8 @@ const sponsorTierMeta = [
     key: "gold",
     label: "Gold",
     eyebrow: "Premium reach",
-    description: "A polished brand layer for sponsors who want standout recall across the fest.",
+    description:
+      "A polished brand layer for sponsors who want standout recall across the fest.",
     accent: "#f5c842",
     glow: "rgba(245,200,66,0.2)",
   },
@@ -60,7 +62,8 @@ const sponsorTierMeta = [
     key: "silver",
     label: "Silver",
     eyebrow: "Momentum layer",
-    description: "Smart campaign visibility with a strong on-ground and digital presence.",
+    description:
+      "Smart campaign visibility with a strong on-ground and digital presence.",
     accent: "#c2cad7",
     glow: "rgba(194,202,215,0.18)",
   },
@@ -68,7 +71,8 @@ const sponsorTierMeta = [
     key: "media",
     label: "Media",
     eyebrow: "Amplification network",
-    description: "Partners who extend Theta's stories, moments, and announcements beyond campus.",
+    description:
+      "Partners who extend Theta's stories, moments, and announcements beyond campus.",
     accent: "#7c5cff",
     glow: "rgba(124,92,255,0.22)",
   },
@@ -112,6 +116,19 @@ const defaultCopy: SponsorsPageCopy = {
 
 const sortSponsors = (list: Sponsor[] = []) =>
   list.slice().sort((a, b) => (a.order || 999) - (b.order || 999));
+
+const getOuterTierTheme = (
+  tier: (typeof sponsorTierMeta)[number] & { sponsors: Sponsor[] },
+) =>
+  tier.key === "platinum"
+    ? {
+        accent: "#ff4d4f",
+        glow: "rgba(255,77,79,0.26)",
+      }
+    : {
+        accent: tier.accent,
+        glow: tier.glow,
+      };
 
 export default component$(() => {
   const sponsors = useSignal<SponsorsConfig>(defaultSponsors);
@@ -301,6 +318,42 @@ export default component$(() => {
     0,
   );
 
+  const benefits = [
+    {
+      title: "Audience Energy",
+      eyebrow: "High-intent crowds",
+      metric: "12K+",
+      metricLabel: "festival impressions",
+      chip: "Student-first reach",
+      accent: "#6eff5a",
+      glow: "rgba(110,255,90,0.22)",
+      description:
+        "Meet students, builders, creators, and communities already primed for festival moments and brand discovery.",
+    },
+    {
+      title: "Visual Presence",
+      eyebrow: "Premium placement",
+      metric: "360",
+      metricLabel: "digital + venue touchpoints",
+      chip: "Always-on visibility",
+      accent: "#4de0ff",
+      glow: "rgba(77,224,255,0.2)",
+      description:
+        "Extend your identity through the website, venue touchpoints, and spotlight moments with a more premium feel.",
+    },
+    {
+      title: "Campus Recall",
+      eyebrow: "Memorable storytelling",
+      metric: "3X",
+      metricLabel: "stronger repeated recall",
+      chip: "Designed to stick",
+      accent: "#ffd54a",
+      glow: "rgba(255,213,74,0.2)",
+      description:
+        "Stay memorable through tiered placements, storytelling opportunities, and a showcase that feels designed, not generic.",
+    },
+  ] as const;
+
   const marqueeSponsors = availableTiers.flatMap((tier) =>
     tier.sponsors.map((sponsor) => ({
       ...sponsor,
@@ -309,41 +362,58 @@ export default component$(() => {
   );
 
   return (
-    <div class="relative overflow-x-hidden px-4 py-10 sm:px-6 lg:px-8">
-      {/* Massive 90vh/95vw Hero Canvas */}
-      <section class="relative z-10 mx-auto mt-4 flex h-[90vh] min-h-[600px] w-[96vw] max-w-[1700px] flex-col justify-center overflow-hidden rounded-[3rem] border border-white/10 bg-gradient-to-br from-black/80 via-[#040604] to-black shadow-[0_0_120px_rgba(14,169,53,0.15)] ring-1 ring-white/5 backdrop-blur-3xl px-6 py-8 sm:px-10 lg:px-14">
-        
+    <div class="relative overflow-x-hidden px-4 pt-0 pb-10 sm:px-6 lg:px-8">
+      {/* Full-viewport hero canvas */}
+      <section
+        class="relative z-10 mx-auto flex w-full max-w-[1700px] flex-col justify-center overflow-hidden rounded-[3rem] border border-white/10 bg-gradient-to-br from-black/80 via-[#040604] to-black px-6 py-8 shadow-[0_0_120px_rgba(14,169,53,0.15)] ring-1 ring-white/5 backdrop-blur-3xl sm:px-10 lg:px-14"
+        style="height: calc(100vh - 90px); height: calc(100svh - 90px); height: calc(100dvh - 90px); min-height: calc(100vh - 90px); min-height: calc(100svh - 90px); min-height: calc(100dvh - 90px); max-height: calc(100dvh - 90px);"
+      >
         {/* --- Background Animations --- */}
-        <div class="absolute inset-0 opacity-[0.04] pointer-events-none" style="background-image: linear-gradient(#0ea935 1px, transparent 1px), linear-gradient(90deg, #0ea935 1px, transparent 1px); background-size: 50px 50px;"></div>
-        
-        <div class="absolute -left-[10%] top-[-10%] h-[60vw] w-[60vw] rounded-full bg-[#0ea935] opacity-[0.05] blur-[150px] pointer-events-none transition-opacity duration-[10s]" />
-        <div class="absolute -right-[15%] bottom-[-10%] h-[50vw] w-[50vw] rounded-full bg-[#0ea935] opacity-[0.08] blur-[150px] pointer-events-none transition-opacity duration-[10s]" style="transition-delay: 2s;" />
+        <div
+          class="pointer-events-none absolute inset-0 opacity-[0.04]"
+          style="background-image: linear-gradient(#0ea935 1px, transparent 1px), linear-gradient(90deg, #0ea935 1px, transparent 1px); background-size: 50px 50px;"
+        ></div>
 
-        <img 
-          src="/ben10/ben10-logo.png" 
-          alt="" 
-          class="absolute left-[3%] top-[10%] w-[40vw] max-w-[600px] opacity-[0.03] grayscale pointer-events-none"
-          style={{ animation: "float 15s ease-in-out infinite" }}
-        />
-        <img 
-          src="/ben10/ben10-logo.png" 
-          alt="" 
-          class="absolute right-[-5%] bottom-[5%] w-[35vw] max-w-[500px] opacity-[0.02] grayscale pointer-events-none"
-          style={{ animation: "float-reverse 20s ease-in-out infinite" }}
+        <div
+          class="pointer-events-none absolute -right-[15%] bottom-[-10%] h-[50vw] w-[50vw] rounded-full bg-[#0ea935] opacity-[0.08] blur-[150px] transition-opacity duration-[10s]"
+          style="transition-delay: 2s;"
         />
 
-        <div class="flex h-full w-full flex-col justify-center align-middle">
-          <div class="relative grid gap-6 lg:gap-14 lg:grid-cols-[1.1fr_0.9fr] lg:items-center -mt-[4vh]">
+        <div class="s-ben10-mark s-ben10-mark--primary">
+          <span class="s-ben10-mark__glow"></span>
+          <img
+            src="/ben10/ben10-logo.png"
+            alt=""
+            class="s-ben10-mark__img"
+            style={{ animation: "float 15s ease-in-out infinite" }}
+          />
+        </div>
+        <div class="s-ben10-mark s-ben10-mark--secondary">
+          <span class="s-ben10-mark__glow"></span>
+          <img
+            src="/ben10/ben10-logo.png"
+            alt=""
+            class="s-ben10-mark__img"
+            style={{ animation: "float-reverse 20s ease-in-out infinite" }}
+          />
+        </div>
+
+        <div class="flex h-full w-full flex-col justify-center">
+          <div class="relative grid h-full items-center gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14">
             <div class="s-reveal">
-              <div class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 mb-2 backdrop-blur-md">
-                <span class="text-[0.6rem] font-bold uppercase tracking-[0.2em] text-white/70">{copy.value.badge}</span>
+              <div class="mb-2 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 backdrop-blur-md">
+                <span class="text-[0.6rem] font-bold tracking-[0.2em] text-white/70 uppercase">
+                  {copy.value.badge}
+                </span>
               </div>
-              
-              <h1 class="t-heading text-[clamp(2rem,4vw,3.5rem)] font-black tracking-tighter leading-[1] text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-200 to-gray-500 drop-shadow-xl">
+
+              <h1 class="t-heading bg-gradient-to-r from-white via-gray-200 to-gray-500 bg-clip-text text-[clamp(2rem,4vw,3.5rem)] leading-[1] font-black tracking-tighter text-transparent drop-shadow-xl">
                 {copy.value.titlePrefix}{" "}
-                <span class="t-gradient drop-shadow-[0_0_20px_rgba(14,169,53,0.3)] block mt-1">{copy.value.titleAccent}</span>
+                <span class="t-gradient mt-1 block drop-shadow-[0_0_20px_rgba(14,169,53,0.3)]">
+                  {copy.value.titleAccent}
+                </span>
               </h1>
-              <p class="mt-4 max-w-xl text-[0.85rem] sm:text-[0.9rem] font-medium leading-relaxed text-[var(--t-muted)] md:pr-10">
+              <p class="mt-4 max-w-xl text-[0.85rem] leading-relaxed font-medium text-[var(--t-muted)] sm:text-[0.9rem] md:pr-10">
                 {copy.value.subtitle}
               </p>
 
@@ -364,12 +434,12 @@ export default component$(() => {
                 ].map((item) => (
                   <div
                     key={item.label}
-                    class="group relative flex flex-col justify-center rounded-[1rem] border border-white/10 bg-black/40 px-4 py-2.5 backdrop-blur-xl transition-all hover:bg-white/10 hover:border-white/20"
+                    class="group relative flex flex-col justify-center rounded-[1rem] border border-white/10 bg-black/40 px-4 py-2.5 backdrop-blur-xl transition-all hover:border-white/20 hover:bg-white/10"
                   >
-                    <p class="text-[0.55rem] font-black uppercase tracking-[0.2em] text-[var(--t-dim)] group-hover:text-[#0ea935] transition-colors">
+                    <p class="text-[0.55rem] font-black tracking-[0.2em] text-[var(--t-dim)] uppercase transition-colors group-hover:text-[#0ea935]">
                       {item.label}
                     </p>
-                    <p class="mt-1 font-[var(--font-display)] text-xl font-black text-white drop-shadow-md">
+                    <p class="mt-1 text-xl font-[var(--font-display)] font-black text-white drop-shadow-md">
                       {item.value}
                     </p>
                   </div>
@@ -377,13 +447,16 @@ export default component$(() => {
               </div>
 
               <div class="mt-8 flex flex-wrap items-center gap-4">
-                <Link href="/contact" class="rounded-full bg-gradient-to-r from-[#0ea935] to-[#0ba030] px-6 py-3 text-[0.75rem] font-black uppercase tracking-widest text-black shadow-[0_0_20px_rgba(14,169,53,0.4)] transition-all hover:scale-105 hover:shadow-[0_0_30px_rgba(14,169,53,0.6)]">
+                <Link
+                  href="/contact"
+                  class="rounded-full bg-gradient-to-r from-[#0ea935] to-[#0ba030] px-6 py-3 text-[0.75rem] font-black tracking-widest text-black uppercase shadow-[0_0_20px_rgba(14,169,53,0.4)] transition-all hover:scale-105 hover:shadow-[0_0_30px_rgba(14,169,53,0.6)]"
+                >
                   {copy.value.primaryCta}
                 </Link>
                 <button
                   type="button"
                   onClick$={scrollToHall}
-                  class="rounded-full border border-white/20 bg-white/5 px-6 py-3 text-[0.75rem] font-bold uppercase tracking-widest text-white transition-all hover:bg-white/10 hover:border-white/40"
+                  class="rounded-full border border-white/20 bg-white/5 px-6 py-3 text-[0.75rem] font-bold tracking-widest text-white uppercase transition-all hover:border-white/40 hover:bg-white/10"
                 >
                   {copy.value.secondaryCta}
                 </button>
@@ -393,20 +466,20 @@ export default component$(() => {
             <div class="s-reveal hidden lg:block">
               <div
                 data-sponsor-tilt
-                class="group relative overflow-hidden rounded-[2rem] border border-white/10 bg-[#070707]/80 p-5 shadow-2xl backdrop-blur-3xl lg:p-6 transition-all duration-500 hover:border-white/30"
+                class="group relative overflow-hidden rounded-[2rem] border border-white/10 bg-[#070707]/80 p-5 shadow-2xl backdrop-blur-3xl transition-all duration-500 hover:border-white/30 lg:p-6"
                 style={`box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 40px ${spotlight.glow};`}
               >
                 {/* Smooth Glass Highlights for Hover Effect */}
                 <div
-                  class="pointer-events-none absolute inset-0 opacity-20 group-hover:opacity-70 transition-opacity duration-1000"
+                  class="pointer-events-none absolute inset-0 opacity-20 transition-opacity duration-1000 group-hover:opacity-70"
                   style={`background: radial-gradient(circle at top right, ${spotlight.glow}, transparent 55%), radial-gradient(circle at bottom left, ${spotlight.glow}, transparent 55%);`}
                 ></div>
-                <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent rounded-[2rem] opacity-30 group-hover:opacity-60 transition-opacity duration-700"></div>
+                <div class="pointer-events-none absolute inset-0 rounded-[2rem] bg-gradient-to-br from-white/10 via-transparent to-transparent opacity-30 transition-opacity duration-700 group-hover:opacity-60"></div>
 
                 <div class="relative z-10">
                   <div class="mb-3 flex items-center justify-between gap-4">
                     <div>
-                      <p class="text-[0.55rem] font-black uppercase tracking-[0.3em] text-white/50 group-hover:text-white transition-colors duration-500">
+                      <p class="text-[0.55rem] font-black tracking-[0.3em] text-white/50 uppercase transition-colors duration-500 group-hover:text-white">
                         Spotlight Tier
                       </p>
                       <h2 class="t-heading mt-1 text-[2rem] font-black tracking-tight text-white drop-shadow-md">
@@ -414,7 +487,7 @@ export default component$(() => {
                       </h2>
                     </div>
                     <span
-                      class="inline-flex h-10 w-10 items-center justify-center rounded-xl border bg-black/50 text-base font-black uppercase shadow-inner backdrop-blur-md group-hover:scale-110 transition-transform duration-500"
+                      class="inline-flex h-10 w-10 items-center justify-center rounded-xl border bg-black/50 text-base font-black uppercase shadow-inner backdrop-blur-md transition-transform duration-500 group-hover:scale-110"
                       style={`border-color: ${spotlight.glow}; color: ${spotlight.accent}; box-shadow: inset 0 0 10px ${spotlight.glow};`}
                     >
                       {spotlight.sponsors.length}
@@ -422,12 +495,12 @@ export default component$(() => {
                   </div>
 
                   <p
-                    class="mt-3 w-max rounded-full border border-white/5 bg-black/40 px-3 py-1 text-[0.55rem] font-bold uppercase tracking-[0.25em] shadow-inner backdrop-blur-md group-hover:bg-black/60 transition-colors duration-500"
+                    class="mt-3 w-max rounded-full border border-white/5 bg-black/40 px-3 py-1 text-[0.55rem] font-bold tracking-[0.25em] uppercase shadow-inner backdrop-blur-md transition-colors duration-500 group-hover:bg-black/60"
                     style={`color: ${spotlight.accent}; box-shadow: 0 0 5px ${spotlight.glow};`}
                   >
                     {spotlight.eyebrow}
                   </p>
-                  <p class="mt-2 max-w-xl text-[0.8rem] leading-relaxed text-white/60 drop-shadow-sm group-hover:text-white/80 transition-colors duration-500">
+                  <p class="mt-2 max-w-xl text-[0.8rem] leading-relaxed text-white/60 drop-shadow-sm transition-colors duration-500 group-hover:text-white/80">
                     {spotlight.description}
                   </p>
 
@@ -438,7 +511,7 @@ export default component$(() => {
                         class="s-spotlight-item group flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/5 p-3 backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:bg-white/10 hover:shadow-[0_10px_20px_rgba(255,255,255,0.05)]"
                         style={`border-color: ${spotlight.glow};`}
                       >
-                        <div class="flex h-12 lg:h-14 w-full items-center justify-center overflow-hidden rounded-xl bg-white/95 p-2 shadow-inner mix-blend-screen group-hover:mix-blend-normal transition-all duration-500">
+                        <div class="flex h-12 w-full items-center justify-center overflow-hidden rounded-xl bg-white/95 p-2 mix-blend-screen shadow-inner transition-all duration-500 group-hover:mix-blend-normal lg:h-14">
                           <img
                             src={sponsor.logo}
                             alt={sponsor.name}
@@ -446,7 +519,7 @@ export default component$(() => {
                             class="h-full w-full object-contain filter transition-transform duration-700 group-hover:scale-110"
                           />
                         </div>
-                        <p class="mt-2 text-center text-[0.6rem] font-bold uppercase tracking-[0.2em] text-[var(--t-dim)] group-hover:text-white transition-colors">
+                        <p class="mt-2 text-center text-[0.6rem] font-bold tracking-[0.2em] text-[var(--t-dim)] uppercase transition-colors group-hover:text-white">
                           {sponsor.name}
                         </p>
                       </div>
@@ -475,24 +548,26 @@ export default component$(() => {
             </div>
             <div class="t-marquee-wrap">
               <div data-marquee-track class="t-marquee-track animate-left">
-                {[...marqueeSponsors, ...marqueeSponsors].map((sponsor, index) => (
-                  <article
-                    key={`${sponsor.tierKey}-${sponsor.name}-${index}`}
-                    class="group mx-4 w-48 flex-shrink-0 text-center"
-                  >
-                    <div class="flex h-20 items-center justify-center rounded-2xl bg-white/95 p-3 shadow-lg border border-white/20 transition-transform duration-300 hover:scale-110">
-                      <img
-                        src={sponsor.logo}
-                        alt={sponsor.name}
-                        loading="lazy"
-                        class="h-full w-full object-contain"
-                      />
-                    </div>
-                    <p class="mt-3 text-[0.55rem] font-bold uppercase tracking-[0.25em] text-[var(--t-dim)]">
-                      {sponsor.name}
-                    </p>
-                  </article>
-                ))}
+                {[...marqueeSponsors, ...marqueeSponsors].map(
+                  (sponsor, index) => (
+                    <article
+                      key={`${sponsor.tierKey}-${sponsor.name}-${index}`}
+                      class="group mx-4 w-48 flex-shrink-0 text-center"
+                    >
+                      <div class="flex h-20 items-center justify-center rounded-2xl border border-white/20 bg-white/95 p-3 shadow-lg transition-transform duration-300 hover:scale-110">
+                        <img
+                          src={sponsor.logo}
+                          alt={sponsor.name}
+                          loading="lazy"
+                          class="h-full w-full object-contain"
+                        />
+                      </div>
+                      <p class="mt-3 text-[0.55rem] font-bold tracking-[0.25em] text-[var(--t-dim)] uppercase">
+                        {sponsor.name}
+                      </p>
+                    </article>
+                  ),
+                )}
               </div>
             </div>
           </div>
@@ -510,6 +585,7 @@ export default component$(() => {
         <div class="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {availableTiers.map((tier) => {
             const active = selectedTier.value === tier.key;
+            const outerTheme = getOuterTierTheme(tier);
             return (
               <button
                 key={tier.key}
@@ -518,20 +594,20 @@ export default component$(() => {
                 onClick$={() => jumpToTier(tier.key)}
                 class={[
                   "s-reveal relative overflow-hidden rounded-[1.75rem] border bg-[rgba(5,5,5,0.72)] p-6 text-left backdrop-blur-2xl transition-all duration-300",
-                  active
-                    ? "translate-y-[-4px]"
-                    : "hover:-translate-y-1",
+                  active ? "translate-y-[-4px]" : "hover:-translate-y-1",
                 ]}
-                style={`border-color: ${tier.glow}; box-shadow: ${
-                  active ? `0 24px 70px ${tier.glow}` : "0 20px 50px rgba(0,0,0,0.22)"
+                style={`border-color: ${outerTheme.glow}; box-shadow: ${
+                  active
+                    ? `0 24px 70px ${outerTheme.glow}`
+                    : "0 20px 50px rgba(0,0,0,0.22)"
                 };`}
               >
                 <div
                   class="pointer-events-none absolute inset-0"
-                  style={`background: radial-gradient(circle at top right, ${tier.glow}, transparent 40%);`}
+                  style={`background: radial-gradient(circle at top right, ${outerTheme.glow}, transparent 40%);`}
                 ></div>
                 <div class="relative">
-                  <p class="text-[0.64rem] font-black uppercase tracking-[0.26em] text-[var(--t-dim)]">
+                  <p class="text-[0.64rem] font-black tracking-[0.26em] text-[var(--t-dim)] uppercase">
                     {tier.eyebrow}
                   </p>
                   <div class="mt-4 flex items-center justify-between gap-4">
@@ -539,8 +615,8 @@ export default component$(() => {
                       {tier.label}
                     </h3>
                     <span
-                      class="inline-flex min-w-[3rem] justify-center rounded-full border px-3 py-1 text-xs font-black uppercase tracking-[0.18em]"
-                      style={`border-color: ${tier.glow}; color: ${tier.accent};`}
+                      class="inline-flex min-w-[3rem] justify-center rounded-full border px-3 py-1 text-xs font-black tracking-[0.18em] uppercase"
+                      style={`border-color: ${outerTheme.glow}; color: ${outerTheme.accent};`}
                     >
                       {tier.sponsors.length}
                     </span>
@@ -548,10 +624,10 @@ export default component$(() => {
                   <p class="mt-4 text-sm leading-relaxed text-[var(--t-muted)]">
                     {tier.description}
                   </p>
-                  <div class="mt-6 flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-[var(--t-text)]">
+                  <div class="mt-6 flex items-center gap-2 text-xs font-black tracking-[0.2em] text-[var(--t-text)] uppercase">
                     <span
                       class="inline-block h-2.5 w-2.5 rounded-full"
-                      style={`background: ${tier.accent}; box-shadow: 0 0 18px ${tier.glow};`}
+                      style={`background: ${outerTheme.accent}; box-shadow: 0 0 18px ${outerTheme.glow};`}
                     ></span>
                     Focus Tier
                   </div>
@@ -581,30 +657,33 @@ export default component$(() => {
           {availableTiers.length > 0 ? (
             availableTiers.map((tier, index) => {
               const active = selectedTier.value === tier.key;
+              const outerTheme = getOuterTierTheme(tier);
 
               return (
                 <section
                   id={`sponsor-tier-${tier.key}`}
                   key={tier.key}
                   class="s-reveal scroll-mt-28 rounded-[2.25rem] border bg-[rgba(5,5,5,0.72)] p-5 backdrop-blur-2xl sm:p-6 lg:p-7"
-                  style={`border-color: ${tier.glow}; box-shadow: ${
-                    active ? `0 24px 90px ${tier.glow}` : "0 26px 70px rgba(0,0,0,0.2)"
+                  style={`border-color: ${outerTheme.glow}; box-shadow: ${
+                    active
+                      ? `0 24px 90px ${outerTheme.glow}`
+                      : "0 26px 70px rgba(0,0,0,0.2)"
                   };`}
                 >
                   <div class="grid gap-6 lg:grid-cols-[320px_1fr]">
                     <div
                       class="rounded-[1.75rem] border px-5 py-6"
-                      style={`border-color: ${tier.glow}; background: radial-gradient(circle at top left, ${tier.glow}, transparent 46%), rgba(255,255,255,0.02);`}
+                      style={`border-color: ${outerTheme.glow}; background: radial-gradient(circle at top left, ${outerTheme.glow}, transparent 46%), rgba(255,255,255,0.02);`}
                     >
-                      <p class="text-[0.66rem] font-black uppercase tracking-[0.28em] text-[var(--t-dim)]">
+                      <p class="text-[0.66rem] font-black tracking-[0.28em] text-[var(--t-dim)] uppercase">
                         Tier {String(index + 1).padStart(2, "0")}
                       </p>
                       <h3 class="t-heading mt-4 text-4xl text-[var(--t-text)]">
                         {tier.label}
                       </h3>
                       <p
-                        class="mt-3 text-[0.74rem] font-black uppercase tracking-[0.22em]"
-                        style={`color: ${tier.accent};`}
+                        class="mt-3 text-[0.74rem] font-black tracking-[0.22em] uppercase"
+                        style={`color: ${outerTheme.accent};`}
                       >
                         {tier.eyebrow}
                       </p>
@@ -613,7 +692,9 @@ export default component$(() => {
                       </p>
 
                       <div class="mt-6 flex flex-wrap gap-2">
-                        <span class="t-chip">{tier.sponsors.length} Partners</span>
+                        <span class="t-chip">
+                          {tier.sponsors.length} Partners
+                        </span>
                         <span class="t-chip">Campus Activation</span>
                         <span class="t-chip">Digital Presence</span>
                       </div>
@@ -642,7 +723,7 @@ export default component$(() => {
                                 class="h-full w-full object-contain filter transition-transform duration-500 group-hover:scale-110"
                               />
                             </div>
-                            <p class="mt-4 text-[0.65rem] font-bold uppercase tracking-[0.2em] text-[var(--t-dim)] group-hover:text-[var(--t-text)] transition-colors">
+                            <p class="mt-4 text-[0.65rem] font-bold tracking-[0.2em] text-[var(--t-dim)] uppercase transition-colors group-hover:text-[var(--t-text)]">
                               {sponsor.name}
                             </p>
                           </article>
@@ -673,73 +754,99 @@ export default component$(() => {
           </p>
         </div>
 
-        <div class="grid gap-5 lg:grid-cols-3">
-          {[
-            {
-              title: "Audience Energy",
-              description:
-                "Meet students, builders, creators, and communities already primed for festival moments and brand discovery.",
-            },
-            {
-              title: "Visual Presence",
-              description:
-                "Extend your identity through the website, venue touchpoints, and spotlight moments with a more premium feel.",
-            },
-            {
-              title: "Campus Recall",
-              description:
-                "Stay memorable through tiered placements, storytelling opportunities, and a showcase that feels designed, not generic.",
-            },
-          ].map((benefit, index) => (
-            <article
-              key={benefit.title}
-              class="s-reveal t-card rounded-[1.75rem] p-6 sm:p-7"
-              style={{ transitionDelay: `${index * 90}ms` }}
-            >
-              <span class="text-[0.68rem] font-black uppercase tracking-[0.26em] text-[var(--t-dim)]">
-                0{index + 1}
-              </span>
-              <h3 class="t-heading mt-4 text-2xl text-[var(--t-text)]">
-                {benefit.title}
-              </h3>
-              <p class="mt-4 text-sm leading-relaxed text-[var(--t-muted)] sm:text-base">
-                {benefit.description}
-              </p>
-              <div class="t-line-glow mt-6"></div>
-            </article>
-          ))}
+        <div class="s-benefits-stage">
+          <div class="s-benefits-stage__glow"></div>
+          <div class="s-benefits-grid">
+            {benefits.map((benefit, index) => (
+              <article
+                key={benefit.title}
+                class="s-reveal s-benefit-card"
+                style={`--s-benefit-accent:${benefit.accent};--s-benefit-glow:${benefit.glow};transition-delay:${index * 90}ms;`}
+              >
+                <span class="s-benefit-card__halo"></span>
+                <span class="s-benefit-card__sheen"></span>
+                <div class="s-benefit-card__top">
+                  <span class="s-benefit-card__index">0{index + 1}</span>
+                  <span class="s-benefit-card__eyebrow">{benefit.eyebrow}</span>
+                </div>
+                <div class="s-benefit-card__body">
+                  <h3 class="s-benefit-card__title">{benefit.title}</h3>
+                  <p class="s-benefit-card__copy">{benefit.description}</p>
+                </div>
+                <div class="s-benefit-card__footer">
+                  <div class="s-benefit-card__metric">
+                    <strong>{benefit.metric}</strong>
+                    <span>{benefit.metricLabel}</span>
+                  </div>
+                  <span class="s-benefit-card__chip">{benefit.chip}</span>
+                </div>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 
       <section class="relative z-10 mx-auto mt-16 max-w-7xl pb-6">
-        <div class="s-reveal t-cta-wrap px-6 py-10 text-center sm:px-10 sm:py-12 lg:px-14 lg:py-16">
-          <div class="t-orb pointer-events-none -left-16 -top-16 h-64 w-64 bg-[#0ea935]/16"></div>
-          <div
-            class="t-orb pointer-events-none -bottom-10 -right-10 h-52 w-52 bg-[#7c5cff]/16"
-            style="animation-delay: 2.5s;"
-          ></div>
+        <div class="s-reveal s-cta-shell">
+          <div class="s-cta-shell__grid"></div>
+          <div class="s-cta-shell__orb s-cta-shell__orb--left"></div>
+          <div class="s-cta-shell__orb s-cta-shell__orb--right"></div>
 
-          <div class="relative">
-            <span class="t-badge mx-auto">{copy.value.badge}</span>
-            <h2 class="t-heading mt-6 text-[clamp(2.4rem,6vw,4.8rem)] text-[var(--t-text)]">
-              {copy.value.ctaTitlePrefix}{" "}
-              <span class="t-gradient">{copy.value.ctaTitleAccent}</span>
-            </h2>
-            <p class="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-[var(--t-muted)]">
-              {copy.value.ctaDescription}
-            </p>
-            <div class="mt-8 flex flex-wrap justify-center gap-4">
-              <Link href="/contact" class="t-btn-primary">
-                {copy.value.ctaButton}
-              </Link>
-              <button
-                type="button"
-                onClick$={() => jumpToTier(spotlight.key)}
-                class="t-btn-ghost"
-              >
-                Revisit {spotlight.label}
-              </button>
+          <div class="s-cta-shell__inner">
+            <div class="s-cta-copy">
+              <div class="s-cta-copy__meta">
+                <span class="t-badge s-cta-copy__badge">
+                  {copy.value.badge}
+                </span>
+                <div class="s-cta-copy__logo">
+                  <span class="s-cta-copy__logo-glow"></span>
+                  <img
+                    src="/ben10/ben10-logo.png"
+                    alt="Ben 10"
+                    class="s-cta-copy__logo-img"
+                  />
+                </div>
+              </div>
+              <h2 class="s-cta-copy__title">
+                {copy.value.ctaTitlePrefix}{" "}
+                <span class="s-cta-copy__accent">
+                  {copy.value.ctaTitleAccent}
+                </span>
+              </h2>
+              <p class="s-cta-copy__desc">{copy.value.ctaDescription}</p>
+
+              <div class="s-cta-copy__actions">
+                <Link href="/contact" class="t-btn-primary">
+                  {copy.value.ctaButton}
+                </Link>
+                <button
+                  type="button"
+                  onClick$={() => jumpToTier(spotlight.key)}
+                  class="t-btn-ghost"
+                >
+                  Revisit {spotlight.label}
+                </button>
+              </div>
             </div>
+
+            <aside class="s-cta-panel">
+              <div class="s-cta-panel__ring"></div>
+              <div class="s-cta-panel__header">
+                <span class="s-cta-panel__label">Sponsor Focus</span>
+                <span class="s-cta-panel__status">Live</span>
+              </div>
+              <strong class="s-cta-panel__value">{spotlight.label}</strong>
+              <p class="s-cta-panel__text">
+                Premium presence across venue touchpoints, digital placements,
+                and community recall.
+              </p>
+
+              <div class="s-cta-panel__chips">
+                <span class="s-cta-panel__chip">On-ground Presence</span>
+                <span class="s-cta-panel__chip">Digital Reach</span>
+                <span class="s-cta-panel__chip">Campus Recall</span>
+              </div>
+            </aside>
           </div>
         </div>
       </section>
