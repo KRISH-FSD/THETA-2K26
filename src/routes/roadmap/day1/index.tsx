@@ -21,9 +21,9 @@ interface EventData {
 interface CatMeta { label: string; short: string; color: string; rgb: string; }
 interface EventCardProps {
   ev: EventData; meta: CatMeta; isActive: boolean;
-  canRegister: boolean; side: "left" | "right"; onToggle$: () => void;
+  side: "left" | "right"; onToggle$: () => void;
 }
-interface SideInfoProps { ev: EventData; meta: CatMeta; }
+interface PopupPanelProps { ev: EventData; meta: CatMeta; side: "left" | "right"; canRegister: boolean; }
 
 const EVENTS: EventData[] = [
   { id: 1, time: "09:00 AM", endTime: "10:00 AM", title: "Inauguration Ceremony",
@@ -79,41 +79,70 @@ const CAT: Record<Cat, CatMeta> = {
   cultural: { label: "Cultural", short: "CL", color: "#efffc8", rgb: "239,255,200" },
 };
 
-/* ─── Side Info Card (fills the empty opposite panel) ─────────────── */
-const SideInfoCard = component$<SideInfoProps>(({ ev, meta }) => (
-  <div class="rm-side-info" style={`--rm-accent:${meta.color};--rm-accent-rgb:${meta.rgb};`}>
-    <div class="rm-side-info__top">
-      <span class="rm-side-info__chip">
-        <span class="rm-side-info__dot" />
-        {meta.label}
-      </span>
-      <span class="rm-side-info__time">{ev.time}</span>
-    </div>
-    <p class="rm-side-info__title">{ev.title}</p>
-    <p class="rm-side-info__venue">📍 {ev.venue}</p>
-    <div class="rm-side-info__stats">
-      <div class="rm-side-info__stat">
-        <span class="rm-side-info__stat-l">Entry</span>
-        <strong class="rm-side-info__stat-v">{ev.fee}</strong>
+/* ─── Water-Drop Popup Panel ───────────────────────────────────────── */
+const PopupPanel = component$<PopupPanelProps>(({ ev, meta, side, canRegister }) => (
+  <div
+    class={["rm-popup", `rm-popup--${side}`]}
+    style={`--rm-accent:${meta.color};--rm-accent-rgb:${meta.rgb};`}
+  >
+    {/* Ripple rings — positioned outside inner so they can overflow */}
+    <span class="rm-popup__ripple rm-popup__ripple--1" />
+    <span class="rm-popup__ripple rm-popup__ripple--2" />
+    <span class="rm-popup__ripple rm-popup__ripple--3" />
+
+    <div class="rm-popup__inner">
+      {/* Header */}
+      <div class="rm-popup__head">
+        <span class="rm-popup__chip">
+          <span class="rm-popup__dot" />
+          {meta.label}
+        </span>
+        <span class="rm-popup__time">{ev.time} – {ev.endTime}</span>
       </div>
-      <div class="rm-side-info__stat">
-        <span class="rm-side-info__stat-l">Team</span>
-        <strong class="rm-side-info__stat-v">{ev.team}</strong>
+
+      <p class="rm-popup__title">{ev.title}</p>
+      <p class="rm-popup__venue">📍 {ev.venue}</p>
+
+      {/* Stats grid: Entry / Team / Prize */}
+      <div class="rm-popup__stats">
+        <div class="rm-popup__stat">
+          <span class="rm-popup__stat-l">Entry</span>
+          <strong class="rm-popup__stat-v">{ev.fee}</strong>
+        </div>
+        <div class="rm-popup__stat">
+          <span class="rm-popup__stat-l">Team</span>
+          <strong class="rm-popup__stat-v">{ev.team}</strong>
+        </div>
+        <div class="rm-popup__stat">
+          <span class="rm-popup__stat-l">Prize</span>
+          <strong class="rm-popup__stat-v">{ev.prize}</strong>
+        </div>
       </div>
-      <div class="rm-side-info__stat">
-        <span class="rm-side-info__stat-l">Prize</span>
-        <strong class="rm-side-info__stat-v">{ev.prize}</strong>
+
+      {/* Tags */}
+      <div class="rm-popup__tags">
+        {ev.tags.map((t) => <span key={t} class="rm-popup__tag">{t}</span>)}
       </div>
-    </div>
-    <div class="rm-side-info__tags">
-      {ev.tags.map((t) => <span key={t} class="rm-side-info__tag">{t}</span>)}
+
+      {/* Action buttons */}
+      <div class="rm-popup__actions">
+        <Link href="/events" class="rm-popup__action rm-popup__action--primary"
+          onClick$={(e: Event) => e.stopPropagation()}>
+          View Event Hub
+        </Link>
+        {canRegister
+          ? <Link href="/events" class="rm-popup__action rm-popup__action--ghost"
+              onClick$={(e: Event) => e.stopPropagation()}>Register Now</Link>
+          : <span class="rm-popup__open-badge">Open Access</span>}
+      </div>
     </div>
   </div>
 ));
 
 /* ─── Main Event Card ──────────────────────────────────────────────── */
+/* Stats/tags/actions live ONLY on the popup — card just expands desc */
 const EventCard = component$<EventCardProps>(
-  ({ ev, meta, isActive, canRegister, side, onToggle$ }) => (
+  ({ ev, meta, isActive, side, onToggle$ }) => (
     <article
       class={["rm-card", isActive ? "is-active" : "", `rm-card--${side}`]}
       style={`--rm-accent:${meta.color};--rm-accent-rgb:${meta.rgb};`}
@@ -141,35 +170,18 @@ const EventCard = component$<EventCardProps>(
             <p class="rm-card__overline">Node {String(ev.id).padStart(2, "0")}</p>
             <h3 class="rm-card__title">{ev.title}</h3>
           </div>
-          <span class="rm-card__toggle">{isActive ? "Collapse" : "Expand"}</span>
+          <span class="rm-card__toggle">{isActive ? "Collapse" : "Details →"}</span>
         </div>
+        {/* Description — unclamps when card is active */}
         <p class="rm-card__desc">{ev.desc}</p>
         <div class="rm-card__quick-meta">
           <span class="rm-card__meta-pill">{ev.venue}</span>
           <span class="rm-card__meta-pill">{ev.time} – {ev.endTime}</span>
         </div>
-        <div class={["rm-card__details", isActive ? "is-open" : ""]}>
-          <div class="rm-card__stat-grid">
-            {[{ label: "Entry", value: ev.fee }, { label: "Team", value: ev.team }, { label: "Reward", value: ev.prize }]
-              .map((item) => (
-                <div key={`${ev.id}-${item.label}`} class="rm-card__stat">
-                  <span class="rm-card__stat-label">{item.label}</span>
-                  <strong class="rm-card__stat-value">{item.value}</strong>
-                </div>
-              ))}
-          </div>
-          <div class="rm-card__tags">
-            {ev.tags.map((tag) => <span key={`${ev.id}-${tag}`} class="rm-card__tag">{tag}</span>)}
-          </div>
-          <div class="rm-card__actions">
-            <Link href="/events" class="rm-card__action rm-card__action--primary" onClick$={(e) => e.stopPropagation()}>
-              View event hub
-            </Link>
-            {canRegister
-              ? <Link href="/events" class="rm-card__action rm-card__action--ghost" onClick$={(e) => e.stopPropagation()}>Register now</Link>
-              : <span class="rm-card__status">Open access</span>}
-          </div>
-        </div>
+        {/* Hint text that appears when active, pointing to popup */}
+        {isActive && (
+          <p class="rm-card__popup-hint">← See details panel →</p>
+        )}
       </div>
     </article>
   ),
@@ -202,13 +214,9 @@ const GRID_JS = `
 `;
 
 export default component$(() => {
-  /* ── activeEventId does NOT drive useVisibleTask$ ── */
   const activeEventId = useSignal<number | null>(null);
 
   useVisibleTask$(() => {
-    /* ─ NO track() here → this runs ONCE only, never re-runs on card toggle ─ */
-
-    /* GSAP loader */
     const loadGSAP = () =>
       new Promise<void>((res) => {
         // @ts-ignore
@@ -236,14 +244,10 @@ export default component$(() => {
       let ro: ResizeObserver | undefined;
       const revealed = new Set<Element>();
 
-      /* ── helpers ── */
       const liveNodes = () =>
         Array.from(container.querySelectorAll<HTMLElement>("[data-snake-node]"))
              .filter((n) => n.offsetParent !== null && n.offsetWidth > 0);
 
-      /* ── Build S-CURVE path through alternating node positions ──
-           Nodes sit at left or right edge of the spine column,
-           alternating per row → the path zigzags = S-curve.          */
       const buildPath = (): boolean => {
         const nodes = liveNodes();
         if (nodes.length < 2) return false;
@@ -252,9 +256,6 @@ export default component$(() => {
         const W  = container.clientWidth;
         const H  = Math.max(container.scrollHeight, container.clientHeight);
 
-        /* Read ACTUAL node centers — they alternate left/right because
-           rm-row--left nodes are right-aligned in the spine column,
-           rm-row--right nodes are left-aligned in the spine column.   */
         const pts = nodes.map((n) => {
           const r = n.getBoundingClientRect();
           return {
@@ -263,7 +264,6 @@ export default component$(() => {
           };
         });
 
-        /* Cubic bezier — large vertical bend creates the S-curve */
         let d = `M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`;
         for (let i = 1; i < pts.length; i++) {
           const p = pts[i - 1], c = pts[i];
@@ -285,7 +285,6 @@ export default component$(() => {
         return true;
       };
 
-      /* ── Tracer position ── */
       const posTracer = (prog: number) => {
         if (!tracer || totalLen === 0) return;
         const cl  = Math.max(0, Math.min(1, prog));
@@ -297,15 +296,12 @@ export default component$(() => {
         tracer.style.opacity = cl > 0.005 && cl < 0.998 ? "1" : "0";
       };
 
-      /* ── Scroll → progress → draw line ── */
       const rows = Array.from(container.querySelectorAll<HTMLElement>(".rm-row:not(.rm-row--final)"));
 
       const update = () => {
         if (totalLen === 0) return;
         const cr   = container.getBoundingClientRect();
         const VH   = window.innerHeight;
-        /* 55% viewport acts as draw line — starts drawing as soon as
-           top of timeline nears the middle of viewport.               */
         const prog = Math.max(0, Math.min(1, (VH * 0.55 - cr.top) / cr.height));
         const off  = totalLen * (1 - prog);
 
@@ -314,15 +310,12 @@ export default component$(() => {
         pathGlow.style.strokeDashoffset   = String(off);
         posTracer(prog);
 
-        /* Node glow when line passes */
         const ns = liveNodes();
         ns.forEach((n, i) => n.classList.toggle("rm-node--lit", prog >= i / Math.max(ns.length - 1, 1) - 0.02));
 
-        /* GSAP card + side-info reveal — triggers once per row */
         rows.forEach((row, idx) => {
-          const card     = row.querySelector<HTMLElement>(".rm-card");
-          const sideInfo = row.querySelector<HTMLElement>(".rm-side-info");
-          const isLeft   = row.classList.contains("rm-row--left");
+          const card   = row.querySelector<HTMLElement>(".rm-card");
+          const isLeft = row.classList.contains("rm-row--left");
 
           if (card && !revealed.has(card)) {
             const r = card.getBoundingClientRect();
@@ -333,17 +326,9 @@ export default component$(() => {
                   { opacity: 0, x: isLeft ? -70 : 70, y: 28, scale: 0.88, rotateY: isLeft ? -14 : 14 },
                   { opacity: 1, x: 0, y: 0, scale: 1, rotateY: 0,
                     duration: 0.85, ease: "back.out(1.4)", delay: idx * 0.04, clearProps: "transform" });
-                /* Side info slides in from the OPPOSITE direction */
-                if (sideInfo) {
-                  gsap.fromTo(sideInfo,
-                    { opacity: 0, x: isLeft ? 50 : -50, y: 20, scale: 0.94 },
-                    { opacity: 1, x: 0, y: 0, scale: 1,
-                      duration: 0.75, ease: "power3.out", delay: idx * 0.04 + 0.12, clearProps: "transform" });
-                }
               } else {
                 card.style.opacity = "1";
                 card.style.transform = "none";
-                if (sideInfo) { sideInfo.style.opacity = "1"; }
               }
             }
           }
@@ -353,7 +338,6 @@ export default component$(() => {
       const flush = () => { scheduled = false; if (needsBuild) needsBuild = !buildPath(); if (!needsBuild) update(); };
       const go    = (rebuild = false) => { needsBuild = needsBuild || rebuild; if (scheduled) return; scheduled = true; rafId = requestAnimationFrame(flush); };
 
-      /* listeners */
       Array.from(container.querySelectorAll<HTMLImageElement>("img"))
            .forEach((img) => { if (!img.complete) img.addEventListener("load", () => go(true)); });
       if ("ResizeObserver" in window) { ro = new ResizeObserver(() => go(true)); ro.observe(container); }
@@ -362,13 +346,11 @@ export default component$(() => {
       setTimeout(() => go(true), 180);
       go(true);
 
-      /* Node hover glow */
       container.querySelectorAll<HTMLElement>(".rm-node").forEach((n) => {
         n.addEventListener("mouseenter", () => n.classList.add("rm-node--hovered"));
         n.addEventListener("mouseleave", () => n.classList.remove("rm-node--hovered"));
       });
 
-      /* Header entrance */
       if (gsap) {
         const hdr = document.querySelector(".rm-section__header");
         if (hdr) gsap.fromTo(hdr, { opacity: 0, y: -36 }, { opacity: 1, y: 0, duration: 1.0, ease: "power3.out" });
@@ -400,7 +382,7 @@ export default component$(() => {
             <div class="rm-section__header-text">
               <span class="rm-pill">Timeline</span>
               <h1 class="rm-section__title">Day 1 Event Flow</h1>
-              <p class="rm-section__copy">Open any card for the needed details.</p>
+              <p class="rm-section__copy">Tap any card to reveal its event, team &amp; entry details.</p>
             </div>
             <div class="rm-event-glass">
               <span class="rm-event-glass__count">{String(EVENTS.length).padStart(2, "0")}</span>
@@ -442,7 +424,6 @@ export default component$(() => {
               <path id="rm-line-glow"   class="rm-line-glow"   fill="none" stroke="url(#rm-grad-line)" />
               <path id="rm-line-base"   class="rm-line-base"   fill="none" stroke="url(#rm-grad-line)" />
               <path id="rm-line-accent" class="rm-line-accent" fill="none" stroke="url(#rm-grad-core)" filter="url(#rm-glow-f)" />
-              {/* Glowing arrow tracer */}
               <g id="rm-tracer" style="opacity:0;will-change:transform;" filter="url(#rm-arrow-f)">
                 <circle class="rm-tracer-ring rm-tracer-ring--outer" cx="0" cy="0" r="18"
                   fill="none" stroke="rgba(215,255,74,0.25)" stroke-width="1" />
@@ -458,7 +439,6 @@ export default component$(() => {
             {/* Event rows */}
             {EVENTS.map((event, index) => {
               const meta        = CAT[event.cat];
-              /* Even index → card LEFT, node RIGHT of spine (rm-row--left) */
               const side: "left" | "right" = index % 2 === 0 ? "left" : "right";
               const isActive    = activeEventId.value === event.id;
               const canRegister = event.cat !== "opening" && event.cat !== "cultural";
@@ -466,19 +446,19 @@ export default component$(() => {
               return (
                 <div key={event.id} class={["rm-row", `rm-row--${side}`]}>
 
-                  {/* LEFT panel: card OR side-info */}
+                  {/* LEFT panel */}
                   <div class="rm-row__side rm-row__side--left">
                     {side === "left"
                       ? <EventCard ev={event} meta={meta} isActive={isActive}
                             canRegister={canRegister} side="left"
                             onToggle$={() => toggleEvent(event.id)} />
-                      : <SideInfoCard ev={event} meta={meta} />
+                      : isActive
+                        ? <PopupPanel ev={event} meta={meta} side="left" canRegister={canRegister} />
+                        : null
                     }
                   </div>
 
-                  {/* CENTER spine — node aligned to CREATE S-CURVE:
-                      left-card rows: node pushed RIGHT inside spine
-                      right-card rows: node pushed LEFT inside spine  */}
+                  {/* CENTER spine */}
                   <div class={["rm-row__center", `rm-row__center--${side === "left" ? "r" : "l"}`]}>
                     <div class="rm-node"
                       style={`--rm-accent:${meta.color};--rm-accent-rgb:${meta.rgb};`}
@@ -491,13 +471,15 @@ export default component$(() => {
                     </div>
                   </div>
 
-                  {/* RIGHT panel: card OR side-info */}
+                  {/* RIGHT panel */}
                   <div class="rm-row__side rm-row__side--right">
                     {side === "right"
                       ? <EventCard ev={event} meta={meta} isActive={isActive}
                             canRegister={canRegister} side="right"
                             onToggle$={() => toggleEvent(event.id)} />
-                      : <SideInfoCard ev={event} meta={meta} />
+                      : isActive
+                        ? <PopupPanel ev={event} meta={meta} side="right" canRegister={canRegister} />
+                        : null
                     }
                   </div>
                 </div>

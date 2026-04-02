@@ -187,6 +187,48 @@ const dayBorderColors = [
   "rgba(214,255,0,0.25)",
 ];
 
+const statSpotlight: Array<{
+  key: keyof ConfigData["stats"];
+  eyebrow: string;
+  note: string;
+  signal: string;
+  accent: string;
+  glow: string;
+  progress: string;
+  surface: string;
+}> = [
+  {
+    key: "events",
+    eyebrow: "Competitive spread",
+    note: "Flagship contests, fast workshops, and showcases distributed through the fest grid.",
+    signal: "Mission roster online",
+    accent: "#8cff7a",
+    glow: "rgba(140,255,122,0.28)",
+    progress: "74%",
+    surface: "linear-gradient(145deg, rgba(14,169,53,0.22), rgba(7,12,8,0.96) 62%)",
+  },
+  {
+    key: "participants",
+    eyebrow: "National turnout",
+    note: "Builders, designers, and problem-solvers charging the campus experience together.",
+    signal: "Audience pulse active",
+    accent: "#6ef3ff",
+    glow: "rgba(110,243,255,0.24)",
+    progress: "92%",
+    surface: "linear-gradient(145deg, rgba(6,214,240,0.2), rgba(6,12,14,0.96) 62%)",
+  },
+  {
+    key: "colleges",
+    eyebrow: "Campus footprint",
+    note: "Institutions across the circuit plug into Theta and widen the reach every year.",
+    signal: "Reach map expanding",
+    accent: "#f5d46b",
+    glow: "rgba(245,212,107,0.24)",
+    progress: "68%",
+    surface: "linear-gradient(145deg, rgba(245,200,66,0.2), rgba(14,11,6,0.96) 62%)",
+  },
+];
+
 /* ════════════════════════════════════════════════════════════
    MAIN COMPONENT
 ════════════════════════════════════════════════════════════ */
@@ -199,6 +241,7 @@ export default component$(() => {
   const counterDisplay = useSignal({ events: 0, participants: 0, colleges: 0 });
   const selectedDay = useSignal<DayEvent | null>(null);
   const selectedTier = useSignal<(typeof sponsorTiers)[number]["key"] | null>(null);
+  const sphereRotation = useSignal({ x: 0, y: 0 });
 
   /* ── Particles Effect ── */
   useVisibleTask$(() => {
@@ -519,6 +562,30 @@ export default component$(() => {
     return () => cleanups.forEach(c => c());
   });
 
+  useVisibleTask$(() => {
+    const sphere = document.querySelector<HTMLElement>(".theta-stats-core");
+    if (!sphere) return;
+
+    const onMove = (e: MouseEvent) => {
+      const rect = sphere.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - 0.5;
+      const y = (e.clientY - rect.top) / rect.height - 0.5;
+      sphereRotation.value = { x: y * 20, y: -x * 20 };
+    };
+
+    const onLeave = () => {
+      sphereRotation.value = { x: 0, y: 0 };
+    };
+
+    sphere.addEventListener("mousemove", onMove);
+    sphere.addEventListener("mouseleave", onLeave);
+
+    return () => {
+      sphere.removeEventListener("mousemove", onMove);
+      sphere.removeEventListener("mouseleave", onLeave);
+    };
+  });
+
   useVisibleTask$(({ track }) => {
     track(() => selectedDay.value);
     if (!selectedDay.value) return;
@@ -626,19 +693,83 @@ export default component$(() => {
       </section>
 
       {/* ═══════════════ STATS ═══════════════ */}
-      <section id="theta-stats" class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-        <div class="reveal-up mb-12 text-center">
-          <span class="t-badge mx-auto">Theta Snapshot</span>
-          <h2 class="t-heading mt-4 text-[clamp(2rem,5vw,3.5rem)] text-white">Numbers that <span class="t-gradient">define the fest</span></h2>
-        </div>
-        <div class="grid gap-5 md:grid-cols-3">
-          {["events", "participants", "colleges"].map((k, i) => (
-            <article key={k} class={["t-stat-card reveal-up", i===1?"md:scale-[1.04]":""]} style={{ transitionDelay:`${i*100}ms` }}>
-              <div class="t-stat-num">{counterDisplay.value[k as keyof typeof counterDisplay.value]}+</div>
-              <div class="t-stat-label">{homeCopy.value.statsLabels[k as keyof typeof homeCopy.value.statsLabels]}</div>
-              <div class="t-line-glow mt-5 w-3/4" />
-            </article>
-          ))}
+      <section id="theta-stats" class="theta-stats-section px-0 py-24 sm:px-4 lg:px-6">
+        <div class="theta-stats-shell">
+          <div class="theta-stats-shell__noise" aria-hidden="true" />
+          <div class="theta-stats-shell__glow theta-stats-shell__glow--left" aria-hidden="true" />
+          <div class="theta-stats-shell__glow theta-stats-shell__glow--right" aria-hidden="true" />
+
+          <div class="theta-stats-grid">
+            <div class="theta-stats-side-left">
+              <div class="theta-stats-copy reveal-left">
+                <span class="t-badge theta-stats-badge">
+                  <span class="t-badge-dot" />
+                  Theta Snapshot
+                </span>
+                <h2 class="t-heading theta-stats-copy__title">
+                  Fest Vitals
+                </h2>
+              </div>
+
+              <div class="theta-stats-visual-wrap relative flex items-center justify-center">
+                <div class="theta-stats-visual reveal-scale">
+                  <div 
+                    class="theta-stats-core"
+                    style={{
+                      transform: `perspective(1000px) rotateX(${sphereRotation.value.x}deg) rotateY(${sphereRotation.value.y}deg)`,
+                      transition: sphereRotation.value.x === 0 ? "transform 0.6s ease-out" : "none"
+                    }}
+                  >
+                    <div class="theta-stats-core__halo theta-stats-core__halo--outer" aria-hidden="true" />
+                    <div class="theta-stats-core__halo theta-stats-core__halo--inner" aria-hidden="true" />
+                    <div class="theta-stats-core__grid" aria-hidden="true" />
+                    <div class="theta-stats-core__scan" aria-hidden="true" />
+                    <div class="theta-stats-core__logo" aria-hidden="true">
+                      <img src="/theta-logo.png" alt="" class="theta-stats-core__logo-image" />
+                    </div>
+
+                    <div class="theta-stats-core__copy">
+                      <span class="theta-stats-core__label">Festival Reach</span>
+                      <strong class="theta-stats-core__value">
+                        {counterDisplay.value.participants}+
+                      </strong>
+                    </div>
+                  </div>
+
+                  <div class="theta-stats-pulse-wrap mt-8 flex flex-col items-center justify-center gap-3">
+                    <div class="theta-stats-core__status">
+                      <span class="theta-stats-core__status-dot" />
+                      Live registration pulse
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="theta-stats-side-right">
+              <div class="theta-stats-rail">
+                {statSpotlight.map((item, index) => (
+                  <article
+                    key={item.key}
+                    class="theta-stats-node reveal-right"
+                    style={`--theta-stat-accent:${item.accent}; --theta-stat-glow:${item.glow}; --theta-stat-progress:${item.progress}; --theta-stat-surface:${item.surface}; transition-delay:${index * 120}ms`}
+                  >
+                    <div class="theta-stats-node__meta">
+                      <span class="theta-stats-node__index">0{index + 1}</span>
+                      <span class="theta-stats-node__eyebrow">{item.eyebrow}</span>
+                    </div>
+                    <div class="theta-stats-node__value">{counterDisplay.value[item.key]}+</div>
+                    <div class="theta-stats-node__label">{homeCopy.value.statsLabels[item.key]}</div>
+                    <p class="theta-stats-node__note">{item.note}</p>
+                    <div class="theta-stats-node__meter">
+                      <span class="theta-stats-node__meter-fill" />
+                    </div>
+                    <div class="theta-stats-node__signal">{item.signal}</div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
