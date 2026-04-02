@@ -116,7 +116,7 @@ export default component$(() => {
   });
 
   return (
-    <div class="relative min-h-screen bg-[#050505] text-[#f0fff0]">
+    <div class="relative min-h-screen overflow-x-hidden bg-[#050505] text-[#f0fff0]">
       {/* Ambient background orbs */}
       {!isSponsorsRoute && (
         <>
@@ -143,10 +143,13 @@ export default component$(() => {
         />
       </div>
 
-      <div class="relative z-10 w-full">
+      <div class="relative z-10 w-full overflow-x-hidden">
         <Header />
         <main
-          class={["w-full", loc.url.pathname === "/" ? "pt-0" : "pt-[90px]"]}
+          class={[
+            "w-full overflow-x-hidden",
+            loc.url.pathname === "/" ? "pt-0" : "pt-[90px]",
+          ]}
         >
           <Slot />
         </main>
