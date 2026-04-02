@@ -26,12 +26,12 @@ interface EventCardProps {
 interface PopupPanelProps { ev: EventData; meta: CatMeta; side: "left" | "right"; canRegister: boolean; }
 
 const EVENTS: EventData[] = [
-  { id: 1, time: "09:00 AM", endTime: "10:00 AM", title: "Inauguration Ceremony",
-    subtitle: "Grand opening for Theta 2026", venue: "Main Auditorium, Block A", cat: "opening",
-    fee: "Free", team: "Open to all", prize: "Opening showcase",
+  { id: 1, time: "09:00 AM", endTime: "10:00 AM", title: "Day 3 Final Briefing",
+    subtitle: "Ultimate day of Theta 2026", venue: "Main Auditorium, Block A", cat: "opening",
+    fee: "Free", team: "Open to all", prize: "Final showcase",
     img: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1200&auto=format&fit=crop",
-    tags: ["Chief guest", "Theme reveal", "Campus launch"],
-    desc: "The opening signal for Theta 2026 with the keynote address, launch visuals, and the first full crowd briefing of the fest." },
+    tags: ["Closing sync", "Legacy reveal", "Prize ceremony hint"],
+    desc: "The final day signal for Theta 2026 with the morning address, ultimate highlights, and the final grand briefing of the fest." },
   { id: 2, time: "10:00 AM", endTime: "01:00 PM", title: "Omnitrix Core Calibration",
     subtitle: "Fast AI and coding sprint", venue: "Galvan Prime Lab, Block C", cat: "tech",
     fee: "Rs 100 / team", team: "2 to 3 members", prize: "Rs 15,000",
@@ -62,12 +62,12 @@ const EVENTS: EventData[] = [
     img: "https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?q=80&w=1200&auto=format&fit=crop",
     tags: ["Obstacle loop", "Pair sync", "Reflex zone"],
     desc: "A movement-based campus challenge where communication, timing, and instincts matter more than raw speed." },
-  { id: 7, time: "07:00 PM", endTime: "09:00 PM", title: "Day 1 Cultural Night",
+  { id: 7, time: "07:00 PM", endTime: "09:00 PM", title: "Day 3 Cultural Night",
     subtitle: "Open-air stage finale", venue: "Open-Air Amphitheatre", cat: "cultural",
     fee: "Free", team: "Open to all", prize: "Festival closeout",
     img: "https://images.unsplash.com/photo-1470229722913-7c090be5c520?q=80&w=1200&auto=format&fit=crop",
     tags: ["Live band", "Dance block", "Comedy set"],
-    desc: "The night wrap with music, campus performances, and a high-energy close to the first day of the roadmap." },
+    desc: "The night wrap with music, campus performances, and a high-energy close to the third day of the roadmap." },
 ];
 
 const CAT: Record<Cat, CatMeta> = {
@@ -213,7 +213,7 @@ const GRID_JS = `
 })();
 `;
 
-export default component$(function Day1Roadmap() {
+export default component$(function Day3Roadmap() {
   const activeEventId = useSignal<number | null>(null);
 
   useVisibleTask$(() => {
@@ -369,7 +369,7 @@ export default component$(function Day1Roadmap() {
   });
 
   return (
-    <div class="rm-page" key="roadmap-day-1">
+    <div class="rm-page" key="roadmap-day-3">
       <canvas id="rm-bg-grid" class="rm-bg-grid" aria-hidden="true" />
       <div class="rm-page__aurora rm-page__aurora--left"  />
       <div class="rm-page__aurora rm-page__aurora--right" />
@@ -381,7 +381,7 @@ export default component$(function Day1Roadmap() {
           <div class="rm-section__header">
             <div class="rm-section__header-text">
               <span class="rm-pill">Timeline</span>
-              <h1 class="rm-section__title">Day 1 Event Flow</h1>
+              <h1 class="rm-section__title">Day 3 Event Flow</h1>
               <p class="rm-section__copy">Tap any card to reveal its event, team &amp; entry details.</p>
             </div>
             <div class="rm-event-glass">
@@ -500,10 +500,10 @@ export default component$(function Day1Roadmap() {
               <div class="rm-row__side rm-row__side--right">
                 <div class="rm-end-card">
                   <span class="rm-pill">Finish</span>
-                  <h3>Day 1 completed.</h3>
-                  <p>Day 2 starts at 09:00 AM.</p>
+                  <h3>Day 3 completed.</h3>
+                  <p>Theta 2026 Concluded.</p>
                   <div class="rm-end-card__meta">
-                    <span>Next sync ready</span>
+                    <span>Final sync complete</span>
                     <Link href="/events">Open events</Link>
                   </div>
                 </div>
@@ -516,9 +516,9 @@ export default component$(function Day1Roadmap() {
       {/* Bottom dock */}
       <div class="rm-dock">
         <div class="rm-dock__inner">
-          <Link href="/roadmap/day1" class="rm-dock__item is-active">Day 1</Link>
+          <Link href="/roadmap/day1" class="rm-dock__item">Day 1</Link>
           <Link href="/roadmap/day2" class="rm-dock__item">Day 2</Link>
-          <Link href="/roadmap/day3" class="rm-dock__item">Day 3</Link>
+          <Link href="/roadmap/day3" class="rm-dock__item is-active">Day 3</Link>
           <span class="rm-dock__status">
             <span class="rm-dock__status-dot" />
             Ben 10 theme
@@ -532,6 +532,6 @@ export default component$(function Day1Roadmap() {
 });
 
 export const head: DocumentHead = {
-  title: "Day 1 Roadmap | Theta 2026",
-  meta: [{ name: "description", content: "Day 1 roadmap for Theta 2026 — S-curve timeline, GSAP card reveals, Ben 10 theme." }],
+  title: "Day 3 Roadmap | Theta 2026",
+  meta: [{ name: "description", content: "Day 3 roadmap for Theta 2026 — S-curve timeline, GSAP card reveals, Ben 10 theme." }],
 };
