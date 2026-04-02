@@ -34,9 +34,9 @@ export default component$(() => {
   const wordVisible = useSignal<boolean>(true);
 
   const cycleWords = [
-    { word: "REGISTER",  icon: "M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z", color: "#00d4ff" },
-    { word: "COMPETE",   icon: "M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z", color: "#0ea935" },
-    { word: "CELEBRATE", icon: "M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z", color: "#ff9500" },
+    { word: "REGISTER", color: "#19d64d" },
+    { word: "COMPETE", color: "#23a6ff" },
+    { word: "CELEBRATE", color: "#ff4d5d" },
   ];
 
   useVisibleTask$(({ cleanup }) => {
@@ -243,61 +243,6 @@ export default component$(() => {
     );
   });
 
-  useVisibleTask$(({ cleanup }) => {
-    // Parallax logic for background Ben 10 logo
-    const bgImage = document.getElementById("parallax-bg-image");
-
-    if (!bgImage) return;
-
-    let rafId: number;
-    let targetX = 0;
-    let targetY = 0;
-    let currentX = 0;
-    let currentY = 0;
-    
-    // Smoothing factor
-    const ease = 0.05;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      const { innerWidth, innerHeight } = window;
-      // Calculate offset based on center (push elements away slightly)
-      const offsetX = (e.clientX / innerWidth - 0.5) * -100; // Inverted for parallax feel
-      const offsetY = (e.clientY / innerHeight - 0.5) * -100;
-      targetX = offsetX;
-      // The scroll handler will also affect Y, let's keep them somewhat merged but for mouse we just set the target
-      targetY = offsetY * 0.5 + (window.scrollY * -0.2); 
-    };
-
-    const handleScroll = () => {
-      // Parallax move up on scroll
-      const scrollY = window.scrollY;
-      targetY = (scrollY * -0.2); // Moves up linearly with scroll
-    };
-
-    const animate = () => {
-      currentX += (targetX - currentX) * ease;
-      currentY += (targetY - currentY) * ease;
-
-      gsap.set(bgImage, {
-        x: currentX,
-        y: currentY,
-        rotation: currentX * -0.05, // Slight rotation for depth
-      });
-
-      rafId = requestAnimationFrame(animate);
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("scroll", handleScroll);
-    rafId = requestAnimationFrame(animate);
-
-    cleanup(() => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("scroll", handleScroll);
-      cancelAnimationFrame(rafId);
-    });
-  });
-
   const openEvent = $((event: Event) => {
     selectedEvent.value = event;
   });
@@ -311,16 +256,100 @@ export default component$(() => {
 
   return (
     <div class="relative mx-auto min-h-screen w-full px-4 py-16 sm:px-6 lg:px-8 font-sans bg-[#050505] overflow-hidden">
+      <style>{`
+        .omnitrix-bg-shell {
+          position: relative;
+        }
+
+        .omnitrix-bg-image {
+          opacity: 0.12;
+          filter:
+            drop-shadow(0 0 18px rgba(20, 255, 120, 0.08))
+            drop-shadow(0 0 42px rgba(14, 169, 53, 0.08))
+            drop-shadow(0 0 88px rgba(14, 169, 53, 0.04));
+          transform: translateZ(0);
+        }
+
+        .omnitrix-bg-core {
+          position: absolute;
+          inset: 0;
+          opacity: 0.18;
+          mix-blend-mode: screen;
+          filter:
+            saturate(1.18)
+            brightness(1.12)
+            contrast(1.08)
+            drop-shadow(0 0 18px rgba(110, 255, 158, 0.12))
+            drop-shadow(0 0 46px rgba(14, 169, 53, 0.12))
+            drop-shadow(0 0 96px rgba(14, 169, 53, 0.08));
+          animation: omnitrixWatchBlink 5s ease-in-out infinite;
+          transform: translateZ(0);
+        }
+
+        @keyframes omnitrixWatchBlink {
+          0%, 80%, 100% {
+            opacity: 0.18;
+            filter:
+              saturate(1.18)
+              brightness(1.12)
+              contrast(1.08)
+              drop-shadow(0 0 18px rgba(110, 255, 158, 0.12))
+              drop-shadow(0 0 46px rgba(14, 169, 53, 0.12))
+              drop-shadow(0 0 96px rgba(14, 169, 53, 0.08));
+          }
+
+          86% {
+            opacity: 0.26;
+            filter:
+              saturate(1.32)
+              brightness(1.24)
+              contrast(1.12)
+              drop-shadow(0 0 24px rgba(168, 255, 196, 0.18))
+              drop-shadow(0 0 58px rgba(50, 255, 104, 0.18))
+              drop-shadow(0 0 124px rgba(14, 169, 53, 0.12));
+          }
+
+          90% {
+            opacity: 0.21;
+            filter:
+              saturate(1.22)
+              brightness(1.16)
+              contrast(1.09)
+              drop-shadow(0 0 20px rgba(132, 255, 172, 0.14))
+              drop-shadow(0 0 50px rgba(36, 224, 88, 0.14))
+              drop-shadow(0 0 104px rgba(14, 169, 53, 0.1));
+          }
+
+          94% {
+            opacity: 0.3;
+            filter:
+              saturate(1.42)
+              brightness(1.32)
+              contrast(1.14)
+              drop-shadow(0 0 28px rgba(214, 255, 224, 0.22))
+              drop-shadow(0 0 70px rgba(82, 255, 126, 0.2))
+              drop-shadow(0 0 140px rgba(14, 169, 53, 0.14));
+          }
+        }
+      `}</style>
       {/* Background Parallax Layer */}
-      <div id="parallax-bg-container" class="fixed inset-0 z-0 pointer-events-none flex items-center justify-center pointer-events-none overflow-hidden">
+      <div id="parallax-bg-container" class="fixed inset-0 z-0 pointer-events-none flex items-center justify-center overflow-hidden">
          {/* Deep shadow / glow behind logo */}
          <div class="absolute w-[60vw] h-[60vw] bg-[#0ea935] opacity-[0.05] blur-[150px] rounded-full mix-blend-screen"></div>
-         <img
-           id="parallax-bg-image"
-           src="/ben10/ben10-logo.png" 
-           alt="Ben 10 Background Logo"
-           class="w-[90vw] sm:w-[50vw] object-contain opacity-[0.08] contrast-150 grayscale mix-blend-screen scale-110 will-change-transform"
-         />
+         <div class="omnitrix-bg-shell flex items-center justify-center">
+           <img
+             id="parallax-bg-image"
+             src="/ben10/ben10-logo.png"
+             alt="Ben 10 Background Logo"
+             class="omnitrix-bg-image w-[90vw] sm:w-[50vw] object-contain contrast-150 grayscale mix-blend-screen scale-110"
+           />
+           <img
+             src="/ben10/ben10-logo.png"
+             alt=""
+             aria-hidden="true"
+             class="omnitrix-bg-core w-[90vw] sm:w-[50vw] object-contain scale-110"
+           />
+         </div>
       </div>
 
       <div class="relative z-10 mx-auto max-w-5xl text-center space-y-0 pt-12 mb-20">
@@ -340,42 +369,22 @@ export default component$(() => {
           </span>
         </h1>
 
-        {/* Animated cycling word */}
-        <div class="flex items-center justify-center gap-4 mt-8 mb-6 h-[4rem] overflow-hidden">
-
-          {/* Icon box — fades with word */}
-          <div
-            class="flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center border-2"
-            style={`
-              background: ${cycleWords[cyclingIdx.value].color}18;
-              border-color: ${cycleWords[cyclingIdx.value].color}45;
-              box-shadow: 0 0 20px ${cycleWords[cyclingIdx.value].color}35;
-              opacity: ${wordVisible.value ? 1 : 0};
-              transform: ${wordVisible.value ? 'translateY(0) rotate(0deg) scale(1)' : 'translateY(-15px) rotate(10deg) scale(0.8)'};
-              filter: blur(${wordVisible.value ? '0px' : '4px'});
-              transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-            `}
-          >
-            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={`color: ${cycleWords[cyclingIdx.value].color};`}>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d={cycleWords[cyclingIdx.value].icon}></path>
-            </svg>
-          </div>
-
-          {/* Cycling word — Theta 2K24 font (Rajdhani) with modern fast-slide animation */}
-          <div class="relative overflow-hidden h-full flex items-center px-2">
+        <div class="flex items-center justify-center gap-4 mt-4 mb-6 min-h-[3.75rem] overflow-hidden">
+          <span class="text-white/25 text-2xl md:text-4xl font-black tracking-[0.14em]">-</span>
+          <div class="relative overflow-hidden">
             <span
               style={`
                 font-family: var(--font-hero-ui, 'Rajdhani', sans-serif);
                 font-weight: 700;
-                font-size: clamp(2.5rem, 6vw, 3.5rem);
-                letter-spacing: 0.02em;
+                font-size: clamp(2rem, 4.5vw, 3.2rem);
+                letter-spacing: 0.16em;
                 text-transform: uppercase;
                 color: ${cycleWords[cyclingIdx.value].color};
-                text-shadow: 0 0 30px ${cycleWords[cyclingIdx.value].color}60;
+                text-shadow: 0 0 26px ${cycleWords[cyclingIdx.value].color}45;
                 line-height: 1;
-                display: block;
+                display: inline-block;
                 opacity: ${wordVisible.value ? 1 : 0};
-                transform: ${wordVisible.value ? 'translateY(0) scale(1)' : 'translateY(-20px) scale(0.95)'};
+                transform: ${wordVisible.value ? 'translateY(0) scale(1)' : 'translateY(-18px) scale(0.96)'};
                 filter: blur(${wordVisible.value ? '0px' : '6px'});
                 transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
               `}
@@ -773,3 +782,4 @@ export const head: DocumentHead = {
     },
   ],
 };
+

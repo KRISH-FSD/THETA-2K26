@@ -180,17 +180,12 @@ const sponsorTierMeta: Record<(typeof sponsorTiers)[number]["key"], {
 
 /* Day icons */
 const dayIcons = ["⚡", "🤖", "🚀"];
-const dayColors = [
-  "from-[rgba(124,58,237,0.25)] to-[rgba(76,29,149,0.1)]",
-  "from-[rgba(6,214,240,0.2)] to-[rgba(6,214,240,0.05)]",
-  "from-[rgba(245,200,66,0.2)] to-[rgba(245,200,66,0.05)]",
-];
+const dayAccents = ["#0ea935", "#06d6a0", "#d6ff00"];
 const dayBorderColors = [
-  "rgba(124,58,237,0.35)",
-  "rgba(6,214,240,0.25)",
-  "rgba(245,200,66,0.25)",
+  "rgba(14,169,53,0.25)",
+  "rgba(6,214,160,0.25)",
+  "rgba(214,255,0,0.25)",
 ];
-const dayAccents = ["#c084fc", "#06d6f0", "#f5c842"];
 
 /* ════════════════════════════════════════════════════════════
    MAIN COMPONENT
@@ -204,717 +199,538 @@ export default component$(() => {
   const counterDisplay = useSignal({ events: 0, participants: 0, colleges: 0 });
   const selectedDay = useSignal<DayEvent | null>(null);
   const selectedTier = useSignal<(typeof sponsorTiers)[number]["key"] | null>(null);
-  const bgSlide = useSignal(0);
 
-  /* ── Fetch data ── */
+  /* ── Particles Effect ── */
+  useVisibleTask$(() => {
+    const section = document.querySelector<HTMLElement>(".festival-days-mesh");
+    const canvas = document.querySelector<HTMLCanvasElement>(".festival-days-mesh-web");
+    if (!section || !canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const particleCount = 30;
+    const clusterCount = 10;
+    const connectDistance = 104;
+    const colors = ["#7ec850", "#c8ff00"];
+    const particles: Array<{
+      x: number; y: number; vx: number; vy: number; radius: number; color: string;
+      minX: number; maxX: number; minY: number; maxY: number; cluster?: boolean;
+    }> = [];
+    const pointer = { x: 0, y: 0, active: false, radius: 210 };
+
+    let width = 0; let height = 0; let raf = 0;
+    const randomVelocity = () => (Math.random() - 0.5) * 0.14;
+
+    const resize = () => {
+      const rect = section.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      width = rect.width; height = rect.height;
+      canvas.width = Math.max(1, Math.floor(width * dpr));
+      canvas.height = Math.max(1, Math.floor(height * dpr));
+      canvas.style.width = `${width}px`; canvas.style.height = `${height}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      if (particles.length === 0) {
+        const edgePadding = 18;
+        const topBand = Math.max(96, height * 0.24);
+        const bottomBandY = Math.max(topBand + 40, height * 0.78);
+        const sideBand = Math.max(120, width * 0.16);
+        const pushParticle = (
+          x: number,
+          y: number,
+          minX: number,
+          maxX: number,
+          minY: number,
+          maxY: number,
+          cluster = false,
+          colorIndex = 0,
+        ) => {
+          particles.push({
+            x,
+            y,
+            vx: randomVelocity(),
+            vy: randomVelocity(),
+            radius: cluster ? 1.85 : 1.55 + (Math.random() - 0.5) * 0.28,
+            color: colors[colorIndex % colors.length],
+            minX,
+            maxX,
+            minY,
+            maxY,
+            cluster,
+          });
+        };
+
+        for (let i = 0; i < particleCount; i += 1) {
+          const zone = i % 4;
+          if (zone === 0) {
+            pushParticle(edgePadding + Math.random() * (width - edgePadding * 2), edgePadding + Math.random() * (topBand - edgePadding), edgePadding, width - edgePadding, edgePadding, topBand, false, i);
+          } else if (zone === 1) {
+            pushParticle(edgePadding + Math.random() * (sideBand - edgePadding), edgePadding + Math.random() * (height - edgePadding * 2), edgePadding, sideBand, edgePadding, height - edgePadding, false, i);
+          } else if (zone === 2) {
+            pushParticle(width - sideBand + Math.random() * (sideBand - edgePadding), edgePadding + Math.random() * (height - edgePadding * 2), width - sideBand, width - edgePadding, edgePadding, height - edgePadding, false, i);
+          } else {
+            pushParticle(edgePadding + Math.random() * (width - edgePadding * 2), bottomBandY + Math.random() * Math.max(24, height - bottomBandY - edgePadding), edgePadding, width - edgePadding, bottomBandY, height - edgePadding, false, i);
+          }
+        }
+
+        const diamondCenterX = width - Math.max(160, width * 0.18);
+        const diamondCenterY = Math.max(86, height * 0.2);
+        const diamondPoints = [[0, -54], [-26, -28], [26, -28], [-48, 0], [0, 0], [48, 0], [-26, 28], [26, 28], [0, 54], [0, 84]];
+        diamondPoints.slice(0, clusterCount).forEach(([dx, dy], index) => {
+          const x = diamondCenterX + dx;
+          const y = diamondCenterY + dy;
+          pushParticle(x, y, diamondCenterX - 92, diamondCenterX + 92, diamondCenterY - 82, diamondCenterY + 114, true, index);
+        });
+      }
+    };
+
+    const draw = () => {
+      ctx.clearRect(0, 0, width, height);
+      for (let i = 0; i < particles.length; i += 1) {
+        const p = particles[i];
+        if (pointer.active) {
+          const dx = pointer.x - p.x;
+          const dy = pointer.y - p.y;
+          const distance = Math.hypot(dx, dy);
+          if (distance < pointer.radius && distance > 0.001) {
+            const force = (1 - distance / pointer.radius) * 0.11;
+            p.vx += (dx / distance) * force;
+            p.vy += (dy / distance) * force;
+          }
+        }
+        p.vx *= p.cluster ? 0.984 : 0.988;
+        p.vy *= p.cluster ? 0.984 : 0.988;
+        if (Math.abs(p.vx) < 0.025) p.vx += randomVelocity() * 0.35;
+        if (Math.abs(p.vy) < 0.025) p.vy += randomVelocity() * 0.35;
+        p.vx = Math.max(Math.min(p.vx, p.cluster ? 1.15 : 1.35), -(p.cluster ? 1.15 : 1.35));
+        p.vy = Math.max(Math.min(p.vy, p.cluster ? 1.15 : 1.35), -(p.cluster ? 1.15 : 1.35));
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x <= p.minX || p.x >= p.maxX) p.vx *= -1;
+        if (p.y <= p.minY || p.y >= p.maxY) p.vy *= -1;
+        p.x = Math.min(Math.max(p.x, p.minX), p.maxX);
+        p.y = Math.min(Math.max(p.y, p.minY), p.maxY);
+        ctx.beginPath(); ctx.fillStyle = p.color; ctx.globalAlpha = 0.95;
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); ctx.fill();
+      }
+
+      if (pointer.active) {
+        const ring = ctx.createRadialGradient(pointer.x, pointer.y, 0, pointer.x, pointer.y, pointer.radius);
+        ring.addColorStop(0, "rgba(126, 200, 80, 0.08)");
+        ring.addColorStop(0.55, "rgba(126, 200, 80, 0.03)");
+        ring.addColorStop(1, "rgba(126, 200, 80, 0)");
+        ctx.beginPath();
+        ctx.fillStyle = ring;
+        ctx.globalAlpha = 1;
+        ctx.arc(pointer.x, pointer.y, pointer.radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      for (let i = 0; i < particles.length; i += 1) {
+        for (let j = i + 1; j < particles.length; j += 1) {
+          const a = particles[i]; const b = particles[j];
+          const distance = Math.hypot(a.x - b.x, a.y - b.y);
+          if (distance < connectDistance) {
+            const strength = 1 - distance / connectDistance;
+            ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+            ctx.strokeStyle = i % 2 === 0 ? "rgba(126, 200, 80, 1)" : "rgba(200, 255, 0, 1)";
+            ctx.lineWidth = 0.55 + strength * 0.55;
+            ctx.globalAlpha = strength * 0.1;
+            ctx.stroke();
+          }
+        }
+      }
+
+      if (pointer.active) {
+        for (let i = 0; i < particles.length; i += 1) {
+          const particle = particles[i];
+          const dx = pointer.x - particle.x;
+          const dy = pointer.y - particle.y;
+          const distance = Math.hypot(dx, dy);
+          if (distance < pointer.radius * 0.6) {
+            const strength = 1 - distance / (pointer.radius * 0.6);
+            ctx.beginPath();
+            ctx.moveTo(pointer.x, pointer.y);
+            ctx.lineTo(particle.x, particle.y);
+            ctx.strokeStyle = "rgba(126, 200, 80, 1)";
+            ctx.lineWidth = 0.45 + strength * 0.5;
+            ctx.globalAlpha = strength * 0.08;
+            ctx.stroke();
+          }
+        }
+      }
+      ctx.globalAlpha = 1; raf = window.requestAnimationFrame(draw);
+    };
+
+    resize(); draw();
+    const obs = new ResizeObserver(() => resize()); obs.observe(section);
+    const onPointerMove = (event: PointerEvent) => {
+      const rect = section.getBoundingClientRect();
+      pointer.x = event.clientX - rect.left;
+      pointer.y = event.clientY - rect.top;
+      pointer.active = true;
+    };
+    const onPointerLeave = () => { pointer.active = false; };
+    section.addEventListener("pointermove", onPointerMove);
+    section.addEventListener("pointerleave", onPointerLeave);
+    window.addEventListener("resize", resize);
+    return () => {
+      window.cancelAnimationFrame(raf);
+      obs.disconnect();
+      section.removeEventListener("pointermove", onPointerMove);
+      section.removeEventListener("pointerleave", onPointerLeave);
+      window.removeEventListener("resize", resize);
+    };
+  });
+
+  useVisibleTask$(() => {
+    const section = document.querySelector<HTMLElement>(".festival-days-shell");
+    if (!section) return;
+
+    let raf = 0;
+    const resetPointer = () => {
+      section.style.setProperty("--festival-pointer-left", "0px");
+      section.style.setProperty("--festival-pointer-right", "0px");
+      section.style.setProperty("--festival-pointer-up", "0px");
+      section.style.setProperty("--festival-pointer-down", "0px");
+    };
+
+    const syncScroll = () => {
+      raf = 0;
+      const rect = section.getBoundingClientRect();
+      const viewportHeight = window.innerHeight || 1;
+      const progress = Math.min(1, Math.max(0, (viewportHeight - rect.top) / (viewportHeight + rect.height)));
+      const verticalShift = Math.round((0.5 - progress) * 44);
+      const horizontalShift = Math.round((progress - 0.5) * 34);
+      const softShift = Math.round((progress - 0.5) * 18);
+
+      section.style.setProperty("--festival-scroll-up", `${verticalShift}px`);
+      section.style.setProperty("--festival-scroll-down", `${-verticalShift}px`);
+      section.style.setProperty("--festival-scroll-left", `${horizontalShift}px`);
+      section.style.setProperty("--festival-scroll-right", `${-horizontalShift}px`);
+      section.style.setProperty("--festival-scroll-soft", `${softShift}px`);
+    };
+
+    const requestScrollSync = () => {
+      if (!raf) raf = window.requestAnimationFrame(syncScroll);
+    };
+
+    const onPointerMove = (event: PointerEvent) => {
+      const rect = section.getBoundingClientRect();
+      const pointerX = (event.clientX - rect.left) / rect.width - 0.5;
+      const pointerY = (event.clientY - rect.top) / rect.height - 0.5;
+
+      section.style.setProperty("--festival-pointer-left", `${Math.round(pointerX * -18)}px`);
+      section.style.setProperty("--festival-pointer-right", `${Math.round(pointerX * 18)}px`);
+      section.style.setProperty("--festival-pointer-up", `${Math.round(pointerY * -14)}px`);
+      section.style.setProperty("--festival-pointer-down", `${Math.round(pointerY * 14)}px`);
+    };
+
+    resetPointer();
+    syncScroll();
+    window.addEventListener("scroll", requestScrollSync, { passive: true });
+    window.addEventListener("resize", requestScrollSync);
+    section.addEventListener("pointermove", onPointerMove);
+    section.addEventListener("pointerleave", resetPointer);
+
+    return () => {
+      if (raf) window.cancelAnimationFrame(raf);
+      resetPointer();
+      window.removeEventListener("scroll", requestScrollSync);
+      window.removeEventListener("resize", requestScrollSync);
+      section.removeEventListener("pointermove", onPointerMove);
+      section.removeEventListener("pointerleave", resetPointer);
+    };
+  });
+
+  /* ── Fetch Data ── */
   useVisibleTask$(async () => {
     try {
       const [cfgRes, sponsorRes, eventRes, contentRes] = await Promise.all([
-        fetch("/data/config.json"),
-        fetch("/data/sponsors.json"),
-        fetch("/data/events.json"),
-        fetch("/data/content.json"),
+        fetch("/data/config.json"), fetch("/data/sponsors.json"), fetch("/data/events.json"), fetch("/data/content.json"),
       ]);
-      if (!cfgRes.ok || !sponsorRes.ok || !eventRes.ok || !contentRes.ok) throw new Error();
-
-      const cfg = (await cfgRes.json()) as Partial<ConfigData>;
-      const sponsorPayload = (await sponsorRes.json()) as { sponsors?: SponsorsConfig };
-      const eventPayload = (await eventRes.json()) as { events?: EventItem[] };
-      const content = (await contentRes.json()) as { home?: Partial<HomeCopy> };
-
-      configData.value = {
-        ...defaultConfig, ...cfg,
-        meta: { ...defaultConfig.meta, ...(cfg.meta || {}) },
-        stats: { ...defaultConfig.stats, ...(cfg.stats || {}) },
-        about: { ...defaultConfig.about, ...(cfg.about || {}), features: cfg.about?.features || defaultConfig.about.features },
-        days: cfg.days || defaultConfig.days,
-      };
-      sponsors.value = { ...defaultSponsors, ...(sponsorPayload.sponsors || {}) };
+      if (!cfgRes.ok || !sponsorRes.ok || !eventRes.ok || !contentRes.ok) return;
+      const cfg = await cfgRes.json(); const sponsorPayload = await sponsorRes.json();
+      const eventPayload = await eventRes.json(); const content = await contentRes.json();
+      configData.value = { ...defaultConfig, ...cfg };
+      sponsors.value = { ...defaultSponsors, ...sponsorPayload.sponsors };
       events.value = eventPayload.events || [];
-
-      if (content.home) {
-        homeCopy.value = {
-          ...defaultHomeCopy, ...content.home,
-          hero: { ...defaultHomeCopy.hero, ...(content.home.hero || {}) },
-          countdownLabels: { ...defaultHomeCopy.countdownLabels, ...(content.home.countdownLabels || {}) },
-          about: { ...defaultHomeCopy.about, ...(content.home.about || {}) },
-          statsLabels: { ...defaultHomeCopy.statsLabels, ...(content.home.statsLabels || {}) },
-          sponsors: { ...defaultHomeCopy.sponsors, ...(content.home.sponsors || {}) },
-          cta: { ...defaultHomeCopy.cta, ...(content.home.cta || {}) },
-          dayModal: { ...defaultHomeCopy.dayModal, ...(content.home.dayModal || {}) },
-        };
-      }
-    } catch {
-      configData.value = defaultConfig;
-    }
+      if (content.home) homeCopy.value = { ...defaultHomeCopy, ...content.home };
+    } catch (e) { console.error(e); }
   });
 
-  /* ── Countdown ── */
+  /* ── Animations & Tasks ── */
   useVisibleTask$(({ track }) => {
     track(() => configData.value.meta.dates);
-    track(() => configData.value.meta.startDate);
     const fest = parseFestStart(configData.value.meta.dates, configData.value.meta.startDate).getTime();
     const sync = () => {
       const diff = Math.max(0, fest - Date.now());
       countdown.value = {
-        days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
-        minutes: Math.floor((diff / (1000 * 60)) % 60),
-        seconds: Math.floor((diff / 1000) % 60),
+        days: Math.floor(diff / 86400000), hours: Math.floor((diff / 3600000) % 24),
+        minutes: Math.floor((diff / 60000) % 60), seconds: Math.floor((diff / 1000) % 60),
       };
     };
-    sync();
-    const id = setInterval(sync, 1000);
-    return () => clearInterval(id);
+    sync(); const id = setInterval(sync, 1000); return () => clearInterval(id);
   });
 
-  /* ── Hero background slideshow ── */
-  useVisibleTask$(() => {
-    const id = setInterval(() => {
-      bgSlide.value = (bgSlide.value + 1) % 4;
-    }, 5000);
-    return () => clearInterval(id);
-  });
-
-  /* ── Stats counter ── */
   useVisibleTask$(() => {
     const node = document.getElementById("theta-stats");
     if (!node) return;
-    const targets = {
-      events: parseStatNumber(configData.value.stats.events),
-      participants: parseStatNumber(configData.value.stats.participants),
-      colleges: parseStatNumber(configData.value.stats.colleges),
-    };
     const animate = () => {
+      const targets = { e: parseStatNumber(configData.value.stats.events), p: parseStatNumber(configData.value.stats.participants), c: parseStatNumber(configData.value.stats.colleges) };
       const start = performance.now();
-      const dur = 1800;
-      const ease = (t: number) => t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
       const step = (now: number) => {
-        const p = Math.min(1, (now - start) / dur);
-        counterDisplay.value = {
-          events: Math.floor(targets.events * ease(p)),
-          participants: Math.floor(targets.participants * ease(p)),
-          colleges: Math.floor(targets.colleges * ease(p)),
-        };
+        const p = Math.min(1, (now - start) / 1800);
+        counterDisplay.value = { events: Math.floor(targets.e * p), participants: Math.floor(targets.p * p), colleges: Math.floor(targets.c * p) };
         if (p < 1) requestAnimationFrame(step);
       };
       requestAnimationFrame(step);
     };
-    const observer = new IntersectionObserver((entries) => {
-      if (entries[0]?.isIntersecting) { animate(); observer.disconnect(); }
-    }, { threshold: 0.3 });
-    observer.observe(node);
-    return () => observer.disconnect();
+    const obs = new IntersectionObserver((e) => { if (e[0].isIntersecting) { animate(); obs.disconnect(); } }, { threshold: 0.3 });
+    obs.observe(node); return () => obs.disconnect();
   });
 
-  /* ── GSAP ScrollTrigger Reveals ── */
   useVisibleTask$(() => {
     gsap.registerPlugin(ScrollTrigger);
-
-    // Reveal Up — fromTo ensures explicit opacity:1 target regardless of CSS
-    gsap.utils.toArray<HTMLElement>(".reveal-up").forEach((el) => {
-      gsap.fromTo(
-        el,
-        { y: 40, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.8,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: el,
-            start: "top 90%",
-            toggleActions: "play none none none",
-          },
-        }
-      );
-    });
-
-    // Reveal Left
-    gsap.utils.toArray<HTMLElement>(".reveal-left").forEach((el) => {
-      gsap.fromTo(
-        el,
-        { x: -50, opacity: 0 },
-        {
-          x: 0,
-          opacity: 1,
-          duration: 0.8,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: el,
-            start: "top 90%",
-            toggleActions: "play none none none",
-          },
-        }
-      );
-    });
-
-    // Reveal Right
-    gsap.utils.toArray<HTMLElement>(".reveal-right").forEach((el) => {
-      gsap.fromTo(
-        el,
-        { x: 50, opacity: 0 },
-        {
-          x: 0,
-          opacity: 1,
-          duration: 0.8,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: el,
-            start: "top 90%",
-            toggleActions: "play none none none",
-          },
-        }
-      );
-    });
-
-    // Reveal Scale
-    gsap.utils.toArray<HTMLElement>(".reveal-scale").forEach((el) => {
-      gsap.fromTo(
-        el,
-        { scale: 0.9, opacity: 0 },
-        {
-          scale: 1,
-          opacity: 1,
-          duration: 0.8,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: el,
-            start: "top 90%",
-            toggleActions: "play none none none",
-          },
-        }
-      );
+    [".reveal-up", ".reveal-left", ".reveal-right", ".reveal-scale"].forEach((cls) => {
+      gsap.utils.toArray<HTMLElement>(cls).forEach((el) => {
+        gsap.fromTo(el, { y: cls===".reveal-up"?40:0, x: cls===".reveal-left"?-50:cls===".reveal-right"?50:0, scale: cls===".reveal-scale"?0.9:1, opacity: 0 }, {
+          y:0, x:0, scale:1, opacity:1, duration:0.8, ease:"power2.out", scrollTrigger:{ trigger:el, start:"top 90%" }
+        });
+      });
     });
   });
 
-  /* ── 3D Tilt on day cards ── */
   useVisibleTask$(() => {
     const cards = document.querySelectorAll<HTMLElement>("[data-tilt]");
-    const onMove = (e: MouseEvent, card: HTMLElement) => {
-      const rect = card.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width - 0.5;
-      const y = (e.clientY - rect.top) / rect.height - 0.5;
-      card.style.transform = `perspective(800px) rotateY(${x * 10}deg) rotateX(${-y * 8}deg) translateY(-6px)`;
-    };
-    const onLeave = (card: HTMLElement) => {
-      card.style.transition = "transform 400ms cubic-bezier(0.34,1.56,0.64,1)";
-      card.style.transform = "perspective(800px) rotateY(0) rotateX(0) translateY(0)";
-    };
-    const onEnter = (card: HTMLElement) => {
-      card.style.transition = "transform 100ms linear";
-    };
-    const cleanups: Array<() => void> = [];
-    cards.forEach((card) => {
-      const mm = (e: MouseEvent) => onMove(e, card);
-      const ml = () => onLeave(card);
-      const me = () => onEnter(card);
-      card.addEventListener("mousemove", mm);
-      card.addEventListener("mouseleave", ml);
-      card.addEventListener("mouseenter", me);
-      cleanups.push(() => {
-        card.removeEventListener("mousemove", mm);
-        card.removeEventListener("mouseleave", ml);
-        card.removeEventListener("mouseenter", me);
-      });
-    });
-    return () => cleanups.forEach((c) => c());
-  });
-
-  /* ── Marquee pause ── */
-  useVisibleTask$(() => {
-    const lanes = Array.from(document.querySelectorAll<HTMLElement>("[data-marquee-lane]"));
-    const cleanups: Array<() => void> = [];
-    for (const lane of lanes) {
-      const track = lane.querySelector<HTMLElement>("[data-marquee-track]");
-      if (!track) continue;
-      let resumeTimer: ReturnType<typeof setTimeout> | undefined;
-      const pause = () => {
-        track.style.animationPlayState = "paused";
-        if (resumeTimer) clearTimeout(resumeTimer);
-        resumeTimer = setTimeout(() => { track.style.animationPlayState = "running"; }, 1400);
+    const cleanups: any[] = [];
+    cards.forEach(card => {
+      const move = (e: MouseEvent) => {
+        const r = card.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - 0.5;
+        const y = (e.clientY - r.top) / r.height - 0.5;
+        card.style.transform = `perspective(800px) rotateY(${x*10}deg) rotateX(${-y*8}deg) translateY(-6px)`;
       };
-      lane.addEventListener("pointerdown", pause);
-      lane.addEventListener("touchstart", pause, { passive: true });
-      cleanups.push(() => {
-        lane.removeEventListener("pointerdown", pause);
-        lane.removeEventListener("touchstart", pause);
-        if (resumeTimer) clearTimeout(resumeTimer);
-      });
-    }
-    return () => cleanups.forEach((c) => c());
+      const leave = () => { card.style.transition="transform 0.4s ease"; card.style.transform="none"; };
+      const enter = () => { card.style.transition="none"; };
+      card.addEventListener("mousemove", move); card.addEventListener("mouseleave", leave); card.addEventListener("mouseenter", enter);
+      cleanups.push(() => { card.removeEventListener("mousemove", move); card.removeEventListener("mouseleave", leave); card.removeEventListener("mouseenter", enter); });
+    });
+    return () => cleanups.forEach(c => c());
   });
 
-  /* ── Modal keyboard close ── */
   useVisibleTask$(({ track }) => {
     track(() => selectedDay.value);
     if (!selectedDay.value) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") selectedDay.value = null; };
-    document.body.style.overflow = "hidden";
-    document.addEventListener("keydown", onKey);
-    return () => { document.removeEventListener("keydown", onKey); document.body.style.overflow = ""; };
+    const key = (e: any) => { if (e.key==="Escape") selectedDay.value=null; };
+    document.body.style.overflow="hidden"; document.addEventListener("keydown", key);
+    return () => { document.body.style.overflow=""; document.removeEventListener("keydown", key); };
   });
 
   useVisibleTask$(({ track }) => {
     track(() => selectedTier.value);
     if (!selectedTier.value) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") selectedTier.value = null; };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
+    const key = (e: any) => { if (e.key==="Escape") selectedTier.value=null; };
+    document.addEventListener("keydown", key); return () => document.removeEventListener("keydown", key);
   });
 
-  /* ── Handlers ── */
   const closeDay = $(() => { selectedDay.value = null; });
   const closeTier = $(() => { selectedTier.value = null; });
+  const getDayEvents = (name: string) => events.value.filter(e => e.day === (dayAliases[name]?.[0] || name));
 
-  const getDayEvents = (dayName: string) => {
-    const variants = dayAliases[dayName] || [dayName];
-    return events.value.filter((item) => item.day ? variants.includes(item.day) : false);
-  };
-
-  /* ──────────────────────── render ───────────────────────── */
-  const sponsorShowcaseItems = sponsorTiers
-    .flatMap((tier) =>
-      (sponsors.value[tier.key] || [])
-        .slice(0, tier.key === "silver" ? 1 : 2)
-        .map((item, index) => ({
-          ...item,
-          tierKey: tier.key,
-          tierLabel: tier.label,
-          rank: index + 1,
-          ...sponsorTierMeta[tier.key],
-        }))
-    )
-    .slice(0, 4);
+  const sponsorShowcaseItems = sponsorTiers.flatMap(t => (sponsors.value[t.key]||[]).slice(0,2).map((s,i)=>({...s, tierLabel:t.label, rank:i+1, ...sponsorTierMeta[t.key]}))).slice(0,4);
 
   return (
     <div class="relative" style="font-family: var(--font-body);">
-
-      {/* ═══════════════ HERO SECTION ═══════════════ */}
       <HeroSlider />
 
-      {/* ═══════════════ DAY CARDS SECTION ═══════════════ */}
-      <section class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-        <div class="reveal-up mb-12 text-center">
-          <span class="t-badge mx-auto">Festival Days</span>
-          <h2 class="t-heading mt-4 text-[clamp(2rem,5vw,3.5rem)] text-[var(--t-text)]">
-            Build. Battle.{" "}
-            <span class="t-gradient">Celebrate.</span>
-          </h2>
-          <p class="mt-3 text-sm text-[var(--t-dim)]">Click a day to explore its full roadmap</p>
+      {/* ═══════════════ DAY CARDS ═══════════════ */}
+      <section class="festival-days-shell py-20">
+        <div class="festival-days-backdrop" aria-hidden="true">
+          <div class="festival-days-aurora festival-days-aurora--a" />
+          <div class="festival-days-aurora festival-days-aurora--b" />
+          <div class="festival-days-aurora festival-days-aurora--c" />
+          <div class="festival-days-vignette" />
         </div>
 
-        <div class="grid gap-6 lg:grid-cols-3">
-          {configData.value.days.map((day, index) => {
-            const roadmapLinks = ["/roadmap/day1", "/roadmap/day2", "/roadmap/day3"];
-            return (
-              <Link
-                key={day.day}
-                href={roadmapLinks[index] || "/roadmap/day1"}
-                data-tilt
-                class={[
-                  "t-day-card group text-left p-6 sm:p-7 block no-underline",
-                  `bg-gradient-to-br ${dayColors[index] || dayColors[0]}`,
-                  "reveal-up",
-                ]}
-                style={{
-                  borderColor: dayBorderColors[index] || dayBorderColors[0],
-                  transitionDelay: `${index * 80}ms`,
-                  backgroundImage: day.bgImage ? `linear-gradient(rgba(14,10,30,0.85), rgba(14,10,30,0.95)), url(${day.bgImage})` : undefined,
-                  backgroundSize: "cover",
-                  backgroundPosition: "center"
-                }}
-              >
-                {/* Inner glow blob */}
-                <div
-                  class="pointer-events-none absolute -top-10 -left-10 h-32 w-32 rounded-full blur-2xl opacity-40"
-                  style={{ background: dayAccents[index] || dayAccents[0] }}
-                ></div>
+        <div class="festival-days-shell__inner mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
-                {/* Top row */}
-                <div class="relative flex items-start justify-between gap-3 mb-5">
-                  <div
-                    class="t-day-number text-xl"
-                    style={{ background: `linear-gradient(135deg, ${dayAccents[index]}, ${dayAccents[index]}88)`, boxShadow: `0 4px 16px ${dayAccents[index]}55` }}
-                  >
-                    {dayIcons[index]}
-                  </div>
-                  <span class="t-label text-[var(--t-dim)]">{day.date}</span>
+        <div class="reveal-up mb-12 text-center relative z-10">
+          <span class="t-badge mx-auto">Festival Days</span>
+          <h2 class="t-heading mt-4 text-[clamp(2.3rem,5vw,3.8rem)] text-white">Build. Battle. <span class="t-gradient">Celebrate.</span></h2>
+          <p class="mt-4 text-xs font-bold tracking-[0.3em] uppercase text-[var(--t-muted)]">Select mission day to track transmission</p>
+        </div>
+
+        <div class="festival-days-mesh">
+          <canvas class="festival-days-mesh-web pointer-events-none" />
+          <div class="festival-days-logo-glow" aria-hidden="true">
+            <img src="/ben10/ben10-logo.png" alt="" class="festival-days-logo-mark" />
+          </div>
+          <div class="festival-days-structure" aria-hidden="true">
+            <div class="festival-days-orbit festival-days-orbit--left" />
+            <div class="festival-days-orbit festival-days-orbit--right" />
+            <div class="festival-days-orbit festival-days-orbit--bottom" />
+            <div class="festival-days-bubble festival-days-bubble--left">
+              <div class="festival-days-bubble__core" />
+              <div class="festival-days-bubble__ring" />
+            </div>
+            <div class="festival-days-bubble festival-days-bubble--right">
+              <div class="festival-days-bubble__core" />
+              <div class="festival-days-bubble__ring" />
+            </div>
+            <div class="festival-days-bubble festival-days-bubble--top">
+              <div class="festival-days-bubble__core" />
+              <div class="festival-days-bubble__ring" />
+            </div>
+            <div class="festival-days-bubble festival-days-bubble--bottom">
+              <div class="festival-days-bubble__core" />
+              <div class="festival-days-bubble__ring" />
+            </div>
+            <div class="festival-days-bubble festival-days-bubble--edge">
+              <div class="festival-days-bubble__core" />
+              <div class="festival-days-bubble__ring" />
+            </div>
+          </div>
+          <div class="grid gap-8 lg:grid-cols-3 relative z-10">
+            {configData.value.days.map((day, index) => (
+              <Link key={day.day} href={`/roadmap/day${index+1}`} data-tilt onMouseMove$={(e, el) => {
+                const r = el.getBoundingClientRect();
+                el.style.setProperty("--mouse-x", `${e.clientX - r.left}px`);
+                el.style.setProperty("--mouse-y", `${e.clientY - r.top}px`);
+              }} class="t-day-card group p-8 block reveal-up" style={{ borderColor: dayBorderColors[index], transitionDelay: `${index*80}ms` }}>
+                <img src="/ben10/ben10-logo.png" alt="" aria-hidden="true" class="t-day-card__mark" />
+                <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: `radial-gradient(400px circle at var(--mouse-x) var(--mouse-y), ${dayAccents[index]}15, transparent 40%)` }} />
+                <div class="relative z-10 flex flex-col h-full">
+                <div class="flex justify-between mb-10">
+                  <div class="t-day-number"><span class="text-xl group-hover:rotate-12 transition-transform">{dayIcons[index]}</span></div>
+                  <span class="t-label opacity-40">{day.date}</span>
                 </div>
-
-                {/* Day name */}
-                <h3
-                  class="t-heading relative text-3xl sm:text-4xl"
-                  style={{ color: dayAccents[index] || "var(--t-text)" }}
-                >
-                  {day.day}
-                </h3>
-                <p class="relative mt-1 text-sm font-medium text-[var(--t-muted)]">{day.highlight}</p>
-
-                {/* Event chips */}
-                <div class="relative mt-5 flex flex-wrap gap-2">
-                  {day.events.slice(0, 3).map((event) => (
-                    <span
-                      key={`${day.day}-${event}`}
-                      class="rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.04)] px-3 py-1 text-xs font-medium text-[var(--t-muted)]"
-                    >
-                      {event}
-                    </span>
-                  ))}
-                  {day.events.length > 3 && (
-                    <span
-                      class="rounded-full px-3 py-1 text-xs font-medium"
-                      style={{ color: dayAccents[index], background: `${dayAccents[index]}15`, border: `1px solid ${dayAccents[index]}30` }}
-                    >
-                      +{day.events.length - 3} more
-                    </span>
-                  )}
+                <div class="mb-8">
+                  <h3 class="t-heading text-4xl sm:text-5xl font-black" style={{ color: dayAccents[index] }}>{day.day}</h3>
+                  <p class="mt-2 text-[10px] uppercase tracking-widest text-[var(--t-muted)]">{day.highlight}</p>
                 </div>
-
-                {/* Bottom row */}
-                <div class="relative mt-6 flex items-center justify-between border-t border-[rgba(255,255,255,0.06)] pt-4">
-                  <span class="text-xs text-[var(--t-dim)]">{day.events.length} Events</span>
-                  <span class="text-xs font-bold tracking-widest uppercase group-hover:translate-x-1 transition-transform inline-block" style={{ color: dayAccents[index] }}>
-                    View Roadmap →
-                  </span>
+                <div class="flex flex-wrap gap-2 mb-10">
+                  {day.events.slice(0,3).map(e => <span key={e} class="rounded-lg border border-white/5 bg-white/5 px-3 py-1.5 text-[9px] uppercase font-black text-white/60">{e}</span>)}
                 </div>
-              </Link>
-            );
-          })}
+                <div class="flex-grow" />
+                <div class="flex justify-between border-t border-white/5 pt-6">
+                  <div class="flex items-center gap-2"><div class="h-1 w-1 rounded-full animate-pulse" style={{ background: dayAccents[index], boxShadow:`0 0 12px ${dayAccents[index]}` }} /><span class="text-[9px] uppercase text-white/30">Mission Files: {day.events.length}</span></div>
+                  <span class="text-[10px] font-black group-hover:translate-x-2 transition-transform flex items-center gap-1.5" style={{ color: dayAccents[index] }}>TRANSMISSION <span class="text-lg">→</span></span>
+                </div>
+              </div>
+            </Link>
+            ))}
+          </div>
+        </div>
         </div>
       </section>
 
-      {/* ═══════════════ STATS SECTION ═══════════════ */}
+      {/* ═══════════════ STATS ═══════════════ */}
       <section id="theta-stats" class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
         <div class="reveal-up mb-12 text-center">
           <span class="t-badge mx-auto">Theta Snapshot</span>
-          <h2 class="t-heading mt-4 text-[clamp(2rem,5vw,3.5rem)] text-[var(--t-text)]">
-            Numbers that{" "}
-            <span class="t-gradient">define the fest</span>
-          </h2>
+          <h2 class="t-heading mt-4 text-[clamp(2rem,5vw,3.5rem)] text-white">Numbers that <span class="t-gradient">define the fest</span></h2>
         </div>
-
         <div class="grid gap-5 md:grid-cols-3">
-          {[
-            {
-              icon: (
-                <svg class="w-6 h-6 text-[var(--t-violet)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10m-9 4h6M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              ),
-              num: counterDisplay.value.events,
-              suffix: "+",
-              label: homeCopy.value.statsLabels.events,
-              suffix2: configData.value.stats.events,
-              delay: 0,
-            },
-            {
-              icon: (
-                <svg class="w-6 h-6 text-[var(--t-cyan)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5V4H2v16h5m10 0v-2a4 4 0 00-4-4H9a4 4 0 00-4 4v2m12 0H7m9-12a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-              ),
-              num: counterDisplay.value.participants,
-              suffix: "+",
-              label: homeCopy.value.statsLabels.participants,
-              suffix2: configData.value.stats.participants,
-              delay: 100,
-              featured: true,
-            },
-            {
-              icon: (
-                <svg class="w-6 h-6 text-[var(--t-gold)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 21h18M4 21V8l8-5 8 5v13M9 21v-6h6v6M9 11h.01M15 11h.01" />
-                </svg>
-              ),
-              num: counterDisplay.value.colleges,
-              suffix: "+",
-              label: homeCopy.value.statsLabels.colleges,
-              suffix2: configData.value.stats.colleges,
-              delay: 200,
-            },
-          ].map((stat) => (
-            <article
-              key={stat.label}
-              class={["t-stat-card reveal-up", stat.featured ? "md:scale-[1.04]" : ""]}
-              style={{ transitionDelay: `${stat.delay}ms` }}
-            >
-              <div class="flex items-center justify-between mb-4">
-                <div class="flex h-11 w-11 items-center justify-center rounded-xl border border-[rgba(120,80,255,0.2)] bg-[rgba(124,58,237,0.08)]">
-                  {stat.icon}
-                </div>
-                <span class="t-label text-[var(--t-dim)]">2026</span>
-              </div>
-              <div class="t-stat-num">{stat.num}+</div>
-              <div class="t-stat-label">{stat.label}</div>
-              <div class="t-line-glow mt-5 w-3/4"></div>
+          {["events", "participants", "colleges"].map((k, i) => (
+            <article key={k} class={["t-stat-card reveal-up", i===1?"md:scale-[1.04]":""]} style={{ transitionDelay:`${i*100}ms` }}>
+              <div class="t-stat-num">{counterDisplay.value[k as keyof typeof counterDisplay.value]}+</div>
+              <div class="t-stat-label">{homeCopy.value.statsLabels[k as keyof typeof homeCopy.value.statsLabels]}</div>
+              <div class="t-line-glow mt-5 w-3/4" />
             </article>
           ))}
         </div>
       </section>
 
-      {/* ═══════════════ SPONSORS SECTION ═══════════════ */}
-      <section class="mx-auto max-w-[100vw] px-3 py-6 sm:px-5 lg:px-6 lg:py-8">
-        <div class="t-glass t-sponsor-showcase mx-auto flex min-h-[calc(100vh-7rem)] max-h-[calc(100vh-7rem)] w-full max-w-7xl flex-col overflow-hidden px-5 py-5 sm:px-7 sm:py-6 lg:px-8 lg:py-7">
-          <div class="t-sponsor-showcase__orb t-sponsor-showcase__orb--a"></div>
-          <div class="t-sponsor-showcase__orb t-sponsor-showcase__orb--b"></div>
-          <div class="t-sponsor-showcase__grid"></div>
-          <div class="t-sponsor-showcase__beam"></div>
-          <div class="t-sponsor-showcase__glyph t-sponsor-showcase__glyph--a"></div>
-          <div class="t-sponsor-showcase__glyph t-sponsor-showcase__glyph--b"></div>
-
-          <div class="relative mb-5 flex flex-wrap items-start justify-between gap-4 lg:mb-6">
-            <div class="max-w-2xl">
+      {/* ═══════════════ SPONSORS ═══════════════ */}
+      <section class="max-w-7xl mx-auto px-4 py-20">
+        <div class="t-glass p-8 sm:p-12 relative overflow-hidden">
+          <div class="relative z-10 mb-10 flex flex-wrap justify-between items-end gap-6">
+            <div class="max-w-xl">
               <span class="t-badge">{homeCopy.value.sponsors.badge}</span>
-              <h2 class="t-heading mt-3 text-[clamp(1.9rem,4vw,3.35rem)] leading-[0.95] text-[var(--t-text)]">
-                Sponsor Power for <span class="t-gradient">Theta 2026</span>
-              </h2>
-              <p class="mt-3 max-w-lg text-sm leading-relaxed text-[var(--t-muted)] sm:text-base" style="font-weight: 300;">
-                Four featured partners. Ben 10 energy. Fast access to the full sponsor wall.
-              </p>
+              <h2 class="t-heading mt-4 text-4xl text-white">Sponsor Power for <span class="t-gradient">Theta 2026</span></h2>
             </div>
-
-            <div class="flex items-center gap-3">
-              <span class="t-sticker">Legacy Wall</span>
-              <Link href="/sponsors" class="t-btn-ghost !px-4 !py-2 !text-xs inline-flex">
-                Open All
-              </Link>
-            </div>
+            <Link href="/sponsors" class="t-btn-ghost !px-6">Open Wall</Link>
           </div>
-
-          <div class="relative mb-5 flex flex-wrap gap-3 lg:mb-6">
-            {sponsorTiers.map((tier) => (
-              <button
-                key={`home-tier-${tier.key}`}
-                type="button"
-                onClick$={() => (selectedTier.value = tier.key)}
-                class="t-sponsor-tier-pill"
-              >
-                <span>{tier.label}</span>
-                <strong>{(sponsors.value[tier.key] || []).length}</strong>
-              </button>
-            ))}
-          </div>
-
-          <div class="relative grid flex-1 auto-rows-fr gap-4 sm:grid-cols-2 xl:gap-5">
-            {sponsorShowcaseItems.map((item, idx) => (
-              <article
-                key={`home-sponsor-${item.name}-${idx}`}
-                class="t-sponsor-card t-sponsor-card--showcase reveal-up flex h-full min-h-0 flex-col justify-between"
-                style={`--s-accent:${item.accent}; --s-glow:${item.glow}; --s-surface:${item.surface}; transition-delay:${idx * 80}ms;`}
-              >
-                <div class="flex items-start justify-between gap-4">
-                  <div>
-                    <p class="t-sponsor-card__eyebrow">{item.eyebrow}</p>
-                    <h3 class="mt-2 text-lg font-semibold text-[var(--t-text)]" style="font-family: var(--font-display);">
-                      {item.name}
-                    </h3>
-                  </div>
-                  <span class="t-sponsor-card__tier">{item.tierLabel}</span>
+          <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {sponsorShowcaseItems.map((s,i) => (
+              <article key={i} class="t-sponsor-card reveal-up p-6" style={`--s-accent:${s.accent}; --s-glow:${s.glow}; --s-surface:${s.surface}; transition-delay:${i*80}ms`}>
+                <div class="flex justify-between items-start mb-6">
+                  <div><p class="text-[10px] uppercase tracking-tighter opacity-50">Partner</p><h3 class="text-white font-bold">{s.name}</h3></div>
+                  <span class="t-sponsor-card__tier">{s.tierLabel}</span>
                 </div>
-
-                <div class="t-sponsor-logo-shell">
-                  <img
-                    src={item.logo}
-                    alt={item.name}
-                    width={220}
-                    height={120}
-                    loading="lazy"
-                    class="t-sponsor-img t-sponsor-img--showcase"
-                  />
-                </div>
-
-                <div class="flex items-center justify-between gap-3">
-                  <p class="text-xs font-medium tracking-[0.2em] text-[var(--t-dim)] uppercase">
-                    Slot {String(item.rank).padStart(2, "0")}
-                  </p>
-                  <button
-                    type="button"
-                    onClick$={() => (selectedTier.value = item.tierKey)}
-                    class="t-sponsor-card__link"
-                  >
-                    View Tier
-                  </button>
-                </div>
+                <div class="t-sponsor-logo-shell my-8"><img src={s.logo} alt={s.name} class="max-h-12 w-auto grayscale group-hover:grayscale-0 transition-all" /></div>
               </article>
             ))}
-
-            {sponsorShowcaseItems.length === 0 && (
-              <div class="rounded-3xl border border-dashed border-[rgba(132,255,135,0.18)] bg-[rgba(5,10,7,0.76)] px-6 py-12 text-center text-sm text-[var(--t-muted)] sm:col-span-2">
-                Sponsor highlights will appear here once the lineup is published.
-              </div>
-            )}
           </div>
         </div>
       </section>
-      <section class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-        <div class="t-cta-wrap p-8 sm:p-10 lg:p-16 text-center">
-          {/* Orbs */}
-          <div class="t-orb pointer-events-none h-64 w-64 bg-[rgba(124,58,237,0.2)] -top-16 -left-16"></div>
-          <div class="t-orb pointer-events-none h-48 w-48 bg-[rgba(6,214,240,0.1)] -bottom-8 -right-8" style="animation-delay: 3s;"></div>
 
+      {/* ═══════════════ CTA ═══════════════ */}
+      <section class="mx-auto max-w-7xl px-4 py-20">
+        <div class="t-cta-wrap p-12 text-center rounded-[3rem] border border-white/5 bg-white/[0.02] backdrop-blur-3xl overflow-hidden relative">
+          <div class="t-orb bg-green-500/10 -top-20 -left-20 h-80 w-80" />
           <div class="relative reveal-up">
-            <span class="t-badge mx-auto mb-6">Ready to Shine</span>
-            <h2 class="t-heading text-[clamp(2.5rem,6vw,5rem)] text-[var(--t-text)]">
-              {homeCopy.value.cta.titlePrefix}{" "}
-              <span class="t-gradient">{homeCopy.value.cta.titleAccent}</span>
-            </h2>
-            <p class="mx-auto mt-5 max-w-xl text-base text-[var(--t-muted)]" style="font-weight: 300;">
-              {homeCopy.value.cta.description}
-            </p>
-
-            {/* Meta pills */}
-            <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
-              {[configData.value.meta.eventName, configData.value.meta.dates, configData.value.meta.venue].map((tag) => (
-                <span key={tag} class="t-chip">{tag}</span>
-              ))}
-            </div>
-
-            {/* Buttons */}
-            <div class="mt-10 flex flex-wrap items-center justify-center gap-4">
-              <Link href="/events" class="t-btn-primary t-btn-cta-pulse !px-8 !py-4 !text-base">
-                {homeCopy.value.cta.browseEvents}
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </Link>
-              <Link href="/contact" class="t-btn-ghost !px-8 !py-4 !text-base">
-                Contact Team
-              </Link>
+            <h2 class="t-heading text-6xl text-white">{homeCopy.value.cta.titlePrefix} <span class="t-gradient">{homeCopy.value.cta.titleAccent}</span></h2>
+            <p class="mt-6 text-[var(--t-muted)] max-w-xl mx-auto">{homeCopy.value.cta.description}</p>
+            <div class="mt-10 flex flex-wrap justify-center gap-4">
+              <Link href="/events" class="t-btn-primary !px-10 !py-5">Browse Events</Link>
+              <Link href="/contact" class="t-btn-ghost !px-10 !py-5">Contact team</Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ═══════════════ DAY SCHEDULE MODAL ═══════════════ */}
+      {/* ═══════════════ MODALS ═══════════════ */}
       {selectedDay.value && (
-        <div class="t-modal-backdrop">
-          <div
-            class="absolute inset-0"
-            onClick$={closeDay}
-            aria-hidden="true"
-          ></div>
-          <div class="t-modal" role="dialog" aria-modal="true" aria-labelledby="day-modal-title">
-            <div class="p-6 sm:p-8">
-              {/* Header */}
-              <div class="mb-6 flex items-start justify-between gap-4">
-                <div>
-                  <p class="t-label text-[var(--t-dim)] mb-1">{homeCopy.value.dayModal.scheduleTitle}</p>
-                  <h3 id="day-modal-title" class="t-heading text-2xl text-[var(--t-text)]">
-                    {selectedDay.value.day}
-                  </h3>
-                  <p class="mt-1 text-sm text-[rgba(192,132,252,0.9)]">
-                    {selectedDay.value.date} — {selectedDay.value.highlight}
-                  </p>
+        <div class="t-modal-backdrop flex items-center justify-center p-4">
+          <div class="absolute inset-0" onClick$={closeDay} />
+          <div class="t-modal w-full max-w-lg relative z-10 bg-[#050a05]/95 backdrop-blur-2xl border border-white/10 rounded-3xl p-8">
+            <div class="flex justify-between items-start mb-8">
+              <div><h3 class="text-3xl text-white font-black">{selectedDay.value.day}</h3><p class="text-[var(--t-muted)] mt-1">{selectedDay.value.date}</p></div>
+              <button onClick$={closeDay} class="text-white/40 hover:text-white transition-colors">✕</button>
+            </div>
+            <div class="space-y-4">
+              {getDayEvents(selectedDay.value.day).map(e => (
+                <div key={e.id} class="p-4 rounded-xl border border-white/5 bg-white/5">
+                  <h4 class="text-white font-bold">{e.name}</h4>
+                  <p class="text-xs text-[var(--t-muted)] mt-1">{e.timing} · {e.location}</p>
                 </div>
-                <button
-                  onClick$={closeDay}
-                  class="t-btn-ghost !py-1.5 !px-3 !text-xs shrink-0"
-                  aria-label="Close"
-                >
-                  Close ✕
-                </button>
-              </div>
-
-              <div class="t-divider mb-6"></div>
-
-              {/* Event list */}
-              <div class="space-y-3">
-                {getDayEvents(selectedDay.value.day).length > 0 ? (
-                  getDayEvents(selectedDay.value.day).map((event) => (
-                    <div
-                      key={event.id}
-                      class="flex items-center justify-between rounded-xl border border-[rgba(120,80,255,0.12)] bg-[rgba(14,10,30,0.6)] p-4"
-                    >
-                      <div>
-                        <p class="font-semibold text-[var(--t-text)]" style="font-family: var(--font-display);">{event.name}</p>
-                        <p class="mt-0.5 text-xs text-[var(--t-muted)]">{event.timing} · {event.location}</p>
-                      </div>
-                      <Link href="/events" class="text-xs font-semibold text-[rgba(192,132,252,0.9)] hover:text-[var(--t-text)] transition-colors">
-                        Details →
-                      </Link>
-                    </div>
-                  ))
-                ) : (
-                  <p class="py-12 text-center text-sm text-[var(--t-dim)]">
-                    {homeCopy.value.dayModal.emptyState}
-                  </p>
-                )}
-              </div>
-
-              {/* Footer */}
-              <div class="mt-6">
-                <Link
-                  href="/events"
-                  onClick$={closeDay}
-                  class="t-btn-ghost block w-full text-center !py-3"
-                >
-                  {homeCopy.value.dayModal.viewAllEvents}
-                </Link>
-              </div>
+              ))}
             </div>
           </div>
         </div>
       )}
 
-      {/* ═══════════════ SPONSOR TIER MODAL ═══════════════ */}
       {selectedTier.value && (() => {
-        const tier = sponsorTiers.find((t) => t.key === selectedTier.value);
+        const tier = sponsorTiers.find(t => t.key === selectedTier.value);
         if (!tier) return null;
-        const tierSponsors = (sponsors.value[tier.key] || [])
-          .slice()
-          .sort((a, b) => (a.order || 999) - (b.order || 999));
-
+        const items = sponsors.value[tier.key] || [];
         return (
-          <div class="t-modal-backdrop">
-            <div class="absolute inset-0" onClick$={closeTier} aria-hidden="true"></div>
-            <div class="t-modal max-w-4xl" role="dialog" aria-modal="true">
-              <div class="p-6 sm:p-8">
-                {/* Header */}
-                <div class="mb-6 flex items-center justify-between gap-4">
-                  <div>
-                    <p class="t-label text-[var(--t-dim)] mb-1">Sponsors</p>
-                    <h3 class="t-heading text-2xl text-[var(--t-text)]">{tier.label} Partners</h3>
+          <div class="t-modal-backdrop flex items-center justify-center p-4">
+            <div class="absolute inset-0" onClick$={closeTier} />
+            <div class="t-modal w-full max-w-3xl bg-[#050a05]/95 border border-white/10 rounded-3xl p-10">
+              <div class="flex justify-between items-center mb-8">
+                <h3 class="text-2xl text-white font-black">{tier.label} Partners</h3>
+                <button onClick$={closeTier} class="text-white/40">✕</button>
+              </div>
+              <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
+                {items.map((s,i) => (
+                  <div key={i} class="t-sponsor-card p-6 flex flex-col items-center justify-center min-h-[120px]">
+                    <img src={s.logo} alt={s.name} class="max-h-12 w-auto" />
+                    <p class="mt-4 text-[10px] text-white/30 uppercase font-bold">{s.name}</p>
                   </div>
-                  <div class="flex items-center gap-3">
-                    <span class="t-badge">{tierSponsors.length} Partners</span>
-                    <button onClick$={closeTier} class="t-btn-ghost !py-1.5 !px-3 !text-xs">Close ✕</button>
-                  </div>
-                </div>
-
-                <div class="t-divider mb-6"></div>
-
-                {/* Grid */}
-                <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {tierSponsors.map((item, idx) => (
-                    <article key={`${tier.key}-${item.name}-modal-${idx}`} class="t-sponsor-card text-center flex flex-col items-center justify-center min-h-[7rem]">
-                      <img
-                        src={item.logo}
-                        alt={item.name}
-                        width={180} height={80}
-                        loading="lazy"
-                        class="t-sponsor-img max-h-14 max-w-[9rem]"
-                      />
-                      <p class="mt-3 text-xs font-medium tracking-wider text-[var(--t-dim)] uppercase">{item.name}</p>
-                    </article>
-                  ))}
-                </div>
+                ))}
               </div>
             </div>
           </div>
         );
       })()}
-
     </div>
   );
 });
 
 export const head: DocumentHead = {
   title: "Theta 2026 | National Level Techno-Management Fest",
-  meta: [
-    {
-      name: "description",
-      content: "Theta 2026 is SASTRA's premier national level techno-management fest. Explore hackathons, robotics, workshops, and more. March 15-17, 2026.",
-    },
-  ],
+  meta: [{ name: "description", content: "Theta 2026 is SASTRA's premier national level techno-management fest. Explore hackathons, robotics, workshops, and more. March 15-17, 2026." }],
 };
