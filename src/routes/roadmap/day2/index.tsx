@@ -1,4 +1,4 @@
-import { $, component$, useSignal, useVisibleTask$ } from "@builder.io/qwik";
+﻿import { $, component$, useSignal, useVisibleTask$ } from "@builder.io/qwik";
 import { Link, type DocumentHead } from "@builder.io/qwik-city";
 
 type Cat = "opening" | "tech" | "workshop" | "quiz" | "fun" | "cultural";
@@ -15,10 +15,10 @@ interface EventCardProps {
 }
 interface PopupPanelProps { ev: EventData; meta: CatMeta; side: "left" | "right"; canRegister: boolean; }
 
-/* ── One Piece event data ── */
+/* â”€â”€ One Piece event data â”€â”€ */
 const EVENTS: EventData[] = [
   { id: 1, time: "09:00 AM", endTime: "10:00 AM", title: "Thousand Sunny Briefing",
-    subtitle: "Grand Line departure — Day 2 kickoff", venue: "Main Auditorium, Block A", cat: "opening",
+    subtitle: "Grand Line departure â€” Day 2 kickoff", venue: "Main Auditorium, Block A", cat: "opening",
     fee: "Free", team: "Open to all", prize: "Daily logpose",
     img: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1200&auto=format&fit=crop",
     tags: ["Crew sync", "Island chart", "Log Pose reveal"],
@@ -28,19 +28,19 @@ const EVENTS: EventData[] = [
     fee: "Rs 100 / team", team: "2 to 3 members", prize: "Rs 15,000",
     img: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1200&auto=format&fit=crop",
     tags: ["3-hour sprint", "Live leaderboard", "Logic battles"],
-    desc: "Eat the code-code fruit. Solve algorithmic and AI challenges under a blazing live scoreboard — only the strongest Devil Fruit users survive the Grand Line pressure." },
+    desc: "Eat the code-code fruit. Solve algorithmic and AI challenges under a blazing live scoreboard â€” only the strongest Devil Fruit users survive the Grand Line pressure." },
   { id: 3, time: "10:00 AM", endTime: "12:00 PM", title: "Marine Cipher Lab",
     subtitle: "Cyber & systems workshop", venue: "Plumber HQ, Block D", cat: "workshop",
     fee: "Rs 150 / head", team: "Individual", prize: "Treasure map + cert",
     img: "https://images.unsplash.com/photo-1629835775533-31682702c256?q=80&w=1200&auto=format&fit=crop",
     tags: ["Live demo", "Mentor-led", "Cipher kit"],
-    desc: "Decode the world's secrets. A guided workshop on cyber defense, AI-assisted security, and real-world penetration tactics — straight from the Marine intelligence files." },
+    desc: "Decode the world's secrets. A guided workshop on cyber defense, AI-assisted security, and real-world penetration tactics â€” straight from the Marine intelligence files." },
   { id: 4, time: "02:00 PM", endTime: "03:30 PM", title: "Davy Back Trivia Fight",
     subtitle: "Rapid-fire quiz arena", venue: "Sector 7G, Block B", cat: "quiz",
     fee: "Rs 50 / team", team: "2 members", prize: "Rs 5,000",
     img: "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1200&auto=format&fit=crop",
     tags: ["5 rounds", "30-second clock", "Buzzer duel"],
-    desc: "The Davy Back Fight rules apply — five brutal rounds across tech, current affairs, and innovation. Win your crewmates' freedom or lose them to the rival ship." },
+    desc: "The Davy Back Fight rules apply â€” five brutal rounds across tech, current affairs, and innovation. Win your crewmates' freedom or lose them to the rival ship." },
   { id: 5, time: "03:30 PM", endTime: "05:00 PM", title: "Pirate Crew Pitch Stage",
     subtitle: "Startup & product strategy battleground", venue: "Innovation Hall, Block A", cat: "tech",
     fee: "Rs 200 / team", team: "2 to 4 members", prize: "Rs 20,000 + mentoring",
@@ -52,26 +52,26 @@ const EVENTS: EventData[] = [
     fee: "Free", team: "Pairs", prize: "Trophies + treasure goodies",
     img: "https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?q=80&w=1200&auto=format&fit=crop",
     tags: ["Obstacle island", "Pair sync", "Reflex snipe"],
-    desc: "Channel your inner Usopp — this movement-based campus challenge rewards communication, timing, and sharpshooter instincts more than raw speed." },
+    desc: "Channel your inner Usopp â€” this movement-based campus challenge rewards communication, timing, and sharpshooter instincts more than raw speed." },
   { id: 7, time: "07:00 PM", endTime: "09:00 PM", title: "Baratie Grand Night",
     subtitle: "Open-air stage feast & finale", venue: "Open-Air Amphitheatre", cat: "cultural",
     fee: "Free", team: "Open to all", prize: "Festival encore",
     img: "https://images.unsplash.com/photo-1470229722913-7c090be5c520?q=80&w=1200&auto=format&fit=crop",
     tags: ["Live band", "Dance island", "Comedy duel"],
-    desc: "The Baratie serves up a grand night — live music, campus performances, and a high-energy curtain call to wrap Day 2 of the Grand Line voyage." },
+    desc: "The Baratie serves up a grand night â€” live music, campus performances, and a high-energy curtain call to wrap Day 2 of the Grand Line voyage." },
 ];
 
-/* ── One Piece CAT palette ─ gold / cyan / teal / orange / aqua / amber ── */
+/* â”€â”€ One Piece CAT palette â”€ gold / cyan / teal / orange / aqua / amber â”€â”€ */
 const CAT: Record<Cat, CatMeta> = {
-  opening:  { label: "Opening",  short: "OP", color: "#ffd700", rgb: "255,215,0"   },
-  tech:     { label: "Tech",     short: "DF", color: "#00bfff", rgb: "0,191,255"   },
-  workshop: { label: "Workshop", short: "WS", color: "#40e0d0", rgb: "64,224,208"  },
-  quiz:     { label: "Quiz",     short: "QZ", color: "#ff8c42", rgb: "255,140,66"  },
-  fun:      { label: "Fun",      short: "FN", color: "#7fffd4", rgb: "127,255,212"  },
-  cultural: { label: "Cultural", short: "CL", color: "#ffd27f", rgb: "255,210,127" },
+  opening:  { label: "Opening",  short: "OP", color: "#f4c542", rgb: "244,197,66" },
+  tech:     { label: "Tech",     short: "DF", color: "#f4c542", rgb: "244,197,66" },
+  workshop: { label: "Workshop", short: "WS", color: "#f4c542", rgb: "244,197,66" },
+  quiz:     { label: "Quiz",     short: "QZ", color: "#f4c542", rgb: "244,197,66" },
+  fun:      { label: "Fun",      short: "FN", color: "#f4c542", rgb: "244,197,66" },
+  cultural: { label: "Cultural", short: "CL", color: "#f4c542", rgb: "244,197,66" },
 };
 
-/* ─── Popup Panel — same structure as Day 1 ────────────────────────────── */
+/* â”€â”€â”€ Popup Panel â€” same structure as Day 1 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const PopupPanel = component$<PopupPanelProps>(({ ev, meta, side, canRegister }) => (
   <div
     class={["rm-popup", `rm-popup--${side}`]}
@@ -85,10 +85,10 @@ const PopupPanel = component$<PopupPanelProps>(({ ev, meta, side, canRegister })
         <span class="rm-popup__chip">
           <span class="rm-popup__dot" />{meta.label}
         </span>
-        <span class="rm-popup__time">{ev.time} – {ev.endTime}</span>
+        <span class="rm-popup__time">{ev.time} â€“ {ev.endTime}</span>
       </div>
       <p class="rm-popup__title">{ev.title}</p>
-      <p class="rm-popup__venue">📍 {ev.venue}</p>
+      <p class="rm-popup__venue">ðŸ“ {ev.venue}</p>
       <div class="rm-popup__stats">
         <div class="rm-popup__stat">
           <span class="rm-popup__stat-l">Entry</span>
@@ -118,7 +118,7 @@ const PopupPanel = component$<PopupPanelProps>(({ ev, meta, side, canRegister })
   </div>
 ));
 
-/* ─── Event Card — same structure as Day 1 ─────────────────────────────── */
+/* â”€â”€â”€ Event Card â€” same structure as Day 1 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const EventCard = component$<EventCardProps>(
   ({ ev, meta, isActive, side, onToggle$ }) => (
     <article
@@ -148,62 +148,72 @@ const EventCard = component$<EventCardProps>(
             <p class="rm-card__overline">Island {String(ev.id).padStart(2, "0")}</p>
             <h3 class="rm-card__title">{ev.title}</h3>
           </div>
-          <span class="rm-card__toggle">{isActive ? "Retreat" : "Sail →"}</span>
+          <span class="rm-card__toggle">{isActive ? "Retreat" : "Sail â†’"}</span>
         </div>
         <p class="rm-card__desc">{ev.desc}</p>
         <div class="rm-card__quick-meta">
           <span class="rm-card__meta-pill">{ev.venue}</span>
-          <span class="rm-card__meta-pill">{ev.time} – {ev.endTime}</span>
+          <span class="rm-card__meta-pill">{ev.time} â€“ {ev.endTime}</span>
         </div>
         {isActive && (
-          <p class="rm-card__popup-hint">← See details panel →</p>
+          <p class="rm-card__popup-hint">â† See details panel â†’</p>
         )}
       </div>
     </article>
   ),
 );
 
-/* ── Ocean-wave canvas — One Piece colors ──────────────────────────────── */
-const GRID_JS = `
-(function(){
-  var c=document.getElementById('rm-bg-grid');
-  if(!c)return;
-  var ctx=c.getContext('2d'),t=0,cell=44;
-  function resize(){c.width=window.innerWidth;c.height=window.innerHeight;}
-  resize();window.addEventListener('resize',resize);
-  function frame(){
-    ctx.clearRect(0,0,c.width,c.height);
-    var off=(t*0.35)%cell;
-    ctx.lineWidth=0.8;ctx.strokeStyle='rgba(0,191,255,0.07)';
-    for(var y=-cell+off;y<c.height+cell;y+=cell){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(c.width,y);ctx.stroke();}
-    for(var x=0;x<c.width+cell;x+=cell){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,c.height);ctx.stroke();}
-    /* gold shimmer dots */
-    ctx.fillStyle='rgba(255,215,0,0.11)';
-    for(var ry=-cell+off;ry<c.height+cell;ry+=cell)
-      for(var rx=0;rx<c.width+cell;rx+=cell){
-        var w=Math.sin(t*0.025+ry*0.08+rx*0.06),r=1.2+w*w*1.3;
-        ctx.beginPath();ctx.arc(rx,ry,r,0,6.28);ctx.fill();
-      }
-    /* ocean bubbles */
-    ctx.fillStyle='rgba(64,224,208,0.06)';
-    for(var b=0;b<12;b++){
-      var bx=(Math.sin(t*0.007+b*1.9)*0.5+0.5)*c.width;
-      var by=((-t*0.22+b*c.height/12+c.height)%c.height);
-      ctx.beginPath();ctx.arc(bx,by,1.5+Math.sin(b)*1.2,0,6.28);ctx.fill();
-    }
-    t++;requestAnimationFrame(frame);
-  }
-  frame();
-})();
-`;
-
 export default component$(function Day2Roadmap() {
   const activeEventId = useSignal<number | null>(null);
 
   useVisibleTask$(() => {
-    /* ── Set One Piece theme on entire site ── */
+    /* â”€â”€ Set One Piece theme on entire site â”€â”€ */
     document.body.setAttribute("data-theme", "onepiece");
     return () => { document.body.removeAttribute("data-theme"); };
+  });
+
+  useVisibleTask$(() => {
+    const page = document.querySelector(".rm-page--op") as HTMLElement | null;
+    if (!page) return;
+
+    const updateScroll = () => {
+      const scrollMax = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+      const scrollRatio = window.scrollY / scrollMax;
+      page.style.setProperty("--rm-scroll-progress", scrollRatio.toFixed(4));
+
+      const mix = (value: number, start: number, end: number) => {
+        if (value <= start) return 0;
+        if (value >= end) return 1;
+        return (value - start) / (end - start);
+      };
+
+      const slide12 = mix(scrollRatio, 0.16, 0.46);
+      const slide23 = mix(scrollRatio, 0.5, 0.82);
+      const img1 = Math.max(0, 1 - slide12);
+      const img2 = Math.max(0, Math.min(1, slide12 * (1 - slide23) + (1 - slide12) * 0.04));
+      const img3 = Math.max(0, slide23);
+
+      page.style.setProperty("--rm-bg1-opacity", img1.toFixed(4));
+      page.style.setProperty("--rm-bg2-opacity", img2.toFixed(4));
+      page.style.setProperty("--rm-bg3-opacity", img3.toFixed(4));
+      page.style.setProperty("--rm-bg1-shift", `${(-180 * slide12).toFixed(2)}px`);
+      page.style.setProperty("--rm-bg2-shift", `${(120 - 140 * slide12 - 90 * slide23).toFixed(2)}px`);
+      page.style.setProperty("--rm-bg3-shift", `${(220 - 220 * slide23).toFixed(2)}px`);
+    };
+
+    page.style.setProperty("--rm-scroll-progress", "0");
+    page.style.setProperty("--rm-bg1-opacity", "1");
+    page.style.setProperty("--rm-bg2-opacity", "0");
+    page.style.setProperty("--rm-bg3-opacity", "0");
+    page.style.setProperty("--rm-bg1-shift", "0px");
+    page.style.setProperty("--rm-bg2-shift", "0px");
+    page.style.setProperty("--rm-bg3-shift", "0px");
+    window.addEventListener("scroll", updateScroll, { passive: true });
+    updateScroll();
+
+    return () => {
+      window.removeEventListener("scroll", updateScroll);
+    };
   });
 
   useVisibleTask$(() => {
@@ -342,76 +352,389 @@ export default component$(function Day2Roadmap() {
   return (
     <div class="rm-page rm-page--op" key="roadmap-day-2">
 
-      {/* ── One Piece color overrides (structure unchanged) ── */}
+      {/* â”€â”€ One Piece color overrides (structure unchanged) â”€â”€ */}
       <style>{`
         .rm-page--op {
-          background: linear-gradient(175deg, #020c18 0%, #031624 35%, #050e1a 65%, #020a12 100%);
+          --rm-scroll-progress: 0;
+          --rm-bg1-opacity: 1;
+          --rm-bg2-opacity: 0;
+          --rm-bg3-opacity: 0;
+          --rm-bg1-shift: 0px;
+          --rm-bg2-shift: 0px;
+          --rm-bg3-shift: 0px;
+          background: #05080d;
+          color: #fff2d2;
         }
-        .rm-page--op .rm-page__aurora--left {
-          background: radial-gradient(ellipse at 0% 30%, rgba(0,120,200,0.18) 0%, transparent 65%);
+        .rm-page--op::before {
+          content: "";
+          position: fixed;
+          inset: 0;
+          pointer-events: none;
+          z-index: 0;
+          background:
+            linear-gradient(180deg, rgba(3, 6, 10, 0.62) 0%, rgba(4, 8, 14, 0.42) 18%, rgba(4, 8, 14, 0.56) 56%, rgba(2, 4, 8, 0.88) 100%),
+            radial-gradient(circle at 50% 18%, rgba(255, 198, 92, 0.16), transparent 22%),
+            radial-gradient(circle at 50% 78%, rgba(255, 124, 0, 0.08), transparent 24%);
+          opacity: 1;
         }
+        .rm-page--op::after {
+          content: "";
+          position: fixed;
+          inset: 0;
+          pointer-events: none;
+          z-index: 0;
+          background:
+            linear-gradient(90deg, rgba(2, 4, 8, 0.72) 0%, rgba(2, 4, 8, 0.18) 18%, rgba(2, 4, 8, 0.18) 82%, rgba(2, 4, 8, 0.72) 100%);
+          opacity: 1;
+        }
+        .rm-page--op .rm-page__aurora--left,
         .rm-page--op .rm-page__aurora--right {
-          background: radial-gradient(ellipse at 100% 60%, rgba(255,215,0,0.1) 0%, rgba(64,224,208,0.07) 40%, transparent 70%);
+          display: none;
         }
+        .rm-page--op .rm-bg-mark {
+          position: absolute;
+          top: clamp(5rem, 9vw, 7rem);
+          right: clamp(1rem, 3vw, 3rem);
+          width: clamp(16rem, 24vw, 21rem);
+          opacity: 0.12;
+          pointer-events: none;
+          user-select: none;
+          filter:
+            drop-shadow(0 0 20px rgba(255, 183, 43, 0.18))
+            drop-shadow(0 0 48px rgba(255, 183, 43, 0.12))
+            saturate(1.08);
+          mix-blend-mode: screen;
+          z-index: 0;
+        }
+        .rm-page--op .rm-bg-mark img {
+          display: block;
+          width: 100%;
+          height: auto;
+        }
+        .rm-page--op .rm-scene-gallery {
+          position: fixed;
+          inset: 0;
+          pointer-events: none;
+          z-index: 0;
+          overflow: hidden;
+        }
+        .rm-page--op .rm-scene-art {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+          will-change: transform;
+          transition: opacity 180ms linear, transform 180ms linear;
+        }
+        .rm-page--op .rm-scene-art::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          background:
+            linear-gradient(180deg, rgba(2, 4, 8, 0.74), rgba(2, 4, 8, 0.48) 22%, rgba(2, 4, 8, 0.56) 58%, rgba(2, 4, 8, 0.92) 100%);
+        }
+        .rm-page--op .rm-scene-art img {
+          display: block;
+          width: 100%;
+          height: 100vh;
+          object-fit: cover;
+          filter: saturate(0.92) contrast(1) brightness(0.34);
+        }
+        .rm-page--op .rm-scene-art--i1 {
+          opacity: var(--rm-bg1-opacity);
+          transform: translate3d(0, var(--rm-bg1-shift), 0) scale(1.05);
+        }
+        .rm-page--op .rm-scene-art--i2 {
+          opacity: var(--rm-bg2-opacity);
+          transform: translate3d(0, var(--rm-bg2-shift), 0) scale(1.05);
+        }
+        .rm-page--op .rm-scene-art--i3 {
+          opacity: var(--rm-bg3-opacity);
+          transform: translate3d(0, var(--rm-bg3-shift), 0) scale(1.05);
+        }
+        .rm-page--op .rm-scene-art--i1 img { object-position: center 22%; }
+        .rm-page--op .rm-scene-art--i2 img { object-position: center center; }
+        .rm-page--op .rm-scene-art--i3 img { object-position: center 35%; }
         .rm-page--op .rm-pill {
-          background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(0,191,255,0.12));
-          border-color: rgba(255,215,0,0.4);
-          color: #ffd700;
+          background: linear-gradient(135deg, rgba(255,177,38,0.24), rgba(180,94,5,0.16));
+          border-color: rgba(255,177,38,0.48);
+          color: #ffbc34;
         }
         .rm-page--op .rm-section__title {
-          background: linear-gradient(135deg, #ffd700 0%, #ffe680 30%, #fff 55%, #00bfff 80%, #40e0d0 100%);
+          background: linear-gradient(135deg, #ffb72b 0%, #ffd768 36%, #fff3c9 68%, #ff9c1a 100%);
           -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
         }
+        .rm-page--op .rm-section__copy {
+          color: rgba(255, 239, 205, 0.84);
+        }
         .rm-page--op .rm-event-glass {
-          background: linear-gradient(135deg, rgba(0,60,120,0.55), rgba(255,215,0,0.1));
-          border-color: rgba(255,215,0,0.28);
+          background: linear-gradient(145deg, rgba(10, 30, 52, 0.92), rgba(20, 56, 92, 0.82));
+          border-color: rgba(255,177,38,0.34);
+          box-shadow:
+            inset 0 1px 0 rgba(255,255,255,0.09),
+            0 0 34px rgba(255,177,38,0.16),
+            0 18px 42px rgba(0,0,0,0.38);
         }
-        .rm-page--op .rm-event-glass__count { color: #ffd700; text-shadow: 0 0 20px rgba(255,215,0,0.5); }
-        .rm-page--op .rm-event-glass__dot   { background: #ffd700; box-shadow: 0 0 12px rgba(255,215,0,0.7); }
-        /* Snake line gradients */
-        .rm-page--op #rm-grad-line stop:nth-child(1) { stop-color: #ffd700; }
-        .rm-page--op #rm-grad-line stop:nth-child(2) { stop-color: #00bfff; }
-        .rm-page--op #rm-grad-line stop:nth-child(3) { stop-color: #40e0d0; }
-        .rm-page--op #rm-grad-core stop:nth-child(1) { stop-color: #fff; }
-        .rm-page--op #rm-grad-core stop:nth-child(2) { stop-color: #ffd700; }
-        .rm-page--op #rm-grad-core stop:nth-child(3) { stop-color: #00bfff; }
-        .rm-page--op #rm-tracer-fill stop:nth-child(2) { stop-color: #ffd700; }
-        .rm-page--op #rm-tracer-fill stop:nth-child(3) { stop-color: #00bfff; }
-        .rm-page--op #rm-tracer-arrow { fill: #ffd700; }
-        /* Node lit state */
+        .rm-page--op .rm-event-glass__count {
+          background: linear-gradient(135deg, #ffb72b, #ffe28d);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          filter: drop-shadow(0 0 16px rgba(255,177,38,0.52));
+        }
+        .rm-page--op .rm-event-glass__label { color: rgba(255, 237, 197, 0.76); }
+        .rm-page--op .rm-event-glass__dot   { background: #ffbc34; box-shadow: 0 0 12px rgba(255,177,38,0.76); }
+        .rm-page--op #rm-grad-line stop:nth-child(1) { stop-color: #ff8f14; }
+        .rm-page--op #rm-grad-line stop:nth-child(2) { stop-color: #ffbc34; }
+        .rm-page--op #rm-grad-line stop:nth-child(3) { stop-color: #ffe18e; }
+        .rm-page--op #rm-grad-core stop:nth-child(1) { stop-color: #fff7dd; }
+        .rm-page--op #rm-grad-core stop:nth-child(2) { stop-color: #ffbc34; }
+        .rm-page--op #rm-grad-core stop:nth-child(3) { stop-color: #ffd46d; }
+        .rm-page--op #rm-tracer-fill stop:nth-child(2) { stop-color: #ffbc34; }
+        .rm-page--op #rm-tracer-fill stop:nth-child(3) { stop-color: #ffe18e; }
+        .rm-page--op #rm-tracer-arrow { fill: #ffbc34; }
+        .rm-page--op .rm-line-glow {
+          stroke: #ffb72b;
+          opacity: 0.26;
+          filter: blur(10px);
+        }
+        .rm-page--op .rm-line-base {
+          stroke: #ffb72b;
+          opacity: 0.82;
+        }
+        .rm-page--op .rm-line-accent {
+          stroke: #fff1c5;
+          filter: drop-shadow(0 0 12px rgba(255,177,38,0.48));
+        }
+        .rm-page--op .rm-card,
+        .rm-page--op .rm-popup__inner,
+        .rm-page--op .rm-end-card {
+          border-color: rgba(255,177,38,0.26);
+          background: linear-gradient(180deg, rgba(5, 12, 20, 0.995), rgba(4, 10, 18, 0.998));
+          box-shadow:
+            inset 0 1px 0 rgba(255,255,255,0.07),
+            0 28px 70px rgba(0,0,0,0.62),
+            0 0 0 1px rgba(0,0,0,0.32);
+          backdrop-filter: blur(6px);
+        }
+        .rm-page--op .rm-card:hover,
+        .rm-page--op .rm-card.is-active {
+          border-color: rgba(255,177,38,0.38);
+          box-shadow:
+            inset 0 1px 0 rgba(255,255,255,0.08),
+            0 34px 80px rgba(0,0,0,0.72),
+            0 0 0 1px rgba(255,177,38,0.1),
+            0 0 34px rgba(255,177,38,0.16);
+        }
+        .rm-page--op .rm-card__media-overlay {
+          background: linear-gradient(180deg, rgba(2, 6, 12, 0.44), rgba(2, 6, 12, 0.9) 66%, rgba(4, 10, 20, 0.99));
+        }
+        .rm-page--op .rm-card__overline,
+        .rm-page--op .rm-card__eyebrow,
+        .rm-page--op .rm-popup__time,
+        .rm-page--op .rm-popup__stat-l,
+        .rm-page--op .rm-node__time {
+          color: rgba(255, 230, 182, 0.62);
+        }
+        .rm-page--op .rm-card__title,
+        .rm-page--op .rm-popup__title,
+        .rm-page--op .rm-node__code,
+        .rm-page--op .rm-end-card h3 {
+          color: #fff4d0;
+        }
+        .rm-page--op .rm-card__desc,
+        .rm-page--op .rm-popup__venue,
+        .rm-page--op .rm-popup__stat-v,
+        .rm-page--op .rm-end-card p,
+        .rm-page--op .rm-end-card__meta span {
+          color: rgba(255, 244, 220, 0.92);
+        }
+        .rm-page--op .rm-card__chip,
+        .rm-page--op .rm-card__meta-pill,
+        .rm-page--op .rm-popup__tag,
+        .rm-page--op .rm-popup__chip,
+        .rm-page--op .rm-card__toggle {
+          border-color: rgba(255,177,38,0.24);
+          background: rgba(255,177,38,0.1);
+          color: #ffbc34;
+        }
+        .rm-page--op .rm-card__chip-dot,
+        .rm-page--op .rm-popup__dot {
+          background: #ffbc34;
+          box-shadow: 0 0 10px rgba(255,177,38,0.82);
+        }
+        .rm-page--op .rm-popup__action--primary,
+        .rm-page--op .rm-end-card__meta a {
+          color: #07111d;
+          background: linear-gradient(135deg, #ffb72b, #ffd76a);
+          border-color: rgba(255,177,38,0.44);
+          box-shadow: 0 14px 28px rgba(255,177,38,0.24);
+        }
+        .rm-page--op .rm-popup__action--ghost {
+          color: #fff0cf;
+          border-color: rgba(255,177,38,0.28);
+          background: rgba(255,177,38,0.1);
+        }
+        .rm-page--op .rm-popup__open-badge {
+          color: #ffbc34;
+          border-color: rgba(255,177,38,0.26);
+          background: rgba(255,177,38,0.1);
+        }
+        .rm-page--op .rm-popup__ripple {
+          border-color: rgba(255,177,38,0.24);
+        }
+        .rm-page--op .rm-node,
+        .rm-page--op .rm-node--finish {
+          border-color: rgba(255,177,38,0.44);
+          background: radial-gradient(circle at 50% 32%, rgba(255,177,38,0.22), rgba(7,15,28,0.96) 72%);
+          box-shadow:
+            inset 0 1px 0 rgba(255,255,255,0.08),
+            0 0 34px rgba(255,177,38,0.16),
+            0 24px 50px rgba(0,0,0,0.38);
+        }
+        .rm-page--op .rm-node__pulse,
+        .rm-page--op .rm-node__halo,
+        .rm-page--op .rm-node__impact {
+          border-color: rgba(255,177,38,0.34);
+        }
         .rm-page--op .rm-node--lit {
-          border-color: #ffd700;
-          box-shadow: 0 0 0 3px rgba(255,215,0,0.15), 0 0 22px rgba(255,215,0,0.5), 0 0 50px rgba(0,191,255,0.2);
-          background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(0,80,160,0.4));
+          border-color: #ffbc34;
+          box-shadow: 0 0 0 3px rgba(255,177,38,0.18), 0 0 24px rgba(255,177,38,0.56), 0 0 56px rgba(255,177,38,0.22);
+          background: radial-gradient(circle at 50% 32%, rgba(255,177,38,0.28), rgba(8,18,32,0.96) 70%);
         }
-        /* Dock — One Piece */
+        .rm-page--op .rm-node--hovered {
+          border-color: rgba(255,177,38,0.98);
+          box-shadow:
+            inset 0 1px 0 rgba(255,255,255,0.16),
+            0 0 38px rgba(255,177,38,0.48),
+            0 0 82px rgba(255,177,38,0.22),
+            0 28px 60px rgba(0,0,0,0.46);
+        }
         .rm-page--op ~ .rm-dock .rm-dock__inner,
         .rm-dock--op .rm-dock__inner {
-          border-color: rgba(255,215,0,0.28);
-          box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 18px rgba(255,215,0,0.07);
+          border-color: rgba(255,177,38,0.32);
+          background: linear-gradient(180deg, rgba(10, 27, 46, 0.97), rgba(6, 16, 30, 0.94));
+          box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 22px rgba(255,177,38,0.1);
+        }
+        .rm-dock--op .rm-dock__item,
+        .rm-dock--op .rm-dock__status {
+          color: rgba(255, 239, 205, 0.8);
         }
         .rm-dock--op .rm-dock__item.is-active {
-          color: #ffd700;
-          background: rgba(255,215,0,0.14);
-          border: 1px solid rgba(255,215,0,0.35);
+          color: #ffbc34;
+          background: rgba(255,177,38,0.16);
+          border: 1px solid rgba(255,177,38,0.38);
         }
-        .rm-dock--op .rm-dock__item:hover    { color: #ffd700; background: rgba(255,215,0,0.09); }
-        .rm-dock--op .rm-dock__status-dot    { background: #ffd700; box-shadow: 0 0 10px rgba(255,215,0,0.7); }
-        /* End card */
+        .rm-dock--op .rm-dock__item:hover { color: #ffbc34; background: rgba(255,177,38,0.1); }
+        .rm-dock--op .rm-dock__status-dot { background: #ffbc34; box-shadow: 0 0 10px rgba(255,177,38,0.76); }
         .rm-page--op .rm-end-card {
-          background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(0,50,110,0.45));
-          border-color: rgba(255,215,0,0.32);
+          background: linear-gradient(135deg, rgba(12,31,50,0.96), rgba(22,55,88,0.94));
+          border-color: rgba(255,177,38,0.28);
         }
-        .rm-page--op .rm-end-card h3 { color: #ffd700; }
-        .rm-page--op .rm-end-card__meta a {
-          color: #ffd700;
-          background: rgba(255,215,0,0.12);
-          border-color: rgba(255,215,0,0.32);
+        .rm-page--op .rm-end-card h3 { color: #ffbc34; }
+        .rm-page--op .rm-end-card__meta a:hover { background: linear-gradient(135deg, #ffc64a, #ffe59a); }
+        .rm-page--op .rm-end-card__note {
+          margin-top: 1rem;
+          padding: 0.95rem 1rem;
+          border-radius: 1rem;
+          border: 1px solid rgba(255, 177, 38, 0.2);
+          background:
+            linear-gradient(135deg, rgba(255, 183, 43, 0.08), rgba(255, 130, 0, 0.04)),
+            rgba(6, 16, 28, 0.78);
+          box-shadow:
+            inset 0 1px 0 rgba(255,255,255,0.05),
+            0 14px 34px rgba(0,0,0,0.24);
         }
-        .rm-page--op .rm-end-card__meta a:hover { background: rgba(255,215,0,0.22); }
+        .rm-page--op .rm-end-card__note-label {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.4rem;
+          color: #ffbc34;
+          font-size: 0.58rem;
+          font-weight: 900;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+        }
+        .rm-page--op .rm-end-card__note-label::before {
+          content: "";
+          width: 0.45rem;
+          height: 0.45rem;
+          border-radius: 999px;
+          background: #ffbc34;
+          box-shadow: 0 0 10px rgba(255,177,38,0.8);
+        }
+        .rm-page--op .rm-end-card__note p {
+          margin: 0.65rem 0 0;
+          color: rgba(255, 244, 220, 0.88);
+          font-size: 0.85rem;
+          line-height: 1.6;
+        }
+        .rm-page--op .rm-shell,
+        .rm-page--op .rm-section,
+        .rm-page--op .rm-timeline {
+          position: relative;
+          z-index: 1;
+        }
+        @media (max-width: 767px) {
+          .rm-page--op .rm-row--final {
+            grid-template-columns: 3rem minmax(0, 1fr);
+            align-items: start;
+          }
+          .rm-page--op .rm-row--final .rm-row__center {
+            grid-column: 1;
+            grid-row: 1;
+            align-items: center;
+          }
+          .rm-page--op .rm-row--final .rm-row__side--left {
+            display: none;
+          }
+          .rm-page--op .rm-row--final .rm-row__side--right {
+            grid-column: 2;
+            grid-row: 1;
+            display: flex;
+            justify-content: stretch;
+          }
+          .rm-page--op .rm-row--final .rm-end-card {
+            width: 100%;
+            margin-top: 0.2rem;
+            padding: 1rem;
+          }
+          .rm-page--op .rm-row--final .rm-node--finish {
+            margin-top: 0.35rem;
+          }
+          .rm-page--op .rm-end-card__note {
+            margin-top: 0.85rem;
+            padding: 0.85rem 0.9rem;
+          }
+          .rm-page--op .rm-bg-mark {
+            top: 6rem;
+            right: -2rem;
+            width: 12rem;
+            opacity: 0.1;
+          }
+          .rm-page--op .rm-scene-gallery {
+            inset: 0;
+          }
+          .rm-page--op .rm-scene-art {
+            position: absolute;
+            inset: 0;
+          }
+          .rm-page--op .rm-scene-art--i2 img { object-position: center top; }
+        }
       `}</style>
-
-      <canvas id="rm-bg-grid" class="rm-bg-grid" aria-hidden="true" />
+      <div class="rm-scene-gallery" aria-hidden="true">
+        <div class="rm-scene-art rm-scene-art--i1">
+          <img src="/roadmap-day2/i1.png" alt="" />
+        </div>
+        <div class="rm-scene-art rm-scene-art--i2">
+          <img src="/roadmap-day2/i2.png" alt="" />
+        </div>
+        <div class="rm-scene-art rm-scene-art--i3">
+          <img src="/roadmap-day2/i3.png" alt="" />
+        </div>
+      </div>
+      <div class="rm-bg-mark" aria-hidden="true">
+        <img src="/onepeice/one-peice-logo.png" alt="" />
+      </div>
       <div class="rm-page__aurora rm-page__aurora--left"  />
       <div class="rm-page__aurora rm-page__aurora--right" />
 
@@ -421,8 +744,8 @@ export default component$(function Day2Roadmap() {
           {/* Header */}
           <div class="rm-section__header">
             <div class="rm-section__header-text">
-              <span class="rm-pill">⚓ Grand Line</span>
-              <h1 class="rm-section__title">Day 2 — The Grand Line Voyage</h1>
+              <span class="rm-pill">âš“ Grand Line</span>
+              <h1 class="rm-section__title">Day 2 â€” The Grand Line Voyage</h1>
               <p class="rm-section__copy">Tap any card to reveal its event, crew size &amp; entry details.</p>
             </div>
             <div class="rm-event-glass">
@@ -523,12 +846,16 @@ export default component$(function Day2Roadmap() {
               </div>
               <div class="rm-row__side rm-row__side--right">
                 <div class="rm-end-card">
-                  <span class="rm-pill">⚓ Dock</span>
+                  <span class="rm-pill">âš“ Dock</span>
                   <h3>Day 2 completed.</h3>
                   <p>Day 3 sails at 09:00 AM.</p>
                   <div class="rm-end-card__meta">
                     <span>Next island ready</span>
                     <Link href="/events">Open events</Link>
+                  </div>
+                  <div class="rm-end-card__note">
+                    <span class="rm-end-card__note-label">Captain&apos;s Note</span>
+                    <p>The crew has crossed the Grand Line for Day 2. Take a breath, review the voyage, and get ready for the Day 3 final island push.</p>
                   </div>
                 </div>
               </div>
@@ -549,13 +876,13 @@ export default component$(function Day2Roadmap() {
           </span>
         </div>
       </div>
-
-      <script dangerouslySetInnerHTML={GRID_JS} />
     </div>
   );
 });
 
 export const head: DocumentHead = {
-  title: "Day 2 Roadmap | Theta 2026 — One Piece Grand Line",
-  meta: [{ name: "description", content: "Day 2 roadmap for Theta 2026 — One Piece Grand Line theme, S-curve timeline, GSAP card reveals." }],
+  title: "Day 2 Roadmap | Theta 2026 â€” One Piece Grand Line",
+  meta: [{ name: "description", content: "Day 2 roadmap for Theta 2026 â€” One Piece Grand Line theme, S-curve timeline, GSAP card reveals." }],
 };
+
+

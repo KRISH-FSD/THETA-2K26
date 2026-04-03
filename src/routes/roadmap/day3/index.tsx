@@ -163,6 +163,14 @@ const EventCard = component$<EventCardProps>(
   ),
 );
 
+/* ─── Decorative Web — fills the empty side of the timeline ─────── */
+const DecorativeWeb = component$<{ side: "left" | "right" }>(({ side }) => (
+  <div class={["rm-deco-web", `rm-deco-web--${side}`]} data-parallax="0.06">
+    <img src="/spidy/spidy-web.png" alt="" class="rm-deco-web__img" width={400} height={400} />
+    <div class="rm-deco-web__glow" />
+  </div>
+));
+
 /* ── Spider-web canvas — red/blue particles ─────────────────────────────── */
 
 
@@ -397,6 +405,51 @@ export default component$(function Day3Roadmap() {
           0% { transform: translate(0, 0) scale(1); opacity: 0.3; }
           100% { transform: translate(20px, 40px) scale(1.2); opacity: 0.6; }
         }
+
+        /* Decorative Web filling empty sides */
+        .rm-deco-web {
+          position: relative;
+          display: flex;
+          align-items: center;
+          width: 100%;
+          min-height: 320px;
+          padding: 2rem;
+          pointer-events: none;
+        }
+        .rm-deco-web--left { justify-content: flex-end; padding-right: 1.5rem; }
+        .rm-deco-web--right { justify-content: flex-start; padding-left: 1.5rem; }
+
+        .rm-deco-web__img {
+          width: clamp(140px, 20vw, 240px);
+          height: auto;
+          opacity: 0.12;
+          filter: drop-shadow(0 0 12px rgba(255, 32, 32, 0.4));
+          transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+          transform: translateY(15px);
+          animation: sp-web-spin-in 1.4s ease-out forwards;
+        }
+        .rm-row:hover .rm-deco-web__img {
+          opacity: 0.28;
+          filter: drop-shadow(0 0 25px rgba(255, 32, 32, 0.6)) drop-shadow(0 0 40px rgba(68, 136, 255, 0.4));
+          transform: scale(1.1) rotate(5deg);
+        }
+
+        .rm-deco-web--left .rm-deco-web__img { rotate: -15deg; }
+        .rm-deco-web--right .rm-deco-web__img { rotate: 15deg; }
+
+        .rm-deco-web__glow {
+          position: absolute;
+          width: 120px;
+          height: 120px;
+          background: radial-gradient(circle, rgba(255, 32, 32, 0.12), transparent 70%);
+          filter: blur(20px);
+          z-index: -1;
+        }
+
+        @keyframes sp-web-spin-in {
+          0% { opacity: 0; transform: translateY(40px) rotate(-10deg) scale(0.8); }
+          100% { opacity: 0.12; transform: translateY(0) rotate(0) scale(1); }
+        }
       `}</style>
 
       <div class="rm-web-backdrop" style="position: absolute; height: 100%; width: 100%; top: 0; left: 0; overflow: hidden;">
@@ -501,7 +554,7 @@ export default component$(function Day3Roadmap() {
                   <div class="rm-row__side rm-row__side--left">
                     {side === "left"
                       ? <EventCard ev={event} meta={meta} isActive={isActive} side="left" onToggle$={() => toggleEvent(event.id)} />
-                      : isActive ? <PopupPanel ev={event} meta={meta} side="left" canRegister={canRegister} /> : null}
+                      : isActive ? <PopupPanel ev={event} meta={meta} side="left" canRegister={canRegister} /> : <DecorativeWeb side="left" />}
                   </div>
                   <div class={["rm-row__center", `rm-row__center--${side === "left" ? "r" : "l"}`]}>
                     <div class="rm-node"
@@ -517,7 +570,7 @@ export default component$(function Day3Roadmap() {
                   <div class="rm-row__side rm-row__side--right">
                     {side === "right"
                       ? <EventCard ev={event} meta={meta} isActive={isActive} side="right" onToggle$={() => toggleEvent(event.id)} />
-                      : isActive ? <PopupPanel ev={event} meta={meta} side="right" canRegister={canRegister} /> : null}
+                      : isActive ? <PopupPanel ev={event} meta={meta} side="right" canRegister={canRegister} /> : <DecorativeWeb side="right" />}
                   </div>
                 </div>
               );

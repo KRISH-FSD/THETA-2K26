@@ -41,7 +41,7 @@ export const Header = component$(() => {
   const accentBg    = theme.value === "spider" ? "rgba(220,16,16,0.1)"  : theme.value === "onepiece" ? "rgba(255,215,0,0.1)"  : "rgba(14,169,53,0.1)";
   const accentGlow  = theme.value === "spider" ? "rgba(220,16,16,0.5)"  : theme.value === "onepiece" ? "rgba(200,160,0,0.5)"  : "rgba(14,169,53,0.5)";
   const logoSrc     = theme.value === "spider"   ? "/spidy/image.png"
-                    : theme.value === "onepiece" ? "/onepeice/image.png"
+                    : theme.value === "onepiece" ? "/onepeice/one-peice-logo.png"
                     : "/ben10/ben10-logo.png";
   const logoAlt     = theme.value === "spider"   ? "Spider-Man"
                     : theme.value === "onepiece" ? "One Piece"
