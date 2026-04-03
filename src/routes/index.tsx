@@ -179,12 +179,17 @@ const sponsorTierMeta: Record<(typeof sponsorTiers)[number]["key"], {
 };
 
 /* Day icons */
-const dayIcons = ["⚡", "🤖", "🚀"];
-const dayAccents = ["#0ea935", "#06d6a0", "#d6ff00"];
+const dayIcons = ["", "", ""];
+const dayAccents = ["#00ff55", "#ffce00", "#ff1a1a"];
+const dayGradients = [
+  "linear-gradient(135deg, #00ff55 0%, #00f2ff 100%)", // Day 1: Ben 10 Cyber
+  "linear-gradient(135deg, #f6ff00 0%, #ff8c00 100%)", // Day 2: Hyper Volt
+  "linear-gradient(135deg, #ff1a1a 0%, #ff0099 100%)", // Day 3: Neural Red
+];
 const dayBorderColors = [
-  "rgba(14,169,53,0.25)",
-  "rgba(6,214,160,0.25)",
-  "rgba(214,255,0,0.25)",
+  "rgba(0,255,85,0.25)",
+  "rgba(255,206,0,0.25)",
+  "rgba(255,26,26,0.25)",
 ];
 
 const statSpotlight: Array<{
@@ -202,30 +207,30 @@ const statSpotlight: Array<{
       eyebrow: "Competitive spread",
       note: "Flagship contests, fast workshops, and showcases distributed through the fest grid.",
       signal: "Mission roster online",
-      accent: "#8cff7a",
-      glow: "rgba(140,255,122,0.28)",
+      accent: "#00ff55",
+      glow: "rgba(0, 255, 85, 0.28)",
       progress: "74%",
-      surface: "linear-gradient(145deg, rgba(14,169,53,0.22), rgba(7,12,8,0.96) 62%)",
+      surface: "linear-gradient(145deg, rgba(0,255,85,0.18), rgba(7,12,8,0.96) 62%)",
     },
     {
       key: "participants",
       eyebrow: "National turnout",
       note: "Builders, designers, and problem-solvers charging the campus experience together.",
       signal: "Audience pulse active",
-      accent: "#6ef3ff",
-      glow: "rgba(110,243,255,0.24)",
+      accent: "#ffce00",
+      glow: "rgba(255,206,0,0.24)",
       progress: "92%",
-      surface: "linear-gradient(145deg, rgba(6,214,240,0.2), rgba(6,12,14,0.96) 62%)",
+      surface: "linear-gradient(145deg, rgba(255,206,0,0.15), rgba(12,11,8,0.96) 62%)",
     },
     {
       key: "colleges",
       eyebrow: "Campus footprint",
       note: "Institutions across the circuit plug into Theta and widen the reach every year.",
       signal: "Reach map expanding",
-      accent: "#f5d46b",
-      glow: "rgba(245,212,107,0.24)",
+      accent: "#ff1a1a",
+      glow: "rgba(255,26,26,0.24)",
       progress: "68%",
-      surface: "linear-gradient(145deg, rgba(245,200,66,0.2), rgba(14,11,6,0.96) 62%)",
+      surface: "linear-gradient(145deg, rgba(255,26,26,0.18), rgba(12,8,10,0.96) 62%)",
     },
   ];
 
@@ -242,6 +247,120 @@ export default component$(() => {
   const selectedDay = useSignal<DayEvent | null>(null);
   const selectedTier = useSignal<(typeof sponsorTiers)[number]["key"] | null>(null);
   const sphereRotation = useSignal({ x: 0, y: 0 });
+  const globalMouse = useSignal({ x: 0, y: 0 });
+  const mouseSmoothing = useSignal({ x: 0, y: 0 });
+
+  /* ── Global Interactive Background Canvas ── */
+  useVisibleTask$(() => {
+    const canvas = document.querySelector<HTMLCanvasElement>(".home-global-interactive-bg");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let width = 0; let height = 0;
+    const particles: Array<{ x: number; y: number; vx: number; vy: number; size: number; alpha: number }> = [];
+    const particleCount = 60;
+
+    const resize = () => {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width * (window.devicePixelRatio || 1);
+      canvas.height = height * (window.devicePixelRatio || 1);
+      ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
+    };
+
+    const createParticles = () => {
+      for (let i = 0; i < particleCount; i++) {
+        particles.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: (Math.random() - 0.5) * 0.5,
+          vy: (Math.random() - 0.5) * 0.5,
+          size: Math.random() * 2 + 1,
+          alpha: Math.random() * 0.5 + 0.1
+        });
+      }
+    };
+
+    const draw = () => {
+      ctx.clearRect(0, 0, width, height);
+
+      // Smooth mouse follow
+      mouseSmoothing.value = {
+        x: mouseSmoothing.value.x + (globalMouse.value.x - mouseSmoothing.value.x) * 0.1,
+        y: mouseSmoothing.value.y + (globalMouse.value.y - mouseSmoothing.value.y) * 0.1
+      };
+      
+      const mX = mouseSmoothing.value.x;
+      const mY = mouseSmoothing.value.y;
+
+      // Global Mouse Spotlight
+      const gradient = ctx.createRadialGradient(mX, mY, 0, mX, mY, 500);
+      gradient.addColorStop(0, "rgba(0, 255, 85, 0.12)");
+      gradient.addColorStop(0.5, "rgba(0, 255, 85, 0.03)");
+      gradient.addColorStop(1, "rgba(0, 255, 85, 0)");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, width, height);
+
+      // Connect to mission cards (Data Filaments)
+      const cards = document.querySelectorAll(".t-day-card");
+      cards.forEach(card => {
+        const rect = card.getBoundingClientRect();
+        const cX = rect.left + rect.width / 2;
+        const cY = rect.top + rect.height / 2;
+        const dist = Math.hypot(cX - mX, cY - mY);
+        if (dist < 450) {
+          ctx.beginPath();
+          ctx.moveTo(mX, mY);
+          ctx.lineTo(cX, cY);
+          ctx.strokeStyle = `rgba(0, 255, 85, ${(1 - dist / 450) * 0.15})`;
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      });
+
+      // Particles system
+      particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        
+        const dx = mX - p.x;
+        const dy = mY - p.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist < 200) {
+          p.x -= dx * 0.01;
+          p.y -= dy * 0.01;
+        }
+
+        if (p.x < 0) p.x = width; if (p.x > width) p.x = 0;
+        if (p.y < 0) p.y = height; if (p.y > height) p.y = 0;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(0, 255, 85, ${p.alpha})`;
+        ctx.fill();
+      });
+
+      requestAnimationFrame(draw);
+    };
+
+    window.addEventListener("resize", resize);
+    resize();
+    createParticles();
+    draw();
+
+    return () => {
+      window.removeEventListener("resize", resize);
+    };
+  });
+
+  useVisibleTask$(() => {
+    const trackMouse = (e: MouseEvent) => {
+      globalMouse.value = { x: e.clientX, y: e.clientY };
+    };
+    window.addEventListener("mousemove", trackMouse);
+    return () => window.removeEventListener("mousemove", trackMouse);
+  });
 
   /* ── Particles Effect ── */
   useVisibleTask$(() => {
@@ -628,6 +747,64 @@ export default component$(() => {
   });
 
   useVisibleTask$(() => {
+    gsap.registerPlugin(ScrollTrigger);
+    const marks = document.querySelectorAll<HTMLElement>(".t-day-card__mark");
+    const overlays = document.querySelectorAll<HTMLElement>(".t-knockout-overlay");
+    const glowTargets = document.querySelectorAll<HTMLElement>(".t-glow-text");
+    if (marks.length === 0) return;
+
+    const colors = [
+      "rgba(189, 255, 0, 0.85)",
+      "rgba(255, 219, 0, 0.85)",
+      "rgba(255, 0, 76, 0.85)"
+    ];
+
+    const tl = gsap.timeline({ repeat: -1 });
+
+    marks.forEach((mark, i) => {
+      const overlay = overlays[i];
+      tl.to([mark, overlay], {
+        opacity: i === 2 ? 0.9 : 0.7,
+        scale: 1.06,
+        y: 20,
+        filter: i === 2 ? `drop-shadow(0 0 55px ${colors[i]})` : `drop-shadow(0 0 40px ${colors[i]})`,
+        duration: 1.1,
+        ease: "power3.out"
+      }, "+=0.15")
+        .to(glowTargets, {
+          color: dayAccents[i],
+          filter: "blur(0px)",
+          scale: 1.15,
+          y: 4,
+          opacity: 1,
+          duration: 0.7,
+          ease: "back.out(1.7)"
+        }, "<")
+        .to([mark, overlay], {
+          opacity: 0.1,
+          scale: 1,
+          y: 0,
+          filter: "drop-shadow(0 0 0px transparent)",
+          duration: 1.2,
+          ease: "power2.inOut"
+        })
+        .to(glowTargets, {
+          color: "rgba(255,255,255,0.4)",
+          filter: "blur(10px)",
+          scale: 1,
+          y: 0,
+          opacity: 0.6,
+          duration: 0.8,
+          ease: "power2.in"
+        }, "<");
+    });
+
+    return () => {
+      tl.kill();
+    };
+  });
+
+  useVisibleTask$(() => {
     const sphere = document.querySelector<HTMLElement>(".theta-stats-core");
     if (!sphere) return;
 
@@ -635,7 +812,7 @@ export default component$(() => {
       const rect = sphere.getBoundingClientRect();
       const x = (e.clientX - rect.left) / rect.width - 0.5;
       const y = (e.clientY - rect.top) / rect.height - 0.5;
-      sphereRotation.value = { x: y * 24, y: -x * 28 };
+      sphereRotation.value = { x: y * 35, y: -x * 40 };
     };
 
     const onLeave = () => {
@@ -677,12 +854,147 @@ export default component$(() => {
     })),
   );
 
+  useVisibleTask$(() => {
+    gsap.registerPlugin(ScrollTrigger);
+
+    const section = document.getElementById("browse-events-section");
+    if (!section) return;
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: section,
+        start: "top 75%",
+        toggleActions: "play none none none"
+      }
+    });
+
+    tl.fromTo(".browse-events-bg",
+      { scale: 1.1, opacity: 0 },
+      { scale: 1, opacity: 0.8, duration: 1.5, ease: "power3.out" }
+    )
+      .fromTo(".browse-events-eyebrow",
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" },
+        "-=1.0"
+      )
+      .fromTo(".browse-events-title-1",
+        { opacity: 0, x: -80, rotateX: 45, transformOrigin: "left center" },
+        { opacity: 1, x: 0, rotateX: 0, duration: 1.2, ease: "back.out(1.1)" },
+        "-=0.7"
+      )
+      .fromTo(".browse-events-title-2",
+        { opacity: 0, x: 80, rotateX: -45, transformOrigin: "right center" },
+        { opacity: 1, x: 0, rotateX: 0, duration: 1.2, ease: "back.out(1.1)" },
+        "-=0.9"
+      )
+      .fromTo(".browse-events-btn",
+        { opacity: 0, scale: 0.8, y: 20 },
+        { opacity: 1, scale: 1, y: 0, duration: 0.8, ease: "back.out(1.5)" },
+        "-=0.8"
+      )
+      .fromTo(".browse-events-desc",
+        { opacity: 0, y: 40 },
+        { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" },
+        "-=0.6"
+      );
+
+    // Festival Days Header Reveal - FAST & SHARP
+    gsap.fromTo(".reveal-slide-up",
+      { y: "115%", opacity: 0 },
+      {
+        y: "0%",
+        opacity: 1,
+        duration: 0.4,
+        stagger: 0.05,
+        ease: "power2.inOut",
+        scrollTrigger: {
+          trigger: ".festival-header-wrap",
+          start: "top 92%",
+          toggleActions: "play none none none"
+        }
+      }
+    );
+
+    // Global Home Neural Grid Activation
+    gsap.to(".home-neural-grid", {
+      opacity: 1,
+      scrollTrigger: {
+        trigger: ".festival-days-shell",
+        start: "top 80%",
+        end: "top 20%",
+        scrub: true
+      }
+    });
+
+    // Home Tracer Lines
+    gsap.to(".home-tracer-path", {
+      strokeDashoffset: 0,
+      scrollTrigger: {
+        trigger: ".festival-days-shell",
+        start: "top 50%",
+        end: "bottom 50%",
+        scrub: 1
+      }
+    });
+
+
+    return () => {
+      ScrollTrigger.getAll().forEach(st => st.kill());
+    };
+  });
+
   return (
-    <div class="relative" style="font-family: var(--font-body);">
+    <div class="relative overflow-x-hidden" style="font-family: var(--font-body);">
       <HeroSlider />
 
+      {/* ── Global Interactive Background (Entire Page) ── */}
+      <canvas class="home-global-interactive-bg fixed inset-0 z-0 pointer-events-none opacity-40" />
+      
+      <div class="home-neural-grid pointer-events-none fixed inset-0 z-0 opacity-0 bg-[radial-gradient(circle_at_center,rgba(0,255,85,0.03)_0%,transparent_70%)]">
+        <div class="absolute inset-0 bg-[url('/grid.svg')] bg-[size:100px_100px] [mask-image:radial-gradient(ellipse_at_center,black,transparent)] opacity-[0.07]" />
+      </div>
+
       {/* ═══════════════ DAY CARDS ═══════════════ */}
-      <section class="festival-days-shell py-20">
+      <section class="festival-days-shell py-20 relative overflow-hidden">
+        {/* Animated Tracer Paths */}
+        <svg class="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-visible" preserveAspectRatio="none">
+           <path class="home-tracer-path" d="M 0,200 Q 500,300 1440,100" fill="none" stroke="#00ff55" stroke-width="1" stroke-dasharray="1000" stroke-dashoffset="1000" opacity="0.1" />
+           <path class="home-tracer-path" d="M 1440,800 Q 720,600 0,900" fill="none" stroke="#00ff55" stroke-width="1" stroke-dasharray="1000" stroke-dashoffset="1000" opacity="0.1" />
+        </svg>
+
+        {/* Global Mesh Background for this section */}
+        <div class="festival-days-mesh absolute inset-0 z-0">
+          <canvas class="festival-days-mesh-web pointer-events-none" />
+          <div class="festival-days-logo-glow" aria-hidden="true">
+            <img src="/backgrounds/sastra-3.png" alt="" class="festival-days-logo-mark" />
+          </div>
+          <div class="festival-days-structure scale-150 sm:scale-100 opacity-80" aria-hidden="true" style="filter: drop-shadow(0 0 15px rgba(0,255,85,0.3))">
+            <div class="festival-days-orbit festival-days-orbit--left opacity-60" />
+            <div class="festival-days-orbit festival-days-orbit--right opacity-60" />
+            <div class="festival-days-orbit festival-days-orbit--bottom opacity-60" />
+            <div class="festival-days-bubble festival-days-bubble--left !opacity-100">
+              <div class="festival-days-bubble__core !bg-[#00ff55] !shadow-[0_0_20px_#00ff55]" />
+              <div class="festival-days-bubble__ring !border-[#00ff55]/50" />
+            </div>
+            <div class="festival-days-bubble festival-days-bubble--right !opacity-100">
+              <div class="festival-days-bubble__core !bg-[#00ff55] !shadow-[0_0_20px_#00ff55]" />
+              <div class="festival-days-bubble__ring !border-[#00ff55]/50" />
+            </div>
+            <div class="festival-days-bubble festival-days-bubble--top !opacity-100">
+              <div class="festival-days-bubble__core !bg-[#00ff55] !shadow-[0_0_20px_#00ff55]" />
+              <div class="festival-days-bubble__ring !border-[#00ff55]/50" />
+            </div>
+            <div class="festival-days-bubble festival-days-bubble--bottom !opacity-100">
+              <div class="festival-days-bubble__core !bg-[#00ff55] !shadow-[0_0_20px_#00ff55]" />
+              <div class="festival-days-bubble__ring !border-[#00ff55]/50" />
+            </div>
+            <div class="festival-days-bubble festival-days-bubble--edge !opacity-100">
+              <div class="festival-days-bubble__core !bg-[#00ff55] !shadow-[0_0_20px_#00ff55]" />
+              <div class="festival-days-bubble__ring !border-[#00ff55]/50" />
+            </div>
+          </div>
+        </div>
+
         <div class="festival-days-backdrop" aria-hidden="true">
           <div class="festival-days-aurora festival-days-aurora--a" />
           <div class="festival-days-aurora festival-days-aurora--b" />
@@ -690,60 +1002,65 @@ export default component$(() => {
           <div class="festival-days-vignette" />
         </div>
 
-        <div class="festival-days-shell__inner mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="festival-days-shell__inner mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
 
-          <div class="reveal-up mb-12 text-center relative z-10">
-            <span class="t-badge mx-auto">Festival Days</span>
-            <h2 class="t-heading mt-4 text-[clamp(2.3rem,5vw,3.8rem)] text-white">Build. Battle. <span class="t-gradient">Celebrate.</span></h2>
-            <p class="mt-4 text-xs font-bold tracking-[0.3em] uppercase text-[var(--t-muted)]">Select mission day to track transmission</p>
+          <div class="festival-header-wrap mb-24 text-center relative z-20">
+            <div class="overflow-hidden mb-4">
+              <span class="t-badge mx-auto reveal-slide-up block w-fit">Mission Day Selection</span>
+            </div>
+            <h2 class="mt-2 text-[clamp(1rem,4.5vw,1.6rem)] font-black uppercase leading-[1.2] tracking-[0.2em] text-white flex flex-col items-center" style={{ fontFamily: "var(--font-body)" }}>
+              <div class="overflow-hidden py-0.5"><span class="reveal-slide-up block">Shine in the <span class="inline-block text-[#00ff44]">light</span></span></div>
+              <div class="overflow-hidden py-0.5"><span class="reveal-slide-up block">& rule the <span class="inline-block text-[#ff3333]">night</span></span></div>
+            </h2>
+            <div class="overflow-hidden mt-6">
+              <p class="reveal-slide-up block text-xs font-bold tracking-[0.4em] uppercase text-[var(--t-muted)] italic">Track live transmission frequencies</p>
+            </div>
           </div>
 
-          <div class="festival-days-mesh">
-            <canvas class="festival-days-mesh-web pointer-events-none" />
-            <div class="festival-days-logo-glow" aria-hidden="true">
-              <img src="/ben10/ben10-logo.png" alt="" class="festival-days-logo-mark" />
-            </div>
-            <div class="festival-days-structure" aria-hidden="true">
-              <div class="festival-days-orbit festival-days-orbit--left" />
-              <div class="festival-days-orbit festival-days-orbit--right" />
-              <div class="festival-days-orbit festival-days-orbit--bottom" />
-              <div class="festival-days-bubble festival-days-bubble--left">
-                <div class="festival-days-bubble__core" />
-                <div class="festival-days-bubble__ring" />
-              </div>
-              <div class="festival-days-bubble festival-days-bubble--right">
-                <div class="festival-days-bubble__core" />
-                <div class="festival-days-bubble__ring" />
-              </div>
-              <div class="festival-days-bubble festival-days-bubble--top">
-                <div class="festival-days-bubble__core" />
-                <div class="festival-days-bubble__ring" />
-              </div>
-              <div class="festival-days-bubble festival-days-bubble--bottom">
-                <div class="festival-days-bubble__core" />
-                <div class="festival-days-bubble__ring" />
-              </div>
-              <div class="festival-days-bubble festival-days-bubble--edge">
-                <div class="festival-days-bubble__core" />
-                <div class="festival-days-bubble__ring" />
-              </div>
-            </div>
-            <div class="grid gap-8 lg:grid-cols-3 relative z-10">
+          <div class="festival-days-mesh relative z-10">
+            <div class="grid gap-8 lg:grid-cols-3">
               {configData.value.days.map((day, index) => (
                 <Link key={day.day} href={`/roadmap/day${index + 1}`} data-tilt onMouseMove$={(e, el) => {
                   const r = el.getBoundingClientRect();
                   el.style.setProperty("--mouse-x", `${e.clientX - r.left}px`);
                   el.style.setProperty("--mouse-y", `${e.clientY - r.top}px`);
-                }} class="t-day-card group p-8 block reveal-up" style={{ borderColor: dayBorderColors[index], transitionDelay: `${index * 80}ms` }}>
-                  <img src="/ben10/ben10-logo.png" alt="" aria-hidden="true" class="t-day-card__mark" />
-                  <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: `radial-gradient(400px circle at var(--mouse-x) var(--mouse-y), ${dayAccents[index]}15, transparent 40%)` }} />
+                }} class="t-day-card group p-8 block reveal-up bg-white/[0.03] backdrop-blur-3xl border border-white/10 rounded-[2rem] hover:bg-white/[0.07] transition-all relative overflow-hidden"
+                  style={{
+                    borderColor: `${dayBorderColors[index]}44`,
+                    transitionDelay: `${index * 80}ms`,
+                    "--day-accent": dayAccents[index],
+                    "--day-gradient": dayGradients[index]
+                  }}>
+                  <div class="absolute inset-0 bg-gradient-to-br from-white/[0.05] to-transparent pointer-events-none" />
+                  <img
+                    src={index === 2 ? "/spidy/spider-logo.png" : (index === 1 ? "/onepeice/one-peice-logo.png" : "/ben10/ben10-logo.png")}
+                    alt=""
+                    aria-hidden="true"
+                    class="t-day-card__mark absolute top-1/2 translate-y-[-50%] group-hover:opacity-85 group-hover:scale-115 group-hover:rotate-[5deg]"
+                    style={{
+                      width: index === 0 ? "11rem" : (index === 1 ? "11rem" : "10.5rem"),
+                      right: index === 2 ? "-1.5rem" : (index === 1 ? "-2rem" : "-1rem"),
+                      opacity: 0.15,
+                      filter: "brightness(2) grayscale(0.2) contrast(1.2)",
+                      transition: "all 0.6s cubic-bezier(0.2, 1, 0.2, 1)"
+                    }}
+                  />
+                  <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-gradient-to-br from-[#00ff55]/10 via-transparent to-transparent" />
+                  <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: `radial-gradient(500px circle at var(--mouse-x) var(--mouse-y), ${dayAccents[index]}20, transparent 40%)` }} />
+
+                  {/* Layer 1: Base Visibility */}
                   <div class="relative z-10 flex flex-col h-full">
-                    <div class="flex justify-between mb-10">
-                      <div class="t-day-number"><span class="text-xl group-hover:rotate-12 transition-transform">{dayIcons[index]}</span></div>
+                    <div class="flex justify-end mb-10">
                       <span class="t-label opacity-40">{day.date}</span>
                     </div>
                     <div class="mb-8">
-                      <h3 class="t-heading text-4xl sm:text-5xl font-black" style={{ color: dayAccents[index] }}>{day.day}</h3>
+                      <h3 class="t-heading text-4xl sm:text-5xl font-black"
+                        style={{
+                          background: dayGradients[index],
+                          WebkitBackgroundClip: "text",
+                          WebkitTextFillColor: "transparent",
+                          backgroundClip: "text"
+                        }}>{day.day}</h3>
                       <p class="mt-2 text-[10px] uppercase tracking-widest text-[var(--t-muted)]">{day.highlight}</p>
                     </div>
                     <div class="flex flex-wrap gap-2 mb-10">
@@ -751,10 +1068,41 @@ export default component$(() => {
                     </div>
                     <div class="flex-grow" />
                     <div class="flex justify-between border-t border-white/5 pt-6">
-                      <div class="flex items-center gap-2"><div class="h-1 w-1 rounded-full animate-pulse" style={{ background: dayAccents[index], boxShadow: `0 0 12px ${dayAccents[index]}` }} /><span class="text-[9px] uppercase text-white/30">Mission Files: {day.events.length}</span></div>
-                      <span class="text-[10px] font-black group-hover:translate-x-2 transition-transform flex items-center gap-1.5" style={{ color: dayAccents[index] }}>TRANSMISSION <span class="text-lg">→</span></span>
+                      <div class="flex items-center gap-2">
+                        <div class="h-1 w-1 rounded-full animate-pulse" style={{ background: dayAccents[index], boxShadow: `0 0 12px ${dayAccents[index]}` }} />
+                        <span class="text-[9px] uppercase text-white/30">Mission Files: {day.events.length}</span>
+                      </div>
+                      <span class="text-[10px] font-black group-hover:translate-x-2 transition-transform flex items-center gap-1.5"
+                        style={{
+                          background: dayGradients[index],
+                          WebkitBackgroundClip: "text",
+                          WebkitTextFillColor: "transparent",
+                          backgroundClip: "text"
+                        }}>TRANSMISSION <span class="text-lg">→</span></span>
                     </div>
                   </div>
+
+                  {/* Layer 2: Knockout Overlay (Black text on white logo) */}
+                  <div
+                    class="t-knockout-overlay absolute inset-x-8 inset-y-8 flex flex-col h-full pointer-events-none z-20"
+                    style={{
+                      WebkitMaskImage: `url(${index === 2 ? "/spidy/spider-logo.png" : (index === 1 ? "/onepeice/one-peice-logo.png" : "/ben10/ben10-logo.png")})`,
+                      WebkitMaskSize: index === 0 ? "11rem" : (index === 1 ? "11rem" : "10.5rem"),
+                      WebkitMaskPosition: `right ${index === 2 ? "-1.5rem" : (index === 1 ? "-2rem" : "-1rem")} center`,
+                      WebkitMaskRepeat: "no-repeat",
+                      maskImage: `url(${index === 2 ? "/spidy/spider-logo.png" : (index === 1 ? "/onepeice/one-peice-logo.png" : "/ben10/ben10-logo.png")})`,
+                      maskSize: index === 0 ? "11rem" : (index === 1 ? "11rem" : "10.5rem"),
+                      maskPosition: `right ${index === 2 ? "-1.5rem" : (index === 1 ? "-2rem" : "-1rem")} center`,
+                      maskRepeat: "no-repeat"
+                    }}
+                  >
+                    <div class="flex justify-between mb-10 opacity-0"> {/* Hide icons in knockout */}
+                    </div>
+                    <div class="mb-8">
+                      <h3 class="t-heading text-4xl sm:text-5xl font-black text-black">{day.day}</h3>
+                    </div>
+                  </div>
+
                 </Link>
               ))}
             </div>
@@ -763,52 +1111,59 @@ export default component$(() => {
       </section>
 
       {/* ═══════════════ STATS ═══════════════ */}
-      <section id="theta-stats" class="theta-stats-section px-0 py-24 sm:px-4 lg:px-6">
-        <div class="theta-stats-shell">
-          <div class="theta-stats-shell__noise" aria-hidden="true" />
-          <div class="theta-stats-shell__glow theta-stats-shell__glow--left" aria-hidden="true" />
-          <div class="theta-stats-shell__glow theta-stats-shell__glow--right" aria-hidden="true" />
+      <section id="theta-stats" class="theta-stats-section px-4 py-12 sm:px-6 lg:px-8 lg:py-0 bg-[#0a0514]/60 min-h-screen lg:h-screen w-full lg:w-screen lg:overflow-hidden flex flex-col lg:flex-row items-center justify-center">
+        <div class="theta-stats-bento grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-6 sm:gap-8 max-w-[90rem] mx-auto h-auto lg:h-full lg:max-h-[90vh] items-center w-full">
 
-          <div class="theta-stats-grid">
-            <div class="theta-stats-side-left">
-              <div class="theta-stats-copy reveal-left">
-                <span class="t-badge theta-stats-badge">
-                  <span class="t-badge-dot" />
-                  Theta Snapshot
-                </span>
-                <h2 class="t-heading theta-stats-copy__title">
-                  Fest Vitals
-                </h2>
-              </div>
+          {/* --- BENTO CARD: VISUAL & TITLE --- */}
+          <div class="theta-bento-card theta-bento-card--visual reveal-left flex flex-col justify-between p-8 sm:p-10 h-full min-h-[400px] relative overflow-hidden">
+            <img src="/theta-logo.png" alt="" class="theta-bento-card__watermark" aria-hidden="true" />
 
-              <div class="theta-stats-visual-wrap relative flex items-center justify-center">
-                <div class="theta-stats-visual reveal-scale">
-                  <div
-                    class="theta-stats-core group"
-                    style={{
-                      transform: `perspective(1200px) rotateX(${sphereRotation.value.x}deg) rotateY(${sphereRotation.value.y}deg) ${sphereRotation.value.x !== 0 ? "translateY(-12px) scale(1.035)" : "translateY(0) scale(1)"}`,
-                      transition: sphereRotation.value.x === 0 ? "all 1s cubic-bezier(0.2, 1, 0.2, 1)" : "transform 0.12s ease-out, box-shadow 0.4s ease"
-                    }}
-                  >
-                    <div class="theta-stats-core__halo theta-stats-core__halo--outer" aria-hidden="true" />
-                    <div class="theta-stats-core__halo theta-stats-core__halo--inner" aria-hidden="true" />
-                    <div class="theta-stats-core__grid" aria-hidden="true" />
-                    <div class="theta-stats-core__scan" aria-hidden="true" />
-                    <div class="theta-stats-core__logo" aria-hidden="true">
-                      <img src="/theta-logo.png" alt="" class="theta-stats-core__logo-image" />
-                    </div>
+            {/* --- AMBIENT HUD LAYERS --- */}
+            <div class="theta-bento-card__ambient-matrix" aria-hidden="true" />
 
-                    <div class="theta-stats-core__copy">
-                      <span class="theta-stats-core__label">Festival Reach</span>
-                      <strong class="theta-stats-core__value">
-                        {counterDisplay.value.participants}+
-                      </strong>
-                    </div>
+            <div class="theta-stats-copy">
+              <span class="t-badge flex items-center gap-2 w-fit">
+                <span class="h-1.5 w-1.5 rounded-full bg-[#00ff55] animate-pulse shadow-[0_0_8px_#00ff55]" />
+                Theta Snapshot
+              </span>
+              <h2 class="theta-stats-copy__title t-heading mt-2 text-5xl sm:text-7xl font-black uppercase tracking-tighter">
+                Fest Vitals
+              </h2>
+            </div>
+
+            <div class="theta-stats-visual-wrap relative flex flex-1 items-center justify-center py-4">
+              <div class="theta-stats-visual-container relative flex flex-col items-center justify-center">
+                {/* --- QUANTUM ENERGY CORE (BACKGROUND) --- */}
+                <div
+                  class="theta-stats-core theta-stats-core--quantum group absolute inset-0 m-auto"
+                  style={{
+                    transform: `perspective(1200px) rotateX(${sphereRotation.value.x}deg) rotateY(${sphereRotation.value.y}deg) ${sphereRotation.value.x !== 0 ? "translateY(-12px) scale(1.035)" : "translateY(0) scale(1)"}`,
+                    transition: sphereRotation.value.x === 0 ? "all 1s cubic-bezier(0.2, 1, 0.2, 1)" : "transform 0.12s ease-out, box-shadow 0.4s ease"
+                  }}
+                >
+                  <div class="theta-stats-core__hexagon" aria-hidden="true" />
+                  <div class="theta-stats-core__rings" aria-hidden="true">
+                    <div class="theta-stats-core__ring" />
+                    <div class="theta-stats-core__ring" />
+                    <div class="theta-stats-core__ring" />
+                  </div>
+                  <div class="theta-stats-core__laser-scan" aria-hidden="true" />
+                  <div class="theta-stats-core__grid" aria-hidden="true" />
+                  <div class="theta-stats-core__shimmer-rim" aria-hidden="true" />
+                </div>
+
+                {/* --- DATA HERO (FOREGROUND) --- */}
+                <div class="theta-stats-data-stack relative z-10 flex flex-col items-center justify-center text-center min-h-[300px]">
+                  <div class="theta-stats-core__copy mb-4">
+                    <span class="theta-stats-core__label">Festival Reach</span>
+                    <strong class="theta-stats-core__value">
+                      {counterDisplay.value.participants}+
+                    </strong>
                   </div>
 
-                  <div class="theta-stats-pulse-wrap mt-8 flex flex-col items-center justify-center gap-3">
+                  <div class="theta-stats-pulse-wrap">
                     <div class="theta-stats-core__status">
-                      <span class="theta-stats-core__status-dot" />
+                      <span class="theta-stats-core__status-dot bg-[#00ff55] shadow-[0_0_12px_#00ff55] animate-pulse" />
                       Live registration pulse
                     </div>
                   </div>
@@ -816,30 +1171,50 @@ export default component$(() => {
               </div>
             </div>
 
-            <div class="theta-stats-side-right">
-              <div class="theta-stats-rail">
-                {statSpotlight.map((item, index) => (
-                  <article
-                    key={item.key}
-                    class="theta-stats-node reveal-right"
-                    style={`--theta-stat-accent:${item.accent}; --theta-stat-glow:${item.glow}; --theta-stat-progress:${item.progress}; --theta-stat-surface:${item.surface}; transition-delay:${index * 120}ms`}
-                  >
-                    <div class="theta-stats-node__meta">
-                      <span class="theta-stats-node__index">0{index + 1}</span>
-                      <span class="theta-stats-node__eyebrow">{item.eyebrow}</span>
-                    </div>
-                    <div class="theta-stats-node__value">{counterDisplay.value[item.key]}+</div>
-                    <div class="theta-stats-node__label">{homeCopy.value.statsLabels[item.key]}</div>
-                    <p class="theta-stats-node__note">{item.note}</p>
-                    <div class="theta-stats-node__meter">
-                      <span class="theta-stats-node__meter-fill" />
-                    </div>
-                    <div class="theta-stats-node__signal">{item.signal}</div>
-                  </article>
-                ))}
-              </div>
+            {/* --- BRAND INTEGRATION (NEW) --- */}
+            <div class="theta-stats-brand-row flex flex-row items-center justify-center gap-6 sm:gap-12 mt-6 sm:mt-auto pt-2 z-20 w-full relative">
+              <img
+                src="/theta-logo.png"
+                alt="Theta Logo"
+                class="h-24 sm:h-36 w-auto object-contain brightness-0 invert opacity-80 drop-shadow-xl"
+              />
+              <div class="h-10 sm:h-16 w-[1px] bg-white/20" aria-hidden="true" />
+              <img
+                src="/sponsors/general/sastra-university-logo.jpg"
+                alt="SASTRA University"
+                class="h-10 sm:h-14 w-auto object-contain rounded-md opacity-80 drop-shadow-xl"
+              />
             </div>
           </div>
+
+          {/* --- BENTO GRID: STATS RAIL --- */}
+          <div class="theta-stats-side-right h-full flex flex-col gap-6">
+            {statSpotlight.map((item, index) => (
+              <article
+                key={item.key}
+                class="theta-bento-card theta-bento-card--stat reveal-right p-6 sm:p-8 h-full min-h-[160px] relative overflow-hidden"
+                style={`--theta-stat-accent:${item.accent}; --theta-stat-glow:${item.glow}; --theta-stat-progress:${item.progress}; --theta-stat-surface:${item.surface}; transition-delay:${index * 120}ms`}
+              >
+                <div class="theta-stats-node__meta mb-3">
+                  <span class="theta-stats-node__index text-[rgba(255,255,255,0.2)] text-xs font-black">0{index + 1}</span>
+                  <span class="theta-stats-node__eyebrow uppercase tracking-widest text-[10px] text-white/40 ml-4 font-bold">{item.eyebrow}</span>
+                </div>
+                <div class="flex items-end justify-between gap-4">
+                  <div>
+                    <div class="theta-stats-node__value t-heading text-4xl sm:text-5xl font-black mb-1">{counterDisplay.value[item.key]}+</div>
+                    <div class="theta-stats-node__label uppercase tracking-tighter text-sm font-black text-white/60">{homeCopy.value.statsLabels[item.key]}</div>
+                  </div>
+                  <div class="theta-stats-node__signal text-[10px] py-1 px-3 border border-white/10 rounded-full font-black text-white/50">{item.signal}</div>
+                </div>
+                <p class="theta-stats-node__note mt-4 text-[10px] sm:text-xs text-white/40 leading-relaxed max-w-[90%]">{item.note}</p>
+
+                <div class="theta-stats-node__meter mt-6 h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                  <span class="theta-stats-node__meter-fill h-full block bg-current" style={`width:${item.progress}; color:var(--theta-stat-accent); box-shadow: 0 0 12px var(--theta-stat-accent)`} />
+                </div>
+              </article>
+            ))}
+          </div>
+
         </div>
       </section>
 
@@ -879,59 +1254,55 @@ export default component$(() => {
         </section>
       )}
 
-      {/* ═══════════════ CTA ═══════════════ */}
-      <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
-        <div id="home-cta" class="home-cta">
-          <div class="home-cta__glow home-cta__glow--left" aria-hidden="true" />
-          <div class="home-cta__glow home-cta__glow--right" aria-hidden="true" />
-          <div class="home-cta__gridline home-cta__gridline--top" aria-hidden="true" />
-          <div class="home-cta__gridline home-cta__gridline--bottom" aria-hidden="true" />
 
-          <div class="home-cta__layout">
-            <div class="home-cta__copy">
-              <span class="t-badge home-cta__badge">
-                <span class="t-badge-dot" />
-                Registrations Live
+      {/* ═══════════════ NEW BROWSE EVENTS CTA ═══════════════ */}
+      <section id="browse-events-section" class="relative w-full min-h-[80vh] flex flex-col justify-between overflow-hidden bg-[#050508] px-6 py-12 sm:px-12 sm:py-20 lg:px-24 border-t border-[#0ea935]/10 mt-12 sm:mt-24">
+        {/* Background Image */}
+        <img src="/backgrounds/sastra-2.jpeg" alt="Sastra Background" class="browse-events-bg absolute inset-0 w-full h-full object-cover object-center z-0 opacity-80" />
+
+        {/* Slightly Dark Overlay */}
+        <div class="absolute inset-0 z-0 bg-gradient-to-br from-[#050508]/90 via-[#050508]/60 to-[#050508]/90"></div>
+
+        {/* Radial glow to make it look premium before the image is added */}
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-[#0ea935] blur-[150px] rounded-full opacity-[0.03] pointer-events-none z-0"></div>
+
+        {/* Content Container */}
+        <div class="relative z-10 w-full max-w-[100rem] mx-auto h-full flex flex-col justify-between flex-1">
+
+          {/* Eyebrow */}
+          <div class="browse-events-eyebrow mb-16 sm:mb-24">
+            <span class="text-[10px] sm:text-xs font-bold tracking-[0.25em] uppercase text-white/50">
+              POWERED BY THETA 2026
+            </span>
+          </div>
+
+          {/* Big Typography */}
+          <div class="flex flex-col mb-auto relative w-full" style="perspective: 1000px;">
+            <h2 class="text-[clamp(5rem,14vw,15rem)] leading-[0.85] font-black tracking-tighter sm:tracking-tight text-white uppercase mix-blend-screen">
+              <span class="browse-events-title-1 block text-left text-transparent bg-clip-text bg-gradient-to-br from-white via-white/90 to-white/40">
+                BROWSE<span class="text-[#0ea935] opacity-80">+</span>
               </span>
-              <p class="home-cta__eyebrow">Theta 2026 is open for builders, teams, and bold ideas.</p>
+              <span class="browse-events-title-2 block text-right sm:text-left sm:ml-[10vw] mt-2 sm:mt-0 text-transparent bg-clip-text bg-gradient-to-br from-white/40 via-white/90 to-white">
+                <span class="text-[#0ea935] opacity-80">+</span>EVENTS
+              </span>
+            </h2>
 
-              <h2 class="t-heading home-cta__title">
-                <span class="home-cta__title-line">{homeCopy.value.cta.titlePrefix}</span>
-                <span class="home-cta__title-line t-gradient">{homeCopy.value.cta.titleAccent}</span>
-              </h2>
-
-              <p class="home-cta__description">{homeCopy.value.cta.description}</p>
-
-              <div class="home-cta__actions">
-                <Link href="/events" class="t-btn-primary home-cta__primary">
-                  {homeCopy.value.cta.browseEvents}
-                </Link>
-                <Link href="/contact" class="t-btn-ghost home-cta__secondary">
-                  Contact Team
-                </Link>
-              </div>
-            </div>
-
-            <div class="home-cta__aside">
-              <article class="home-cta__card">
-                <span class="home-cta__card-label">Event Grid</span>
-                <strong class="home-cta__card-value">{counterDisplay.value.events}+</strong>
-                <p class="home-cta__card-text">Challenges, workshops, and showdowns ready to explore.</p>
-              </article>
-
-              <article class="home-cta__card">
-                <span class="home-cta__card-label">Live Community</span>
-                <strong class="home-cta__card-value">{counterDisplay.value.participants}+</strong>
-                <p class="home-cta__card-text">Participants powering a campus-wide builder atmosphere.</p>
-              </article>
-
-              <article class="home-cta__card">
-                <span class="home-cta__card-label">National Reach</span>
-                <strong class="home-cta__card-value">{counterDisplay.value.colleges}+</strong>
-                <p class="home-cta__card-text">Colleges already in the conversation and ready to compete.</p>
-              </article>
+            {/* Explore Button */}
+            <div class="browse-events-btn mt-12 sm:mt-16 sm:ml-[10vw] w-fit">
+              <Link href="/events" class="inline-flex items-center justify-center rounded-full border border-white/20 bg-black/40 px-8 py-4 text-xs font-black uppercase tracking-[0.2em] text-white backdrop-blur-md transition-all hover:bg-[#0ea935] hover:text-black hover:border-transparent hover:shadow-[0_0_20px_rgba(14,169,53,0.4)] group">
+                Explore Now
+                <svg class="ml-3 w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+              </Link>
             </div>
           </div>
+
+          {/* Bottom Row - Paragraph on Right */}
+          <div class="browse-events-desc flex justify-end mt-20 sm:mt-24 w-full">
+            <p class="max-w-[280px] sm:max-w-sm text-right text-xs sm:text-sm leading-[1.8] text-[#8ca38c] font-medium">
+              We transform ideas into fully-realized festival experiences — from intense challenges and showcases to campus-wide showdowns — creating an atmosphere that elevates the entire student collective.
+            </p>
+          </div>
+
         </div>
       </section>
 

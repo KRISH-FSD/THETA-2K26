@@ -51,7 +51,7 @@ const defaultLayoutCopy: LayoutCopy = {
   },
   footer: {
     description:
-      "Theta is SASTRA's national-level techno-management fest organized by SASTRA Deemed University. Join us for three days of innovation, competition, and excitement.",
+      "Theta is SASTRA's national-level techno-management fest. Join us for competitions, workshops, and community.",
     quickLinksTitle: "Quick Links",
     contactTitle: "Contact",
     homeLabel: "Home",
@@ -124,6 +124,30 @@ export default component$(() => {
       }
     });
 
+    // Floating Energy Spheres
+    document.querySelectorAll(".energy-sphere").forEach((sphere: any) => {
+      const speed = parseFloat(sphere.dataset.speed || "0.2");
+      gsap.to(sphere, {
+        y: "+=30",
+        x: "+=20",
+        duration: 3 + Math.random() * 2,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+        delay: Math.random() * 2
+      });
+      
+      // Subtle parallax on scroll
+      gsap.to(sphere, {
+        yPercent: 50 * speed,
+        ease: "none",
+        scrollTrigger: {
+          trigger: "footer",
+          scrub: true,
+        }
+      });
+    });
+
     // Scanner Cursor Animation
     gsap.to(".scanner-cursor", {
       y: "100%",
@@ -152,30 +176,6 @@ export default component$(() => {
         end: "bottom bottom",
         scrub: 1.5,
       }
-    });
-
-    // Floating Energy Spheres
-    document.querySelectorAll(".energy-sphere").forEach((sphere: any) => {
-      const speed = parseFloat(sphere.dataset.speed || "0.2");
-      gsap.to(sphere, {
-        y: "+=30",
-        x: "+=20",
-        duration: 3 + Math.random() * 2,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-        delay: Math.random() * 2
-      });
-      
-      // Subtle parallax on scroll
-      gsap.to(sphere, {
-        yPercent: 50 * speed,
-        ease: "none",
-        scrollTrigger: {
-          trigger: "footer",
-          scrub: true,
-        }
-      });
     });
   });
 
@@ -262,9 +262,9 @@ export default component$(() => {
                 <stop offset="100%" stop-color="#00ff55" stop-opacity="0" />
               </linearGradient>
             </defs>
-            <path class="footer-tracer-path" d="M -100,100 C 200,150 400,50 720,100 C 1040,150 1240,50 1540,100" />
-            <path class="footer-tracer-path" d="M -100,300 C 300,250 500,350 720,300 C 940,250 1240,350 1540,300" opacity="0.6" />
-            <path class="footer-tracer-path" d="M -100,500 C 150,450 450,550 720,500 C 990,450 1290,550 1540,500" opacity="0.3" />
+            <path id="path-1" class="footer-tracer-path" d="M -100,100 C 200,150 400,50 720,100 C 1040,150 1240,50 1540,100" />
+            <path id="path-2" class="footer-tracer-path" d="M -100,300 C 300,250 500,350 720,300 C 940,250 1240,350 1540,300" opacity="0.6" />
+            <path id="path-3" class="footer-tracer-path" d="M -100,500 C 150,450 450,550 720,500 C 990,450 1290,550 1540,500" opacity="0.3" />
             
             {/* Tracer Points */}
             <circle class="signal-tracer h-2 w-2 fill-[#00ff55] shadow-[0_0_10px_#00ff55]" r="4" />

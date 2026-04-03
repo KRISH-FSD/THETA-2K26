@@ -16,22 +16,9 @@ export const heroSlides = [
     title: "The Grand Inauguration",
     subtitle: "THETA 2026",
     description: "Musical Fusion · Opening Ceremony · Cultural Night",
-    accentColor: "#a8ff3a",
-    accentRgb: "168,255,58",
-    /**
-     * 📸 IMAGE PLACEHOLDER — Day 1
-     * Replace the src below with your actual image path.
-     * Recommended: a wide (16:9) hero shot, ≥1920×1080px.
-     * Place the file at:  public/hero/day-1.jpg
-     * Then set:           bgImage: "/hero/day-1.jpg"
-     */
+    accentColor: "#00ff44",
+    accentRgb: "0,255,68",
     bgImage: "/day/day-1.png",
-    /**
-     * 📸 THUMBNAIL PLACEHOLDER — Day 1
-     * A square/portrait crop of the same photo.
-     * Place at: public/hero/day-1-thumb.jpg
-     * Then set: thumb: "/hero/day-1-thumb.jpg"
-     */
     thumb: "/day/day-1.png",
   },
   {
@@ -40,19 +27,9 @@ export const heroSlides = [
     title: "Flagship Competitions",
     subtitle: "THETA 2026",
     description: "Hackathon · Robotics · AI/ML Showdown",
-    accentColor: "#06d6f0",
-    accentRgb: "6,214,240",
-    /**
-     * 📸 IMAGE PLACEHOLDER — Day 2
-     * Place at: public/hero/day-2.jpg
-     * Then set: bgImage: "/hero/day-2.jpg"
-     */
+    accentColor: "#f5c842",
+    accentRgb: "245,200,66",
     bgImage: "/day/day-2.png",
-    /**
-     * 📸 THUMBNAIL PLACEHOLDER — Day 2
-     * Place at: public/hero/day-2-thumb.jpg
-     * Then set: thumb: "/hero/day-2-thumb.jpg"
-     */
     thumb: "/day/day-2.png",
   },
   {
@@ -61,19 +38,9 @@ export const heroSlides = [
     title: "Grand Finale & Awards",
     subtitle: "THETA 2026",
     description: "Prize Distribution · Valedictory · Networking Night",
-    accentColor: "#f5c842",
-    accentRgb: "245,200,66",
-    /**
-     * 📸 IMAGE PLACEHOLDER — Day 3
-     * Place at: public/hero/day-3.jpg
-     * Then set: bgImage: "/hero/day-3.jpg"
-     */
+    accentColor: "#ff3333",
+    accentRgb: "255,51,51",
     bgImage: "/day/day-3.png",
-    /**
-     * 📸 THUMBNAIL PLACEHOLDER — Day 3
-     * Place at: public/hero/day-3-thumb.jpg
-     * Then set: thumb: "/hero/day-3-thumb.jpg"
-     */
     thumb: "/day/day-3.png",
   },
 ];
@@ -147,29 +114,45 @@ const HeroCountdown = component$((props: { targetDate: string }) => {
   );
 });
 
-/* ─── Component ─── */
+/* ─── Main Component ─── */
 export const HeroSlider = component$(() => {
   const active = useSignal(0);
   const isAnimating = useSignal(false);
   const progress = useSignal(0);
+  const state = useStore({ startTime: 0 });
 
-  const state = useStore({ paused: false });
+  const goTo = $((idx: number) => {
+    if (isAnimating.value || idx === active.value) return;
+    isAnimating.value = true;
+    active.value = idx;
+    progress.value = 0;
+    state.startTime = performance.now();
 
-  /* Progress bar & auto-advance */
+    const tl = gsap.timeline();
+    tl.fromTo(".hs-badge", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power4.out" });
+    tl.fromTo(".hs-title", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power4.out" }, "-=0.4");
+    tl.fromTo(".hs-desc", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power4.out" }, "-=0.5");
+    tl.fromTo(".hs-cta", { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.7)" }, "-=0.4");
+
+    setTimeout(() => { isAnimating.value = false; }, 900);
+  });
+
+  /* UNSTOPPABLE Progress bar & auto-advance */
   useVisibleTask$(() => {
-    let startTime = performance.now();
+    state.startTime = performance.now();
     const duration = 6000;
     let rafId: number;
 
-    const tick = (now: number) => {
-      if (!state.paused) {
-        const elapsed = now - startTime;
-        progress.value = Math.min((elapsed / duration) * 100, 100);
-        if (elapsed >= duration) {
-          active.value = (active.value + 1) % heroSlides.length;
-          startTime = performance.now();
-          progress.value = 0;
-        }
+    const tick = () => {
+      const now = performance.now();
+      const elapsed = now - state.startTime;
+      progress.value = Math.min((elapsed / duration) * 100, 100);
+      
+      if (elapsed >= duration) {
+        state.startTime = now; 
+        progress.value = 0;
+        const nextIdx = (active.value + 1) % heroSlides.length;
+        goTo(nextIdx);
       }
       rafId = requestAnimationFrame(tick);
     };
@@ -178,271 +161,92 @@ export const HeroSlider = component$(() => {
     return () => cancelAnimationFrame(rafId);
   });
 
-  const goTo = $((idx: number) => {
-    if (isAnimating.value || idx === active.value) return;
-    isAnimating.value = true;
-    active.value = idx;
-    progress.value = 0;
-
-    // GSAP entry animation for text
-    const tl = gsap.timeline();
-    tl.fromTo(
-      ".hs-badge",
-      { y: 20, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.6, ease: "power4.out" },
-    );
-    tl.fromTo(
-      ".hs-title",
-      { y: 30, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.8, ease: "power4.out" },
-      "-=0.4",
-    );
-    tl.fromTo(
-      ".hs-desc",
-      { y: 20, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.6, ease: "power4.out" },
-      "-=0.5",
-    );
-    tl.fromTo(
-      ".hs-cta",
-      { scale: 0.8, opacity: 0 },
-      { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.7)" },
-      "-=0.4",
-    );
-
-    setTimeout(() => {
-      isAnimating.value = false;
-    }, 900);
-  });
-
   useVisibleTask$(() => {
-    // Initial GSAP animation
     const tl = gsap.timeline({ delay: 0.5 });
-    tl.fromTo(
-      ".hs-badge",
-      { y: 20, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.6, ease: "power4.out" },
-    );
-    tl.fromTo(
-      ".hs-title",
-      { y: 30, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.8, ease: "power4.out" },
-      "-=0.4",
-    );
-    tl.fromTo(
-      ".hs-desc",
-      { y: 20, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.6, ease: "power4.out" },
-      "-=0.5",
-    );
-    tl.fromTo(
-      ".hs-cta",
-      { scale: 0.8, opacity: 0 },
-      { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.7)" },
-      "-=0.4",
-    );
-    tl.fromTo(
-      ".hs-countdown-wrap",
-      { y: 40, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" },
-      "-=0.6",
-    );
+    tl.fromTo(".hs-badge", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power4.out" });
+    tl.fromTo(".hs-title", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power4.out" }, "-=0.4");
+    tl.fromTo(".hs-desc", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power4.out" }, "-=0.5");
+    tl.fromTo(".hs-cta", { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.7)" }, "-=0.4");
+    tl.fromTo(".hs-countdown-wrap", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }, "-=0.6");
   });
 
   const slide = heroSlides[active.value];
 
   return (
-    <section
-      id="hero-slider"
-      class="hs-root"
-      style={`--hs-accent:${slide.accentColor};--hs-accent-rgb:${slide.accentRgb};`}
-      onMouseEnter$={() => {
-        state.paused = true;
-      }}
-      onMouseLeave$={() => {
-        state.paused = false;
-      }}
-    >
-      {/* ── Background slides ── */}
+    <section id="hero-slider" class="hs-root relative overflow-hidden" 
+             style={`--hs-accent:${slide.accentColor};--hs-accent-rgb:${slide.accentRgb};`}>
+      
+      {/* Backgrounds */}
       {heroSlides.map((s, i) => (
-        <div
-          key={s.id}
-          class="hs-bg"
-          style={{
-            opacity: active.value === i ? "1" : "0",
-            backgroundImage: `url(${s.bgImage})`,
-            transform: active.value === i ? "scale(1)" : "scale(1.04)",
-          }}
-        >
-          {/* Dark gradient overlay */}
-          <div
-            class="hs-overlay"
-            style={{
-              background: `linear-gradient(
-                108deg,
-                rgba(10,6,25,0.82) 0%,
-                rgba(10,6,25,0.55) 50%,
-                rgba(10,6,25,0.2) 100%
-              ), linear-gradient(
-                to top,
-                rgba(10,6,25,0.95) 0%,
-                transparent 45%
-              )`,
-            }}
-          />
-
-          {/* Colour tint from accent */}
-          <div
-            class="hs-tint"
-            style={{
-              background: `radial-gradient(ellipse 70% 60% at 80% 40%, rgba(${s.accentRgb},0.18), transparent 70%)`,
-              opacity: active.value === i ? "1" : "0",
-            }}
-          />
+        <div key={s.id} class="hs-bg" 
+             style={{ 
+               opacity: active.value === i ? "1" : "0", 
+               backgroundImage: `url(${s.bgImage})`,
+               transform: active.value === i ? "scale(1)" : "scale(1.04)"
+             }}>
+          <div class="hs-overlay" style={{ background: `linear-gradient(108deg, rgba(10,6,25,0.82) 0%, rgba(10,6,25,0.55) 50%, rgba(10,6,25,0.2) 100%), linear-gradient(to top, rgba(10,6,25,0.95) 0%, transparent 45%)` }} />
+          <div class="hs-tint" style={{ background: `radial-gradient(ellipse 70% 60% at 80% 40%, rgba(${s.accentRgb},0.18), transparent 70%)`, opacity: active.value === i ? "1" : "0" }} />
         </div>
       ))}
 
-      {/* ── Grain texture ── */}
       <div class="hs-grain" />
 
-      {/* ── Main content ── */}
+      {/* Content */}
       <div class="hs-content">
-        {/* Badge */}
         <div class="hs-badge">
-          <span class="hs-badge-text">
-            {slide.day} · {slide.subtitle}
-          </span>
+          <span class="hs-badge-text">{slide.day} · {slide.subtitle}</span>
         </div>
-
-        {/* Title */}
         <h1 class="hs-title font-black uppercase">{slide.title}</h1>
-
-        {/* Description */}
         <p class="hs-desc">{slide.description}</p>
-
         <div class="hs-actions">
           <a href="/roadmap/day1" class="hs-cta hs-cta--primary">
             View Roadmap
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="3"
-              stroke-linecap="round"
-              style="flex-shrink:0"
-            >
-              <path d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
           </a>
-
           <a href="/events" class="hs-cta hs-cta--secondary">
             Explore All
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="3"
-              stroke-linecap="round"
-              style="flex-shrink:0"
-            >
-              <path d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
           </a>
-
-          <Link href="/contact" class="hs-cta hs-cta--ghost">
-            Contact Team
-          </Link>
+          <Link href="/contact" class="hs-cta hs-cta--ghost">Contact Team</Link>
         </div>
       </div>
 
-      {/* Countdown - moved outside hs-content for bottom-right absolute positioning */}
       <HeroCountdown targetDate="2026-04-11T09:00:00" />
-
-      {/* Progress bar */}
-      <div class="hs-progress-wrap">
-        <div class="hs-progress-track">
-          <div
-            class="hs-progress-fill"
-            style={{
-              width: `${progress.value}%`,
-              background: slide.accentColor,
-            }}
-          />
-        </div>
-      </div>
+      
+      {/* Dots */}
       <div class="hs-dots">
         {heroSlides.map((s, i) => (
-          <button
-            key={s.id}
-            class={`hs-dot ${active.value === i ? "hs-dot--active" : ""}`}
-            style={
-              active.value === i
-                ? {
-                    background: slide.accentColor,
-                    boxShadow: `0 0 8px ${slide.accentColor}`,
-                  }
-                : {}
-            }
-            onClick$={() => goTo(i)}
-            aria-label={`Go to ${s.day}`}
-          />
+          <button key={s.id} 
+                  class={`hs-dot ${active.value === i ? "hs-dot--active" : ""}`}
+                  style={active.value === i ? { background: slide.accentColor, boxShadow: `0 0 8px ${slide.accentColor}` } : {}}
+                  onClick$={() => goTo(i)} />
         ))}
       </div>
 
-      {/* ── Thumbnail strip (bottom) ── */}
+      {/* Thumbs */}
       <div class="hs-thumbs">
         {heroSlides.map((s, i) => (
-          <button
-            key={s.id}
-            class={`hs-thumb ${active.value === i ? "hs-thumb--active" : ""}`}
-            style={
-              active.value === i
-                ? {
-                    borderColor: s.accentColor,
-                    boxShadow: `0 0 0 2px ${s.accentColor}44, 0 8px 24px rgba(0,0,0,0.5)`,
-                  }
-                : {}
-            }
-            onClick$={() => goTo(i)}
-            aria-label={`Switch to ${s.day}`}
-          >
-            <img
-              src={s.thumb}
-              alt={s.day}
-              class="hs-thumb-img"
-              loading="lazy"
-            />
-            {/* Thumb overlay */}
-            <div
-              class="hs-thumb-overlay"
-              style={
-                active.value === i
-                  ? {
-                      background: `linear-gradient(to top, rgba(${s.accentRgb},0.55), transparent)`,
-                    }
-                  : {}
-              }
-            />
-            {/* Day label */}
-            <span
-              class="hs-thumb-label"
-              style={active.value === i ? { color: s.accentColor } : {}}
-            >
-              {s.day}
-            </span>
-            {/* Active indicator line */}
-            {active.value === i && (
-              <div
-                class="hs-thumb-line"
-                style={{ background: s.accentColor }}
-              />
-            )}
+          <button key={s.id} 
+                  class={`hs-thumb ${active.value === i ? "hs-thumb--active" : ""}`}
+                  style={active.value === i ? { borderColor: s.accentColor, boxShadow: `0 0 0 2px ${s.accentColor}44, 0 8px 24px rgba(0,0,0,0.5)` } : {}}
+                  onClick$={() => goTo(i)}>
+            <img src={s.thumb} alt={s.day} class="hs-thumb-img" loading="lazy" />
+            <div class="hs-thumb-overlay" style={active.value === i ? { background: `linear-gradient(to top, rgba(${s.accentRgb},0.55), transparent)` } : {}} />
+            <span class="hs-thumb-label" style={active.value === i ? { color: s.accentColor } : {}}>{s.day}</span>
+            {active.value === i && <div class="hs-thumb-line" style={{ background: s.accentColor }} />}
           </button>
         ))}
+      </div>
+
+      {/* UNSTOPPABLE PROGRESS BAR (Absolute Bottom) */}
+      <div class="absolute bottom-0 left-0 z-50 h-[2.5px] w-full bg-white/5 pointer-events-none overflow-hidden">
+        <div class="h-full shadow-[0_0_15px_var(--hs-accent)]"
+             style={{ 
+               width: `${progress.value}%`, 
+               background: slide.accentColor,
+               /* No CSS transitions here! JS handles the smoothness via RAF */
+               willChange: "width"
+             }} />
       </div>
     </section>
   );

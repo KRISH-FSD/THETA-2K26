@@ -370,7 +370,8 @@ export default component$(function Day1Roadmap() {
 
   return (
     <div class="rm-page" key="roadmap-day-1">
-      <canvas id="rm-bg-grid" class="rm-bg-grid" aria-hidden="true" />
+      <img src="/backgrounds/sastra-2.jfif" alt="Background" class="fixed inset-0 w-full h-full object-cover z-0 opacity-20 pointer-events-none mix-blend-screen" />
+      <canvas id="rm-bg-grid" class="rm-bg-grid relative z-10" aria-hidden="true" />
       <div class="rm-page__aurora rm-page__aurora--left"  />
       <div class="rm-page__aurora rm-page__aurora--right" />
 

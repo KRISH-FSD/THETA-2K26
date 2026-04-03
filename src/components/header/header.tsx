@@ -4,6 +4,7 @@ import { Link, useLocation } from "@builder.io/qwik-city";
 export const Header = component$(() => {
   const location = useLocation();
   const open = useSignal(false);
+  const theme = useSignal<"default" | "spider" | "onepiece">("default");
 
   const isActive = (href: string) => {
     const p = location.url.pathname.replace(/\/$/, "") || "/";
@@ -12,18 +13,48 @@ export const Header = component$(() => {
     return p === h || p.startsWith(h + "/");
   };
 
+  /* Watch route changes — close menu + sync theme from body data-attr */
   useVisibleTask$(({ track }) => {
     track(() => location.url.pathname);
     open.value = false;
+
+    /* Read theme set by the page component */
+    const t = document.body.getAttribute("data-theme") as typeof theme.value | null;
+    theme.value = t === "spider" ? "spider" : t === "onepiece" ? "onepiece" : "default";
+
+    /* Observe future body attribute changes (set by page useVisibleTask$) */
+    const obs = new MutationObserver(() => {
+      const val = document.body.getAttribute("data-theme") as typeof theme.value | null;
+      theme.value = val === "spider" ? "spider" : val === "onepiece" ? "onepiece" : "default";
+    });
+    obs.observe(document.body, { attributes: true, attributeFilter: ["data-theme"] });
+    return () => obs.disconnect();
   });
 
   const toggleMenu = $(() => {
     open.value = !open.value;
   });
 
+  /* Derived accent color for current theme */
+  const accent = theme.value === "spider" ? "#ff4040" : theme.value === "onepiece" ? "#ffd700" : "#0ea935";
+  const accentLight = theme.value === "spider" ? "rgba(220,16,16,0.35)" : theme.value === "onepiece" ? "rgba(255,215,0,0.35)" : "rgba(14,169,53,0.35)";
+  const accentBg    = theme.value === "spider" ? "rgba(220,16,16,0.1)"  : theme.value === "onepiece" ? "rgba(255,215,0,0.1)"  : "rgba(14,169,53,0.1)";
+  const accentGlow  = theme.value === "spider" ? "rgba(220,16,16,0.5)"  : theme.value === "onepiece" ? "rgba(200,160,0,0.5)"  : "rgba(14,169,53,0.5)";
+  const logoSrc     = theme.value === "spider"   ? "/spidy/image.png"
+                    : theme.value === "onepiece" ? "/onepeice/image.png"
+                    : "/ben10/ben10-logo.png";
+  const logoAlt     = theme.value === "spider"   ? "Spider-Man"
+                    : theme.value === "onepiece" ? "One Piece"
+                    : "Ben 10 Logo";
+
+  const navLinkActive = (href: string) =>
+    isActive(href)
+      ? `px-2 text-[0.65rem] font-bold tracking-widest uppercase transition-colors lg:text-xs t-spider-nav-active t-spider-nav-hover`
+      : `px-2 text-[0.65rem] font-bold tracking-widest uppercase transition-colors lg:text-xs text-[#8ca38c] t-spider-nav-hover`;
+
   return (
     <>
-      <header class="pointer-events-none fixed top-2 right-0 left-0 z-[100] flex w-full items-center justify-between px-3 sm:px-4 md:top-3 md:px-6">
+      <header class="pointer-events-none fixed top-6 right-0 left-0 z-[100] flex w-full items-center justify-between px-3 sm:px-4 md:top-8 md:px-6">
         {/* Left: Theta Logo */}
         <div class="pointer-events-auto flex min-w-0 flex-1 items-center md:flex-initial md:w-[220px] lg:w-[280px]">
           <Link
@@ -38,112 +69,70 @@ export const Header = component$(() => {
           </Link>
         </div>
 
-        {/* Center: Pill Navigation (Desktop) - Modern Apple Glassmorphism Effect */}
+        {/* Center: Pill Navigation (Desktop) */}
         <nav class="pointer-events-auto absolute top-1/2 left-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-2 rounded-[2.5rem] border border-[rgba(255,255,255,0.15)] bg-[rgba(10,10,10,0.5)] px-4 py-1.5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_12px_40px_rgba(0,0,0,0.6)] backdrop-blur-2xl transition-transform hover:scale-[1.02] md:flex lg:gap-6 lg:px-6">
-          <Link
-            href="/events"
-            class={[
-              "px-2 text-[0.65rem] font-bold tracking-widest uppercase transition-colors lg:text-xs",
-              isActive("/events")
-                ? "text-[#0ea935]"
-                : "text-[#8ca38c] hover:text-[#f0fff0]",
-            ]}
-          >
-            Events
-          </Link>
+          <Link href="/events" class={navLinkActive("/events")}>Events</Link>
+          <Link href="/sponsors" class={navLinkActive("/sponsors")}>Sponsors</Link>
 
-          <Link
-            href="/sponsors"
-            class={[
-              "px-2 text-[0.65rem] font-bold tracking-widest uppercase transition-colors lg:text-xs",
-              isActive("/sponsors")
-                ? "text-[#0ea935]"
-                : "text-[#8ca38c] hover:text-[#f0fff0]",
-            ]}
-          >
-            Sponsors
-          </Link>
-
-          <Link
-            href="/"
-            class="t-ben10-link group relative mx-1 flex shrink-0 items-center justify-center lg:mx-2"
-          >
-            <div class="t-ben10-shell relative z-10 flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-[rgba(255,255,255,0.1)] bg-[#050505]/80 backdrop-blur-md transition-all lg:h-14 lg:w-14">
-              <span class="t-ben10-shell-glow"></span>
+          {/* Center logo button */}
+          <Link href="/" class="t-ben10-link group relative mx-1 flex shrink-0 items-center justify-center lg:mx-2">
+            <div
+              class="t-ben10-shell relative z-10 flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-[rgba(255,255,255,0.1)] bg-[#050505]/80 backdrop-blur-md transition-all lg:h-14 lg:w-14"
+              style={`border-color:${accentLight};box-shadow:0 0 20px ${accentBg};transition:border-color 0.5s,box-shadow 0.5s;`}
+            >
+              <span
+                class="t-ben10-shell-glow"
+                style={`background:radial-gradient(circle,${accentBg.replace("0.1","0.55")},transparent 70%);transition:background 0.5s;`}
+              />
               <img
-                src="/ben10/ben10-logo.png"
-                alt="Ben 10 Logo"
+                src={logoSrc}
+                alt={logoAlt}
                 class="t-ben10-icon h-7 w-auto object-contain lg:h-10"
+                style="transition:opacity 0.4s,transform 0.4s;"
               />
             </div>
           </Link>
 
-          <Link
-            href="/roadmap/day1"
-            class={[
-              "px-2 text-[0.65rem] font-bold tracking-widest uppercase transition-colors lg:text-xs",
-              isActive("/roadmap")
-                ? "text-[#0ea935]"
-                : "text-[#8ca38c] hover:text-[#f0fff0]",
-            ]}
-          >
-            Roadmap
-          </Link>
-
-          <Link
-            href="/contact"
-            class={[
-              "px-2 text-[0.65rem] font-bold tracking-widest uppercase transition-colors lg:text-xs",
-              isActive("/contact")
-                ? "text-[#0ea935]"
-                : "text-[#8ca38c] hover:text-[#f0fff0]",
-            ]}
-          >
-            Contacts
-          </Link>
+          <Link href="/roadmap/day1" class={navLinkActive("/roadmap")}>Roadmap</Link>
+          <Link href="/contact"      class={navLinkActive("/contact")}>Contacts</Link>
         </nav>
 
-        {/* Center: Mobile Logo Display */}
+        {/* Center: Mobile Logo */}
         <div class="pointer-events-auto flex flex-1 justify-center md:hidden">
           <Link
             href="/"
             class="t-ben10-link t-ben10-shell relative z-10 flex h-14 w-14 items-center justify-center overflow-hidden rounded-full border border-[rgba(255,255,255,0.15)] bg-[rgba(10,10,10,0.6)] backdrop-blur-xl"
+            style={`border-color:${accentLight};box-shadow:0 0 20px ${accentBg};transition:border-color 0.5s,box-shadow 0.5s;`}
           >
-            <span class="t-ben10-shell-glow"></span>
+            <span
+              class="t-ben10-shell-glow"
+              style={`background:radial-gradient(circle,${accentBg.replace("0.1","0.55")},transparent 70%);transition:background 0.5s;`}
+            />
             <img
-              src="/ben10/ben10-logo.png"
-              alt="Ben 10 Logo"
+              src={logoSrc}
+              alt={logoAlt}
               class="t-ben10-icon h-10 w-auto object-contain"
+              style="transition:opacity 0.4s,transform 0.4s;"
             />
           </Link>
         </div>
 
-        {/* Right: Register Button & Mobile Menu */}
+        {/* Right: Register + Hamburger */}
         <div class="pointer-events-auto flex flex-1 items-center justify-end gap-2 sm:gap-3 md:flex-initial md:w-[220px] lg:w-[280px]">
-          {/* Modern Minimalist Cyberpunk Register Button */}
           <div class="group pointer-events-auto relative hidden cursor-pointer md:flex">
             <Link
               href="/events"
-              class="relative z-10 flex items-center justify-center gap-2.5 overflow-hidden rounded-full border border-[#0ea935] bg-[#050505]/40 px-5 py-2.5 text-[0.6rem] font-black tracking-[0.2em] whitespace-nowrap text-[#0ea935] uppercase shadow-[0_0_15px_rgba(14,169,53,0.15),inset_0_0_10px_rgba(14,169,53,0.1)] backdrop-blur-md transition-all duration-300 hover:bg-[#0ea935] hover:text-[#050505] hover:shadow-[0_0_30px_rgba(14,169,53,0.5)] active:scale-95 lg:px-8 lg:py-3.5 lg:text-[0.7rem]"
+              class="t-spider-register relative z-10 flex items-center justify-center gap-2.5 overflow-hidden rounded-full border bg-[#050505]/40 px-5 py-2.5 text-[0.6rem] font-black tracking-[0.2em] whitespace-nowrap uppercase backdrop-blur-md transition-all duration-300 active:scale-95 lg:px-8 lg:py-3.5 lg:text-[0.7rem]"
+              style={`border-color:${accent};color:${accent};box-shadow:0 0 15px ${accentBg},inset 0 0 10px ${accentBg};`}
             >
-              {/* Online Dot (syncs with text color via bg-current) */}
               <span class="relative flex h-2 w-2">
                 <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-current opacity-70"></span>
                 <span class="relative inline-flex h-2 w-2 rounded-full bg-current"></span>
               </span>
-
               <span class="mt-[1px]">Register</span>
-
-              {/* Chevron Icon */}
-              <svg
-                class="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="3"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
+              <svg class="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M5 12h14"></path>
                 <path d="m12 5 7 7-7 7"></path>
               </svg>
@@ -153,30 +142,17 @@ export const Header = component$(() => {
           <button
             type="button"
             onClick$={toggleMenu}
-            class="flex h-12 w-12 items-center justify-center rounded-full border border-[rgba(255,255,255,0.15)] bg-[rgba(10,10,10,0.5)] text-[#0ea935] shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_8px_20px_rgba(0,0,0,0.4)] backdrop-blur-2xl md:hidden"
+            class="t-spider-hamburger flex h-12 w-12 items-center justify-center rounded-full border border-[rgba(255,255,255,0.15)] bg-[rgba(10,10,10,0.5)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_8px_20px_rgba(0,0,0,0.4)] backdrop-blur-2xl md:hidden"
+            style={`color:${accent};`}
           >
             {open.value ? (
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-              >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
                 <path d="M18 6L6 18M6 6l12 12" />
               </svg>
             ) : (
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-              >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
                 <path d="M3 12h18M3 6h18M3 18h18" />
               </svg>
             )}
@@ -184,7 +160,7 @@ export const Header = component$(() => {
         </div>
       </header>
 
-      {/* Mobile Menu Overlay */}
+      {/* Mobile Menu */}
       <div
         class={[
           "fixed inset-x-4 top-[74px] z-[99] overflow-hidden rounded-[2.5rem] border border-[rgba(255,255,255,0.1)] bg-[rgba(10,10,10,0.85)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.1),0_24px_60px_rgba(0,0,0,0.8)] backdrop-blur-3xl transition-all duration-300 md:hidden",
@@ -194,34 +170,26 @@ export const Header = component$(() => {
         ]}
       >
         <div class="space-y-3 px-6">
-          <Link
-            href="/events"
-            class="block rounded-2xl border border-[rgba(255,255,255,0.05)] bg-[#111111]/80 px-5 py-4 text-center text-sm font-bold tracking-widest text-[#f0fff0] uppercase shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] transition-colors hover:border-[#0ea935]/40"
-          >
+          <Link href="/events"
+            class="t-spider-mobile-hover block rounded-2xl border border-[rgba(255,255,255,0.05)] bg-[#111111]/80 px-5 py-4 text-center text-sm font-bold tracking-widest text-[#f0fff0] uppercase shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] transition-colors">
             Events
           </Link>
-          <Link
-            href="/sponsors"
-            class="block rounded-2xl border border-[#0ea935]/30 bg-[#0ea935]/10 px-5 py-4 text-center text-sm font-bold tracking-widest text-[#0ea935] uppercase shadow-[inset_0_1px_1px_rgba(255,255,255,0.05),0_0_12px_rgba(14,169,53,0.2)] transition-colors hover:border-[#0ea935]/60"
-          >
+          <Link href="/sponsors"
+            class="t-spider-mobile-highlight block rounded-2xl px-5 py-4 text-center text-sm font-bold tracking-widest uppercase shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] transition-colors"
+            style={`border:1px solid ${accentLight};background:${accentBg};color:${accent};box-shadow:inset 0 1px 1px rgba(255,255,255,0.05),0 0 12px ${accentBg};`}>
             Sponsors
           </Link>
-          <Link
-            href="/roadmap/day1"
-            class="block rounded-2xl border border-[rgba(255,255,255,0.05)] bg-[#111111]/80 px-5 py-4 text-center text-sm font-bold tracking-widest text-[#f0fff0] uppercase shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] transition-colors hover:border-[#0ea935]/40"
-          >
+          <Link href="/roadmap/day1"
+            class="t-spider-mobile-hover block rounded-2xl border border-[rgba(255,255,255,0.05)] bg-[#111111]/80 px-5 py-4 text-center text-sm font-bold tracking-widest text-[#f0fff0] uppercase shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] transition-colors">
             Roadmap
           </Link>
-          <Link
-            href="/contact"
-            class="block rounded-2xl border border-[rgba(255,255,255,0.05)] bg-[#111111]/80 px-5 py-4 text-center text-sm font-bold tracking-widest text-[#f0fff0] uppercase shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] transition-colors hover:border-[#0ea935]/40"
-          >
+          <Link href="/contact"
+            class="t-spider-mobile-hover block rounded-2xl border border-[rgba(255,255,255,0.05)] bg-[#111111]/80 px-5 py-4 text-center text-sm font-bold tracking-widest text-[#f0fff0] uppercase shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] transition-colors">
             Contacts
           </Link>
-          <Link
-            href="/events"
-            class="mt-6 block rounded-2xl bg-[#0ea935] px-5 py-4 text-center text-sm font-black tracking-widest text-[#050505] uppercase shadow-[0_0_20px_rgba(14,169,53,0.5)] transition-colors"
-          >
+          <Link href="/events"
+            class="t-spider-mobile-register mt-6 block rounded-2xl px-5 py-4 text-center text-sm font-black tracking-widest text-white uppercase transition-colors"
+            style={`background:${accent};box-shadow:0 0 20px ${accentGlow};`}>
             Register
           </Link>
         </div>
