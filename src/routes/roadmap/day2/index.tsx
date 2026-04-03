@@ -232,6 +232,7 @@ export default component$(function Day2Roadmap() {
       // @ts-ignore
       const gsap: any = window.gsap;
 
+      const pageRoot   = document.querySelector(".rm-page--op") as HTMLElement | null;
       const container  = document.getElementById("rm-timeline")    as HTMLElement     | null;
       const svgEl      = document.getElementById("rm-line-svg")    as SVGSVGElement   | null;
       const pathBase   = document.getElementById("rm-line-base")   as SVGPathElement  | null;
@@ -239,6 +240,8 @@ export default component$(function Day2Roadmap() {
       const pathGlow   = document.getElementById("rm-line-glow")   as SVGPathElement  | null;
       const tracer     = document.getElementById("rm-tracer")      as SVGGElement     | null;
       if (!container || !svgEl || !pathBase || !pathAccent || !pathGlow) return;
+      const finalRow   = container.querySelector(".rm-row--final") as HTMLElement | null;
+      const finalNode  = finalRow?.querySelector(".rm-node--finish") as HTMLElement | null;
 
       let totalLen = 0, rafId = 0, scheduled = false, needsBuild = true;
       let ro: ResizeObserver | undefined;
@@ -290,16 +293,29 @@ export default component$(function Day2Roadmap() {
 
       const update = () => {
         if (totalLen === 0) return;
-        const cr   = container.getBoundingClientRect();
-        const VH   = window.innerHeight;
-        const prog = Math.max(0, Math.min(1, (VH * 0.55 - cr.top) / cr.height));
+        const VH = window.innerHeight;
+        const ns = liveNodes();
+        if (ns.length < 2) return;
+        const firstRect = ns[0].getBoundingClientRect();
+        const lastRect = ns[ns.length - 1].getBoundingClientRect();
+        const startY = firstRect.top + firstRect.height / 2;
+        const endY = lastRect.top + lastRect.height / 2;
+        const targetY = VH * 0.55;
+        const span = Math.max(endY - startY, 1);
+        const prog = Math.max(0, Math.min(1, (targetY - startY) / span));
         const off  = totalLen * (1 - prog);
         pathBase.style.strokeDashoffset   = String(off);
         pathAccent.style.strokeDashoffset = String(Math.max(0, off - 26));
         pathGlow.style.strokeDashoffset   = String(off);
         posTracer(prog);
-        const ns = liveNodes();
         ns.forEach((n, i) => n.classList.toggle("rm-node--lit", prog >= i / Math.max(ns.length - 1, 1) - 0.02));
+        const endReached = prog >= 0.97;
+        pageRoot?.classList.toggle("is-end-reached", endReached);
+        finalRow?.classList.toggle("is-end-reached", endReached);
+        finalNode?.classList.toggle("rm-node--lit", endReached);
+        if (tracer && endReached) {
+          tracer.style.opacity = "0";
+        }
         rows.forEach((row, idx) => {
           const card   = row.querySelector<HTMLElement>(".rm-card");
           const isLeft = row.classList.contains("rm-row--left");
@@ -632,6 +648,103 @@ export default component$(function Day2Roadmap() {
         }
         .rm-page--op .rm-end-card h3 { color: #ffbc34; }
         .rm-page--op .rm-end-card__meta a:hover { background: linear-gradient(135deg, #ffc64a, #ffe59a); }
+        .rm-page--op .rm-row--final {
+          margin-bottom: 0.8rem;
+        }
+        .rm-page--op .rm-timeline {
+          padding-bottom: 0.5rem;
+        }
+        .rm-page--op .rm-section--top {
+          padding-bottom: 6.5rem;
+        }
+        .rm-page--op .rm-top-line-veil {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 10rem;
+          z-index: 1;
+          pointer-events: none;
+          background: linear-gradient(180deg, rgba(4, 9, 16, 0.96) 0%, rgba(4, 9, 16, 0.72) 42%, rgba(4, 9, 16, 0) 100%);
+        }
+        .rm-page--op .rm-row--final .rm-node--finish {
+          position: relative;
+        }
+        .rm-page--op .rm-end-popup {
+          position: absolute;
+          right: calc(100% + 0.95rem);
+          left: auto;
+          top: 50%;
+          bottom: auto;
+          transform: translate(-12px, -50%) scale(0.92);
+          min-width: 12rem;
+          max-width: 13.5rem;
+          padding: 0.75rem 0.9rem;
+          border-radius: 1rem;
+          border: 1px solid rgba(255,177,38,0.28);
+          background:
+            linear-gradient(135deg, rgba(255, 183, 43, 0.12), rgba(255, 122, 0, 0.08)),
+            rgba(5, 14, 24, 0.94);
+          box-shadow:
+            0 18px 42px rgba(0,0,0,0.42),
+            0 0 26px rgba(255,177,38,0.12);
+          opacity: 0;
+          pointer-events: none;
+          transition:
+            opacity 320ms ease,
+            transform 380ms cubic-bezier(0.22, 1, 0.36, 1);
+          z-index: 4;
+        }
+        .rm-page--op .rm-end-popup::after {
+          content: "";
+          position: absolute;
+          right: -0.45rem;
+          left: auto;
+          top: 50%;
+          bottom: auto;
+          width: 0.9rem;
+          height: 0.9rem;
+          transform: translateY(-50%) rotate(45deg);
+          border-right: 1px solid rgba(255,177,38,0.28);
+          border-bottom: 1px solid rgba(255,177,38,0.28);
+          background: rgba(11, 25, 40, 0.96);
+        }
+        .rm-page--op .rm-end-popup__label {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.38rem;
+          color: #ffbc34;
+          font-size: 0.56rem;
+          font-weight: 900;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+        }
+        .rm-page--op .rm-end-popup__label::before {
+          content: "";
+          width: 0.42rem;
+          height: 0.42rem;
+          border-radius: 999px;
+          background: #ffbc34;
+          box-shadow: 0 0 10px rgba(255,177,38,0.8);
+        }
+        .rm-page--op .rm-end-popup p {
+          margin: 0.55rem 0 0;
+          color: rgba(255, 243, 214, 0.92);
+          font-size: 0.76rem;
+          line-height: 1.45;
+        }
+        .rm-page--op.is-end-reached .rm-end-popup,
+        .rm-page--op .rm-row--final.is-end-reached .rm-end-popup {
+          opacity: 1;
+          transform: translate(0, -50%) scale(1);
+        }
+        .rm-page--op.is-end-reached .rm-row--final .rm-node--finish {
+          box-shadow:
+            0 0 0 4px rgba(255,177,38,0.16),
+            0 0 28px rgba(255,177,38,0.58),
+            0 0 72px rgba(255,177,38,0.22),
+            0 24px 50px rgba(0,0,0,0.44);
+        }
         .rm-page--op .rm-end-card__note {
           margin-top: 1rem;
           padding: 0.95rem 1rem;
@@ -675,9 +788,13 @@ export default component$(function Day2Roadmap() {
           z-index: 1;
         }
         @media (max-width: 767px) {
+          .rm-page--op .rm-section--top {
+            padding-bottom: 5.4rem;
+          }
           .rm-page--op .rm-row--final {
             grid-template-columns: 3rem minmax(0, 1fr);
             align-items: start;
+            margin-bottom: 0.35rem;
           }
           .rm-page--op .rm-row--final .rm-row__center {
             grid-column: 1;
@@ -697,6 +814,30 @@ export default component$(function Day2Roadmap() {
             width: 100%;
             margin-top: 0.2rem;
             padding: 1rem;
+          }
+          .rm-page--op .rm-end-popup {
+            min-width: 9.75rem;
+            padding: 0.62rem 0.72rem;
+            left: 50%;
+            top: auto;
+            bottom: calc(100% + 0.8rem);
+            transform: translate(-50%, 14px) scale(0.92);
+          }
+          .rm-page--op .rm-end-popup::after {
+            left: 50%;
+            top: auto;
+            bottom: -0.45rem;
+            transform: translateX(-50%) rotate(45deg);
+            border-left: none;
+            border-right: 1px solid rgba(255,177,38,0.28);
+            border-bottom: 1px solid rgba(255,177,38,0.28);
+          }
+          .rm-page--op .rm-end-popup p {
+            font-size: 0.68rem;
+          }
+          .rm-page--op.is-end-reached .rm-end-popup,
+          .rm-page--op .rm-row--final.is-end-reached .rm-end-popup {
+            transform: translate(-50%, 0) scale(1);
           }
           .rm-page--op .rm-row--final .rm-node--finish {
             margin-top: 0.35rem;
@@ -721,6 +862,7 @@ export default component$(function Day2Roadmap() {
           .rm-page--op .rm-scene-art--i2 img { object-position: center top; }
         }
       `}</style>
+      <div class="rm-top-line-veil" aria-hidden="true" />
       <div class="rm-scene-gallery" aria-hidden="true">
         <div class="rm-scene-art rm-scene-art--i1">
           <img src="/roadmap-day2/i1.png" alt="" />
@@ -842,6 +984,10 @@ export default component$(function Day2Roadmap() {
                   <span class="rm-node__halo"  />
                   <span class="rm-node__code">END</span>
                   <span class="rm-node__time">09:00 PM</span>
+                  <div class="rm-end-popup">
+                    <span class="rm-end-popup__label">Treasure Secured</span>
+                    <p>Day 2 voyage complete. The crew has reached the final dock.</p>
+                  </div>
                 </div>
               </div>
               <div class="rm-row__side rm-row__side--right">

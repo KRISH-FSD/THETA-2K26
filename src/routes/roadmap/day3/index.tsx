@@ -199,6 +199,7 @@ export default component$(function Day3Roadmap() {
       // @ts-ignore
       const gsap: any = window.gsap;
 
+      const pageRoot   = document.querySelector(".rm-page--sp")    as HTMLElement     | null;
       const container  = document.getElementById("rm-timeline")    as HTMLElement     | null;
       const svgEl      = document.getElementById("rm-line-svg")    as SVGSVGElement   | null;
       const pathBase   = document.getElementById("rm-line-base")   as SVGPathElement  | null;
@@ -206,6 +207,8 @@ export default component$(function Day3Roadmap() {
       const pathGlow   = document.getElementById("rm-line-glow")   as SVGPathElement  | null;
       const tracer     = document.getElementById("rm-tracer")      as SVGGElement     | null;
       if (!container || !svgEl || !pathBase || !pathAccent || !pathGlow) return;
+      const finalRow   = container.querySelector(".rm-row--final") as HTMLElement | null;
+      const finalNode  = finalRow?.querySelector(".rm-node--finish") as HTMLElement | null;
 
       let totalLen = 0, rafId = 0, scheduled = false, needsBuild = true;
       let ro: ResizeObserver | undefined;
@@ -257,16 +260,27 @@ export default component$(function Day3Roadmap() {
 
       const update = () => {
         if (totalLen === 0) return;
-        const cr   = container.getBoundingClientRect();
         const VH   = window.innerHeight;
-        const prog = Math.max(0, Math.min(1, (VH * 0.55 - cr.top) / cr.height));
+        const ns = liveNodes();
+        if (ns.length < 2) return;
+        const firstRect = ns[0].getBoundingClientRect();
+        const lastRect  = ns[ns.length - 1].getBoundingClientRect();
+        const startY = firstRect.top + firstRect.height / 2;
+        const endY   = lastRect.top + lastRect.height / 2;
+        const span   = Math.max(1, endY - startY);
+        const focusY = VH * 0.55;
+        const prog   = Math.max(0, Math.min(1, (focusY - startY) / span));
         const off  = totalLen * (1 - prog);
         pathBase.style.strokeDashoffset   = String(off);
         pathAccent.style.strokeDashoffset = String(Math.max(0, off - 26));
         pathGlow.style.strokeDashoffset   = String(off);
         posTracer(prog);
-        const ns = liveNodes();
         ns.forEach((n, i) => n.classList.toggle("rm-node--lit", prog >= i / Math.max(ns.length - 1, 1) - 0.02));
+        const endReached = prog >= 0.97;
+        pageRoot?.classList.toggle("is-end-reached", endReached);
+        finalRow?.classList.toggle("is-end-reached", endReached);
+        finalNode?.classList.toggle("rm-node--lit", endReached);
+        if (tracer) tracer.style.opacity = endReached ? "0" : tracer.style.opacity;
         rows.forEach((row, idx) => {
           const card   = row.querySelector<HTMLElement>(".rm-card");
           const isLeft = row.classList.contains("rm-row--left");
@@ -450,6 +464,102 @@ export default component$(function Day3Roadmap() {
           0% { opacity: 0; transform: translateY(40px) rotate(-10deg) scale(0.8); }
           100% { opacity: 0.12; transform: translateY(0) rotate(0) scale(1); }
         }
+        .rm-page--sp .rm-end-popup {
+          position: absolute;
+          right: calc(100% + 0.95rem);
+          top: 50%;
+          min-width: 13.5rem;
+          max-width: 15.5rem;
+          padding: 0.9rem 1rem;
+          border-radius: 1.1rem;
+          border: 1px solid rgba(255, 82, 82, 0.34);
+          background:
+            linear-gradient(180deg, rgba(42, 14, 20, 0.96), rgba(17, 11, 20, 0.94)),
+            radial-gradient(circle at top, rgba(255, 72, 72, 0.16), transparent 60%);
+          box-shadow:
+            0 22px 46px rgba(0, 0, 0, 0.42),
+            0 0 0 1px rgba(255, 82, 82, 0.08) inset,
+            0 0 24px rgba(255, 72, 72, 0.18);
+          backdrop-filter: blur(10px);
+          pointer-events: none;
+          opacity: 0;
+          transform: translate(-12px, -50%) scale(0.92);
+          transform-origin: right center;
+          transition: opacity 0.35s ease, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+          z-index: 7;
+        }
+        .rm-page--sp .rm-end-popup::after {
+          content: "";
+          position: absolute;
+          right: -0.45rem;
+          top: 50%;
+          width: 0.9rem;
+          height: 0.9rem;
+          border-radius: 0.18rem;
+          background: rgba(42, 14, 20, 0.96);
+          border-top: 1px solid rgba(255, 82, 82, 0.28);
+          border-right: 1px solid rgba(255, 82, 82, 0.28);
+          transform: translateY(-50%) rotate(45deg);
+        }
+        .rm-page--sp .rm-end-popup__label {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.45rem;
+          font-size: 0.8rem;
+          font-weight: 800;
+          letter-spacing: 0.16em;
+          text-transform: uppercase;
+          color: #ffb8b8;
+        }
+        .rm-page--sp .rm-end-popup__label::before {
+          content: "";
+          width: 0.52rem;
+          height: 0.52rem;
+          border-radius: 999px;
+          background: #ff3b3b;
+          box-shadow: 0 0 12px rgba(255, 59, 59, 0.85);
+        }
+        .rm-page--sp .rm-end-popup p {
+          margin: 0.55rem 0 0;
+          color: rgba(255, 239, 239, 0.94);
+          font-size: 0.76rem;
+          line-height: 1.45;
+        }
+        .rm-page--sp.is-end-reached .rm-end-popup,
+        .rm-page--sp .rm-row--final.is-end-reached .rm-end-popup {
+          opacity: 1;
+          transform: translate(0, -50%) scale(1);
+        }
+        .rm-page--sp.is-end-reached .rm-row--final .rm-node--finish {
+          box-shadow:
+            0 0 0 4px rgba(255, 82, 82, 0.14),
+            0 0 28px rgba(255, 72, 72, 0.44),
+            0 0 72px rgba(68, 136, 255, 0.16),
+            0 24px 50px rgba(0, 0, 0, 0.44);
+        }
+        @media (max-width: 767px) {
+          .rm-page--sp .rm-end-popup {
+            left: 50%;
+            right: auto;
+            top: auto;
+            bottom: calc(100% + 0.8rem);
+            transform: translate(-50%, 14px) scale(0.92);
+            min-width: 10rem;
+            max-width: 12rem;
+            padding: 0.68rem 0.8rem;
+          }
+          .rm-page--sp .rm-end-popup::after {
+            left: 50%;
+            right: auto;
+            top: auto;
+            bottom: -0.45rem;
+            transform: translateX(-50%) rotate(45deg);
+          }
+          .rm-page--sp.is-end-reached .rm-end-popup,
+          .rm-page--sp .rm-row--final.is-end-reached .rm-end-popup {
+            transform: translate(-50%, 0) scale(1);
+          }
+        }
       `}</style>
 
       <div class="rm-web-backdrop" style="position: absolute; height: 100%; width: 100%; top: 0; left: 0; overflow: hidden;">
@@ -585,6 +695,10 @@ export default component$(function Day3Roadmap() {
                   <span class="rm-node__halo"  />
                   <span class="rm-node__code">END</span>
                   <span class="rm-node__time">09:00 PM</span>
+                  <div class="rm-end-popup">
+                    <span class="rm-end-popup__label">City Secured</span>
+                    <p>Day 3 complete. The final swing is done and Theta 2026 wraps strong.</p>
+                  </div>
                 </div>
               </div>
               <div class="rm-row__side rm-row__side--right">

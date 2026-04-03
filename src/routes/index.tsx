@@ -191,6 +191,16 @@ const dayBorderColors = [
   "rgba(255,206,0,0.25)",
   "rgba(255,26,26,0.25)",
 ];
+const dayCardSurfaces = [
+  "linear-gradient(180deg, rgba(8,14,10,0.96) 0%, rgba(10,18,12,0.94) 100%)",
+  "linear-gradient(180deg, rgba(16,14,7,0.96) 0%, rgba(18,14,8,0.94) 100%)",
+  "linear-gradient(180deg, rgba(20,8,10,0.96) 0%, rgba(17,8,12,0.94) 100%)",
+];
+const dayCardGlow = [
+  "radial-gradient(120% 120% at 100% 0%, rgba(0,255,85,0.12) 0%, transparent 48%)",
+  "radial-gradient(120% 120% at 100% 0%, rgba(255,206,0,0.12) 0%, transparent 48%)",
+  "radial-gradient(120% 120% at 100% 0%, rgba(255,26,95,0.14) 0%, transparent 48%)",
+];
 
 const statSpotlight: Array<{
   key: keyof ConfigData["stats"];
@@ -732,16 +742,29 @@ export default component$(() => {
     const cards = document.querySelectorAll<HTMLElement>("[data-tilt]");
     const cleanups: any[] = [];
     cards.forEach(card => {
+      let raf = 0;
       const move = (e: MouseEvent) => {
         const r = card.getBoundingClientRect();
         const x = (e.clientX - r.left) / r.width - 0.5;
         const y = (e.clientY - r.top) / r.height - 0.5;
-        card.style.transform = `perspective(800px) rotateY(${x * 10}deg) rotateX(${-y * 8}deg) translateY(-6px)`;
+        if (raf) cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(() => {
+          card.style.transform = `perspective(1000px) rotateY(${x * 6}deg) rotateX(${-y * 5}deg) translateY(-3px)`;
+        });
       };
-      const leave = () => { card.style.transition = "transform 0.4s ease"; card.style.transform = "none"; };
-      const enter = () => { card.style.transition = "none"; };
+      const leave = () => {
+        if (raf) cancelAnimationFrame(raf);
+        card.style.transition = "transform 0.7s cubic-bezier(0.22, 1, 0.36, 1)";
+        card.style.transform = "perspective(1000px) rotateY(0deg) rotateX(0deg) translateY(0)";
+      };
+      const enter = () => { card.style.transition = "transform 0.18s linear"; };
       card.addEventListener("mousemove", move); card.addEventListener("mouseleave", leave); card.addEventListener("mouseenter", enter);
-      cleanups.push(() => { card.removeEventListener("mousemove", move); card.removeEventListener("mouseleave", leave); card.removeEventListener("mouseenter", enter); });
+      cleanups.push(() => {
+        if (raf) cancelAnimationFrame(raf);
+        card.removeEventListener("mousemove", move);
+        card.removeEventListener("mouseleave", leave);
+        card.removeEventListener("mouseenter", enter);
+      });
     });
     return () => cleanups.forEach(c => c());
   });
@@ -764,38 +787,38 @@ export default component$(() => {
     marks.forEach((mark, i) => {
       const overlay = overlays[i];
       tl.to([mark, overlay], {
-        opacity: i === 2 ? 0.9 : 0.7,
-        scale: 1.06,
-        y: 20,
-        filter: i === 2 ? `drop-shadow(0 0 55px ${colors[i]})` : `drop-shadow(0 0 40px ${colors[i]})`,
-        duration: 1.1,
-        ease: "power3.out"
-      }, "+=0.15")
+        opacity: i === 2 ? 0.34 : 0.28,
+        scale: 1.025,
+        y: 10,
+        filter: i === 2 ? `drop-shadow(0 0 18px ${colors[i]})` : `drop-shadow(0 0 14px ${colors[i]})`,
+        duration: 1.8,
+        ease: "sine.inOut"
+      }, "+=0.2")
         .to(glowTargets, {
           color: dayAccents[i],
           filter: "blur(0px)",
-          scale: 1.15,
-          y: 4,
-          opacity: 1,
-          duration: 0.7,
-          ease: "back.out(1.7)"
+          scale: 1.04,
+          y: 1,
+          opacity: 0.9,
+          duration: 1.1,
+          ease: "sine.out"
         }, "<")
         .to([mark, overlay], {
-          opacity: 0.1,
+          opacity: 0.12,
           scale: 1,
           y: 0,
           filter: "drop-shadow(0 0 0px transparent)",
-          duration: 1.2,
-          ease: "power2.inOut"
+          duration: 1.8,
+          ease: "sine.inOut"
         })
         .to(glowTargets, {
           color: "rgba(255,255,255,0.4)",
-          filter: "blur(10px)",
+          filter: "blur(4px)",
           scale: 1,
           y: 0,
-          opacity: 0.6,
-          duration: 0.8,
-          ease: "power2.in"
+          opacity: 0.72,
+          duration: 1.2,
+          ease: "sine.inOut"
         }, "<");
     });
 
@@ -956,6 +979,122 @@ export default component$(() => {
 
       {/* ═══════════════ DAY CARDS ═══════════════ */}
       <section class="festival-days-shell py-20 relative overflow-hidden">
+        <style>{`
+          .festival-title {
+            font-family: "Syne", var(--font-body), sans-serif;
+          }
+          .festival-title__line {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            white-space: nowrap;
+            letter-spacing: 0.22em;
+            text-shadow: 0 8px 30px rgba(0, 0, 0, 0.28);
+            animation: festival-line-float 6s ease-in-out infinite;
+          }
+          .festival-title__line--alt {
+            animation-delay: -3s;
+          }
+          .festival-title__base {
+            color: rgba(255, 255, 255, 0.96);
+            transition: transform 0.6s ease, opacity 0.6s ease;
+          }
+          .festival-title__accent {
+            position: relative;
+            display: inline-block;
+            padding: 0 0.08em;
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: festival-accent-shift 4.8s ease-in-out infinite;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.08));
+          }
+          .festival-title__accent--light {
+            background-image: linear-gradient(90deg, #9dff8b 0%, #00ff6e 45%, #bfffe0 100%);
+          }
+          .festival-title__accent--night {
+            background-image: linear-gradient(90deg, #ff7a7a 0%, #ff2657 50%, #ff86c7 100%);
+            animation-delay: -2.1s;
+          }
+          .festival-title__accent::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -0.08em;
+            height: 0.08em;
+            border-radius: 999px;
+            background: currentColor;
+            opacity: 0.18;
+            transform: scaleX(0.72);
+            transform-origin: center;
+            filter: blur(4px);
+          }
+          @keyframes festival-line-float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+          }
+          @keyframes festival-accent-shift {
+            0%, 100% { background-position: 0% 50%; transform: translateY(0) scale(1); }
+            50% { background-position: 100% 50%; transform: translateY(-1px) scale(1.03); }
+          }
+          @media (max-width: 640px) {
+            .festival-title__line {
+              gap: 0.24rem;
+              letter-spacing: 0.12em;
+              white-space: normal;
+              justify-content: center;
+              flex-wrap: wrap;
+            }
+          }
+          .t-day-card {
+            isolation: isolate;
+          }
+          .t-day-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: var(--day-surface);
+            z-index: 0;
+          }
+          .t-day-card::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: var(--day-glow);
+            opacity: 0.85;
+            transition: opacity 0.7s ease, transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+            z-index: 0;
+            pointer-events: none;
+          }
+          .t-day-card:hover::after {
+            opacity: 1;
+            transform: scale(1.03);
+          }
+          .t-day-card__tag {
+            border: 1px solid color-mix(in srgb, var(--day-accent) 18%, rgba(255,255,255,0.04));
+            background: color-mix(in srgb, var(--day-accent) 7%, rgba(255,255,255,0.02));
+            color: rgba(244, 248, 244, 0.7);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+          }
+          .t-day-card__meta {
+            color: rgba(214, 222, 214, 0.62);
+          }
+          .t-day-card__date {
+            color: rgba(214, 222, 214, 0.42);
+          }
+          .t-day-card__line {
+            border-color: color-mix(in srgb, var(--day-accent) 10%, rgba(255,255,255,0.04));
+          }
+          .t-day-card__mark {
+            transform: translateY(-50%) !important;
+            transition: opacity 0.7s ease, filter 0.7s ease !important;
+          }
+          .t-day-card:hover .t-day-card__mark {
+            transform: translateY(-50%) !important;
+          }
+        `}</style>
         {/* Animated Tracer Paths */}
         <svg class="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-visible" preserveAspectRatio="none">
            <path class="home-tracer-path" d="M 0,200 Q 500,300 1440,100" fill="none" stroke="#00ff55" stroke-width="1" stroke-dasharray="1000" stroke-dashoffset="1000" opacity="0.1" />
@@ -968,29 +1107,29 @@ export default component$(() => {
           <div class="festival-days-logo-glow" aria-hidden="true">
             <img src="/backgrounds/sastra-3.png" alt="" class="festival-days-logo-mark" />
           </div>
-          <div class="festival-days-structure scale-150 sm:scale-100 opacity-80" aria-hidden="true" style="filter: drop-shadow(0 0 15px rgba(0,255,85,0.3))">
+          <div class="festival-days-structure scale-150 sm:scale-100 opacity-55" aria-hidden="true" style="filter: drop-shadow(0 0 8px rgba(0,255,85,0.14))">
             <div class="festival-days-orbit festival-days-orbit--left opacity-60" />
             <div class="festival-days-orbit festival-days-orbit--right opacity-60" />
             <div class="festival-days-orbit festival-days-orbit--bottom opacity-60" />
             <div class="festival-days-bubble festival-days-bubble--left !opacity-100">
-              <div class="festival-days-bubble__core !bg-[#00ff55] !shadow-[0_0_20px_#00ff55]" />
-              <div class="festival-days-bubble__ring !border-[#00ff55]/50" />
+              <div class="festival-days-bubble__core !bg-[#00ff55] !shadow-[0_0_8px_#00ff55]" />
+              <div class="festival-days-bubble__ring !border-[#00ff55]/25" />
             </div>
             <div class="festival-days-bubble festival-days-bubble--right !opacity-100">
-              <div class="festival-days-bubble__core !bg-[#00ff55] !shadow-[0_0_20px_#00ff55]" />
-              <div class="festival-days-bubble__ring !border-[#00ff55]/50" />
+              <div class="festival-days-bubble__core !bg-[#00ff55] !shadow-[0_0_8px_#00ff55]" />
+              <div class="festival-days-bubble__ring !border-[#00ff55]/25" />
             </div>
             <div class="festival-days-bubble festival-days-bubble--top !opacity-100">
-              <div class="festival-days-bubble__core !bg-[#00ff55] !shadow-[0_0_20px_#00ff55]" />
-              <div class="festival-days-bubble__ring !border-[#00ff55]/50" />
+              <div class="festival-days-bubble__core !bg-[#00ff55] !shadow-[0_0_8px_#00ff55]" />
+              <div class="festival-days-bubble__ring !border-[#00ff55]/25" />
             </div>
             <div class="festival-days-bubble festival-days-bubble--bottom !opacity-100">
-              <div class="festival-days-bubble__core !bg-[#00ff55] !shadow-[0_0_20px_#00ff55]" />
-              <div class="festival-days-bubble__ring !border-[#00ff55]/50" />
+              <div class="festival-days-bubble__core !bg-[#00ff55] !shadow-[0_0_8px_#00ff55]" />
+              <div class="festival-days-bubble__ring !border-[#00ff55]/25" />
             </div>
             <div class="festival-days-bubble festival-days-bubble--edge !opacity-100">
-              <div class="festival-days-bubble__core !bg-[#00ff55] !shadow-[0_0_20px_#00ff55]" />
-              <div class="festival-days-bubble__ring !border-[#00ff55]/50" />
+              <div class="festival-days-bubble__core !bg-[#00ff55] !shadow-[0_0_8px_#00ff55]" />
+              <div class="festival-days-bubble__ring !border-[#00ff55]/25" />
             </div>
           </div>
         </div>
@@ -1008,9 +1147,19 @@ export default component$(() => {
             <div class="overflow-hidden mb-4">
               <span class="t-badge mx-auto reveal-slide-up block w-fit">Mission Day Selection</span>
             </div>
-            <h2 class="mt-2 text-[clamp(1rem,4.5vw,1.6rem)] font-black uppercase leading-[1.2] tracking-[0.2em] text-white flex flex-col items-center" style={{ fontFamily: "var(--font-body)" }}>
-              <div class="overflow-hidden py-0.5"><span class="reveal-slide-up block">Shine in the <span class="inline-block text-[#00ff44]">light</span></span></div>
-              <div class="overflow-hidden py-0.5"><span class="reveal-slide-up block">& rule the <span class="inline-block text-[#ff3333]">night</span></span></div>
+            <h2 class="festival-title mt-2 text-[clamp(1.15rem,5vw,2rem)] font-black uppercase leading-[1.1] text-white flex flex-col items-center">
+              <div class="overflow-hidden py-1">
+                <span class="festival-title__line reveal-slide-up">
+                  <span class="festival-title__base">Shine in the</span>
+                  <span class="festival-title__accent festival-title__accent--light">light</span>
+                </span>
+              </div>
+              <div class="overflow-hidden py-1">
+                <span class="festival-title__line festival-title__line--alt reveal-slide-up">
+                  <span class="festival-title__base">&amp; rule the</span>
+                  <span class="festival-title__accent festival-title__accent--night">night</span>
+                </span>
+              </div>
             </h2>
             <div class="overflow-hidden mt-6">
               <p class="reveal-slide-up block text-xs font-bold tracking-[0.4em] uppercase text-[var(--t-muted)] italic">Track live transmission frequencies</p>
@@ -1024,34 +1173,41 @@ export default component$(() => {
                   const r = el.getBoundingClientRect();
                   el.style.setProperty("--mouse-x", `${e.clientX - r.left}px`);
                   el.style.setProperty("--mouse-y", `${e.clientY - r.top}px`);
-                }} class="t-day-card group p-8 block reveal-up bg-white/[0.03] backdrop-blur-3xl border border-white/10 rounded-[2rem] hover:bg-white/[0.07] transition-all relative overflow-hidden"
+                }} class="t-day-card group p-8 block reveal-up backdrop-blur-3xl border rounded-[2rem] transition-all relative overflow-hidden"
                   style={{
                     borderColor: `${dayBorderColors[index]}44`,
                     transitionDelay: `${index * 80}ms`,
+                    transitionDuration: "700ms",
+                    background: dayCardSurfaces[index],
                     "--day-accent": dayAccents[index],
-                    "--day-gradient": dayGradients[index]
+                    "--day-gradient": dayGradients[index],
+                    "--day-surface": dayCardSurfaces[index],
+                    "--day-glow": dayCardGlow[index],
+                    boxShadow: `inset 0 1px 0 rgba(255,255,255,0.04), 0 24px 60px rgba(0,0,0,0.34), 0 0 0 1px ${dayBorderColors[index].replace("0.25", "0.14")}`
                   }}>
-                  <div class="absolute inset-0 bg-gradient-to-br from-white/[0.05] to-transparent pointer-events-none" />
+                  <div class="absolute inset-0 bg-gradient-to-br from-white/[0.03] via-transparent to-black/10 pointer-events-none z-0" />
                   <img
                     src={index === 2 ? "/spidy/spider-logo.png" : (index === 1 ? "/onepeice/one-peice-logo.png" : "/ben10/ben10-logo.png")}
                     alt=""
                     aria-hidden="true"
-                    class="t-day-card__mark absolute top-1/2 translate-y-[-50%] group-hover:opacity-85 group-hover:scale-115 group-hover:rotate-[5deg]"
+                    class="t-day-card__mark absolute top-1/2"
                     style={{
-                      width: index === 0 ? "11rem" : (index === 1 ? "11rem" : "10.5rem"),
-                      right: index === 2 ? "-1.5rem" : (index === 1 ? "-2rem" : "-1rem"),
-                      opacity: 0.15,
-                      filter: "brightness(2) grayscale(0.2) contrast(1.2)",
-                      transition: "all 0.6s cubic-bezier(0.2, 1, 0.2, 1)"
+                      width: index === 0 ? "10.4rem" : (index === 1 ? "9.8rem" : "10rem"),
+                      right: index === 0 ? "-0.35rem" : (index === 1 ? "0.15rem" : "0.2rem"),
+                      opacity: index === 1 ? 0.28 : 0.22,
+                      filter: index === 1
+                        ? "brightness(1.12) grayscale(0.02) contrast(1.02)"
+                        : "brightness(1.08) grayscale(0.08) contrast(1.02)",
+                      top: index === 0 ? "53%" : (index === 1 ? "58%" : "52%")
                     }}
                   />
-                  <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-gradient-to-br from-[#00ff55]/10 via-transparent to-transparent" />
-                  <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: `radial-gradient(500px circle at var(--mouse-x) var(--mouse-y), ${dayAccents[index]}20, transparent 40%)` }} />
+                  <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 bg-gradient-to-br from-white/[0.02] via-transparent to-transparent z-0" />
+                  <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000" style={{ background: `radial-gradient(420px circle at var(--mouse-x) var(--mouse-y), ${dayAccents[index]}12, transparent 42%)` }} />
 
                   {/* Layer 1: Base Visibility */}
                   <div class="relative z-10 flex flex-col h-full">
                     <div class="flex justify-end mb-10">
-                      <span class="t-label opacity-40">{day.date}</span>
+                      <span class="t-label t-day-card__date">{day.date}</span>
                     </div>
                     <div class="mb-8">
                       <h3 class="t-heading text-4xl sm:text-5xl font-black"
@@ -1061,16 +1217,16 @@ export default component$(() => {
                           WebkitTextFillColor: "transparent",
                           backgroundClip: "text"
                         }}>{day.day}</h3>
-                      <p class="mt-2 text-[10px] uppercase tracking-widest text-[var(--t-muted)]">{day.highlight}</p>
+                      <p class="t-day-card__meta mt-2 text-[10px] uppercase tracking-widest">{day.highlight}</p>
                     </div>
                     <div class="flex flex-wrap gap-2 mb-10">
-                      {day.events.slice(0, 3).map(e => <span key={e} class="rounded-lg border border-white/5 bg-white/5 px-3 py-1.5 text-[9px] uppercase font-black text-white/60">{e}</span>)}
+                      {day.events.slice(0, 3).map(e => <span key={e} class="t-day-card__tag rounded-lg px-3 py-1.5 text-[9px] uppercase font-black">{e}</span>)}
                     </div>
                     <div class="flex-grow" />
-                    <div class="flex justify-between border-t border-white/5 pt-6">
+                    <div class="t-day-card__line flex justify-between border-t pt-6">
                       <div class="flex items-center gap-2">
-                        <div class="h-1 w-1 rounded-full animate-pulse" style={{ background: dayAccents[index], boxShadow: `0 0 12px ${dayAccents[index]}` }} />
-                        <span class="text-[9px] uppercase text-white/30">Mission Files: {day.events.length}</span>
+                        <div class="h-1 w-1 rounded-full animate-pulse" style={{ background: dayAccents[index], boxShadow: `0 0 5px ${dayAccents[index]}` }} />
+                        <span class="t-day-card__meta text-[9px] uppercase">Mission Files: {day.events.length}</span>
                       </div>
                       <span class="text-[10px] font-black group-hover:translate-x-2 transition-transform flex items-center gap-1.5"
                         style={{
