@@ -322,6 +322,7 @@ export default component$(function Day1Roadmap() {
       let targetProg = 0, renderProg = 0, tracerRafId = 0;
       let ro: ResizeObserver | undefined;
       const lateRebuildTimers: number[] = [];
+      const enableCardReveal = !(window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 767);
       const smoothFactor = window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 767 ? 0.16 : 0.32;
       const revealed = new Set<Element>();
 
@@ -395,7 +396,7 @@ export default component$(function Day1Roadmap() {
             const r = card.getBoundingClientRect();
             if (r.top < VH * 0.9) {
               revealed.add(card);
-              if (gsap) {
+              if (gsap && enableCardReveal) {
                 gsap.fromTo(card,
                   { opacity: 0, x: isLeft ? -70 : 70, y: 28, scale: 0.88, rotateY: isLeft ? -14 : 14 },
                   {

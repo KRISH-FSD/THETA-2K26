@@ -250,9 +250,8 @@ export default component$(() => {
     };
   });
 
-  if (true) {
-    return (
-      <div class="relative isolate overflow-hidden bg-[#05010f] text-white">
+  return (
+    <div class="relative isolate overflow-hidden bg-[#05010f] text-white">
         <style>{`
           .dev-credit-shell {
             background:
@@ -484,8 +483,7 @@ export default component$(() => {
           </div>
         </section>
       </div>
-    );
-  }
+  );
 
   return (
     <div class="relative isolate overflow-hidden bg-[#05010f] text-white">
