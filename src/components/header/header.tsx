@@ -54,7 +54,7 @@ export const Header = component$(() => {
 
   return (
     <>
-      <header class="pointer-events-none fixed top-6 right-0 left-0 z-[100] flex w-full items-center justify-between px-3 sm:px-4 md:top-8 md:px-6">
+      <header class="pointer-events-none fixed top-6 right-0 left-0 z-[110] flex w-full items-center justify-between px-3 sm:px-4 md:top-8 md:px-6">
         {/* Left: Theta Logo */}
         <div class="pointer-events-auto flex min-w-0 flex-1 items-center md:flex-initial md:w-[220px] lg:w-[280px]">
           <Link

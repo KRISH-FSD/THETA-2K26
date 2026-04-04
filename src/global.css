@@ -7862,9 +7862,18 @@ header.scrolled {
    ============================================================ */
 .footer-neural-grid {
   position: relative;
-  background: radial-gradient(circle at 50% 100%, rgba(0, 200, 80, 0.04), transparent 70%);
+  background: 
+    radial-gradient(circle at 50% 100%, rgba(0, 200, 80, 0.08), transparent 70%),
+    linear-gradient(180deg, rgba(5, 10, 5, 0.6) 0%, rgba(8, 12, 8, 0.95) 100%);
   overflow: hidden;
+  backdrop-filter: blur(28px) saturate(1.2);
+  -webkit-backdrop-filter: blur(28px) saturate(1.2);
 }
+
+.footer-ambient-glow--1 { background: radial-gradient(circle, rgba(0, 255, 85, 0.2), transparent); }
+.footer-ambient-glow--2 { background: radial-gradient(circle, rgba(0, 255, 150, 0.15), transparent); }
+.footer-ambient-glow--3 { background: radial-gradient(circle, rgba(255, 255, 255, 0.1), transparent); }
+.footer-ambient-glow--4 { background: radial-gradient(circle, var(--t-brand-accent), transparent); opacity: 0.1; }
 
 .footer-neural-grid::before {
   content: "";
@@ -8013,8 +8022,14 @@ body[data-theme="spider"] .t-ben10-link:hover .t-ben10-shell-glow {
 
 /* Footer lines / grid */
 body[data-theme="spider"] .footer-neural-grid {
-  background: radial-gradient(circle at 50% 100%, rgba(200,10,10,0.07), transparent 70%);
+  background: 
+    radial-gradient(circle at 50% 100%, rgba(255, 32, 32, 0.1), transparent 70%),
+    linear-gradient(180deg, rgba(16, 0, 5, 0.6) 0%, rgba(20, 0, 10, 0.98) 100%);
 }
+body[data-theme="spider"] .footer-ambient-glow--1 { background: radial-gradient(circle, rgba(255, 32, 32, 0.25), transparent); }
+body[data-theme="spider"] .footer-ambient-glow--2 { background: radial-gradient(circle, rgba(200, 10, 10, 0.2), transparent); }
+body[data-theme="spider"] .footer-ambient-glow--3 { background: radial-gradient(circle, rgba(32, 32, 255, 0.15), transparent); }
+
 body[data-theme="spider"] .footer-neural-grid::before {
   background-image:
     linear-gradient(rgba(220,16,16,0.04) 1px, transparent 1px),
@@ -8344,10 +8359,14 @@ body[data-theme="onepiece"] .t-ben10-link:hover .t-ben10-shell-glow {
   opacity: 1 !important;
 }
 body[data-theme="onepiece"] .footer-neural-grid {
-  background:
-    radial-gradient(circle at 50% 100%, rgba(255,183,43,0.09), transparent 62%),
-    linear-gradient(180deg, rgba(6,17,29,0.98), rgba(7,20,35,0.98));
+  background: 
+    radial-gradient(circle at 50% 100%, rgba(255, 183, 43, 0.12), transparent 62%),
+    linear-gradient(180deg, rgba(6, 17, 29, 0.7) 0%, rgba(7, 20, 35, 0.98) 100%);
 }
+body[data-theme="onepiece"] .footer-ambient-glow--1 { background: radial-gradient(circle, rgba(255, 183, 43, 0.22), transparent); }
+body[data-theme="onepiece"] .footer-ambient-glow--2 { background: radial-gradient(circle, rgba(24, 118, 224, 0.18), transparent); }
+body[data-theme="onepiece"] .footer-ambient-glow--3 { background: radial-gradient(circle, rgba(255, 205, 104, 0.12), transparent); }
+
 body[data-theme="onepiece"] .footer-neural-grid::before {
   background-image:
     linear-gradient(rgba(255,183,43,0.035) 1px, transparent 1px),

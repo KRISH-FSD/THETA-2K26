@@ -141,8 +141,8 @@ export default component$(() => {
     // Signal Tracers (Points moving along paths)
     gsap.to(".signal-tracer", {
       motionPath: {
-        path: (i) => document.querySelectorAll(".footer-tracer-path")[i] as any,
-        align: (i) => document.querySelectorAll(".footer-tracer-path")[i] as any,
+        path: (i: number) => document.querySelectorAll(".footer-tracer-path")[i] as SVGPathElement,
+        align: (i: number) => document.querySelectorAll(".footer-tracer-path")[i] as SVGPathElement,
         alignOrigin: [0.5, 0.5],
         autoRotate: true
       },
@@ -275,7 +275,12 @@ export default component$(() => {
         )}
 
         {/* ── Footer: Neural Grid Redesign ── */}
-        <footer class="footer-neural-grid mt-32 border-t border-white/5 pt-20 pb-12 relative overflow-hidden">
+        <footer class="footer-neural-grid mt-12 border-t border-white/5 pt-12 pb-12 relative overflow-hidden backdrop-blur-2xl bg-black/40">
+          {/* Ambient Blurred Glows (Modern Layout) */}
+          <div class="footer-ambient-glow footer-ambient-glow--1 absolute -top-[20%] -left-[10%] h-[150%] w-[50%] opacity-20 blur-[120px] rounded-full pointer-events-none" />
+          <div class="footer-ambient-glow footer-ambient-glow--2 absolute -bottom-[30%] -right-[15%] h-[120%] w-[60%] opacity-[0.15] blur-[100px] rounded-full pointer-events-none" />
+          <div class="footer-ambient-glow footer-ambient-glow--3 absolute top-[20%] right-[5%] h-[60%] w-[30%] opacity-[0.08] blur-[80px] rounded-full pointer-events-none" />
+          <div class="footer-ambient-glow footer-ambient-glow--4 absolute -top-10 left-1/2 -translate-x-1/2 h-40 w-[60%] opacity-10 blur-[60px] rounded-full pointer-events-none" />
           {/* BG: Energy Spheres (Round interactive objects) */}
           <div class="energy-sphere h-24 w-24 -top-12 -left-12 opacity-20" data-speed="0.2" />
           <div class="energy-sphere h-40 w-40 bottom-20 right-10 opacity-10" data-speed="0.5" />

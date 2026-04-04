@@ -15,63 +15,83 @@ interface EventCardProps {
 }
 interface PopupPanelProps { ev: EventData; meta: CatMeta; side: "left" | "right"; canRegister: boolean; }
 
-/* ── Spider-Man event data ── */
 const EVENTS: EventData[] = [
-  { id: 1, time: "09:00 AM", endTime: "10:00 AM", title: "With Great Power Briefing",
-    subtitle: "Final day — the city needs its heroes", venue: "Main Auditorium, Block A", cat: "opening",
-    fee: "Free", team: "Open to all", prize: "Final badge",
-    img: "/spidy/spidy-web.png",
-    tags: ["Hero sync", "Web of plans", "City update"],
-    desc: "The final day signal fires across the skyline. Daily highlights, prize-pool reveals, and a full-hero assembly before the grand curtain of Theta 2026 drops." },
-  { id: 2, time: "10:00 AM", endTime: "01:00 PM", title: "Spider-Sense Code Sprint",
-    subtitle: "Your spidey-sense tingles on every bug", venue: "Galvan Prime Lab, Block C", cat: "tech",
-    fee: "Rs 100 / team", team: "2 to 3 members", prize: "Rs 15,000",
-    img: "/spidy/spidy-web.png",
-    tags: ["3-hour sprint", "Live leaderboard", "Bug hunt"],
-    desc: "Your spider-sense fires on every test case. Solve algorithmic and AI challenges under a blazing live scoreboard — swing from problem to problem without touching the ground." },
-  { id: 3, time: "10:00 AM", endTime: "12:00 PM", title: "S.H.I.E.L.D. Tech Workshop",
-    subtitle: "Hands-on cyber & systems lab", venue: "Plumber HQ, Block D", cat: "workshop",
-    fee: "Rs 150 / head", team: "Individual", prize: "Shield cert + kit",
-    img: "/spidy/spidy-web.png",
-    tags: ["Live demo", "Mentor-led", "Gadget kit"],
-    desc: "S.H.I.E.L.D. clearance granted. A guided session on cyber defense, AI-assisted security, and real espionage tactics — straight from the helicarrier files." },
-  { id: 4, time: "02:00 PM", endTime: "03:30 PM", title: "Daily Bugle Trivia Blitz",
-    subtitle: "J. Jonah Jameson hosts the rapid quiz", venue: "Sector 7G, Block B", cat: "quiz",
-    fee: "Rs 50 / team", team: "2 members", prize: "Rs 5,000",
-    img: "/spidy/spidy-web.png",
-    tags: ["5 rounds", "30-second clock", "Buzzer shot"],
-    desc: "Extra! Extra! Five brutal quiz rounds across tech, science, and current affairs — Jameson demands answers fast. Hit the buzzer before your rival swings in first." },
-  { id: 5, time: "03:30 PM", endTime: "05:00 PM", title: "Oscorp Startup Pitch Stage",
-    subtitle: "Convince the boardroom before it goes rogue", venue: "Innovation Hall, Block A", cat: "tech",
-    fee: "Rs 200 / team", team: "2 to 4 members", prize: "Rs 20,000 + mentoring",
-    img: "/spidy/spidy-web.png",
-    tags: ["VC panel", "5-minute pitch", "Feedback web"],
-    desc: "Pitch your startup idea to the Oscorp board before they turn villain. Sharp story, crisp demo, real pressure — walk out a legend or swing away in defeat." },
-  { id: 6, time: "05:00 PM", endTime: "06:30 PM", title: "Web-Slinger Agility Run",
-    subtitle: "Fast-paced rooftop obstacle challenge", venue: "Open Arena, Ground Floor", cat: "fun",
-    fee: "Free", team: "Pairs", prize: "Trophies + web-goodies",
-    img: "/spidy/spidy-web.png",
-    tags: ["Obstacle rooftop", "Pair sync", "Reflex shot"],
-    desc: "Swing, dodge, and coordinate like the Spectacular Spider-Man. A movement-based campus challenge where communication and reflexes beat raw speed every time." },
-  { id: 7, time: "07:00 PM", endTime: "09:00 PM", title: "The Amazing Cultural Night",
-    subtitle: "The city's grand finale stage show", venue: "Open-Air Amphitheatre", cat: "cultural",
-    fee: "Free", team: "Open to all", prize: "Grand festival close",
-    img: "/spidy/spidy-web.png",
-    tags: ["Live band", "Dance rooftop", "Comedy arc"],
-    desc: "The Amazing Night — live music, campus performances, and a high-energy curtain call that closes the Theta 2026 saga. With great fest comes great memories." },
+  {
+    id: 1, time: "09:00 AM", endTime: "03:00 PM", title: "Spider-Game Arena",
+    subtitle: "Rooftop of the multiverse", venue: "Room 202", cat: "fun",
+    fee: "Free", team: "Individual", prize: "Champion Badge",
+    img: "https://images.unsplash.com/photo-1635805737707-57588b48f6f7?q=80&w=1200",
+    tags: ["Ladder", "Math Royale", "Battle"],
+    desc: "A multiverse spanning arena featuring Ladder games, Brain Bid Battles, and the high-intensity Math Royale."
+  },
+  {
+    id: 2, time: "09:30 AM", endTime: "11:30 AM", title: "Optica Simulation 3",
+    subtitle: "Final light & pulse challenges", venue: "Room 310", cat: "quiz",
+    fee: "Free", team: "Individual", prize: "Goodies",
+    img: "https://images.unsplash.com/photo-1542332213-9b5a5a3fad35?q=80&w=1200",
+    tags: ["Sonar", "Pyramid", "Scoops"],
+    desc: "Heroic precision required for Sonar Sprints, Hopscotch Pyramids, and Hoops & Scoops simulations."
+  },
+  {
+    id: 3, time: "10:00 AM", endTime: "01:00 PM", title: "Clash of Codes",
+    subtitle: "Spider-sense bug hunting", venue: "Lab", cat: "tech",
+    fee: "Rs 150", team: "2 Members", prize: "Rs 10,000",
+    img: "https://images.unsplash.com/photo-1627389955805-720619756184?q=80&w=1200",
+    tags: ["Warm Up", "Challenge", "Showdown"],
+    desc: "Your spider-sense tingles on every bug. A three-stage code battle from warm-ups to the final world-saving showdown."
+  },
+  {
+    id: 4, time: "10:00 AM", endTime: "01:00 PM", title: "ThinkZone Challenge",
+    subtitle: "Oscorp artistic research", venue: "Room 402", cat: "workshop",
+    fee: "Rs 100", team: "Pairs", prize: "Rs 5,000",
+    img: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1200",
+    tags: ["Artistic", "Scavenger", "Hunt"],
+    desc: "Identify the hidden patterns in Oscorp's data through Kandupidi research and scavenger hunts."
+  },
+  {
+    id: 5, time: "11:00 AM", endTime: "01:00 PM", title: "Stock Wars",
+    subtitle: "Strategic market web", venue: "Room 303", cat: "tech",
+    fee: "Rs 100", team: "3 Members", prize: "Rs 12,000",
+    img: "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?q=80&w=1200",
+    tags: ["Entry", "News", "Shock"],
+    desc: "Market entry, news impacts, and market shocks — weave through the stock web before the bubble pops."
+  },
+  {
+    id: 6, time: "11:00 AM", endTime: "01:00 PM", title: "Spider-Funverse",
+    subtitle: "Chaos in the into-the-verse", venue: "Room 410/411", cat: "fun",
+    fee: "Free", team: "4 Members", prize: "Trophies",
+    img: "https://images.unsplash.com/photo-1533447333873-31185b3b77ba?q=80&w=1200",
+    tags: ["Imposter", "Chaos", "Battle"],
+    desc: "Enter the multiverse with Imposter Arc, Chaos Carnival, and MegaVerse battle simulations."
+  },
+  {
+    id: 7, time: "11:00 AM", endTime: "01:00 PM", title: "Daily Bugle Hackathon",
+    subtitle: "Breaking the news with code", venue: "Room 106", cat: "tech",
+    fee: "Rs 200", team: "3 Members", prize: "Rs 15,000",
+    img: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1200",
+    tags: ["Hack", "News", "Sprint"],
+    desc: "S.H.I.E.L.D. level clearance hackathon. Build solutions that make the front page of the Daily Bugle."
+  },
+  {
+    id: 8, time: "11:00 AM", endTime: "02:00 PM", title: "Web-Slinger Sports",
+    subtitle: "City-wide reflex challenge", venue: "Basketball Court", cat: "fun",
+    fee: "Free", team: "Varies", prize: "Medals",
+    img: "https://images.unsplash.com/photo-1517649763962-0c623066013b?q=80&w=1200",
+    tags: ["Basketball", "Pass", "Tug"],
+    desc: "High-agility basketball, pass the ball relay, and a final strength-draining Tug of War."
+  },
 ];
 
-/* ── Spider-Man CAT palette — red / blue / purple / amber / teal / pink ── */
 const CAT: Record<Cat, CatMeta> = {
-  opening:  { label: "Opening",  short: "OP", color: "#ff2020", rgb: "255,32,32"    },
-  tech:     { label: "Tech",     short: "TK", color: "#4488ff", rgb: "68,136,255"   },
-  workshop: { label: "Workshop", short: "WS", color: "#bb77ff", rgb: "187,119,255"  },
-  quiz:     { label: "Quiz",     short: "QZ", color: "#ffaa33", rgb: "255,170,51"   },
-  fun:      { label: "Fun",      short: "FN", color: "#66ddcc", rgb: "102,221,204"  },
-  cultural: { label: "Cultural", short: "CL", color: "#ff88aa", rgb: "255,136,170"  },
+  opening: { label: "Opening", short: "OP", color: "#ff2020", rgb: "255,32,32" },
+  tech: { label: "Tech", short: "TK", color: "#4488ff", rgb: "68,136,255" },
+  workshop: { label: "Workshop", short: "WS", color: "#bb77ff", rgb: "187,119,255" },
+  quiz: { label: "Quiz", short: "QZ", color: "#ffaa33", rgb: "255,170,51" },
+  fun: { label: "Fun", short: "FN", color: "#66ddcc", rgb: "102,221,204" },
+  cultural: { label: "Cultural", short: "CL", color: "#ff88aa", rgb: "255,136,170" },
 };
 
-/* ─── Popup Panel — same structure as Day 1 ────────────────────────────── */
+/* ─── Popup Panel ─────────────────────────────── */
 const PopupPanel = component$<PopupPanelProps>(({ ev, meta, side, canRegister }) => (
   <div
     class={["rm-popup", `rm-popup--${side}`]}
@@ -85,10 +105,25 @@ const PopupPanel = component$<PopupPanelProps>(({ ev, meta, side, canRegister })
         <span class="rm-popup__chip">
           <span class="rm-popup__dot" />{meta.label}
         </span>
-        <span class="rm-popup__time">{ev.time} – {ev.endTime}</span>
+        <span class="rm-popup__node-label">SCENE {String(ev.id).padStart(2, "0")}</span>
       </div>
-      <p class="rm-popup__title">{ev.title}</p>
-      <p class="rm-popup__venue">📍 {ev.venue}</p>
+      <h3 class="rm-popup__title">{ev.title}</h3>
+      <div class="rm-popup__vitals">
+        <div class="rm-popup__vital">
+          <div class="rm-popup__vital-icon">🕒</div>
+          <div class="rm-popup__vital-content">
+            <span class="rm-popup__vital-label">TIMING</span>
+            <span class="rm-popup__vital-value">{ev.time} – {ev.endTime}</span>
+          </div>
+        </div>
+        <div class="rm-popup__vital">
+          <div class="rm-popup__vital-icon">📍</div>
+          <div class="rm-popup__vital-content">
+            <span class="rm-popup__vital-label">VENUE</span>
+            <span class="rm-popup__vital-value">{ev.venue}</span>
+          </div>
+        </div>
+      </div>
       <div class="rm-popup__stats">
         <div class="rm-popup__stat">
           <span class="rm-popup__stat-l">Entry</span>
@@ -111,14 +146,14 @@ const PopupPanel = component$<PopupPanelProps>(({ ev, meta, side, canRegister })
           onClick$={(e: Event) => e.stopPropagation()}>View Event Hub</Link>
         {canRegister
           ? <Link href="/events" class="rm-popup__action rm-popup__action--ghost"
-              onClick$={(e: Event) => e.stopPropagation()}>Register Now</Link>
+            onClick$={(e: Event) => e.stopPropagation()}>Register Now</Link>
           : <span class="rm-popup__open-badge">Open Access</span>}
       </div>
     </div>
   </div>
 ));
 
-/* ─── Event Card — same structure as Day 1 ─────────────────────────────── */
+/* ─── Event Card ───────────────────────────────── */
 const EventCard = component$<EventCardProps>(
   ({ ev, meta, isActive, side, onToggle$ }) => (
     <article
@@ -148,7 +183,7 @@ const EventCard = component$<EventCardProps>(
             <p class="rm-card__overline">Scene {String(ev.id).padStart(2, "0")}</p>
             <h3 class="rm-card__title">{ev.title}</h3>
           </div>
-          <span class="rm-card__toggle">{isActive ? "Retreat" : "Swing →"}</span>
+          <span class="rm-card__toggle">{isActive ? "Collapse" : "Details →"}</span>
         </div>
         <p class="rm-card__desc">{ev.desc}</p>
         <div class="rm-card__quick-meta">
@@ -163,24 +198,36 @@ const EventCard = component$<EventCardProps>(
   ),
 );
 
-/* ─── Decorative Web — fills the empty side of the timeline ─────── */
-const DecorativeWeb = component$<{ side: "left" | "right" }>(({ side }) => (
-  <div class={["rm-deco-web", `rm-deco-web--${side}`]} data-parallax="0.06">
-    <img src="/spidy/spidy-web.png" alt="" class="rm-deco-web__img" width={400} height={400} />
-    <div class="rm-deco-web__glow" />
-  </div>
-));
-
-/* ── Spider-web canvas — red/blue particles ─────────────────────────────── */
-
-
 export default component$(function Day3Roadmap() {
   const activeEventId = useSignal<number | null>(null);
 
   useVisibleTask$(() => {
-    /* ── Set Spider-Man theme on entire site ── */
     document.body.setAttribute("data-theme", "spider");
     return () => { document.body.removeAttribute("data-theme"); };
+  });
+
+  useVisibleTask$(() => {
+    const page = document.querySelector(".rm-page--sp") as HTMLElement | null;
+    if (!page) return;
+    const updateScroll = () => {
+      const scrollMax = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+      const scrollRatio = window.scrollY / scrollMax;
+      page.style.setProperty("--rm-scroll-progress", scrollRatio.toFixed(4));
+      const mid1 = 0.3, mid2 = 0.7;
+      const span = 0.3;
+      const img1 = Math.max(0, Math.min(1, (mid1 - scrollRatio + span / 2) / span));
+      const img3 = Math.max(0, Math.min(1, (scrollRatio - mid2 + span / 2) / span));
+      const img2 = Math.max(0, 1 - img1 - img3);
+      page.style.setProperty("--rm-bg1-opacity", img1.toFixed(4));
+      page.style.setProperty("--rm-bg2-opacity", img2.toFixed(4));
+      page.style.setProperty("--rm-bg3-opacity", img3.toFixed(4));
+      page.style.setProperty("--rm-bg1-shift", `${(-140 * (1 - img1)).toFixed(1)}px`);
+      page.style.setProperty("--rm-bg2-shift", `${(140 * (img1 - img3)).toFixed(1)}px`);
+      page.style.setProperty("--rm-bg3-shift", `${(140 * (1 - img3)).toFixed(1)}px`);
+    };
+    window.addEventListener("scroll", updateScroll, { passive: true });
+    updateScroll();
+    return () => { window.removeEventListener("scroll", updateScroll); };
   });
 
   useVisibleTask$(() => {
@@ -198,32 +245,25 @@ export default component$(function Day3Roadmap() {
       await loadGSAP();
       // @ts-ignore
       const gsap: any = window.gsap;
-
-      const pageRoot   = document.querySelector(".rm-page--sp")    as HTMLElement     | null;
-      const container  = document.getElementById("rm-timeline")    as HTMLElement     | null;
-      const svgEl      = document.getElementById("rm-line-svg")    as SVGSVGElement   | null;
-      const pathBase   = document.getElementById("rm-line-base")   as SVGPathElement  | null;
-      const pathAccent = document.getElementById("rm-line-accent") as SVGPathElement  | null;
-      const pathGlow   = document.getElementById("rm-line-glow")   as SVGPathElement  | null;
-      const tracer     = document.getElementById("rm-tracer")      as SVGGElement     | null;
+      const pageRoot = document.querySelector(".rm-page--sp") as HTMLElement | null;
+      const container = document.getElementById("rm-timeline") as HTMLElement | null;
+      const svgEl = document.getElementById("rm-line-svg") as SVGSVGElement | null;
+      const pathBase = document.getElementById("rm-line-base") as SVGPathElement | null;
+      const pathAccent = document.getElementById("rm-line-accent") as SVGPathElement | null;
+      const pathGlow = document.getElementById("rm-line-glow") as SVGPathElement | null;
+      const tracer = document.getElementById("rm-tracer") as SVGGElement | null;
       if (!container || !svgEl || !pathBase || !pathAccent || !pathGlow) return;
-      const finalRow   = container.querySelector(".rm-row--final") as HTMLElement | null;
-      const finalNode  = finalRow?.querySelector(".rm-node--finish") as HTMLElement | null;
-
+      const finalRow = container.querySelector(".rm-row--final") as HTMLElement | null;
+      const finalNode = finalRow?.querySelector(".rm-node--finish") as HTMLElement | null;
       let totalLen = 0, rafId = 0, scheduled = false, needsBuild = true;
       let ro: ResizeObserver | undefined;
       const revealed = new Set<Element>();
-
-      const liveNodes = () =>
-        Array.from(container.querySelectorAll<HTMLElement>("[data-snake-node]"))
-             .filter((n) => n.offsetParent !== null && n.offsetWidth > 0);
-
+      const liveNodes = () => Array.from(container.querySelectorAll<HTMLElement>("[data-snake-node]")).filter((n) => n.offsetParent !== null && n.offsetWidth > 0);
       const buildPath = (): boolean => {
         const nodes = liveNodes();
         if (nodes.length < 2) return false;
         const cr = container.getBoundingClientRect();
-        const W  = container.clientWidth;
-        const H  = Math.max(container.scrollHeight, container.clientHeight);
+        const W = container.clientWidth, H = Math.max(container.scrollHeight, container.clientHeight);
         const pts = nodes.map((n) => {
           const r = n.getBoundingClientRect();
           return { x: r.left - cr.left + r.width / 2, y: r.top - cr.top + r.height / 2 };
@@ -232,374 +272,167 @@ export default component$(function Day3Roadmap() {
         for (let i = 1; i < pts.length; i++) {
           const p = pts[i - 1], c = pts[i];
           const dy = c.y - p.y, bend = Math.max(60, dy * 0.42);
-          d += ` C ${p.x.toFixed(1)} ${(p.y + bend).toFixed(1)},`
-             + ` ${c.x.toFixed(1)} ${(c.y - bend).toFixed(1)},`
-             + ` ${c.x.toFixed(1)} ${c.y.toFixed(1)}`;
+          d += ` C ${p.x.toFixed(1)} ${(p.y + bend).toFixed(1)},` + ` ${c.x.toFixed(1)} ${(c.y - bend).toFixed(1)},` + ` ${c.x.toFixed(1)} ${c.y.toFixed(1)}`;
         }
-        svgEl.setAttribute("viewBox", `0 0 ${W} ${H}`);
-        svgEl.setAttribute("width", String(W)); svgEl.setAttribute("height", String(H));
-        for (const p of [pathBase, pathAccent, pathGlow]) {
-          p.setAttribute("d", d); p.style.strokeDasharray = String(p.getTotalLength());
-        }
+        svgEl.setAttribute("viewBox", `0 0 ${W} ${H}`); svgEl.setAttribute("width", String(W)); svgEl.setAttribute("height", String(H));
+        for (const p of [pathBase, pathAccent, pathGlow]) { p.setAttribute("d", d); p.style.strokeDasharray = String(p.getTotalLength()); }
         totalLen = pathBase.getTotalLength();
         return true;
       };
-
       const posTracer = (prog: number) => {
         if (!tracer || totalLen === 0) return;
-        const cl = Math.max(0, Math.min(1, prog));
-        const off = cl * totalLen;
-        const pt  = pathBase.getPointAtLength(off);
-        const ptN = pathBase.getPointAtLength(Math.min(totalLen, off + 18));
+        const cl = Math.max(0, Math.min(1, prog)), off = cl * totalLen, pt = pathBase.getPointAtLength(off), ptN = pathBase.getPointAtLength(Math.min(totalLen, off + 18));
         const ang = Math.atan2(ptN.y - pt.y, ptN.x - pt.x) * (180 / Math.PI);
         tracer.setAttribute("transform", `translate(${pt.x.toFixed(2)},${pt.y.toFixed(2)}) rotate(${ang.toFixed(1)})`);
         tracer.style.opacity = cl > 0.005 && cl < 0.998 ? "1" : "0";
       };
-
-      const rows = Array.from(container.querySelectorAll<HTMLElement>(".rm-row:not(.rm-row--final)"));
-
       const update = () => {
         if (totalLen === 0) return;
-        const VH   = window.innerHeight;
-        const ns = liveNodes();
+        const VH = window.innerHeight, ns = liveNodes();
         if (ns.length < 2) return;
-        const firstRect = ns[0].getBoundingClientRect();
-        const lastRect  = ns[ns.length - 1].getBoundingClientRect();
-        const startY = firstRect.top + firstRect.height / 2;
-        const endY   = lastRect.top + lastRect.height / 2;
-        const span   = Math.max(1, endY - startY);
-        const focusY = VH * 0.55;
-        const prog   = Math.max(0, Math.min(1, (focusY - startY) / span));
-        const off  = totalLen * (1 - prog);
-        pathBase.style.strokeDashoffset   = String(off);
-        pathAccent.style.strokeDashoffset = String(Math.max(0, off - 26));
-        pathGlow.style.strokeDashoffset   = String(off);
+        const firstRect = ns[0].getBoundingClientRect(), lastRect = ns[ns.length - 1].getBoundingClientRect(), startY = firstRect.top + firstRect.height / 2, endY = lastRect.top + lastRect.height / 2, targetY = VH * 0.55, span = Math.max(endY - startY, 1), prog = Math.max(0, Math.min(1, (targetY - startY) / span));
+        const currentIdx = Math.floor(prog * (ns.length - 1) + 0.1);
+        if (currentIdx >= 0 && currentIdx < EVENTS.length) { const ev = EVENTS[currentIdx]; if (activeEventId.value !== ev.id) activeEventId.value = ev.id; } else if (currentIdx >= EVENTS.length) { activeEventId.value = null; }
+        const off = totalLen * (1 - prog);
+        pathBase.style.strokeDashoffset = String(off); pathAccent.style.strokeDashoffset = String(Math.max(0, off - 26)); pathGlow.style.strokeDashoffset = String(off);
         posTracer(prog);
         ns.forEach((n, i) => n.classList.toggle("rm-node--lit", prog >= i / Math.max(ns.length - 1, 1) - 0.02));
         const endReached = prog >= 0.97;
-        pageRoot?.classList.toggle("is-end-reached", endReached);
-        finalRow?.classList.toggle("is-end-reached", endReached);
-        finalNode?.classList.toggle("rm-node--lit", endReached);
-        if (tracer) tracer.style.opacity = endReached ? "0" : tracer.style.opacity;
-        rows.forEach((row, idx) => {
-          const card   = row.querySelector<HTMLElement>(".rm-card");
-          const isLeft = row.classList.contains("rm-row--left");
+        pageRoot?.classList.toggle("is-end-reached", endReached); finalRow?.classList.toggle("is-end-reached", endReached); finalNode?.classList.toggle("rm-node--lit", endReached);
+        if (tracer && endReached) tracer.style.opacity = "0";
+        Array.from(container.querySelectorAll<HTMLElement>(".rm-row:not(.rm-row--final)")).forEach((row, idx) => {
+          const card = row.querySelector<HTMLElement>(".rm-card"), isLeft = row.classList.contains("rm-row--left");
           if (card && !revealed.has(card)) {
-            const r = card.getBoundingClientRect();
-            if (r.top < VH * 0.9) {
-              revealed.add(card);
-              if (gsap) {
-                gsap.fromTo(card,
-                  { opacity: 0, x: isLeft ? -70 : 70, y: 28, scale: 0.88, rotateY: isLeft ? -14 : 14 },
-                  { opacity: 1, x: 0, y: 0, scale: 1, rotateY: 0,
-                    duration: 0.85, ease: "back.out(1.4)", delay: idx * 0.04, clearProps: "transform" });
-              } else { card.style.opacity = "1"; card.style.transform = "none"; }
-            }
+            const r = card.getBoundingClientRect(); if (r.top < VH * 0.9) { revealed.add(card); if (gsap) { gsap.fromTo(card, { opacity: 0, x: isLeft ? -70 : 70, y: 28, scale: 0.88, rotateY: isLeft ? -14 : 14 }, { opacity: 1, x: 0, y: 0, scale: 1, rotateY: 0, duration: 0.85, ease: "back.out(1.4)", delay: idx * 0.04, clearProps: "transform" }); } else { card.style.opacity = "1"; card.style.transform = "none"; } }
           }
         });
       };
-
       const flush = () => { scheduled = false; if (needsBuild) needsBuild = !buildPath(); if (!needsBuild) update(); };
-      const go    = (rebuild = false) => { needsBuild = needsBuild || rebuild; if (scheduled) return; scheduled = true; rafId = requestAnimationFrame(flush); };
-
-      Array.from(container.querySelectorAll<HTMLImageElement>("img"))
-           .forEach((img) => { if (!img.complete) img.addEventListener("load", () => go(true)); });
+      const go = (rebuild = false) => { needsBuild = needsBuild || rebuild; if (scheduled) return; scheduled = true; rafId = requestAnimationFrame(flush); };
+      Array.from(container.querySelectorAll<HTMLImageElement>("img")).forEach((img) => { if (!img.complete) img.addEventListener("load", () => go(true)); });
       if ("ResizeObserver" in window) { ro = new ResizeObserver(() => go(true)); ro.observe(container); }
-      window.addEventListener("scroll", () => go(false), { passive: true });
-      window.addEventListener("resize", () => go(true),  { passive: true });
+      window.addEventListener("scroll", () => go(false), { passive: true }); window.addEventListener("resize", () => go(true), { passive: true });
       setTimeout(() => go(true), 180); go(true);
-
-      container.querySelectorAll<HTMLElement>(".rm-node").forEach((n) => {
-        n.addEventListener("mouseenter", () => n.classList.add("rm-node--hovered"));
-        n.addEventListener("mouseleave", () => n.classList.remove("rm-node--hovered"));
-      });
-
-      if (gsap) {
-        const hdr = document.querySelector(".rm-section__header");
-        if (hdr) gsap.fromTo(hdr, { opacity: 0, y: -36 }, { opacity: 1, y: 0, duration: 1.0, ease: "power3.out" });
-
-        /* Interactive Web Parallax */
-        const webs = document.querySelectorAll("[data-parallax]");
-        window.addEventListener("mousemove", (e) => {
-          const { clientX: x, clientY: y } = e;
-          const xc = window.innerWidth / 2;
-          const yc = window.innerHeight / 2;
-          webs.forEach((web) => {
-            const factor = parseFloat(web.getAttribute("data-parallax") || "0.05");
-            const dx = (x - xc) * factor;
-            const dy = (y - yc) * factor;
-            gsap.to(web, { x: dx, y: dy, duration: 2, ease: "power2.out" });
-          });
-        });
-      }
+      container.querySelectorAll<HTMLElement>(".rm-node").forEach((n) => { n.addEventListener("mouseenter", () => n.classList.add("rm-node--hovered")); n.addEventListener("mouseleave", () => n.classList.remove("rm-node--hovered")); });
+      if (gsap) { const hdr = document.querySelector(".rm-section__header"); if (hdr) gsap.fromTo(hdr, { opacity: 0, y: -36 }, { opacity: 1, y: 0, duration: 1.0, ease: "power3.out" }); }
       return () => { if (rafId) cancelAnimationFrame(rafId); ro?.disconnect(); };
     };
-
-    let cleanup: (() => void) | undefined;
-    boot().then((fn) => { cleanup = fn as any; });
-    return () => cleanup?.();
+    let cleanup: (() => void) | undefined; boot().then((fn) => { cleanup = fn as any; }); return () => cleanup?.();
   });
 
-  const toggleEvent = $((id: number) => {
-    activeEventId.value = activeEventId.value === id ? null : id;
-  });
+  const toggleEvent = $((id: number) => { activeEventId.value = activeEventId.value === id ? null : id; });
 
   return (
-    <div class="rm-page rm-page--sp" key="roadmap-day-3">
-
-      {/* ── Spider-Man page-specific styles ── */}
+    <div class="rm-page rm-page--sp">
       <style>{`
         .rm-page--sp {
-          background: linear-gradient(175deg, #0a0005 0%, #130010 25%, #0d0018 55%, #050008 100%);
+          --rm-scroll-progress: 0;
+          --rm-bg1-opacity: 1; --rm-bg2-opacity: 0; --rm-bg3-opacity: 0;
+          --rm-bg1-shift: 0px; --rm-bg2-shift: 0px; --rm-bg3-shift: 0px;
+          background: #040006; color: #fff; position: relative;
         }
-        .rm-page--sp .rm-page__aurora--left {
-          background: radial-gradient(ellipse at 0% 30%, rgba(200,15,15,0.16) 0%, transparent 65%);
-        }
-        .rm-page--sp .rm-page__aurora--right {
-          background: radial-gradient(ellipse at 100% 60%, rgba(30,60,220,0.12) 0%, rgba(180,30,30,0.07) 45%, transparent 70%);
-        }
-        .rm-page--sp .rm-pill {
-          background: linear-gradient(135deg, rgba(220,20,20,0.2), rgba(30,80,220,0.14));
-          border-color: rgba(220,20,20,0.45);
-          color: #ff4040;
-        }
-        .rm-page--sp .rm-section__title {
-          background: linear-gradient(135deg, #ff2020 0%, #ff7070 30%, #fff 55%, #4488ff 80%, #aa44ff 100%);
-          -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-        }
-        /* Snake line gradients - Spider-Verse Red Only */
-        #rm-grad-line stop:nth-child(1) { stop-color: #ff0000; }
-        #rm-grad-line stop:nth-child(2) { stop-color: #880000; }
-        #rm-grad-line stop:nth-child(3) { stop-color: #330000; }
-        #rm-grad-core stop:nth-child(1) { stop-color: #ffffff; }
-        #rm-grad-core stop:nth-child(2) { stop-color: #ff3333; }
-        #rm-grad-core stop:nth-child(3) { stop-color: #ff0000; }
 
-        /* Web Backdrop specific animations and glow */
-        .rm-web-img {
+        /* Redesigned Popup Block */
+        .rm-page--sp .rm-popup {
+          background: rgba(4, 0, 8, 0.98);
+          backdrop-filter: blur(28px);
+          border-color: rgba(255, 32, 32, 0.35);
+          box-shadow: 0 32px 84px rgba(0,0,0,0.64), 0 0 24px rgba(255, 32, 32, 0.08);
+          animation: rmPopupEnter 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+          max-width: 360px;
+          width: calc(100vw - 4rem);
+          border-radius: 1.5rem;
+          overflow: hidden;
           transform-origin: center;
-          animation: sp-web-sway 18s ease-in-out infinite alternate;
-          transition: filter 0.6s ease;
+        }
+        @keyframes rmPopupEnter {
+          0% { opacity: 0; transform: scale(0.92) translateY(12px); }
+          100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .rm-popup__inner { padding: 1.15rem !important; }
+
+        .rm-popup__vitals {
+          display: flex; flex-direction: column; gap: 0.6rem; margin: 0.85rem 0; padding: 0.85rem;
+          border-radius: 1rem; background: rgba(255, 255, 255, 0.04);
+          border: 1px solid rgba(255, 255, 255, 0.08); border-left: 3px solid var(--rm-accent);
+          box-shadow: inset 0 2px 8px rgba(0,0,0,0.22);
+        }
+        .rm-popup__vital { display: flex; align-items: center; gap: 0.75rem; }
+        .rm-popup__vital-icon {
+          width: 1.5rem; height: 1.65rem; display: flex; align-items: center; justify-content: center;
+          background: rgba(255,255,255,0.06); border-radius: 0.5rem; font-size: 0.85rem;
+        }
+        .rm-popup__vital-content { display: flex; flex-direction: column; gap: 0.05rem; }
+        .rm-popup__vital-label { font-size: 0.5rem; font-weight: 800; letter-spacing: 0.12em; color: rgba(255,255,255,0.42); text-transform: uppercase; }
+        .rm-popup__vital-value { font-size: 0.78rem; font-weight: 700; color: #fff; line-height: 1.1; }
+        .rm-popup__node-label { font-size: 0.58rem; font-weight: 900; color: var(--rm-accent); letter-spacing: 0.1em; opacity: 0.7; }
+        .rm-popup__title { font-size: 1.15rem !important; margin: 0.4rem 0 !important; line-height: 1.3 !important; }
+        
+        .rm-popup__stats { margin-top: 0.75rem !important; gap: 0.5rem !important; }
+        .rm-popup__stat { padding: 0.45rem 0.6rem !important; border-radius: 0.6rem !important; }
+        .rm-popup__stat-l { font-size: 0.55rem !important; }
+        .rm-popup__stat-v { font-size: 0.75rem !important; }
+        .rm-popup__actions {
+          margin-top: 1rem !important;
+          display: flex !important;
+          flex-direction: row !important;
+          gap: 0.5rem !important;
+        }
+        .rm-popup__action {
+          flex: 1 !important;
+          padding: 0.55rem 0.6rem !important;
+          font-size: 0.72rem !important;
+          border-radius: 0.75rem !important;
+          text-align: center;
+          white-space: nowrap;
         }
 
-        .rm-web-img--glow {
-          opacity: 0.15;
-          filter: drop-shadow(0 0 12px rgba(255, 32, 32, 0.4));
-          animation: sp-web-sway 18s ease-in-out infinite alternate, sp-web-glow 10s ease-in-out infinite alternate !important;
+        .rm-page--sp::before {
+          content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+          background: 
+            linear-gradient(180deg, rgba(8, 0, 12, 0.52) 0%, rgba(12, 0, 18, 0.35) 18%, rgba(12, 0, 18, 0.46) 56%, rgba(4, 0, 6, 0.82) 100%),
+            radial-gradient(circle at 50% 20%, rgba(255, 32, 32, 0.08), transparent 25%);
         }
+        .rm-page--sp .rm-card { background: rgba(4, 0, 8, 0.95); backdrop-filter: blur(24px); border-color: rgba(255, 32, 32, 0.22); }
+        .rm-scene-gallery { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+        .rm-scene-art { position: absolute; inset: 0; overflow: hidden; will-change: transform; transition: opacity 220ms linear, transform 220ms linear; }
+        .rm-scene-art::after {
+          content: ""; position: absolute; inset: 0;
+          background: linear-gradient(180deg, rgba(4, 0, 6, 0.42) 0%, rgba(4, 0, 6, 0.18) 24%, rgba(4, 0, 6, 0.18) 68%, rgba(4, 0, 6, 0.52) 82%, rgba(4, 0, 6, 1) 100%);
+        }
+        .rm-scene-art img { display: block; width: 100%; height: 100vh; object-fit: cover; filter: saturate(0.85) contrast(1.1) brightness(0.42); transform: scale(1.05); }
+        .rm-scene-art--i1 { opacity: var(--rm-bg1-opacity); transform: translate3d(0, var(--rm-bg1-shift), 0); }
+        .rm-scene-art--i2 { opacity: var(--rm-bg2-opacity); transform: translate3d(0, var(--rm-bg2-shift), 0); }
+        .rm-scene-art--i3 { opacity: var(--rm-bg3-opacity); transform: translate3d(0, var(--rm-bg3-shift), 0); }
 
-        @keyframes sp-web-sway {
-          0% { rotate: -2deg; scale: 1; }
-          100% { rotate: 2deg; scale: 1.05; }
-        }
-
-        @keyframes sp-web-glow {
-          0%, 100% {
-            opacity: 0.1;
-            filter: drop-shadow(0 0 8px rgba(255, 32, 32, 0.3));
-          }
-          50% {
-            opacity: 0.25;
-            filter: drop-shadow(0 0 25px rgba(255, 32, 32, 0.6)) drop-shadow(0 0 40px rgba(68, 136, 255, 0.3));
-          }
-        }
-
-        /* Minimal buddy glow - soft radial highlights */
-        .rm-web-glow-point {
-          position: absolute;
-          width: 400px; height: 400px;
-          border-radius: 50%;
-          background: radial-gradient(circle, rgba(255,32,32,0.1) 0%, transparent 70%);
-          pointer-events: none;
-          z-index: 0;
-          filter: blur(40px);
-          animation: sp-point-float 15s ease-in-out infinite alternate;
-        }
-        @keyframes sp-point-float {
-          0% { transform: translate(0, 0) scale(1); opacity: 0.3; }
-          100% { transform: translate(20px, 40px) scale(1.2); opacity: 0.6; }
-        }
-
-        /* Decorative Web filling empty sides */
-        .rm-deco-web {
-          position: relative;
-          display: flex;
-          align-items: center;
-          width: 100%;
-          min-height: 320px;
-          padding: 2rem;
-          pointer-events: none;
-        }
-        .rm-deco-web--left { justify-content: flex-end; padding-right: 1.5rem; }
-        .rm-deco-web--right { justify-content: flex-start; padding-left: 1.5rem; }
-
-        .rm-deco-web__img {
-          width: clamp(140px, 20vw, 240px);
-          height: auto;
-          opacity: 0.12;
-          filter: drop-shadow(0 0 12px rgba(255, 32, 32, 0.4));
-          transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-          transform: translateY(15px);
-          animation: sp-web-spin-in 1.4s ease-out forwards;
-        }
-        .rm-row:hover .rm-deco-web__img {
-          opacity: 0.28;
-          filter: drop-shadow(0 0 25px rgba(255, 32, 32, 0.6)) drop-shadow(0 0 40px rgba(68, 136, 255, 0.4));
-          transform: scale(1.1) rotate(5deg);
-        }
-
-        .rm-deco-web--left .rm-deco-web__img { rotate: -15deg; }
-        .rm-deco-web--right .rm-deco-web__img { rotate: 15deg; }
-
-        .rm-deco-web__glow {
-          position: absolute;
-          width: 120px;
-          height: 120px;
-          background: radial-gradient(circle, rgba(255, 32, 32, 0.12), transparent 70%);
-          filter: blur(20px);
-          z-index: -1;
-        }
-
-        @keyframes sp-web-spin-in {
-          0% { opacity: 0; transform: translateY(40px) rotate(-10deg) scale(0.8); }
-          100% { opacity: 0.12; transform: translateY(0) rotate(0) scale(1); }
-        }
         .rm-page--sp .rm-end-popup {
-          position: absolute;
-          right: calc(100% + 0.95rem);
-          top: 50%;
-          min-width: 13.5rem;
-          max-width: 15.5rem;
-          padding: 0.9rem 1rem;
-          border-radius: 1.1rem;
-          border: 1px solid rgba(255, 82, 82, 0.34);
-          background:
-            linear-gradient(180deg, rgba(42, 14, 20, 0.96), rgba(17, 11, 20, 0.94)),
-            radial-gradient(circle at top, rgba(255, 72, 72, 0.16), transparent 60%);
-          box-shadow:
-            0 22px 46px rgba(0, 0, 0, 0.42),
-            0 0 0 1px rgba(255, 82, 82, 0.08) inset,
-            0 0 24px rgba(255, 72, 72, 0.18);
-          backdrop-filter: blur(10px);
-          pointer-events: none;
-          opacity: 0;
-          transform: translate(-12px, -50%) scale(0.92);
-          transform-origin: right center;
-          transition: opacity 0.35s ease, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-          z-index: 7;
+          position: absolute; right: calc(100% + 0.95rem); top: 50%; transform: translate(-12px, -50%) scale(0.92);
+          min-width: 12rem; padding: 0.75rem 0.9rem; border-radius: 1rem; border: 1px solid rgba(255, 32, 32, 0.24);
+          background: linear-gradient(135deg, rgba(255, 32, 32, 0.1), rgba(184, 0, 0, 0.05)), rgba(4, 0, 8, 0.94);
+          box-shadow: 0 18px 42px rgba(0,0,0,0.42), 0 0 24px rgba(255, 32, 32, 0.12); opacity: 0; pointer-events: none;
+          transition: opacity 320ms ease, transform 380ms cubic-bezier(0.22, 1, 0.36, 1); z-index: 4;
         }
-        .rm-page--sp .rm-end-popup::after {
-          content: "";
-          position: absolute;
-          right: -0.45rem;
-          top: 50%;
-          width: 0.9rem;
-          height: 0.9rem;
-          border-radius: 0.18rem;
-          background: rgba(42, 14, 20, 0.96);
-          border-top: 1px solid rgba(255, 82, 82, 0.28);
-          border-right: 1px solid rgba(255, 82, 82, 0.28);
-          transform: translateY(-50%) rotate(45deg);
-        }
-        .rm-page--sp .rm-end-popup__label {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.45rem;
-          font-size: 0.8rem;
-          font-weight: 800;
-          letter-spacing: 0.16em;
-          text-transform: uppercase;
-          color: #ffb8b8;
-        }
-        .rm-page--sp .rm-end-popup__label::before {
-          content: "";
-          width: 0.52rem;
-          height: 0.52rem;
-          border-radius: 999px;
-          background: #ff3b3b;
-          box-shadow: 0 0 12px rgba(255, 59, 59, 0.85);
-        }
-        .rm-page--sp .rm-end-popup p {
-          margin: 0.55rem 0 0;
-          color: rgba(255, 239, 239, 0.94);
-          font-size: 0.76rem;
-          line-height: 1.45;
-        }
-        .rm-page--sp.is-end-reached .rm-end-popup,
-        .rm-page--sp .rm-row--final.is-end-reached .rm-end-popup {
-          opacity: 1;
-          transform: translate(0, -50%) scale(1);
-        }
-        .rm-page--sp.is-end-reached .rm-row--final .rm-node--finish {
-          box-shadow:
-            0 0 0 4px rgba(255, 82, 82, 0.14),
-            0 0 28px rgba(255, 72, 72, 0.44),
-            0 0 72px rgba(68, 136, 255, 0.16),
-            0 24px 50px rgba(0, 0, 0, 0.44);
-        }
-        @media (max-width: 767px) {
-          .rm-page--sp .rm-end-popup {
-            left: 50%;
-            right: auto;
-            top: auto;
-            bottom: calc(100% + 0.8rem);
-            transform: translate(-50%, 14px) scale(0.92);
-            min-width: 10rem;
-            max-width: 12rem;
-            padding: 0.68rem 0.8rem;
-          }
-          .rm-page--sp .rm-end-popup::after {
-            left: 50%;
-            right: auto;
-            top: auto;
-            bottom: -0.45rem;
-            transform: translateX(-50%) rotate(45deg);
-          }
-          .rm-page--sp.is-end-reached .rm-end-popup,
-          .rm-page--sp .rm-row--final.is-end-reached .rm-end-popup {
-            transform: translate(-50%, 0) scale(1);
-          }
-        }
+        .rm-page--sp.is-end-reached .rm-end-popup { opacity: 1; transform: translate(0, -50%) scale(1); }
+        .rm-row--final { margin-bottom: 0 !important; }
+        .rm-timeline { padding-bottom: 0 !important; }
       `}</style>
 
-      <div class="rm-web-backdrop" style="position: absolute; height: 100%; width: 100%; top: 0; left: 0; overflow: hidden;">
-        {/* Glow Buds - Minimal ambient glows */}
-        <div class="rm-web-glow-point" style="top: 10%; left: 20%; animation-delay: 0s;" />
-        <div class="rm-web-glow-point" style="top: 40%; left: 80%; animation-delay: -2s; background: radial-gradient(circle, rgba(68,136,255,0.08) 0%, transparent 70%);" />
-        <div class="rm-web-glow-point" style="top: 70%; left: 10%; animation-delay: -5s;" />
-        <div class="rm-web-glow-point" style="top: 1500px; left: 50%;" />
-        <div class="rm-web-glow-point" style="top: 2800px; left: 70%; background: radial-gradient(circle, rgba(68,136,255,0.08) 0%, transparent 70%);" />
-
-        {/* Top 100vh - 3 webs */}
-        <img src="/spidy/spidy-web.png" class="rm-web-img" style="top:2%; left:5%; opacity:0.12; scale:1.5;" data-parallax="0.04" />
-        <img src="/spidy/spidy-web.png" class="rm-web-img rm-web-img--glow" style="top:15%; left:70%; scale:0.8; rotate:45deg;" data-parallax="0.07" />
-        <img src="/spidy/spidy-web.png" class="rm-web-img" style="top:40%; left:-5%; scale:1.2; rotate:-15deg;" data-parallax="0.03" />
-
-        {/* Distributed webs for scrolling */}
-        <img src="/spidy/spidy-web.png" class="rm-web-img rm-web-img--glow" style="top:1200px; left:80%; scale:1.1; rotate:90deg; opacity:0.1;" data-parallax="0.05" />
-        <img src="/spidy/spidy-web.png" class="rm-web-img" style="top:1500px; left:15%; scale:0.9; rotate:180deg; opacity:0.08;" data-parallax="0.06" />
-        <img src="/spidy/spidy-web.png" class="rm-web-img rm-web-img--glow" style="top:2200px; left:60%; scale:1.3; rotate:-45deg; opacity:0.12;" data-parallax="0.04" />
-        <img src="/spidy/spidy-web.png" class="rm-web-img" style="top:2600px; left:5%; scale:1.0; rotate:15deg; opacity:0.09;" data-parallax="0.05" />
-        <img src="/spidy/spidy-web.png" class="rm-web-img rm-web-img--glow" style="top:3100px; left:75%; scale:1.4; rotate:160deg; opacity:0.1;" data-parallax="0.07" />
-        <img src="/spidy/spidy-web.png" class="rm-web-img" style="top:3500px; left:25%; scale:0.8; rotate:220deg; opacity:0.11;" data-parallax="0.03" />
-        <img src="/spidy/spidy-web.png" class="rm-web-img rm-web-img--glow" style="top:30%; left:45%; scale:0.6; rotate:10deg; opacity:0.07;" data-parallax="0.08" />
-        <img src="/spidy/spidy-web.png" class="rm-web-img" style="top:65%; left:85%; scale:1.1; opacity:0.1;" data-parallax="0.05" />
-        <img src="/spidy/spidy-web.png" class="rm-web-img rm-web-img--glow" style="top:85%; left:10%; scale:1.5; rotate:-30deg; opacity:0.12;" data-parallax="0.04" />
-        <img src="/spidy/spidy-web.png" class="rm-web-img" style="top:50%; left:80%; scale:0.9; opacity:0.06;" data-parallax="0.06" />
-        <img src="/spidy/spidy-web.png" class="rm-web-img rm-web-img--glow" style="top:95%; left:60%; scale:1.2; opacity:0.08;" data-parallax="0.03" />
+      <div class="rm-scene-gallery">
+        <div class="rm-scene-art rm-scene-art--i1"><img src="/roadmap-day3/i1.png" alt="Scene 1" /></div>
+        <div class="rm-scene-art rm-scene-art--i2"><img src="/roadmap-day3/i2.png" alt="Scene 2" /></div>
+        <div class="rm-scene-art rm-scene-art--i3"><img src="/roadmap-day3/i3.png" alt="Scene 3" /></div>
       </div>
-      <div class="rm-page__aurora rm-page__aurora--left"  />
+
+      <div class="rm-page__aurora rm-page__aurora--left" />
       <div class="rm-page__aurora rm-page__aurora--right" />
 
       <section class="rm-section rm-section--top">
         <div class="rm-shell">
-
-          {/* Header */}
           <div class="rm-section__header">
             <div class="rm-section__header-text">
-              <span class="rm-pill">🕷️ Spider-Verse</span>
-              <h1 class="rm-section__title">Day 3 — The Amazing Final Day!</h1>
-              <p class="rm-section__copy">Tap any card to reveal its event, team &amp; entry details. THWIP!</p>
+              <span class="rm-pill">Timeline</span>
+              <h1 class="rm-section__title">Day 3: Spider-Verse</h1>
+              <p class="rm-section__copy">Tap any card to reveal its event, team & prize details.</p>
             </div>
             <div class="rm-event-glass">
               <span class="rm-event-glass__count">{String(EVENTS.length).padStart(2, "0")}</span>
@@ -608,108 +441,79 @@ export default component$(function Day3Roadmap() {
             </div>
           </div>
 
-          {/* Timeline */}
           <div id="rm-timeline" class="rm-timeline">
-
-            {/* SVG snake line */}
             <svg id="rm-line-svg" class="rm-line-svg" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <defs>
                 <linearGradient id="rm-grad-line" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%"   stop-color="#ff2020" />
-                  <stop offset="55%"  stop-color="#4488ff" />
-                  <stop offset="100%" stop-color="#aa44ff" />
-                </linearGradient>
-                <linearGradient id="rm-grad-core" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%"   stop-color="#fff"    />
-                  <stop offset="50%"  stop-color="#ff4040" />
-                  <stop offset="100%" stop-color="#4488ff" />
+                  <stop offset="0%" stop-color="#ff2020" />
+                  <stop offset="50%" stop-color="#ff4444" />
+                  <stop offset="100%" stop-color="#ff2020" />
                 </linearGradient>
                 <filter id="rm-glow-f" x="-40%" y="-10%" width="180%" height="120%">
-                  <feGaussianBlur stdDeviation="10" result="b" />
+                  <feGaussianBlur stdDeviation="15" result="b" />
                   <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
                 </filter>
-                <filter id="rm-arrow-f" x="-120%" y="-120%" width="340%" height="340%">
-                  <feGaussianBlur stdDeviation="7" result="b" />
-                  <feMerge><feMergeNode in="b" /><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
-                </filter>
                 <radialGradient id="rm-tracer-fill" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%"   stop-color="#fff"    stop-opacity="1"  />
-                  <stop offset="45%"  stop-color="#ff2020" stop-opacity="0.9"/>
-                  <stop offset="100%" stop-color="#4488ff" stop-opacity="0"  />
+                  <stop offset="0%" stop-color="#fff" stop-opacity="1" />
+                  <stop offset="45%" stop-color="#ff2020" stop-opacity="0.9" />
+                  <stop offset="100%" stop-color="#ff4444" stop-opacity="0" />
                 </radialGradient>
               </defs>
-              <path id="rm-line-glow"   class="rm-line-glow"   fill="none" stroke="url(#rm-grad-line)" />
-              <path id="rm-line-base"   class="rm-line-base"   fill="none" stroke="url(#rm-grad-line)" />
-              <path id="rm-line-accent" class="rm-line-accent" fill="none" stroke="url(#rm-grad-core)" filter="url(#rm-glow-f)" />
-              <g id="rm-tracer" style="opacity:0;will-change:transform;" filter="url(#rm-arrow-f)">
-                <circle class="rm-tracer-ring rm-tracer-ring--outer" cx="0" cy="0" r="18"
-                  fill="none" stroke="rgba(255,0,0,0.3)" stroke-width="1.2" />
-                <circle class="rm-tracer-ring rm-tracer-ring--mid" cx="0" cy="0" r="11"
-                  fill="none" stroke="rgba(255,50,50,0.5)" stroke-width="1.2" />
-                <circle cx="0" cy="0" r="7" fill="url(#rm-tracer-fill)" />
-                <polygon id="rm-tracer-arrow" points="18,0 5,-6 5,6" fill="#ff0000" />
-                <line x1="-4" y1="-3" x2="-18" y2="-7" stroke="rgba(255,0,0,0.6)" stroke-width="1.8" stroke-linecap="round" />
-                <line x1="-4" y1="3"  x2="-18" y2="7"  stroke="rgba(255,0,0,0.6)" stroke-width="1.8" stroke-linecap="round" />
+              <path id="rm-line-glow" class="rm-line-glow" fill="none" stroke="url(#rm-grad-line)" />
+              <path id="rm-line-base" class="rm-line-base" fill="none" stroke="url(#rm-grad-line)" />
+              <path id="rm-line-accent" class="rm-line-accent" fill="none" stroke="rgba(255,255,255,0.7)" filter="url(#rm-glow-f)" />
+              <g id="rm-tracer" style="opacity:0;will-change:transform;">
+                {/* Outer Glow Arrow */}
+                <path d="M -14,-10 L 18,0 L -14,10 C -10,4 -10,-4 -14,-10 Z" fill="url(#rm-tracer-fill)" filter="url(#rm-glow-f)" opacity="0.6" />
+                {/* Sleek Core Arrow */}
+                <path d="M -12,-8 L 14,0 L -12,8 C -9,3 -9,-3 -12,-8 Z" fill="#fff" filter="url(#rm-glow-f)" />
+                
+                {/* Fast Inner Pulse */}
+                <circle cx="0" cy="0" r="18" fill="none" stroke="url(#rm-grad-line)" stroke-width="1.5" opacity="0.6">
+                  <animate attributeName="r" from="12" to="35" dur="1s" repeatCount="indefinite" />
+                  <animate attributeName="opacity" from="0.8" to="0" dur="1s" repeatCount="indefinite" />
+                </circle>
+                
+                {/* Slow Outer Pulse */}
+                <circle cx="0" cy="0" r="25" fill="none" stroke="url(#rm-grad-line)" stroke-width="1" opacity="0.3">
+                  <animate attributeName="r" from="15" to="50" dur="2s" repeatCount="indefinite" />
+                  <animate attributeName="opacity" from="0.4" to="0" dur="2s" repeatCount="indefinite" />
+                </circle>
               </g>
             </svg>
 
-            {/* Event rows */}
             {EVENTS.map((event, index) => {
-              const meta = CAT[event.cat];
-              const side: "left" | "right" = index % 2 === 0 ? "left" : "right";
-              const isActive    = activeEventId.value === event.id;
-              const canRegister = event.cat !== "opening" && event.cat !== "cultural";
+              const meta = CAT[event.cat], side = index % 2 === 0 ? "left" : "right", isActive = activeEventId.value === event.id, canRegister = event.cat !== "opening" && event.cat !== "cultural";
               return (
                 <div key={event.id} class={["rm-row", `rm-row--${side}`]}>
                   <div class="rm-row__side rm-row__side--left">
-                    {side === "left"
-                      ? <EventCard ev={event} meta={meta} isActive={isActive} side="left" onToggle$={() => toggleEvent(event.id)} />
-                      : isActive ? <PopupPanel ev={event} meta={meta} side="left" canRegister={canRegister} /> : <DecorativeWeb side="left" />}
+                    {side === "left" ? <EventCard ev={event} meta={meta} isActive={isActive} side="left" onToggle$={() => toggleEvent(event.id)} /> : isActive && <PopupPanel ev={event} meta={meta} side="left" canRegister={canRegister} />}
                   </div>
                   <div class={["rm-row__center", `rm-row__center--${side === "left" ? "r" : "l"}`]}>
-                    <div class="rm-node"
-                      style={`--rm-accent:${meta.color};--rm-accent-rgb:${meta.rgb};`}
-                      data-snake-node="">
-                      <span class="rm-node__pulse"  />
-                      <span class="rm-node__halo"   />
-                      <span class="rm-node__impact" />
-                      <span class="rm-node__code">{meta.short}</span>
-                      <span class="rm-node__time">{event.time}</span>
+                    <div class="rm-node" style={`--rm-accent:${meta.color};--rm-accent-rgb:${meta.rgb};`} data-snake-node="">
+                      <span class="rm-node__pulse" /><span class="rm-node__halo" /><span class="rm-node__impact" />
+                      <span class="rm-node__code">{meta.short}</span><span class="rm-node__time">{event.time}</span>
                     </div>
                   </div>
                   <div class="rm-row__side rm-row__side--right">
-                    {side === "right"
-                      ? <EventCard ev={event} meta={meta} isActive={isActive} side="right" onToggle$={() => toggleEvent(event.id)} />
-                      : isActive ? <PopupPanel ev={event} meta={meta} side="right" canRegister={canRegister} /> : <DecorativeWeb side="right" />}
+                    {side === "right" ? <EventCard ev={event} meta={meta} isActive={isActive} side="right" onToggle$={() => toggleEvent(event.id)} /> : isActive && <PopupPanel ev={event} meta={meta} side="right" canRegister={canRegister} />}
                   </div>
                 </div>
               );
             })}
 
-            {/* Finish row */}
             <div class="rm-row rm-row--final">
               <div class="rm-row__side rm-row__side--left" />
               <div class="rm-row__center rm-row__center--c">
                 <div class="rm-node rm-node--finish" data-snake-node="">
-                  <span class="rm-node__pulse" />
-                  <span class="rm-node__halo"  />
-                  <span class="rm-node__code">END</span>
-                  <span class="rm-node__time">09:00 PM</span>
-                  <div class="rm-end-popup">
-                    <span class="rm-end-popup__label">City Secured</span>
-                    <p>Day 3 complete. The final swing is done and Theta 2026 wraps strong.</p>
-                  </div>
+                  <span class="rm-node__pulse" /><span class="rm-node__halo" /><span class="rm-node__code">END</span><span class="rm-node__time">09:00 PM</span>
+                  <div class="rm-end-popup"><span class="rm-end-popup__label">Hero Protocol Set</span><p>Theta 2026 mission complete. The city is safe.</p></div>
                 </div>
               </div>
               <div class="rm-row__side rm-row__side--right">
                 <div class="rm-end-card">
-                  <span class="rm-pill">🕷️ The End</span>
-                  <h3>Day 3 completed.</h3>
-                  <p>With great fest comes great memories. Theta 2026 concluded.</p>
-                  <div class="rm-end-card__meta">
-                    <span>Final sync complete</span>
-                    <Link href="/events">Open events</Link>
-                  </div>
+                  <span class="rm-pill">Finish</span><h3>Mission Complete.</h3><p>Thank you for participating!</p>
+                  <div class="rm-end-card__meta"><span>Archive ready</span><Link href="/events">View Results</Link></div>
                 </div>
               </div>
             </div>
@@ -717,25 +521,19 @@ export default component$(function Day3Roadmap() {
         </div>
       </section>
 
-      {/* Bottom dock */}
-      <div class="rm-dock rm-dock--sp">
+      <div class="rm-dock">
         <div class="rm-dock__inner">
           <Link href="/roadmap/day1" class="rm-dock__item">Day 1</Link>
           <Link href="/roadmap/day2" class="rm-dock__item">Day 2</Link>
           <Link href="/roadmap/day3" class="rm-dock__item is-active">Day 3</Link>
-          <span class="rm-dock__status">
-            <span class="rm-dock__status-dot" />
-            Spider-Man theme
-          </span>
+          <span class="rm-dock__status"><span class="rm-dock__status-dot" />Spider theme</span>
         </div>
       </div>
-
-
     </div>
   );
 });
 
 export const head: DocumentHead = {
-  title: "Day 3 Roadmap | Theta 2026 — Spider-Verse",
-  meta: [{ name: "description", content: "Day 3 roadmap for Theta 2026 — Spider-Man Spider-Verse theme, S-curve timeline, GSAP web-slinger reveals." }],
+  title: "Day 3 Roadmap | Theta 2026",
+  meta: [{ name: "description", content: "Day 3 roadmap - Spider-Verse finale. Final mission schedule and interactive timeline." }],
 };

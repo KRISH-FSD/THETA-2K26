@@ -1,110 +1,55 @@
 {
   "order": [
-    { "key": "coordinators", "label": "Coordinators" },
     { "key": "president", "label": "President" },
-    { "key": "vicePresidents", "label": "Vice Presidents" },
-    { "key": "sponsorship", "label": "Sponsorship" },
-    { "key": "publicRelation", "label": "Public Relations" }
+    { "key": "vicePresidents", "label": "Vice President" },
+    { "key": "corporateRelations", "label": "Corporate Relations" }
   ],
   "president": [
     {
-      "name": "Arjun Sharma",
+      "name": "Harish Kumar S",
       "role": "President",
-      "email": "arjun.sharma@theta2026.in",
-      "phone": "+91 98765 43210",
+      "email": "226004035@sastra.ac.in",
+      "phone": "+91 63797 14145",
       "image": "/team/president.jpg"
     }
   ],
   "vicePresidents": [
     {
-      "name": "Priya Venkatesh",
+      "name": "Hariharan M",
       "role": "Vice President",
-      "email": "priya.v@theta2026.in",
-      "phone": "+91 98765 43211",
+      "email": "226025021@sastra.ac.in",
+      "phone": "+91 93449 34638",
       "image": "/team/vp1.jpg"
     },
     {
-      "name": "Karthik Raj",
+      "name": "Mrudhula DS",
       "role": "Vice President",
-      "email": "karthik.r@theta2026.in",
-      "phone": "+91 98765 43212",
+      "email": "227003091@sastra.ac.in",
+      "phone": "+91 94893 88113",
       "image": "/team/vp2.jpg"
     }
   ],
-  "coordinators": [
+  "corporateRelations": [
     {
-      "name": "Sneha Krishnan",
-      "role": "Event Coordinator",
-      "email": "sneha.k@theta2026.in",
-      "phone": "+91 98765 43213",
+      "name": "Ashok S",
+      "role": "Corporate Relations",
+      "email": "226025009@sastra.ac.in",
+      "phone": "+91 97900 51827",
       "image": "/team/coord1.jpg"
     },
     {
-      "name": "Rohan Patel",
-      "role": "Event Coordinator",
-      "email": "rohan.p@theta2026.in",
-      "phone": "+91 98765 43214",
+      "name": "Kathiresan K",
+      "role": "Corporate Relations",
+      "email": "226025028@sastra.ac.in",
+      "phone": "+91 86104 57445",
       "image": "/team/coord2.jpg"
     },
     {
-      "name": "Ananya Gupta",
-      "role": "Event Coordinator",
-      "email": "ananya.g@theta2026.in",
-      "phone": "+91 98765 43215",
+      "name": "Srevatsan B",
+      "role": "Corporate Relations",
+      "email": "226025044@sastra.ac.in",
+      "phone": "+91 93423 24723",
       "image": "/team/coord3.jpg"
-    },
-    {
-      "name": "Vikram Singh",
-      "role": "Event Coordinator",
-      "email": "vikram.s@theta2026.in",
-      "phone": "+91 98765 43216",
-      "image": "/team/coord4.jpg"
-    },
-    {
-      "name": "Meera Nair",
-      "role": "Event Coordinator",
-      "email": "meera.n@theta2026.in",
-      "phone": "+91 98765 43217",
-      "image": "/team/coord5.jpg"
-    },
-    {
-      "name": "Aditya Kumar",
-      "role": "Event Coordinator",
-      "email": "aditya.k@theta2026.in",
-      "phone": "+91 98765 43218",
-      "image": "/team/coord6.jpg"
-    }
-  ],
-  "sponsorship": [
-    {
-      "name": "Sanjay Menon",
-      "role": "Sponsorship Lead",
-      "email": "sanjay.m@theta2026.in",
-      "phone": "+91 98765 43219",
-      "image": "/team/sponsor1.jpg"
-    },
-    {
-      "name": "Divya Prakash",
-      "role": "Sponsorship Lead",
-      "email": "divya.p@theta2026.in",
-      "phone": "+91 98765 43220",
-      "image": "/team/sponsor2.jpg"
-    }
-  ],
-  "publicRelation": [
-    {
-      "name": "Rahul Joshi",
-      "role": "Public Relations",
-      "email": "rahul.j@theta2026.in",
-      "phone": "+91 98765 43221",
-      "image": "/team/pr.jpg"
-    },
-    {
-      "name": "Shweta Iyer",
-      "role": "Public Relations",
-      "email": "shweta.i@theta2026.in",
-      "phone": "+91 98765 43222",
-      "image": "/team/pr2.jpg"
     }
   ],
   "webtek": {
