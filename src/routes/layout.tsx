@@ -145,7 +145,7 @@ export default component$(() => {
         align: (i: number) => document.querySelectorAll(".footer-tracer-path")[i] as SVGPathElement,
         alignOrigin: [0.5, 0.5],
         autoRotate: true
-      },
+      } as any,
       duration: 1,
       ease: "none",
       scrollTrigger: {

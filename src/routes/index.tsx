@@ -559,7 +559,7 @@ export default component$(() => {
     const section = document.querySelector<HTMLElement>(".festival-days-shell");
     if (!section) return;
 
-    let raf = 0;
+    const raf = 0;
     const resetPointer = () => {
       section.style.setProperty("--festival-pointer-left", "0px");
       section.style.setProperty("--festival-pointer-right", "0px");
