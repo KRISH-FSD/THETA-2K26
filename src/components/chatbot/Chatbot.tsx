@@ -269,7 +269,7 @@ export const Chatbot = component$(() => {
         <div class="flex items-center justify-between px-5 py-4 border-b border-white/10 bg-white/5 rounded-t-3xl">
            <div class="flex items-center gap-3">
               <div class="relative flex items-center justify-center w-8 h-8 rounded-full bg-[#0ea935]/20 text-[#0ea935]">
-                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
+                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
                  <span class="absolute top-0 right-0 w-2.5 h-2.5 bg-[#0ea935] rounded-full border-2 border-[#06090a]"></span>
               </div>
               <div class="flex flex-col">
@@ -278,7 +278,7 @@ export const Chatbot = component$(() => {
               </div>
            </div>
            <button type="button" class="text-white/50 hover:text-white transition-colors p-1" onClick$={() => { isOpen.value = false; }}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg>
            </button>
         </div>
 
@@ -344,7 +344,7 @@ export const Chatbot = component$(() => {
                  class="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center bg-[#0ea935] text-white rounded-full hover:bg-[#0ca030] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                  disabled={!inputValue.value.trim() || isTyping.value}
               >
-                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" x2="11" y1="2" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" x2="11" y1="2" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
               </button>
            </form>
            <div class="text-[10px] text-center text-white/30 mt-2 font-medium">Powered by WebTek Technical Team</div>
