@@ -18,8 +18,9 @@ export const heroSlides = [
     description: "Musical Fusion · Opening Ceremony · Cultural Night",
     accentColor: "#00ff44",
     accentRgb: "0,255,68",
-    bgImage: "/day/day-1.png",
-    thumb: "/day/day-1.png",
+    bgImage: "/homepage/i1.png",
+    bgVideo: "/homepage/v1.mp4",
+    thumb: "/homepage/i1.png",
   },
   {
     id: 1,
@@ -40,8 +41,8 @@ export const heroSlides = [
     description: "Prize Distribution · Valedictory · Networking Night",
     accentColor: "#ff3333",
     accentRgb: "255,51,51",
-    bgImage: "/day/day-3.png",
-    thumb: "/day/day-3.png",
+    bgImage: "/homepage/i3.png",
+    thumb: "/homepage/i3.png",
   },
 ];
 
@@ -118,15 +119,23 @@ const HeroCountdown = component$((props: { targetDate: string }) => {
 export const HeroSlider = component$(() => {
   const active = useSignal(0);
   const isAnimating = useSignal(false);
-  const progress = useSignal(0);
+  const heroRef = useSignal<HTMLElement>();
+  const progressBarRef = useSignal<HTMLElement>();
+  const videoRef = useSignal<HTMLVideoElement>();
+  const isDesktop = useSignal(false);
+  const isHeroInView = useSignal(true);
+  const isVideoLoading = useSignal(false);
   const state = useStore({ startTime: 0 });
 
   const goTo = $((idx: number) => {
     if (isAnimating.value || idx === active.value) return;
     isAnimating.value = true;
     active.value = idx;
-    progress.value = 0;
     state.startTime = performance.now();
+
+    if (progressBarRef.value) {
+      progressBarRef.value.style.width = "0%";
+    }
 
     const tl = gsap.timeline();
     tl.fromTo(".hs-badge", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power4.out" });
@@ -137,85 +146,264 @@ export const HeroSlider = component$(() => {
     setTimeout(() => { isAnimating.value = false; }, 900);
   });
 
-  /* UNSTOPPABLE Progress bar & auto-advance */
-  useVisibleTask$(() => {
-    state.startTime = performance.now();
-    const duration = 6000;
-    let rafId: number;
-
-    const tick = () => {
-      const now = performance.now();
-      const elapsed = now - state.startTime;
-      const pct = Math.min((elapsed / duration) * 100, 100);
-      
-      const bar = document.getElementById("hs-progress-bar");
-      if (bar) {
-        bar.style.width = `${pct}%`;
-      }
-      
-      if (elapsed >= duration) {
-        state.startTime = now; 
-        const nextIdx = (active.value + 1) % heroSlides.length;
-        goTo(nextIdx);
-      }
-      rafId = requestAnimationFrame(tick);
-    };
-
-    rafId = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(rafId);
-  });
-
   useVisibleTask$(() => {
     const tl = gsap.timeline({ delay: 0.5 });
     tl.fromTo(".hs-badge", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power4.out" });
     tl.fromTo(".hs-title", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power4.out" }, "-=0.4");
     tl.fromTo(".hs-desc", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power4.out" }, "-=0.5");
     tl.fromTo(".hs-cta", { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.7)" }, "-=0.4");
-    tl.fromTo(".hs-countdown-wrap", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }, "-=0.6");
+  });
+
+  useVisibleTask$(({ cleanup }) => {
+    const mediaQuery = window.matchMedia("(min-width: 1024px)");
+    const syncViewport = () => {
+      isDesktop.value = mediaQuery.matches;
+    };
+
+    syncViewport();
+    mediaQuery.addEventListener("change", syncViewport);
+
+    const hero = heroRef.value;
+    if (!hero) {
+      cleanup(() => mediaQuery.removeEventListener("change", syncViewport));
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isHeroInView.value = entry?.isIntersecting ?? false;
+      },
+      { threshold: 0.2 },
+    );
+
+    observer.observe(hero);
+    cleanup(() => {
+      observer.disconnect();
+      mediaQuery.removeEventListener("change", syncViewport);
+    });
+  });
+
+  useVisibleTask$(({ cleanup, track }) => {
+    track(() => active.value);
+    track(() => isDesktop.value);
+    track(() => isHeroInView.value);
+
+    const activeSlide = heroSlides[active.value];
+    const progressBar = progressBarRef.value;
+
+    if (progressBar) {
+      progressBar.style.width = "0%";
+    }
+
+    if (!isHeroInView.value) {
+      return;
+    }
+
+    if (activeSlide.bgVideo && isDesktop.value) {
+      return;
+    }
+
+    const duration = 6000;
+    state.startTime = performance.now();
+    const intervalId = window.setInterval(() => {
+      const elapsed = performance.now() - state.startTime;
+      const pct = Math.min((elapsed / duration) * 100, 100);
+      if (progressBar) {
+        progressBar.style.width = `${pct}%`;
+      }
+
+      if (elapsed >= duration) {
+        const nextIdx = (active.value + 1) % heroSlides.length;
+        goTo(nextIdx);
+      }
+    }, 120);
+
+    cleanup(() => window.clearInterval(intervalId));
+  });
+
+  useVisibleTask$(({ cleanup, track }) => {
+    track(() => active.value);
+    track(() => isDesktop.value);
+    track(() => isHeroInView.value);
+
+    const activeSlide = heroSlides[active.value];
+    const currentVideo = videoRef.value;
+    const shouldTrackVideo =
+      !!currentVideo && !!activeSlide.bgVideo && isDesktop.value && isHeroInView.value;
+
+    isVideoLoading.value = shouldTrackVideo;
+
+    if (!shouldTrackVideo || !currentVideo) {
+      return;
+    }
+
+    const handleReady = () => {
+      isVideoLoading.value = false;
+    };
+
+    if (currentVideo.readyState >= 2) {
+      isVideoLoading.value = false;
+      return;
+    }
+
+    currentVideo.addEventListener("loadeddata", handleReady);
+    currentVideo.addEventListener("canplay", handleReady);
+
+    cleanup(() => {
+      currentVideo.removeEventListener("loadeddata", handleReady);
+      currentVideo.removeEventListener("canplay", handleReady);
+    });
+  });
+
+  useVisibleTask$(({ cleanup, track }) => {
+    track(() => active.value);
+    track(() => isDesktop.value);
+    track(() => isHeroInView.value);
+
+    const videos = document.querySelectorAll<HTMLVideoElement>("[data-hero-video]");
+
+    videos.forEach((video, index) => {
+      if (index === active.value && isHeroInView.value && isDesktop.value) {
+        void video.play().catch(() => {
+          // Ignore autoplay interruptions from the browser.
+        });
+        return;
+      }
+
+      video.pause();
+    });
+
+    const currentVideo = videoRef.value;
+    const progressBar = progressBarRef.value;
+    const activeSlide = heroSlides[active.value];
+
+    if (!currentVideo || !progressBar || !activeSlide.bgVideo || !isDesktop.value) {
+      return;
+    }
+
+    const syncProgress = () => {
+      const duration = currentVideo.duration;
+      if (!duration || Number.isNaN(duration)) {
+        progressBar.style.width = "0%";
+        return;
+      }
+
+      const pct = Math.min((currentVideo.currentTime / duration) * 100, 100);
+      progressBar.style.width = `${pct}%`;
+    };
+
+    const handleEnded = () => {
+      progressBar.style.width = "100%";
+      const nextIdx = (active.value + 1) % heroSlides.length;
+      void goTo(nextIdx);
+    };
+
+    currentVideo.addEventListener("loadedmetadata", syncProgress);
+    currentVideo.addEventListener("timeupdate", syncProgress);
+    currentVideo.addEventListener("ended", handleEnded);
+
+    cleanup(() => {
+      currentVideo.removeEventListener("loadedmetadata", syncProgress);
+      currentVideo.removeEventListener("timeupdate", syncProgress);
+      currentVideo.removeEventListener("ended", handleEnded);
+    });
   });
 
   const slide = heroSlides[active.value];
+  const isDay1DesktopVideo = slide.id === 0 && !!slide.bgVideo && isDesktop.value;
 
   return (
-    <section id="hero-slider" class="hs-root relative overflow-hidden" 
+    <section id="hero-slider" ref={heroRef} class="hs-root relative overflow-hidden" 
              style={`--hs-accent:${slide.accentColor};--hs-accent-rgb:${slide.accentRgb};`}>
       
       {/* Backgrounds */}
-      {heroSlides.map((s, i) => (
-        <div key={s.id} class="hs-bg" 
-             style={{ 
-               opacity: active.value === i ? "1" : "0", 
-               backgroundImage: `url(${s.bgImage})`,
-               transform: active.value === i ? "scale(1)" : "scale(1.04)"
-             }}>
-          <div class="hs-overlay" style={{ background: `linear-gradient(108deg, rgba(10,6,25,0.82) 0%, rgba(10,6,25,0.55) 50%, rgba(10,6,25,0.2) 100%), linear-gradient(to top, rgba(10,6,25,0.95) 0%, transparent 45%)` }} />
-          <div class="hs-tint" style={{ background: `radial-gradient(ellipse 70% 60% at 80% 40%, rgba(${s.accentRgb},0.18), transparent 70%)`, opacity: active.value === i ? "1" : "0" }} />
-        </div>
-      ))}
+      <div
+        key={slide.id}
+        class="hs-bg"
+        style={{
+          opacity: "1",
+          transform: "scale(1)",
+        }}
+      >
+        {slide.bgVideo && isDesktop.value ? (
+          isHeroInView.value ? (
+            <video
+              ref={videoRef}
+              class="absolute inset-0 h-full w-full object-cover"
+              data-hero-video
+              src={slide.bgVideo}
+              autoPlay
+              muted
+              playsInline
+              preload="none"
+              poster={slide.bgImage}
+              disablePictureInPicture
+            />
+          ) : (
+            <div
+              class="absolute inset-0 h-full w-full bg-cover bg-center"
+              style={{ backgroundImage: `url(${slide.bgImage})` }}
+            />
+          )
+        ) : (
+          <div
+            class="absolute inset-0 h-full w-full bg-cover bg-center"
+            style={{ backgroundImage: `url(${slide.bgImage})` }}
+          />
+        )}
+        <div class="hs-overlay" style={{ background: `linear-gradient(108deg, rgba(5,3,15,0.65) 0%, rgba(5,3,15,0.45) 45%, rgba(5,3,15,0.1) 100%), linear-gradient(to top, rgba(5,3,15,1) 0%, rgba(5,3,15,0.44) 32%, transparent 100%)` }} />
+        <div class="hs-tint" style={{ background: `radial-gradient(ellipse 70% 60% at 80% 40%, rgba(${slide.accentRgb},0.08), transparent 70%)`, opacity: "1" }} />
+        {isDay1DesktopVideo && isVideoLoading.value && (
+          <div class="hs-video-loader">
+            <div
+              class="hs-video-loader__poster"
+              style={{ backgroundImage: `url(${slide.bgImage})` }}
+            />
+            <div class="hs-video-loader__veil" />
+            <div class="hs-video-loader__content">
+              <span class="hs-video-loader__label">Loading Day 1 video...</span>
+            </div>
+          </div>
+        )}
+      </div>
 
       <div class="hs-grain" />
 
       {/* Content */}
-      <div class="hs-content">
+      {!isDay1DesktopVideo && slide.id !== 2 && <div class={`hs-content ${slide.id === 0 ? "hs-content--mobile-day1" : ""}`}>
         <div class="hs-badge">
           <span class="hs-badge-text">{slide.day} · {slide.subtitle}</span>
         </div>
         <h1 class="hs-title font-black uppercase">{slide.title}</h1>
         <p class="hs-desc">{slide.description}</p>
         <div class="hs-actions">
-          <a href="/roadmap/day1" class="hs-cta hs-cta--primary">
-            View Roadmap
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-          </a>
-          <a href="/events" class="hs-cta hs-cta--secondary">
-            Explore All
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-          </a>
-          <Link href="/contact" class="hs-cta hs-cta--ghost">Contact Team</Link>
+          <div class="hs-actions__row">
+            <a href="/roadmap/day1" class="hs-cta hs-cta--primary">
+              View Roadmap
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+            </a>
+          </div>
+          <div class="hs-actions__row">
+            <a href="/events" class="hs-cta hs-cta--secondary">
+              Explore All
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+            </a>
+            <Link href="/contact" class="hs-cta hs-cta--ghost">Contact Team</Link>
+          </div>
         </div>
+      </div>}
+
+      <div class="hs-hero-countdown">
+        <HeroCountdown targetDate="2026-04-11T09:00:00" />
       </div>
 
-      <HeroCountdown targetDate="2026-04-11T09:00:00" />
+      {isDesktop.value && (
+        <div class="hs-video-branding" aria-label="Theta and SASTRA logos">
+          <img src="/theta-logo.png" alt="Theta" class="hs-video-branding__logo hs-video-branding__logo--theta" />
+          <div class="hs-video-branding__divider" />
+          <img src="/sponsors/general/sastra-university-logo.jpg" alt="SASTRA" class="hs-video-branding__logo hs-video-branding__logo--sastra" />
+        </div>
+      )}
       
       {/* Dots */}
       <div class="hs-dots">
@@ -243,15 +431,17 @@ export const HeroSlider = component$(() => {
       </div>
 
       {/* UNSTOPPABLE PROGRESS BAR (Absolute Bottom) */}
-      <div class="absolute bottom-0 left-0 z-50 h-[2.5px] w-full bg-white/5 pointer-events-none overflow-hidden">
-        <div class="h-full shadow-[0_0_15px_var(--hs-accent)]"
+      {!isDesktop.value && <div class="absolute bottom-0 left-0 z-50 h-[2.5px] w-full bg-white/5 pointer-events-none overflow-hidden">
+        <div
+             ref={progressBarRef}
+             class="h-full shadow-[0_0_15px_var(--hs-accent)]"
              style={{ 
-               width: `${progress.value}%`, 
+               width: "0%", 
                background: slide.accentColor,
-               /* No CSS transitions here! JS handles the smoothness via RAF */
+               transition: "width 120ms linear",
                willChange: "width"
              }} />
-      </div>
+      </div>}
     </section>
   );
 });

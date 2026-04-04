@@ -365,8 +365,7 @@ export default component$(() => {
     <div class="relative overflow-x-hidden px-4 pt-0 pb-10 sm:px-6 lg:px-8">
       {/* Full-viewport hero canvas */}
       <section
-        class="relative z-10 mx-auto flex w-full max-w-[1700px] flex-col justify-center overflow-hidden rounded-[3rem] border border-white/10 bg-gradient-to-br from-black/80 via-[#040604] to-black px-6 py-8 shadow-[0_0_120px_rgba(14,169,53,0.15)] ring-1 ring-white/5 backdrop-blur-3xl sm:px-10 lg:px-14"
-        style="height: calc(100vh - 90px); height: calc(100svh - 90px); height: calc(100dvh - 90px); min-height: calc(100vh - 90px); min-height: calc(100svh - 90px); min-height: calc(100dvh - 90px); max-height: calc(100dvh - 90px);"
+        class="relative z-10 mx-auto flex min-h-[42rem] w-full max-w-[1700px] flex-col justify-center overflow-hidden rounded-[2.25rem] border border-white/10 bg-gradient-to-br from-black/80 via-[#040604] to-black px-4 py-6 shadow-[0_0_120px_rgba(14,169,53,0.15)] ring-1 ring-white/5 backdrop-blur-3xl sm:min-h-[calc(100svh-90px)] sm:rounded-[3rem] sm:px-8 sm:py-8 lg:px-12 xl:px-14"
       >
         {/* --- Background Animations --- */}
         <div
@@ -375,11 +374,11 @@ export default component$(() => {
         ></div>
 
         <div
-          class="pointer-events-none absolute -right-[15%] bottom-[-10%] h-[50vw] w-[50vw] rounded-full bg-[#0ea935] opacity-[0.08] blur-[150px] transition-opacity duration-[10s]"
+          class="pointer-events-none absolute -right-[15%] bottom-[-10%] hidden h-[50vw] w-[50vw] rounded-full bg-[#0ea935] opacity-[0.08] blur-[150px] transition-opacity duration-[10s] sm:block"
           style="transition-delay: 2s;"
         />
 
-        <div class="s-ben10-mark s-ben10-mark--primary">
+        <div class="s-ben10-mark s-ben10-mark--primary hidden sm:block">
           <span class="s-ben10-mark__glow"></span>
           <img
             src="/ben10/ben10-logo.png"
@@ -388,7 +387,7 @@ export default component$(() => {
             style={{ animation: "float 15s ease-in-out infinite" }}
           />
         </div>
-        <div class="s-ben10-mark s-ben10-mark--secondary">
+        <div class="s-ben10-mark s-ben10-mark--secondary hidden sm:block">
           <span class="s-ben10-mark__glow"></span>
           <img
             src="/ben10/ben10-logo.png"
@@ -399,25 +398,25 @@ export default component$(() => {
         </div>
 
         <div class="flex h-full w-full flex-col justify-center">
-          <div class="relative grid h-full items-center gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14">
-            <div class="s-reveal">
-              <div class="mb-2 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 backdrop-blur-md">
+          <div class="relative grid h-full items-center gap-8 md:gap-10 xl:grid-cols-[minmax(0,1.02fr)_minmax(20rem,0.98fr)] xl:gap-10 2xl:gap-14">
+            <div class="s-reveal mx-auto flex w-full max-w-[32rem] flex-col items-center text-center xl:mx-0 xl:max-w-none xl:items-start xl:text-left">
+              <div class="mb-3 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 backdrop-blur-md">
                 <span class="text-[0.6rem] font-bold tracking-[0.2em] text-white/70 uppercase">
                   {copy.value.badge}
                 </span>
               </div>
 
-              <h1 class="t-heading bg-gradient-to-r from-white via-gray-200 to-gray-500 bg-clip-text text-[clamp(2rem,4vw,3.5rem)] leading-[1] font-black tracking-tighter text-transparent drop-shadow-xl">
+              <h1 class="t-heading bg-gradient-to-r from-white via-gray-200 to-gray-500 bg-clip-text text-[clamp(2.35rem,7vw,5rem)] leading-[0.92] font-black tracking-[-0.04em] text-transparent drop-shadow-xl">
                 {copy.value.titlePrefix}{" "}
                 <span class="t-gradient mt-1 block drop-shadow-[0_0_20px_rgba(14,169,53,0.3)]">
                   {copy.value.titleAccent}
                 </span>
               </h1>
-              <p class="mt-4 max-w-xl text-[0.85rem] leading-relaxed font-medium text-[var(--t-muted)] sm:text-[0.9rem] md:pr-10">
+              <p class="mt-4 max-w-[26rem] text-[0.92rem] leading-relaxed font-medium text-[var(--t-muted)] sm:max-w-[34rem] sm:text-[1rem] xl:pr-10">
                 {copy.value.subtitle}
               </p>
 
-              <div class="mt-8 flex flex-wrap gap-3 sm:gap-4">
+              <div class="mt-7 grid w-full grid-cols-3 gap-3 sm:max-w-[28rem] sm:gap-4 xl:max-w-none">
                 {[
                   {
                     label: "Partners",
@@ -434,7 +433,7 @@ export default component$(() => {
                 ].map((item) => (
                   <div
                     key={item.label}
-                    class="group relative flex flex-col justify-center rounded-[1rem] border border-white/10 bg-black/40 px-4 py-2.5 backdrop-blur-xl transition-all hover:border-white/20 hover:bg-white/10"
+                    class="group relative flex min-h-[5rem] flex-col justify-center rounded-[1rem] border border-white/10 bg-black/40 px-3 py-2.5 text-center backdrop-blur-xl transition-all hover:border-white/20 hover:bg-white/10 sm:px-4"
                   >
                     <p class="text-[0.55rem] font-black tracking-[0.2em] text-[var(--t-dim)] uppercase transition-colors group-hover:text-[#0ea935]">
                       {item.label}
@@ -446,27 +445,27 @@ export default component$(() => {
                 ))}
               </div>
 
-              <div class="mt-8 flex flex-wrap items-center gap-4">
+              <div class="mt-7 flex w-full flex-col gap-3 sm:max-w-[28rem] sm:flex-row sm:flex-wrap sm:justify-center xl:max-w-none xl:justify-start xl:gap-4">
                 <Link
                   href="/contact"
-                  class="rounded-full bg-gradient-to-r from-[#0ea935] to-[#0ba030] px-6 py-3 text-[0.75rem] font-black tracking-widest text-black uppercase shadow-[0_0_20px_rgba(14,169,53,0.4)] transition-all hover:scale-105 hover:shadow-[0_0_30px_rgba(14,169,53,0.6)]"
+                  class="flex w-full items-center justify-center rounded-full bg-gradient-to-r from-[#0ea935] via-[#35ff6b] to-[#09a82b] px-6 py-3 text-center text-[0.75rem] font-black tracking-widest text-black uppercase shadow-[0_0_20px_rgba(14,169,53,0.4)] transition-all hover:scale-105 hover:shadow-[0_0_30px_rgba(14,169,53,0.6)] sm:flex-1 xl:w-auto xl:flex-none"
                 >
                   {copy.value.primaryCta}
                 </Link>
                 <button
                   type="button"
                   onClick$={scrollToHall}
-                  class="rounded-full border border-white/20 bg-white/5 px-6 py-3 text-[0.75rem] font-bold tracking-widest text-white uppercase transition-all hover:border-white/40 hover:bg-white/10"
+                  class="flex w-full items-center justify-center rounded-full border border-white/20 bg-white/5 px-6 py-3 text-center text-[0.75rem] font-bold tracking-widest text-white uppercase transition-all hover:border-white/40 hover:bg-white/10 sm:flex-1 xl:w-auto xl:flex-none"
                 >
                   {copy.value.secondaryCta}
                 </button>
               </div>
             </div>
 
-            <div class="s-reveal hidden lg:block">
+            <div class="s-reveal block">
               <div
                 data-sponsor-tilt
-                class="group relative overflow-hidden rounded-[2rem] border border-white/10 bg-[#070707]/80 p-5 shadow-2xl backdrop-blur-3xl transition-all duration-500 hover:border-white/30 lg:p-6"
+                class="group relative mx-auto w-full max-w-[42rem] overflow-hidden rounded-[1.8rem] border border-white/10 bg-[#070707]/80 p-4 shadow-2xl backdrop-blur-3xl transition-all duration-500 hover:border-white/30 sm:p-5 lg:p-6 xl:mx-0 xl:max-w-none"
                 style={`box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 40px ${spotlight.glow};`}
               >
                 {/* Smooth Glass Highlights for Hover Effect */}
@@ -477,12 +476,12 @@ export default component$(() => {
                 <div class="pointer-events-none absolute inset-0 rounded-[2rem] bg-gradient-to-br from-white/10 via-transparent to-transparent opacity-30 transition-opacity duration-700 group-hover:opacity-60"></div>
 
                 <div class="relative z-10">
-                  <div class="mb-3 flex items-center justify-between gap-4">
+                  <div class="mb-3 flex items-start justify-between gap-4">
                     <div>
                       <p class="text-[0.55rem] font-black tracking-[0.3em] text-white/50 uppercase transition-colors duration-500 group-hover:text-white">
                         Spotlight Tier
                       </p>
-                      <h2 class="t-heading mt-1 text-[2rem] font-black tracking-tight text-white drop-shadow-md">
+                      <h2 class="t-heading mt-1 text-[1.75rem] font-black tracking-tight text-white drop-shadow-md sm:text-[2rem]">
                         {spotlight.label}
                       </h2>
                     </div>
@@ -495,23 +494,23 @@ export default component$(() => {
                   </div>
 
                   <p
-                    class="mt-3 w-max rounded-full border border-white/5 bg-black/40 px-3 py-1 text-[0.55rem] font-bold tracking-[0.25em] uppercase shadow-inner backdrop-blur-md transition-colors duration-500 group-hover:bg-black/60"
+                    class="mt-3 inline-flex max-w-full rounded-full border border-white/5 bg-black/40 px-3 py-1 text-[0.55rem] font-bold tracking-[0.22em] uppercase shadow-inner backdrop-blur-md transition-colors duration-500 group-hover:bg-black/60"
                     style={`color: ${spotlight.accent}; box-shadow: 0 0 5px ${spotlight.glow};`}
                   >
                     {spotlight.eyebrow}
                   </p>
-                  <p class="mt-2 max-w-xl text-[0.8rem] leading-relaxed text-white/60 drop-shadow-sm transition-colors duration-500 group-hover:text-white/80">
+                  <p class="mt-2 max-w-xl text-[0.82rem] leading-relaxed text-white/60 drop-shadow-sm transition-colors duration-500 group-hover:text-white/80 sm:text-[0.88rem]">
                     {spotlight.description}
                   </p>
 
-                  <div class="mt-4 grid gap-2 sm:grid-cols-2">
+                  <div class="mt-4 grid gap-2.5 sm:grid-cols-2">
                     {spotlight.sponsors.slice(0, 4).map((sponsor) => (
                       <div
                         key={`${spotlight.key}-${sponsor.name}`}
-                        class="s-spotlight-item group flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/5 p-3 backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:bg-white/10 hover:shadow-[0_10px_20px_rgba(255,255,255,0.05)]"
+                        class="s-spotlight-item group flex min-h-[8.75rem] flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/5 p-3 backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:bg-white/10 hover:shadow-[0_10px_20px_rgba(255,255,255,0.05)] sm:min-h-[9.5rem]"
                         style={`border-color: ${spotlight.glow};`}
                       >
-                        <div class="flex h-12 w-full items-center justify-center overflow-hidden rounded-xl bg-white/95 p-2 mix-blend-screen shadow-inner transition-all duration-500 group-hover:mix-blend-normal lg:h-14">
+                        <div class="flex h-14 w-full items-center justify-center overflow-hidden rounded-xl bg-white/95 p-2 mix-blend-screen shadow-inner transition-all duration-500 group-hover:mix-blend-normal sm:h-16">
                           <img
                             src={sponsor.logo}
                             alt={sponsor.name}
@@ -519,7 +518,7 @@ export default component$(() => {
                             class="h-full w-full object-contain filter transition-transform duration-700 group-hover:scale-110"
                           />
                         </div>
-                        <p class="mt-2 text-center text-[0.6rem] font-bold tracking-[0.2em] text-[var(--t-dim)] uppercase transition-colors group-hover:text-white">
+                        <p class="mt-2 line-clamp-2 text-center text-[0.6rem] font-bold tracking-[0.16em] text-[var(--t-dim)] uppercase transition-colors group-hover:text-white">
                           {sponsor.name}
                         </p>
                       </div>

@@ -7,6 +7,7 @@ import {
 } from "@builder.io/qwik";
 import { Link, useLocation } from "@builder.io/qwik-city";
 import { Header } from "~/components/header/header";
+import { Chatbot } from "~/components/chatbot/Chatbot";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { MotionPathPlugin } from "gsap/MotionPathPlugin";
@@ -82,6 +83,7 @@ export default component$(() => {
   const toastOpen = useSignal(false);
   const copy = useSignal<LayoutCopy>(defaultLayoutCopy);
   const isSponsorsRoute = loc.url.pathname.startsWith("/sponsors");
+  const isDevelopersRoute = loc.url.pathname.startsWith("/developers");
   const isDay2 = loc.url.pathname.includes("/roadmap/day2");
   const footerLogo = isDay2 ? "/onepeice/one-peice-logo.png" : "/theta-logo.png";
 
@@ -96,6 +98,10 @@ export default component$(() => {
     underDev.value = import.meta.env.PUBLIC_UNDER_DEV !== "false";
     
     gsap.registerPlugin(ScrollTrigger, MotionPathPlugin);
+    const footer = document.querySelector("footer.footer-neural-grid");
+    if (!footer) {
+      return;
+    }
 
     // Footer Stagger Entrance
     gsap.fromTo(".reveal-f", 
@@ -107,7 +113,7 @@ export default component$(() => {
         stagger: 0.15, 
         ease: "power4.out",
         scrollTrigger: {
-          trigger: "footer",
+          trigger: footer,
           start: "top 80%",
         }
       }
@@ -119,7 +125,7 @@ export default component$(() => {
       duration: 2,
       ease: "none",
       scrollTrigger: {
-        trigger: "footer",
+        trigger: footer,
         start: "top 90%",
         end: "bottom bottom",
         scrub: 1.5,
@@ -131,7 +137,7 @@ export default component$(() => {
       y: "100%",
       ease: "none",
       scrollTrigger: {
-        trigger: "footer",
+        trigger: footer,
         start: "top 50%",
         end: "bottom 50%",
         scrub: true,
@@ -149,7 +155,7 @@ export default component$(() => {
       duration: 1,
       ease: "none",
       scrollTrigger: {
-        trigger: "footer",
+        trigger: footer,
         start: "top 90%",
         end: "bottom bottom",
         scrub: 1.5,
@@ -174,7 +180,7 @@ export default component$(() => {
         yPercent: 50 * speed,
         ease: "none",
         scrollTrigger: {
-          trigger: "footer",
+          trigger: footer,
           scrub: true,
         }
       });
@@ -211,22 +217,25 @@ export default component$(() => {
     // Roadmap Dock (Bottom Navbar) Hiding Style
     // We re-run this on every route change because the dock is part of the page Slot
     const dock = document.querySelector(".rm-dock");
+    const footer = document.querySelector("footer.footer-neural-grid");
     if (dock) {
       // Clear any existing triggers for this element to prevent duplicates
       gsap.killTweensOf(dock);
-      
-      gsap.to(dock, {
-        scrollTrigger: {
-          trigger: "footer",
-          start: "top 95%",
-          toggleActions: "play reverse play reverse",
-        },
-        y: 120,
-        opacity: 0,
-        scale: 0.9,
-        duration: 0.7,
-        ease: "power3.inOut",
-      });
+
+      if (footer) {
+        gsap.to(dock, {
+          scrollTrigger: {
+            trigger: footer,
+            start: "top 95%",
+            toggleActions: "play reverse play reverse",
+          },
+          y: 120,
+          opacity: 0,
+          scale: 0.9,
+          duration: 0.7,
+          ease: "power3.inOut",
+        });
+      }
     }
   });
 
@@ -275,7 +284,8 @@ export default component$(() => {
         )}
 
         {/* ── Footer: Neural Grid Redesign ── */}
-        <footer class="footer-neural-grid mt-12 border-t border-white/5 pt-12 pb-12 relative overflow-hidden backdrop-blur-2xl bg-black/40">
+        {!isDevelopersRoute && (
+          <footer class="footer-neural-grid mt-12 border-t border-white/5 pt-12 pb-12 relative overflow-hidden backdrop-blur-2xl bg-black/40">
           {/* Ambient Blurred Glows (Modern Layout) */}
           <div class="footer-ambient-glow footer-ambient-glow--1 absolute -top-[20%] -left-[10%] h-[150%] w-[50%] opacity-20 blur-[120px] rounded-full pointer-events-none" />
           <div class="footer-ambient-glow footer-ambient-glow--2 absolute -bottom-[30%] -right-[15%] h-[120%] w-[60%] opacity-[0.15] blur-[100px] rounded-full pointer-events-none" />
@@ -444,8 +454,10 @@ export default component$(() => {
               </div>
             </div>
           </div>
-        </footer>
+          </footer>
+        )}
       </div>
+      <Chatbot />
     </div>
   );
 });

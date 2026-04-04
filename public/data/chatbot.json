@@ -1,0 +1,807 @@
+{
+  "_meta": {
+    "project": "Theta 2026 — SASTRA Deemed University",
+    "chatbot_type": "Intent-based FAQ with fuzzy matching",
+    "version": "1.0.0",
+    "note_on_fees": "Event entry fees are not published on the website. When any user asks about fees or registration cost, the bot must redirect them to check the event details page or contact the respective cluster coordinator.",
+    "last_updated": "2026-04-04"
+  },
+
+  "fest_info": {
+    "name": "Theta 2026",
+    "full_name": "Theta 2026 — National Level Techno-Management Fest",
+    "hosted_by": "SASTRA Deemed University",
+    "venue": "SASTRA Deemed University, Thanjavur, Tamil Nadu",
+    "dates": "March 15–17, 2026",
+    "day1_date": "March 15, 2026",
+    "day2_date": "March 16, 2026",
+    "day3_date": "March 17, 2026",
+    "website": "https://theta.sastra.edu",
+    "email": "theta@sastra.edu",
+    "tagline": "National Level Techno-Management Fest",
+    "stats": {
+      "events": "50+",
+      "participants": "5000+",
+      "colleges": "100+"
+    }
+  },
+
+  "team": {
+    "webtek": {
+      "label": "WebTek Team",
+      "description": "Engineering & Platform team responsible for the Theta 2026 website, deployment, and digital experience.",
+      "github": "#",
+      "linkedin": "#",
+      "email": "theta@sastra.edu",
+      "members": [
+        {
+          "name": "Abishek",
+          "role": "Frontend Developer",
+          "tags": ["UI", "Neon", "Interface Systems"]
+        },
+        {
+          "name": "Krish",
+          "role": "UI Engineer",
+          "tags": ["Flow", "Grid", "Design Sync"]
+        },
+        {
+          "name": "Abishek",
+          "role": "Motion Developer",
+          "tags": ["FX", "Pulse", "Motion Lab"]
+        },
+        {
+          "name": "Lingesh",
+          "role": "Component Developer",
+          "tags": ["Build", "Scale", "Systems"]
+        },
+        {
+          "name": "Kowhik",
+          "role": "Platform Developer",
+          "tags": ["Ship", "Speed", "Release"]
+        }
+      ],
+      "contact_note": "For platform or website issues, reach out via theta@sastra.edu"
+    },
+    "president": [],
+    "vice_presidents": [],
+    "corporate_relations": [],
+    "note": "Full team contact details (phone, email per member) are loaded from /data/team.json at runtime. The chatbot should fetch and serve that live data for specific contact queries."
+  },
+
+  "clusters": [
+    {
+      "id": "BIOGENISIS",
+      "theme": "logic",
+      "theme_color": "#bf5af2",
+      "description": "Biology and life sciences cluster with hands-on competitive events."
+    },
+    {
+      "id": "MATHEMATICA",
+      "theme": "logic",
+      "theme_color": "#bf5af2",
+      "description": "Math and logic-based games, puzzles, and competitive events."
+    },
+    {
+      "id": "STRATEGIA",
+      "theme": "innovation",
+      "theme_color": "#00d4ff",
+      "description": "Business strategy, entrepreneurship, and management challenges."
+    },
+    {
+      "id": "ACCESS",
+      "theme": "innovation",
+      "theme_color": "#00d4ff",
+      "description": "AI, tech, and interdisciplinary challenge events."
+    },
+    {
+      "id": "INFORMATICA",
+      "theme": "innovation",
+      "theme_color": "#00d4ff",
+      "description": "Coding, software development, and computer science challenges."
+    },
+    {
+      "id": "OPTICA",
+      "theme": "logic",
+      "theme_color": "#bf5af2",
+      "description": "Physics and optics-based fun and competitive games."
+    },
+    {
+      "id": "PODHIGAI",
+      "theme": "creative",
+      "theme_color": "#ff9500",
+      "description": "Creative tech and cultural fusion events in Tamil."
+    },
+    {
+      "id": "VINODHA VAHINI",
+      "theme": "fun",
+      "theme_color": "#0ea935",
+      "description": "Fun and entertainment events — treasure hunts and team games."
+    },
+    {
+      "id": "ELECTRONICA",
+      "theme": "innovation",
+      "theme_color": "#00d4ff",
+      "description": "Electronics, circuits, startup challenges, and tech showcases."
+    },
+    {
+      "id": "ROBOTICS",
+      "theme": "innovation",
+      "theme_color": "#00d4ff",
+      "description": "Robotics competitions including maze navigation and sumo bots."
+    },
+    {
+      "id": "SPORTIVA",
+      "theme": "sports",
+      "theme_color": "#ff375f",
+      "description": "Sports and physical activity events across all three days."
+    }
+  ],
+
+  "events": {
+    "day1": [
+      {
+        "id": 1,
+        "name": "FunKart",
+        "cluster": "BIOGENISIS",
+        "day": "Day 1",
+        "date": "March 15, 2026",
+        "timing": "2 PM – 5 PM",
+        "venue": "IED Hall",
+        "activities": ["Focus Freaks", "Zero Vision Zone", "Error Hunt"],
+        "activity_count": 3,
+        "description": "BIOGENISIS presents FunKart at IED Hall — a fun-packed bio event with Focus Freaks, Zero Vision Zone, and Error Hunt.",
+        "fee_info": "Please check the event details page or contact the BIOGENISIS cluster coordinator for entry fee information.",
+        "registration": "Check website events page"
+      },
+      {
+        "id": 2,
+        "name": "Bio Architect",
+        "cluster": "BIOGENISIS",
+        "day": "Day 1",
+        "date": "March 15, 2026",
+        "timing": "10 AM – 1 PM",
+        "venue": "IED Hall",
+        "activities": [],
+        "activity_count": 0,
+        "description": "BIOGENISIS presents Bio Architect — a standalone biology architecture challenge at IED Hall.",
+        "fee_info": "Please check the event details page or contact the BIOGENISIS cluster coordinator for entry fee information.",
+        "registration": "Check website events page"
+      },
+      {
+        "id": 3,
+        "name": "FInfinity",
+        "cluster": "MATHEMATICA",
+        "day": "Day 1",
+        "date": "March 15, 2026",
+        "timing": "11 AM – 4 PM",
+        "venue": "Room 203",
+        "activities": ["Act it - Guess it - Win it", "Think Fast Move Smart", "Clue Connection"],
+        "activity_count": 3,
+        "description": "MATHEMATICA presents FInfinity at Room 203 — a math-meets-fun event with Act it - Guess it - Win it, Think Fast Move Smart, and Clue Connection.",
+        "fee_info": "Please check the event details page or contact the MATHEMATICA cluster coordinator for entry fee information.",
+        "registration": "Check website events page"
+      },
+      {
+        "id": 4,
+        "name": "Infinity Beats",
+        "cluster": "MATHEMATICA",
+        "day": "Day 1",
+        "date": "March 15, 2026",
+        "timing": "11 AM – 4 PM",
+        "venue": "Room 211",
+        "activities": ["Balance Blitz", "Tap & Drop", "Spin & Solve"],
+        "activity_count": 3,
+        "description": "MATHEMATICA presents Infinity Beats at Room 211 — rhythm and math combined with Balance Blitz, Tap & Drop, and Spin & Solve.",
+        "fee_info": "Please check the event details page or contact the MATHEMATICA cluster coordinator for entry fee information.",
+        "registration": "Check website events page"
+      },
+      {
+        "id": 5,
+        "name": "Venture Forge Hackathon",
+        "cluster": "STRATEGIA",
+        "day": "Day 1",
+        "date": "March 15, 2026",
+        "timing": "11 AM – 1 PM",
+        "venue": "Room 303",
+        "activities": ["Problem Identification", "Marketing Solution Design", "Pitch"],
+        "activity_count": 3,
+        "description": "STRATEGIA presents Venture Forge Hackathon at Room 303 — a startup challenge with Problem Identification, Marketing Solution Design, and Pitch rounds.",
+        "fee_info": "Please check the event details page or contact the STRATEGIA cluster coordinator for entry fee information.",
+        "registration": "Check website events page"
+      },
+      {
+        "id": 6,
+        "name": "IRON FIST AI",
+        "cluster": "ACCESS",
+        "day": "Day 1",
+        "date": "March 15, 2026",
+        "timing": "11 AM – 1 PM",
+        "venue": "Room 410",
+        "activities": ["Mini Militia Team Battle", "Memory Relay", "Vision Challenge"],
+        "activity_count": 3,
+        "description": "ACCESS presents IRON FIST AI at Room 410 — an AI and gaming event with Mini Militia Team Battle, Memory Relay, and Vision Challenge.",
+        "fee_info": "Please check the event details page or contact the ACCESS cluster coordinator for entry fee information.",
+        "registration": "Check website events page"
+      },
+      {
+        "id": 7,
+        "name": "Edit Blitz",
+        "cluster": "INFORMATICA",
+        "day": "Day 1",
+        "date": "March 15, 2026",
+        "timing": "11:15 AM – 1:45 PM",
+        "venue": "Lab",
+        "activities": [],
+        "activity_count": 0,
+        "description": "INFORMATICA presents Edit Blitz — a standalone fast-paced editing competition at the Lab.",
+        "fee_info": "Please check the event details page or contact the INFORMATICA cluster coordinator for entry fee information.",
+        "registration": "Check website events page"
+      },
+      {
+        "id": 8,
+        "name": "Optica Event 1",
+        "cluster": "OPTICA",
+        "day": "Day 1",
+        "date": "March 15, 2026",
+        "timing": "11 AM – 1 PM",
+        "venue": "Room 310",
+        "activities": ["Physics Freeze Game", "Binary Code Game", "Bernoulli Binary Blast"],
+        "activity_count": 3,
+        "description": "OPTICA presents its Day 1 event at Room 310 with Physics Freeze Game, Binary Code Game, and Bernoulli Binary Blast.",
+        "fee_info": "Please check the event details page or contact the OPTICA cluster coordinator for entry fee information.",
+        "registration": "Check website events page"
+      },
+      {
+        "id": 9,
+        "name": "AI Prompt App Creation",
+        "cluster": "PODHIGAI",
+        "day": "Day 1",
+        "date": "March 15, 2026",
+        "timing": "11:30 AM – 1 PM",
+        "venue": "Room 110",
+        "activities": [],
+        "activity_count": 0,
+        "description": "PODHIGAI presents AI Prompt App Creation — build an app using AI prompts at Room 110.",
+        "fee_info": "Please check the event details page or contact the PODHIGAI cluster coordinator for entry fee information.",
+        "registration": "Check website events page"
+      },
+      {
+        "id": 10,
+        "name": "Tech Fun Fusion",
+        "cluster": "PODHIGAI",
+        "day": "Day 1",
+        "date": "March 15, 2026",
+        "timing": "2 PM – 3:30 PM",
+        "venue": "Room 110",
+        "activities": ["Connect the Tech", "Meme Creation"],
+        "activity_count": 2,
+        "description": "PODHIGAI presents Tech Fun Fusion at Room 110 — a creative blend of tech and fun with Connect the Tech and Meme Creation.",
+        "fee_info": "Please check the event details page or contact the PODHIGAI cluster coordinator for entry fee information.",
+        "registration": "Check website events page"
+      },
+      {
+        "id": 11,
+        "name": "Treasure Hunt",
+        "cluster": "VINODHA VAHINI",
+        "day": "Day 1",
+        "date": "March 15, 2026",
+        "timing": "2 PM – 4 PM",
+        "venue": "Room 406",
+        "activities": [],
+        "activity_count": 0,
+        "description": "VINODHA VAHINI presents Treasure Hunt — a fun campus-wide treasure hunt challenge at Room 406.",
+        "fee_info": "Please check the event details page or contact the VINODHA VAHINI cluster coordinator for entry fee information.",
+        "registration": "Check website events page"
+      },
+      {
+        "id": 12,
+        "name": "Tech Startup Challenge",
+        "cluster": "ELECTRONICA",
+        "day": "Day 1",
+        "date": "March 15, 2026",
+        "timing": "11 AM – 2 PM",
+        "venue": "Room 402",
+        "activities": ["Tech Spark", "Design & Develop", "Start-up Showcase"],
+        "activity_count": 3,
+        "description": "ELECTRONICA presents Tech Startup Challenge at Room 402 — a full startup pipeline event with Tech Spark, Design & Develop, and Start-up Showcase.",
+        "fee_info": "Please check the event details page or contact the ELECTRONICA cluster coordinator for entry fee information.",
+        "registration": "Check website events page"
+      },
+      {
+        "id": 13,
+        "name": "Maze Bot",
+        "cluster": "ROBOTICS",
+        "day": "Day 1",
+        "date": "March 15, 2026",
+        "timing": "11 AM – 1 PM",
+        "venue": "ECE Lab",
+        "activities": [],
+        "activity_count": 0,
+        "description": "ROBOTICS presents Maze Bot — a robot maze navigation competition at the ECE Lab.",
+        "fee_info": "Please check the event details page or contact the ROBOTICS cluster coordinator for entry fee information.",
+        "registration": "Check website events page"
+      },
+      {
+        "id": 14,
+        "name": "Sumo Bot",
+        "cluster": "ROBOTICS",
+        "day": "Day 1",
+        "date": "March 15, 2026",
+        "timing": "2 PM – 4 PM",
+        "venue": "ECE Lab",
+        "activities": [],
+        "activity_count": 0,
+        "description": "ROBOTICS presents Sumo Bot — robots battle it out in a sumo-style ring at the ECE Lab.",
+        "fee_info": "Please check the event details page or contact the ROBOTICS cluster coordinator for entry fee information.",
+        "registration": "Check website events page"
+      },
+      {
+        "id": 15,
+        "name": "Sports Events — Day 1",
+        "cluster": "SPORTIVA",
+        "day": "Day 1",
+        "date": "March 15, 2026",
+        "timing": "11 AM – 2 PM",
+        "venue": "Basketball Court",
+        "activities": ["Football", "Spin & Bowl", "Match the Bottle"],
+        "activity_count": 3,
+        "description": "SPORTIVA kicks off Day 1 at the Basketball Court with Football, Spin & Bowl, and Match the Bottle.",
+        "fee_info": "Please check the event details page or contact the SPORTIVA cluster coordinator for entry fee information.",
+        "registration": "Check website events page"
+      }
+    ],
+
+    "day2": [
+      {
+        "id": 16,
+        "name": "Clash of Champions",
+        "cluster": "BIOGENISIS",
+        "day": "Day 2",
+        "date": "March 16, 2026",
+        "timing": "10 AM – 1 PM",
+        "venue": "IED Hall",
+        "activities": ["Cup Stack Game", "Ping Pong Bounce", "Fast Word / Movie / Song"],
+        "activity_count": 3,
+        "description": "BIOGENISIS presents Clash of Champions at IED Hall — Cup Stack Game, Ping Pong Bounce, and Fast Word/Movie/Song rounds.",
+        "fee_info": "Please check the event details page or contact the BIOGENISIS cluster coordinator for entry fee information.",
+        "registration": "Check website events page"
+      },
+      {
+        "id": 17,
+        "name": "Non Technical Arena",
+        "cluster": "STRATEGIA",
+        "day": "Day 2",
+        "date": "March 16, 2026",
+        "timing": "11 AM – 1 PM",
+        "venue": "Room 303",
+        "activities": ["Cup Tower", "Mystery Box", "Bidding Challenge"],
+        "activity_count": 3,
+        "description": "STRATEGIA presents Non Technical Arena at Room 303 — fun management games with Cup Tower, Mystery Box, and Bidding Challenge.",
+        "fee_info": "Please check the event details page or contact the STRATEGIA cluster coordinator for entry fee information.",
+        "registration": "Check website events page"
+      },
+      {
+        "id": 18,
+        "name": "Technical Vibe",
+        "cluster": "ACCESS",
+        "day": "Day 2",
+        "date": "March 16, 2026",
+        "timing": "2 PM – 4 PM",
+        "venue": "Room 410",
+        "activities": ["Prompt Engineering", "AI Trailer", "QR Rhapsody"],
+        "activity_count": 3,
+        "description": "ACCESS presents Technical Vibe at Room 410 — AI-centric activities with Prompt Engineering, AI Trailer, and QR Rhapsody.",
+        "fee_info": "Please check the event details page or contact the ACCESS cluster coordinator for entry fee information.",
+        "registration": "Check website events page"
+      },
+      {
+        "id": 19,
+        "name": "Ctrl + Build + Win",
+        "cluster": "INFORMATICA",
+        "day": "Day 2",
+        "date": "March 16, 2026",
+        "timing": "10 AM – 1 PM",
+        "venue": "Lab",
+        "activities": [],
+        "activity_count": 0,
+        "description": "INFORMATICA presents Ctrl + Build + Win — a standalone build and code challenge at the Lab.",
+        "fee_info": "Please check the event details page or contact the INFORMATICA cluster coordinator for entry fee information.",
+        "registration": "Check website events page"
+      },
+      {
+        "id": 20,
+        "name": "Optica Event 2",
+        "cluster": "OPTICA",
+        "day": "Day 2",
+        "date": "March 16, 2026",
+        "timing": "9:30 AM – 11:30 AM",
+        "venue": "Room 310",
+        "activities": ["Number Grid Race", "Memory Snap", "Gravity Defier"],
+        "activity_count": 3,
+        "description": "OPTICA presents its Day 2 event at Room 310 — Number Grid Race, Memory Snap, and Gravity Defier.",
+        "fee_info": "Please check the event details page or contact the OPTICA cluster coordinator for entry fee information.",
+        "registration": "Check website events page"
+      },
+      {
+        "id": 21,
+        "name": "Fun Event",
+        "cluster": "PODHIGAI",
+        "day": "Day 2",
+        "date": "March 16, 2026",
+        "timing": "10 AM – 11:30 AM",
+        "venue": "Room 110",
+        "activities": ["Dizzy Balance", "Comedy Number Remix", "Memory Flip"],
+        "activity_count": 3,
+        "description": "PODHIGAI presents Fun Event at Room 110 — Dizzy Balance, Comedy Number Remix, and Memory Flip.",
+        "fee_info": "Please check the event details page or contact the PODHIGAI cluster coordinator for entry fee information.",
+        "registration": "Check website events page"
+      },
+      {
+        "id": 22,
+        "name": "Tech Mayhem",
+        "cluster": "ELECTRONICA",
+        "day": "Day 2",
+        "date": "March 16, 2026",
+        "timing": "10 AM – 1 PM",
+        "venue": "Room 402",
+        "activities": ["Real or Fake Tech", "Resistor Rush", "Memory Match"],
+        "activity_count": 3,
+        "description": "ELECTRONICA presents Tech Mayhem at Room 402 — Real or Fake Tech, Resistor Rush, and Memory Match.",
+        "fee_info": "Please check the event details page or contact the ELECTRONICA cluster coordinator for entry fee information.",
+        "registration": "Check website events page"
+      },
+      {
+        "id": 23,
+        "name": "Sports Events — Day 2",
+        "cluster": "SPORTIVA",
+        "day": "Day 2",
+        "date": "March 16, 2026",
+        "timing": "11 AM – 2 PM",
+        "venue": "Basketball Court",
+        "activities": ["One Over Cricket", "Mind on Leg", "Lucky Box"],
+        "activity_count": 3,
+        "description": "SPORTIVA continues on Day 2 at the Basketball Court — One Over Cricket, Mind on Leg, and Lucky Box.",
+        "fee_info": "Please check the event details page or contact the SPORTIVA cluster coordinator for entry fee information.",
+        "registration": "Check website events page"
+      }
+    ],
+
+    "day3": [
+      {
+        "id": 24,
+        "name": "Game Events",
+        "cluster": "MATHEMATICA",
+        "day": "Day 3",
+        "date": "March 17, 2026",
+        "timing": "9 AM – 3 PM",
+        "venue": "Room 202",
+        "activities": ["Ladder Game", "Brain Bid Battle", "Math Royale", "Digit Decoder"],
+        "activity_count": 4,
+        "description": "MATHEMATICA presents Game Events at Room 202 — Ladder Game, Brain Bid Battle, Math Royale, and Digit Decoder.",
+        "fee_info": "Please check the event details page or contact the MATHEMATICA cluster coordinator for entry fee information.",
+        "registration": "Check website events page"
+      },
+      {
+        "id": 25,
+        "name": "Stock Wars",
+        "cluster": "STRATEGIA",
+        "day": "Day 3",
+        "date": "March 17, 2026",
+        "timing": "11 AM – 1 PM",
+        "venue": "Room 303",
+        "activities": ["Market Entry", "News Impact", "Market Shock"],
+        "activity_count": 3,
+        "description": "STRATEGIA presents Stock Wars at Room 303 — a simulated stock market game with Market Entry, News Impact, and Market Shock rounds.",
+        "fee_info": "Please check the event details page or contact the STRATEGIA cluster coordinator for entry fee information.",
+        "registration": "Check website events page"
+      },
+      {
+        "id": 26,
+        "name": "Funverse",
+        "cluster": "ACCESS",
+        "day": "Day 3",
+        "date": "March 17, 2026",
+        "timing": "11 AM – 1 PM",
+        "venue": "Room 410 / 411",
+        "activities": ["Imposter Arc", "Chaos Carnival", "MegaVerse Battle"],
+        "activity_count": 3,
+        "description": "ACCESS presents Funverse at Room 410/411 — Imposter Arc, Chaos Carnival, and MegaVerse Battle.",
+        "fee_info": "Please check the event details page or contact the ACCESS cluster coordinator for entry fee information.",
+        "registration": "Check website events page"
+      },
+      {
+        "id": 27,
+        "name": "Clash of Codes",
+        "cluster": "INFORMATICA",
+        "day": "Day 3",
+        "date": "March 17, 2026",
+        "timing": "10 AM – 1 PM",
+        "venue": "Lab",
+        "activities": ["Warm Up", "Challenge", "Final Showdown"],
+        "activity_count": 3,
+        "description": "INFORMATICA presents Clash of Codes — a 3-round competitive coding event at the Lab with Warm Up, Challenge, and Final Showdown.",
+        "fee_info": "Please check the event details page or contact the INFORMATICA cluster coordinator for entry fee information.",
+        "registration": "Check website events page"
+      },
+      {
+        "id": 28,
+        "name": "Optica Event 3",
+        "cluster": "OPTICA",
+        "day": "Day 3",
+        "date": "March 17, 2026",
+        "timing": "9:30 AM – 11:30 AM",
+        "venue": "Room 310",
+        "activities": ["Sonar Sprint", "Hopscotch Pyramid", "Hoops & Scoops"],
+        "activity_count": 3,
+        "description": "OPTICA presents its Day 3 finale at Room 310 — Sonar Sprint, Hopscotch Pyramid, and Hoops & Scoops.",
+        "fee_info": "Please check the event details page or contact the OPTICA cluster coordinator for entry fee information.",
+        "registration": "Check website events page"
+      },
+      {
+        "id": 29,
+        "name": "Hackathon",
+        "cluster": "ROBOTICS",
+        "day": "Day 3",
+        "date": "March 17, 2026",
+        "timing": "11 AM – 1 PM",
+        "venue": "Room 106",
+        "activities": [],
+        "activity_count": 0,
+        "description": "ROBOTICS presents the grand Hackathon finale at Room 106 — build and innovate in one shot.",
+        "fee_info": "Please check the event details page or contact the ROBOTICS cluster coordinator for entry fee information.",
+        "registration": "Check website events page"
+      },
+      {
+        "id": 30,
+        "name": "ThinkZone Challenge",
+        "cluster": "ELECTRONICA",
+        "day": "Day 3",
+        "date": "March 17, 2026",
+        "timing": "10 AM – 1 PM",
+        "venue": "Room 402",
+        "activities": ["Artistic", "Kandupidi", "Scavenger Hunt"],
+        "activity_count": 3,
+        "description": "ELECTRONICA presents ThinkZone Challenge at Room 402 — Artistic, Kandupidi, and Scavenger Hunt.",
+        "fee_info": "Please check the event details page or contact the ELECTRONICA cluster coordinator for entry fee information.",
+        "registration": "Check website events page"
+      },
+      {
+        "id": 31,
+        "name": "Sports Events — Day 3",
+        "cluster": "SPORTIVA",
+        "day": "Day 3",
+        "date": "March 17, 2026",
+        "timing": "11 AM – 2 PM",
+        "venue": "Basketball Court",
+        "activities": ["Basketball", "Pass the Ball", "Tug of War"],
+        "activity_count": 3,
+        "description": "SPORTIVA closes the fest on Day 3 at the Basketball Court — Basketball, Pass the Ball, and Tug of War.",
+        "fee_info": "Please check the event details page or contact the SPORTIVA cluster coordinator for entry fee information.",
+        "registration": "Check website events page"
+      }
+    ]
+  },
+
+  "intents": [
+    {
+      "id": "greeting",
+      "patterns": [
+        "hi", "hello", "hey", "good morning", "good afternoon",
+        "good evening", "hai", "helo", "what's up", "yo", "sup", "howdy"
+      ],
+      "response": "Hey! 👋 Welcome to Theta 2026 — SASTRA's National Level Techno-Management Fest. How can I help you today? You can ask me about events, timings, venues, clusters, or the WebTek team!"
+    },
+    {
+      "id": "fest_dates",
+      "patterns": [
+        "when is theta", "theta dates", "when is the fest", "theta 2026 date",
+        "fest date", "event date", "when is theta 2026", "march", "schedule date",
+        "which day", "what date", "theta when"
+      ],
+      "response": "📅 Theta 2026 is happening on **March 15, 16, and 17, 2026** at SASTRA Deemed University, Thanjavur.\n\n• Day 1 — March 15, 2026\n• Day 2 — March 16, 2026\n• Day 3 — March 17, 2026"
+    },
+    {
+      "id": "fest_venue",
+      "patterns": [
+        "venue", "where is theta", "location", "theta location", "where is the fest",
+        "sastra", "place", "campus", "address", "thanjavur", "where is it"
+      ],
+      "response": "📍 Theta 2026 is hosted at **SASTRA Deemed University**, Thanjavur, Tamil Nadu. Individual events are spread across various rooms and labs on campus — check event details for specific venues."
+    },
+    {
+      "id": "webtek_contact",
+      "patterns": [
+        "webtek number", "web tek number", "webtek team number", "webtek leader number",
+        "webtek leader", "webtek team leader", "webtek head", "webtek team head",
+        "webtek contact", "webtek phone", "web tech team", "website team",
+        "give me webtek", "need webtek number", "i need webtek", "webtek leader contact",
+        "who built website", "who made website", "tech team number", "web team leader",
+        "webtek team contact", "who is webtek", "webtek details", "webtek info",
+        "tech team contact", "website developer", "webtek developer"
+      ],
+      "response": "💻 **WebTek Team — Theta 2026**\n\nThe WebTek team handles the engineering & platform for Theta 2026. Here are the members:\n\n• **Abishek** — Frontend Developer\n• **Krish** — UI Engineer\n• **Abishek** — Motion Developer\n• **Lingesh** — Component Developer\n• **Kowhik** — Platform Developer\n\n📧 For direct contact: **theta@sastra.edu**\n\n_For specific phone numbers, please check the Contact page on our website or email us._"
+    },
+    {
+      "id": "president_contact",
+      "patterns": [
+        "president number", "president contact", "president phone", "theta president",
+        "who is president", "president of theta", "fest president", "give me president number",
+        "president leader", "president details"
+      ],
+      "response": "👤 For the **Theta 2026 President's** contact details, please visit the **Contact page** on the website or email us at **theta@sastra.edu**. The full team directory with phone numbers is available there!"
+    },
+    {
+      "id": "vice_president_contact",
+      "patterns": [
+        "vice president", "vp number", "vice president contact", "vp contact",
+        "vice president number", "vp phone", "theta vp", "who is vp",
+        "vice president of theta", "give me vp number"
+      ],
+      "response": "👤 For the **Theta 2026 Vice President's** contact details, please visit the **Contact page** on the website or email us at **theta@sastra.edu**."
+    },
+    {
+      "id": "all_events",
+      "patterns": [
+        "all events", "list events", "show events", "what events", "events list",
+        "how many events", "total events", "events in theta", "theta events",
+        "what are the events", "event list", "events available", "all the events",
+        "events of theta", "theta 2026 events", "event schedule", "full schedule"
+      ],
+      "response": "🎯 Theta 2026 has **31 events** across **11 clusters** and **3 days**!\n\n**Day 1 (Mar 15):** FunKart, Bio Architect, FInfinity, Infinity Beats, Venture Forge Hackathon, IRON FIST AI, Edit Blitz, Optica Event 1, AI Prompt App Creation, Tech Fun Fusion, Treasure Hunt, Tech Startup Challenge, Maze Bot, Sumo Bot, Sports Events\n\n**Day 2 (Mar 16):** Clash of Champions, Non Technical Arena, Technical Vibe, Ctrl + Build + Win, Optica Event 2, Fun Event, Tech Mayhem, Sports Events\n\n**Day 3 (Mar 17):** Game Events, Stock Wars, Funverse, Clash of Codes, Optica Event 3, Hackathon, ThinkZone Challenge, Sports Events\n\nVisit the **Events page** for full details and timings!"
+    },
+    {
+      "id": "day1_events",
+      "patterns": [
+        "day 1 events", "day one events", "march 15 events", "first day events",
+        "events on day 1", "day 1 schedule", "day one schedule", "what events day 1",
+        "events day one", "day 1 activities"
+      ],
+      "response": "📅 **Day 1 Events — March 15, 2026**\n\n• FunKart — BIOGENISIS | IED Hall | 2 PM–5 PM\n• Bio Architect — BIOGENISIS | IED Hall | 10 AM–1 PM\n• FInfinity — MATHEMATICA | Room 203 | 11 AM–4 PM\n• Infinity Beats — MATHEMATICA | Room 211 | 11 AM–4 PM\n• Venture Forge Hackathon — STRATEGIA | Room 303 | 11 AM–1 PM\n• IRON FIST AI — ACCESS | Room 410 | 11 AM–1 PM\n• Edit Blitz — INFORMATICA | Lab | 11:15 AM–1:45 PM\n• Optica Event 1 — OPTICA | Room 310 | 11 AM–1 PM\n• AI Prompt App Creation — PODHIGAI | Room 110 | 11:30 AM–1 PM\n• Tech Fun Fusion — PODHIGAI | Room 110 | 2 PM–3:30 PM\n• Treasure Hunt — VINODHA VAHINI | Room 406 | 2 PM–4 PM\n• Tech Startup Challenge — ELECTRONICA | Room 402 | 11 AM–2 PM\n• Maze Bot — ROBOTICS | ECE Lab | 11 AM–1 PM\n• Sumo Bot — ROBOTICS | ECE Lab | 2 PM–4 PM\n• Sports Events — SPORTIVA | Basketball Court | 11 AM–2 PM"
+    },
+    {
+      "id": "day2_events",
+      "patterns": [
+        "day 2 events", "day two events", "march 16 events", "second day events",
+        "events on day 2", "day 2 schedule", "day two schedule", "what events day 2",
+        "events day two", "day 2 activities"
+      ],
+      "response": "📅 **Day 2 Events — March 16, 2026**\n\n• Clash of Champions — BIOGENISIS | IED Hall | 10 AM–1 PM\n• Non Technical Arena — STRATEGIA | Room 303 | 11 AM–1 PM\n• Technical Vibe — ACCESS | Room 410 | 2 PM–4 PM\n• Ctrl + Build + Win — INFORMATICA | Lab | 10 AM–1 PM\n• Optica Event 2 — OPTICA | Room 310 | 9:30 AM–11:30 AM\n• Fun Event — PODHIGAI | Room 110 | 10 AM–11:30 AM\n• Tech Mayhem — ELECTRONICA | Room 402 | 10 AM–1 PM\n• Sports Events — SPORTIVA | Basketball Court | 11 AM–2 PM"
+    },
+    {
+      "id": "day3_events",
+      "patterns": [
+        "day 3 events", "day three events", "march 17 events", "third day events",
+        "events on day 3", "day 3 schedule", "day three schedule", "what events day 3",
+        "events day three", "day 3 activities", "last day events", "final day events"
+      ],
+      "response": "📅 **Day 3 Events — March 17, 2026**\n\n• Game Events — MATHEMATICA | Room 202 | 9 AM–3 PM\n• Stock Wars — STRATEGIA | Room 303 | 11 AM–1 PM\n• Funverse — ACCESS | Room 410/411 | 11 AM–1 PM\n• Clash of Codes — INFORMATICA | Lab | 10 AM–1 PM\n• Optica Event 3 — OPTICA | Room 310 | 9:30 AM–11:30 AM\n• Hackathon — ROBOTICS | Room 106 | 11 AM–1 PM\n• ThinkZone Challenge — ELECTRONICA | Room 402 | 10 AM–1 PM\n• Sports Events — SPORTIVA | Basketball Court | 11 AM–2 PM"
+    },
+    {
+      "id": "event_fee",
+      "patterns": [
+        "fee", "entry fee", "registration fee", "how much", "cost", "price",
+        "ticket price", "pay", "payment", "how much to register", "fees",
+        "event cost", "registration cost", "participation fee", "entry cost",
+        "how much is the fee", "what is the fee", "registration amount"
+      ],
+      "response": "💳 **Event Entry Fee**\n\nThe exact entry fees are **not listed publicly** on the website. To get the fee details for any specific event, please:\n\n1. Visit the **Events page** and click on the event you're interested in — the details section may have registration info.\n2. Or **email us** at theta@sastra.edu\n3. Or contact the respective **cluster coordinator** directly via the Contact page.\n\n_We don't want to give you wrong numbers, so please verify directly!_ ✅"
+    },
+    {
+      "id": "registration",
+      "patterns": [
+        "how to register", "registration", "register", "sign up", "how to apply",
+        "how to participate", "participate", "join", "enroll", "how to join",
+        "registration link", "register for event", "how do i register",
+        "how to sign up", "registration process", "apply"
+      ],
+      "response": "📝 **How to Register for Theta 2026**\n\nTo register for events:\n1. Visit the **Events page** on the website\n2. Click on the event you want to join\n3. Look for the **registration link** in the event details\n4. Or email **theta@sastra.edu** with your query\n\nFor fees — please check the event details page directly, as fees are not published publicly."
+    },
+    {
+      "id": "robotics_events",
+      "patterns": [
+        "robotics", "robot event", "maze bot", "sumo bot", "hackathon robotics",
+        "robot competition", "robotics events", "robotics cluster",
+        "bot events", "robot challenge"
+      ],
+      "response": "🤖 **ROBOTICS Cluster Events**\n\n• **Maze Bot** — Day 1 | ECE Lab | 11 AM–1 PM\n  Navigate your bot through a maze!\n\n• **Sumo Bot** — Day 1 | ECE Lab | 2 PM–4 PM\n  Bots battle in a sumo ring!\n\n• **Hackathon** — Day 3 | Room 106 | 11 AM–1 PM\n  Build and innovate in one go!\n\n📍 Venue: ECE Lab (Maze Bot & Sumo Bot), Room 106 (Hackathon)\n💳 Fee: Please check the events page or contact us at theta@sastra.edu"
+    },
+    {
+      "id": "coding_events",
+      "patterns": [
+        "coding event", "code competition", "programming event", "informatica",
+        "clash of codes", "edit blitz", "ctrl build win", "coding challenge",
+        "programming competition", "code event", "software event", "informatica events"
+      ],
+      "response": "💻 **INFORMATICA Cluster Events**\n\n• **Edit Blitz** — Day 1 | Lab | 11:15 AM–1:45 PM\n  Fast-paced editing competition\n\n• **Ctrl + Build + Win** — Day 2 | Lab | 10 AM–1 PM\n  Build and compete!\n\n• **Clash of Codes** — Day 3 | Lab | 10 AM–1 PM\n  3 rounds: Warm Up → Challenge → Final Showdown\n\n📍 All events at the **Lab**\n💳 Fee: Please check the events page or email theta@sastra.edu"
+    },
+    {
+      "id": "sports_events",
+      "patterns": [
+        "sports", "sportiva", "football", "cricket", "basketball", "tug of war",
+        "sports event", "physical event", "sports activities", "games event",
+        "sportiva events", "sports competition", "athletic event"
+      ],
+      "response": "⚽ **SPORTIVA Cluster Events** — Basketball Court\n\n• **Day 1 (Mar 15) | 11 AM–2 PM**\n  Football, Spin & Bowl, Match the Bottle\n\n• **Day 2 (Mar 16) | 11 AM–2 PM**\n  One Over Cricket, Mind on Leg, Lucky Box\n\n• **Day 3 (Mar 17) | 11 AM–2 PM**\n  Basketball, Pass the Ball, Tug of War\n\n📍 All sports events at the **Basketball Court**\n💳 Fee: Please check the events page or email theta@sastra.edu"
+    },
+    {
+      "id": "hackathon_event",
+      "patterns": [
+        "hackathon", "hack", "hacking event", "venture forge", "coding hackathon",
+        "hack event", "hack competition", "build competition", "venture forge hackathon"
+      ],
+      "response": "🛠️ **Hackathon Events at Theta 2026**\n\n• **Venture Forge Hackathon** — STRATEGIA\n  Day 1 | Room 303 | 11 AM–1 PM\n  Rounds: Problem Identification → Marketing Solution Design → Pitch\n\n• **Hackathon** — ROBOTICS\n  Day 3 | Room 106 | 11 AM–1 PM\n  Build and innovate in one session!\n\n💳 Fee: Please check event details on the website or email theta@sastra.edu"
+    },
+    {
+      "id": "clusters_list",
+      "patterns": [
+        "clusters", "what are the clusters", "list clusters", "all clusters",
+        "cluster list", "categories", "event categories", "what clusters",
+        "theta clusters", "how many clusters", "types of events"
+      ],
+      "response": "🗂️ **Theta 2026 has 11 Clusters:**\n\n1. **BIOGENISIS** — Biology & life sciences\n2. **MATHEMATICA** — Math & logic\n3. **STRATEGIA** — Business strategy & management\n4. **ACCESS** — AI & interdisciplinary tech\n5. **INFORMATICA** — Coding & software\n6. **OPTICA** — Physics & optics\n7. **PODHIGAI** — Creative tech & cultural\n8. **VINODHA VAHINI** — Fun & entertainment\n9. **ELECTRONICA** — Electronics & startups\n10. **ROBOTICS** — Robot competitions\n11. **SPORTIVA** — Sports & physical events\n\nAsk me about any cluster for more details!"
+    },
+    {
+      "id": "stock_wars",
+      "patterns": [
+        "stock wars", "stock market event", "market event", "stock game",
+        "stock competition", "finance event", "business event", "bidding"
+      ],
+      "response": "📈 **Stock Wars** — STRATEGIA Cluster\n\n📅 Day 3 | March 17, 2026\n⏰ 11 AM – 1 PM\n📍 Room 303\n\n**Rounds:**\n• Market Entry\n• News Impact\n• Market Shock\n\n💳 Fee: Please check the events page or email theta@sastra.edu"
+    },
+    {
+      "id": "treasure_hunt",
+      "patterns": [
+        "treasure hunt", "hunt event", "vinodha vahini", "fun hunt",
+        "treasure game", "campus hunt", "scavenger"
+      ],
+      "response": "🗺️ **Treasure Hunt** — VINODHA VAHINI Cluster\n\n📅 Day 1 | March 15, 2026\n⏰ 2 PM – 4 PM\n📍 Room 406\n\nA fun campus-wide treasure hunt challenge!\n\n💳 Fee: Please check the events page or email theta@sastra.edu"
+    },
+    {
+      "id": "ai_events",
+      "patterns": [
+        "ai event", "artificial intelligence", "prompt engineering", "ai competition",
+        "iron fist ai", "ai prompt", "ai activity", "machine learning event",
+        "technical vibe", "ai trailer", "access cluster"
+      ],
+      "response": "🤖 **AI & Tech Events at Theta 2026**\n\n• **IRON FIST AI** — ACCESS | Day 1 | Room 410 | 11 AM–1 PM\n  Mini Militia Team Battle, Memory Relay, Vision Challenge\n\n• **AI Prompt App Creation** — PODHIGAI | Day 1 | Room 110 | 11:30 AM–1 PM\n  Build an app using AI prompts!\n\n• **Technical Vibe** — ACCESS | Day 2 | Room 410 | 2 PM–4 PM\n  Prompt Engineering, AI Trailer, QR Rhapsody\n\n💳 Fee: Please check event details on the website or email theta@sastra.edu"
+    },
+    {
+      "id": "contact_general",
+      "patterns": [
+        "contact", "how to contact", "email", "phone number", "reach",
+        "get in touch", "contact theta", "theta email", "coordinator",
+        "who to contact", "helpline", "support", "query", "doubt"
+      ],
+      "response": "📬 **Contact Theta 2026**\n\n📧 **Email:** theta@sastra.edu\n🌐 **Website:** theta.sastra.edu\n\nFor specific team member contacts (President, Vice Presidents, Corporate Relations), visit the **Contact page** on the website — all coordinators with their numbers are listed there.\n\nFor website issues, reach the **WebTek team** via theta@sastra.edu"
+    },
+    {
+      "id": "about_theta",
+      "patterns": [
+        "about theta", "what is theta", "tell me about theta", "theta info",
+        "what is theta 2026", "sastra fest", "about the fest", "theta details",
+        "what is this fest", "about this event", "theta overview"
+      ],
+      "response": "🎉 **About Theta 2026**\n\nTheta 2026 is SASTRA Deemed University's **National Level Techno-Management Fest** — one of the most exciting college fests in Tamil Nadu!\n\n📅 **Dates:** March 15–17, 2026\n📍 **Venue:** SASTRA Deemed University, Thanjavur\n🎯 **Events:** 50+\n👥 **Participants:** 5000+\n🏫 **Colleges:** 100+\n\nTheta brings together the best minds in tech, management, arts, and sports across 11 competitive clusters. 🚀"
+    },
+    {
+      "id": "fallback",
+      "patterns": [],
+      "response": "🤔 Hmm, I didn't quite catch that! I can help you with:\n\n• **Events & Schedule** — timings, venues, activities\n• **Clusters** — BIOGENISIS, MATHEMATICA, ROBOTICS, and more\n• **Contact** — team leads, WebTek team, general queries\n• **Registration** — how to sign up\n• **Fest Info** — dates, venue, about Theta 2026\n\nTry asking something like: _\"What events are on Day 1?\"_ or _\"Give me WebTek team contact\"_"
+    }
+  ],
+
+  "fuzzy_match_config": {
+    "library_recommendation": "Fuse.js",
+    "threshold": 0.35,
+    "keys_to_match": ["patterns"],
+    "note": "Lower threshold = stricter match. 0.35 works well for typos and partial matches like 'webtek leder nmbr' → webtek leader number.",
+    "stop_words": ["give", "me", "i", "need", "want", "can", "you", "please", "tell", "show", "what", "is", "the", "a", "an", "of", "for", "to", "how", "do", "get"],
+    "preprocessing": "lowercase, strip punctuation, remove stop words, then fuzzy match against patterns array"
+  },
+
+  "quick_replies": {
+    "on_greeting": ["📅 Event Schedule", "🎯 All Events", "🤖 Robotics Events", "💻 Coding Events", "📞 Contact Us"],
+    "on_fee_question": ["📋 Event Details Page", "📧 Email Us", "📞 Contact Coordinator"],
+    "on_event_details": ["📅 Day 1 Events", "📅 Day 2 Events", "📅 Day 3 Events", "🏆 All Clusters"]
+  }
+}

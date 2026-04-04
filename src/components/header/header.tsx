@@ -120,32 +120,33 @@ export const Header = component$(() => {
         </div>
 
         {/* Right: Register + Hamburger */}
-        <div class="pointer-events-auto flex flex-1 items-center justify-end gap-2 sm:gap-3 md:flex-initial md:w-[260px] lg:w-[390px]">
+        <div class="pointer-events-auto flex flex-1 items-center justify-end gap-2 sm:gap-3 md:flex-initial md:w-[290px] lg:w-[420px]">
           <div class="group pointer-events-auto relative hidden md:flex">
             <Link
               href="/developers"
-              class="relative z-10 flex items-center justify-center gap-2 overflow-hidden rounded-full border px-5 py-2.5 text-[0.6rem] font-black tracking-[0.24em] whitespace-nowrap uppercase text-[#f7fbff] backdrop-blur-xl transition-all duration-300 active:scale-95 lg:px-6 lg:py-3"
+              class="relative z-10 flex min-w-[9.75rem] items-center justify-center gap-2 overflow-hidden rounded-full border px-3 py-2.5 text-[0.54rem] font-black tracking-[0.2em] uppercase text-[#f7fbff] backdrop-blur-xl transition-all duration-300 active:scale-95 md:min-w-[10.5rem] md:px-4 lg:min-w-[12rem] lg:gap-2.5 lg:px-6 lg:py-3 lg:text-[0.62rem]"
               style={
                 developerButtonActive
-                  ? "border-color:rgba(111,255,253,0.72);box-shadow:0 0 0 1px rgba(255,0,184,0.15),0 0 24px rgba(111,255,253,0.22),0 0 52px rgba(255,0,184,0.2);"
-                  : "border-color:rgba(255,255,255,0.12);box-shadow:0 0 18px rgba(111,255,253,0.14),0 0 36px rgba(255,0,184,0.12);"
+                  ? "border-color:rgba(111,255,253,0.72);background:linear-gradient(135deg,rgba(8,20,42,0.96),rgba(38,8,54,0.94));box-shadow:0 0 0 1px rgba(255,0,184,0.16),0 0 26px rgba(111,255,253,0.3),0 0 58px rgba(255,0,184,0.24);"
+                  : "border-color:rgba(255,255,255,0.12);background:linear-gradient(135deg,rgba(7,16,34,0.92),rgba(31,8,50,0.9));box-shadow:0 0 18px rgba(111,255,253,0.18),0 0 40px rgba(255,0,184,0.14);"
               }
             >
               <span
-                class="absolute inset-0"
-                style="background:linear-gradient(135deg,rgba(6,18,38,0.95),rgba(31,8,50,0.92));"
+                class="absolute inset-0 opacity-90"
+                style="background:linear-gradient(135deg,rgba(92,255,247,0.08),transparent 35%,rgba(255,0,184,0.12) 100%);"
               />
               <span
-                class="absolute inset-y-[-120%] left-[-20%] w-[70%] rotate-12 opacity-80 blur-2xl transition-transform duration-500 group-hover:translate-x-6"
-                style="background:linear-gradient(180deg,rgba(111,255,253,0.6),rgba(255,0,184,0.55),rgba(171,255,57,0.34));"
+                class="absolute inset-y-[-120%] left-[-18%] w-[68%] rotate-12 opacity-80 blur-2xl transition-transform duration-500 group-hover:translate-x-7"
+                style="background:linear-gradient(180deg,rgba(111,255,253,0.72),rgba(255,0,184,0.58),rgba(171,255,57,0.38));"
               />
-              <span class="relative flex h-2.5 w-2.5">
-                <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#6ffffd] opacity-70" />
-                <span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#ff4fd8] shadow-[0_0_14px_rgba(255,79,216,0.75)]" />
+              <span class="pointer-events-none absolute inset-[1px] rounded-full border border-white/10 opacity-70" />
+              <span class="relative flex h-2.5 w-2.5 shrink-0 lg:h-3 lg:w-3">
+                <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#6ffffd] opacity-75" />
+                <span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#ff4fd8] shadow-[0_0_16px_rgba(255,79,216,0.82)] lg:h-3 lg:w-3" />
               </span>
-              <span class="relative">Developers</span>
+              <span class="relative truncate">Developers</span>
               <svg
-                class="relative h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1"
+                class="relative h-3.5 w-3.5 shrink-0 transition-transform duration-300 group-hover:translate-x-1"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -229,14 +230,17 @@ export const Header = component$(() => {
           </Link>
           <Link
             href="/developers"
-            class="block rounded-2xl border px-5 py-4 text-center text-sm font-black tracking-[0.22em] uppercase text-[#f7fbff] shadow-[0_0_18px_rgba(111,255,253,0.16)] transition-all"
+            class="block rounded-2xl border px-5 py-4 text-center text-sm font-black tracking-[0.18em] uppercase text-[#f7fbff] shadow-[0_0_18px_rgba(111,255,253,0.16)] transition-all"
             style={
               developerButtonActive
-                ? "border-color:rgba(111,255,253,0.65);background:linear-gradient(135deg,rgba(8,22,42,0.96),rgba(34,8,44,0.94));box-shadow:0 0 20px rgba(111,255,253,0.22),0 0 44px rgba(255,0,184,0.16);"
-                : "border-color:rgba(255,255,255,0.08);background:linear-gradient(135deg,rgba(8,18,35,0.92),rgba(27,10,38,0.9));box-shadow:0 0 16px rgba(111,255,253,0.14),0 0 28px rgba(255,0,184,0.1);"
+                ? "border-color:rgba(111,255,253,0.68);background:linear-gradient(135deg,rgba(8,22,42,0.96),rgba(42,8,56,0.94));box-shadow:0 0 24px rgba(111,255,253,0.24),0 0 48px rgba(255,0,184,0.18);"
+                : "border-color:rgba(255,255,255,0.08);background:linear-gradient(135deg,rgba(8,18,35,0.94),rgba(31,10,44,0.92));box-shadow:0 0 18px rgba(111,255,253,0.16),0 0 32px rgba(255,0,184,0.12);"
             }
           >
-            Developers
+            <span class="inline-flex items-center justify-center gap-2">
+              <span class="inline-flex h-2.5 w-2.5 rounded-full bg-[#ff4fd8] shadow-[0_0_14px_rgba(255,79,216,0.78)]" />
+              <span>Developers</span>
+            </span>
           </Link>
           <Link href="/events"
             class="t-spider-mobile-register mt-6 block rounded-2xl px-5 py-4 text-center text-sm font-black tracking-widest text-white uppercase transition-colors"

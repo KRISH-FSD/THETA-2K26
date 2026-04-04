@@ -269,8 +269,6 @@ export default component$(() => {
   const selectedDay = useSignal<DayEvent | null>(null);
   const selectedTier = useSignal<(typeof sponsorTiers)[number]["key"] | null>(null);
   const sphereRotation = useSignal({ x: 0, y: 0 });
-  const globalMouse = useSignal({ x: 0, y: 0 });
-  const mouseSmoothing = useSignal({ x: 0, y: 0 });
   const mobilePerfMode = useSignal(false);
 
   useVisibleTask$(() => {
@@ -292,122 +290,10 @@ export default component$(() => {
   });
 
   /* ── Global Interactive Background Canvas ── */
-  useVisibleTask$(() => {
-    if (isMobilePerfMode()) return;
-    const canvas = document.querySelector<HTMLCanvasElement>(".home-global-interactive-bg");
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    let width = 0; let height = 0;
-    const particles: Array<{ x: number; y: number; vx: number; vy: number; size: number; alpha: number }> = [];
-    const particleCount = 60;
-
-    const resize = () => {
-      width = window.innerWidth;
-      height = window.innerHeight;
-      canvas.width = width * (window.devicePixelRatio || 1);
-      canvas.height = height * (window.devicePixelRatio || 1);
-      ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
-    };
-
-    const createParticles = () => {
-      for (let i = 0; i < particleCount; i++) {
-        particles.push({
-          x: Math.random() * width,
-          y: Math.random() * height,
-          vx: (Math.random() - 0.5) * 0.5,
-          vy: (Math.random() - 0.5) * 0.5,
-          size: Math.random() * 2 + 1,
-          alpha: Math.random() * 0.5 + 0.1
-        });
-      }
-    };
-
-    const draw = () => {
-      ctx.clearRect(0, 0, width, height);
-
-      // Smooth mouse follow
-      mouseSmoothing.value = {
-        x: mouseSmoothing.value.x + (globalMouse.value.x - mouseSmoothing.value.x) * 0.1,
-        y: mouseSmoothing.value.y + (globalMouse.value.y - mouseSmoothing.value.y) * 0.1
-      };
-      
-      const mX = mouseSmoothing.value.x;
-      const mY = mouseSmoothing.value.y;
-
-      // Global Mouse Spotlight
-      const gradient = ctx.createRadialGradient(mX, mY, 0, mX, mY, 500);
-      gradient.addColorStop(0, "rgba(0, 255, 85, 0.12)");
-      gradient.addColorStop(0.5, "rgba(0, 255, 85, 0.03)");
-      gradient.addColorStop(1, "rgba(0, 255, 85, 0)");
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, width, height);
-
-      // Connect to mission cards (Data Filaments)
-      const cards = document.querySelectorAll(".t-day-card");
-      cards.forEach(card => {
-        const rect = card.getBoundingClientRect();
-        const cX = rect.left + rect.width / 2;
-        const cY = rect.top + rect.height / 2;
-        const dist = Math.hypot(cX - mX, cY - mY);
-        if (dist < 450) {
-          ctx.beginPath();
-          ctx.moveTo(mX, mY);
-          ctx.lineTo(cX, cY);
-          ctx.strokeStyle = `rgba(0, 255, 85, ${(1 - dist / 450) * 0.15})`;
-          ctx.lineWidth = 0.5;
-          ctx.stroke();
-        }
-      });
-
-      // Particles system
-      particles.forEach(p => {
-        p.x += p.vx;
-        p.y += p.vy;
-        
-        const dx = mX - p.x;
-        const dy = mY - p.y;
-        const dist = Math.hypot(dx, dy);
-        if (dist < 200) {
-          p.x -= dx * 0.01;
-          p.y -= dy * 0.01;
-        }
-
-        if (p.x < 0) p.x = width; if (p.x > width) p.x = 0;
-        if (p.y < 0) p.y = height; if (p.y > height) p.y = 0;
-
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(0, 255, 85, ${p.alpha})`;
-        ctx.fill();
-      });
-
-      requestAnimationFrame(draw);
-    };
-
-    window.addEventListener("resize", resize);
-    resize();
-    createParticles();
-    draw();
-
-    return () => {
-      window.removeEventListener("resize", resize);
-    };
-  });
-
-  useVisibleTask$(() => {
-    if (isMobilePerfMode()) return;
-    const trackMouse = (e: MouseEvent) => {
-      globalMouse.value = { x: e.clientX, y: e.clientY };
-    };
-    window.addEventListener("mousemove", trackMouse);
-    return () => window.removeEventListener("mousemove", trackMouse);
-  });
 
   /* ── Particles Effect ── */
   useVisibleTask$(() => {
-    if (isMobilePerfMode()) return;
+    return;
     const section = document.querySelector<HTMLElement>(".festival-days-mesh");
     const canvas = document.querySelector<HTMLCanvasElement>(".festival-days-mesh-web");
     if (!section || !canvas) return;
@@ -1033,7 +919,6 @@ export default component$(() => {
       <HeroSlider />
 
       {/* ── Global Interactive Background (Entire Page) ── */}
-      {!mobilePerfMode.value && <canvas class="home-global-interactive-bg fixed inset-0 z-0 pointer-events-none opacity-40" />}
 
       {!mobilePerfMode.value && (
         <div class="home-neural-grid pointer-events-none fixed inset-0 z-0 opacity-0 bg-[radial-gradient(circle_at_center,rgba(0,255,85,0.03)_0%,transparent_70%)]">
@@ -1045,71 +930,47 @@ export default component$(() => {
       <section class="festival-days-shell py-20 relative overflow-hidden">
         <style>{`
           .festival-title {
-            font-family: "Syne", var(--font-body), sans-serif;
+            font-family: var(--font-hero-ui), var(--font-body), sans-serif;
+            font-style: italic;
+            font-weight: 700;
+            letter-spacing: 0.34em;
+            text-transform: uppercase;
+            color: rgba(214, 222, 214, 0.72);
+            text-shadow: none;
           }
           .festival-title__line {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
+            display: inline-block;
             white-space: nowrap;
-            letter-spacing: 0.22em;
-            text-shadow: 0 8px 30px rgba(0, 0, 0, 0.28);
-            animation: festival-line-float 6s ease-in-out infinite;
-          }
-          .festival-title__line--alt {
-            animation-delay: -3s;
           }
           .festival-title__base {
-            color: rgba(255, 255, 255, 0.96);
-            transition: transform 0.6s ease, opacity 0.6s ease;
+            color: inherit;
+            font-weight: inherit;
           }
           .festival-title__accent {
-            position: relative;
             display: inline-block;
-            padding: 0 0.08em;
-            background-size: 200% 100%;
+            padding: 0 0.04em;
+            font-weight: inherit;
+            background-size: 100% 100%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            animation: festival-accent-shift 4.8s ease-in-out infinite;
-            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.08));
+            filter: drop-shadow(0 0 14px rgba(255, 255, 255, 0.08));
           }
           .festival-title__accent--light {
-            background-image: linear-gradient(90deg, #9dff8b 0%, #00ff6e 45%, #bfffe0 100%);
+            background-image: linear-gradient(135deg, #b8ff7a 0%, #32ff88 45%, #00d26a 100%);
           }
           .festival-title__accent--night {
-            background-image: linear-gradient(90deg, #ff7a7a 0%, #ff2657 50%, #ff86c7 100%);
-            animation-delay: -2.1s;
+            background-image: linear-gradient(135deg, #ff8a8a 0%, #ff3d6e 45%, #ff1847 100%);
           }
           .festival-title__accent::after {
-            content: "";
-            position: absolute;
-            left: 0;
-            right: 0;
-            bottom: -0.08em;
-            height: 0.08em;
-            border-radius: 999px;
-            background: currentColor;
-            opacity: 0.18;
-            transform: scaleX(0.72);
-            transform-origin: center;
-            filter: blur(4px);
-          }
-          @keyframes festival-line-float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-3px); }
-          }
-          @keyframes festival-accent-shift {
-            0%, 100% { background-position: 0% 50%; transform: translateY(0) scale(1); }
-            50% { background-position: 100% 50%; transform: translateY(-1px) scale(1.03); }
+            content: none;
           }
           @media (max-width: 640px) {
+            .festival-title {
+              letter-spacing: 0.2em;
+            }
             .festival-title__line {
-              gap: 0.24rem;
-              letter-spacing: 0.12em;
               white-space: normal;
-              justify-content: center;
-              flex-wrap: wrap;
             }
           }
           .t-day-card {
@@ -1207,37 +1068,31 @@ export default component$(() => {
 
         <div class="festival-days-shell__inner mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
 
-          <div class="festival-header-wrap mb-24 text-center relative z-20">
+          <div class="festival-header-wrap mb-14 text-center relative z-20 sm:mb-16">
             <div class="overflow-hidden mb-4">
               <span class="t-badge mx-auto reveal-slide-up block w-fit">Mission Day Selection</span>
             </div>
-            <h2 class="festival-title mt-2 text-[clamp(1.15rem,5vw,2rem)] font-black uppercase leading-[1.1] text-white flex flex-col items-center">
-              <div class="overflow-hidden py-1">
-                <span class="festival-title__line reveal-slide-up">
-                  <span class="festival-title__base">Shine in the</span>
-                  <span class="festival-title__accent festival-title__accent--light">light</span>
-                </span>
-              </div>
-              <div class="overflow-hidden py-1">
-                <span class="festival-title__line festival-title__line--alt reveal-slide-up">
-                  <span class="festival-title__base">&amp; rule the</span>
-                  <span class="festival-title__accent festival-title__accent--night">night</span>
-                </span>
-              </div>
+            <h2 class="festival-title mt-2 text-[clamp(1.15rem,2.4vw,1.45rem)] leading-[1.2]">
+              <span class="festival-title__line">
+                <span class="festival-title__base">Shine in the </span>
+                <span class="festival-title__accent festival-title__accent--light">light</span>
+                <span class="festival-title__base"> &amp; rule the </span>
+                <span class="festival-title__accent festival-title__accent--night">night</span>
+              </span>
             </h2>
             <div class="overflow-hidden mt-6">
-              <p class="reveal-slide-up block text-xs font-bold tracking-[0.4em] uppercase text-[var(--t-muted)] italic">Track live transmission frequencies</p>
+              <p class="block text-sm font-bold tracking-[0.38em] uppercase text-[var(--t-muted)] italic sm:text-[0.95rem]">Track live transmission frequencies</p>
             </div>
           </div>
 
           <div class="festival-days-mesh relative z-10">
-            <div class="grid gap-8 lg:grid-cols-3">
+            <div class="grid gap-5 sm:gap-6 lg:grid-cols-3">
               {configData.value.days.map((day, index) => (
                 <Link key={day.day} href={`/roadmap/day${index + 1}`} data-tilt onMouseMove$={(e, el) => {
                   const r = el.getBoundingClientRect();
                   el.style.setProperty("--mouse-x", `${e.clientX - r.left}px`);
                   el.style.setProperty("--mouse-y", `${e.clientY - r.top}px`);
-                }} class="t-day-card group p-8 block reveal-up backdrop-blur-3xl border rounded-[2rem] transition-all relative overflow-hidden"
+                }} class="t-day-card group block overflow-hidden rounded-[2rem] border p-6 backdrop-blur-3xl transition-all reveal-up sm:p-7"
                   style={{
                     borderColor: `${dayBorderColors[index]}44`,
                     transitionDelay: `${index * 80}ms`,
