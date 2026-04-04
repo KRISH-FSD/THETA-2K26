@@ -7,7 +7,7 @@ import "./global.css";
 
 export default component$(() => {
   useVisibleTask$(() => {
-    const lenis = new Lenis();
+        const lenis = new Lenis();
     function raf(time: number) {
       lenis.raf(time);
       requestAnimationFrame(raf);

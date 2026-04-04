@@ -247,16 +247,18 @@ export default component$(function Day3Roadmap() {
       const gsap: any = window.gsap;
       const pageRoot = document.querySelector(".rm-page--sp") as HTMLElement | null;
       const container = document.getElementById("rm-timeline") as HTMLElement | null;
-      const svgEl = document.getElementById("rm-line-svg") as SVGSVGElement | null;
-      const pathBase = document.getElementById("rm-line-base") as SVGPathElement | null;
-      const pathAccent = document.getElementById("rm-line-accent") as SVGPathElement | null;
-      const pathGlow = document.getElementById("rm-line-glow") as SVGPathElement | null;
-      const tracer = document.getElementById("rm-tracer") as SVGGElement | null;
+      const svgEl = document.getElementById("rm-line-svg") as unknown as SVGSVGElement | null;
+      const pathBase = document.getElementById("rm-line-base") as unknown as SVGPathElement | null;
+      const pathAccent = document.getElementById("rm-line-accent") as unknown as SVGPathElement | null;
+      const pathGlow = document.getElementById("rm-line-glow") as unknown as SVGPathElement | null;
+      const tracer = document.getElementById("rm-tracer") as unknown as SVGGElement | null;
       if (!container || !svgEl || !pathBase || !pathAccent || !pathGlow) return;
       const finalRow = container.querySelector(".rm-row--final") as HTMLElement | null;
       const finalNode = finalRow?.querySelector(".rm-node--finish") as HTMLElement | null;
       let totalLen = 0, rafId = 0, scheduled = false, needsBuild = true;
+      let targetProg = 0, renderProg = 0, tracerRafId = 0;
       let ro: ResizeObserver | undefined;
+      const smoothFactor = window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 767 ? 0.16 : 0.32;
       const revealed = new Set<Element>();
       const liveNodes = () => Array.from(container.querySelectorAll<HTMLElement>("[data-snake-node]")).filter((n) => n.offsetParent !== null && n.offsetWidth > 0);
       const buildPath = (): boolean => {
@@ -286,26 +288,76 @@ export default component$(function Day3Roadmap() {
         tracer.setAttribute("transform", `translate(${pt.x.toFixed(2)},${pt.y.toFixed(2)}) rotate(${ang.toFixed(1)})`);
         tracer.style.opacity = cl > 0.005 && cl < 0.998 ? "1" : "0";
       };
-      const update = () => {
-        if (totalLen === 0) return;
-        const VH = window.innerHeight, ns = liveNodes();
-        if (ns.length < 2) return;
-        const firstRect = ns[0].getBoundingClientRect(), lastRect = ns[ns.length - 1].getBoundingClientRect(), startY = firstRect.top + firstRect.height / 2, endY = lastRect.top + lastRect.height / 2, targetY = VH * 0.55, span = Math.max(endY - startY, 1), prog = Math.max(0, Math.min(1, (targetY - startY) / span));
+      const applyProgress = (prog: number, ns: HTMLElement[], VH: number) => {
         const currentIdx = Math.floor(prog * (ns.length - 1) + 0.1);
         if (currentIdx >= 0 && currentIdx < EVENTS.length) { const ev = EVENTS[currentIdx]; if (activeEventId.value !== ev.id) activeEventId.value = ev.id; } else if (currentIdx >= EVENTS.length) { activeEventId.value = null; }
+
         const off = totalLen * (1 - prog);
+        const endReached = prog >= 0.97;
+
         pathBase.style.strokeDashoffset = String(off); pathAccent.style.strokeDashoffset = String(Math.max(0, off - 26)); pathGlow.style.strokeDashoffset = String(off);
         posTracer(prog);
         ns.forEach((n, i) => n.classList.toggle("rm-node--lit", prog >= i / Math.max(ns.length - 1, 1) - 0.02));
-        const endReached = prog >= 0.97;
+
         pageRoot?.classList.toggle("is-end-reached", endReached); finalRow?.classList.toggle("is-end-reached", endReached); finalNode?.classList.toggle("rm-node--lit", endReached);
         if (tracer && endReached) tracer.style.opacity = "0";
+
         Array.from(container.querySelectorAll<HTMLElement>(".rm-row:not(.rm-row--final)")).forEach((row, idx) => {
-          const card = row.querySelector<HTMLElement>(".rm-card"), isLeft = row.classList.contains("rm-row--left");
+          const card = row.querySelector<HTMLElement>(".rm-card");
           if (card && !revealed.has(card)) {
-            const r = card.getBoundingClientRect(); if (r.top < VH * 0.9) { revealed.add(card); if (gsap) { gsap.fromTo(card, { opacity: 0, x: isLeft ? -70 : 70, y: 28, scale: 0.88, rotateY: isLeft ? -14 : 14 }, { opacity: 1, x: 0, y: 0, scale: 1, rotateY: 0, duration: 0.85, ease: "back.out(1.4)", delay: idx * 0.04, clearProps: "transform" }); } else { card.style.opacity = "1"; card.style.transform = "none"; } }
+            const top = card.getBoundingClientRect().top;
+            const isLeft = row.classList.contains("rm-row--left");
+            if (top < VH * 0.9) {
+              revealed.add(card);
+              if (gsap) { gsap.fromTo(card, { opacity: 0, x: isLeft ? -70 : 70, y: 28, scale: 0.88, rotateY: isLeft ? -14 : 14 }, { opacity: 1, x: 0, y: 0, scale: 1, rotateY: 0, duration: 0.85, ease: "back.out(1.4)", delay: idx * 0.04, clearProps: "transform" }); } else { card.style.opacity = "1"; card.style.transform = "none"; }
+            }
           }
         });
+      };
+      const animateTracer = () => {
+        tracerRafId = 0;
+        if (totalLen === 0) return;
+        const VH = window.innerHeight, ns = liveNodes();
+        if (ns.length < 2) return;
+        renderProg += (targetProg - renderProg) * smoothFactor;
+        if (Math.abs(targetProg - renderProg) < 0.0012) renderProg = targetProg;
+        applyProgress(renderProg, ns, VH);
+        if (Math.abs(targetProg - renderProg) >= 0.0012) tracerRafId = requestAnimationFrame(animateTracer);
+      };
+      const queueTracer = () => {
+        if (tracerRafId) return;
+        tracerRafId = requestAnimationFrame(animateTracer);
+      };
+      const update = () => {
+        if (totalLen === 0) return;
+        const ns = liveNodes();
+        if (ns.length < 2) return;
+        
+        // --- READ PHASE ---
+        const firstRect = ns[0].getBoundingClientRect();
+        const lastRect = ns[ns.length - 1].getBoundingClientRect();
+        
+        const unrevealedCards: { card: HTMLElement; top: number; isLeft: boolean; idx: number }[] = [];
+        Array.from(container.querySelectorAll<HTMLElement>(".rm-row:not(.rm-row--final)")).forEach((row, idx) => {
+          const card = row.querySelector<HTMLElement>(".rm-card");
+          if (card && !revealed.has(card)) {
+            unrevealedCards.push({
+              card,
+              top: card.getBoundingClientRect().top,
+              isLeft: row.classList.contains("rm-row--left"),
+              idx
+            });
+          }
+        });
+
+        // --- COMPUTE PHASE ---
+        const startY = firstRect.top + firstRect.height / 2;
+        const endY = lastRect.top + lastRect.height / 2;
+        const targetY = window.innerHeight * 0.55;
+        const span = Math.max(endY - startY, 1);
+        targetProg = Math.max(0, Math.min(1, (targetY - startY) / span));
+        if (!tracerRafId && Math.abs(renderProg - targetProg) < 0.0012) renderProg = targetProg;
+        queueTracer();
       };
       const flush = () => { scheduled = false; if (needsBuild) needsBuild = !buildPath(); if (!needsBuild) update(); };
       const go = (rebuild = false) => { needsBuild = needsBuild || rebuild; if (scheduled) return; scheduled = true; rafId = requestAnimationFrame(flush); };
@@ -315,7 +367,7 @@ export default component$(function Day3Roadmap() {
       setTimeout(() => go(true), 180); go(true);
       container.querySelectorAll<HTMLElement>(".rm-node").forEach((n) => { n.addEventListener("mouseenter", () => n.classList.add("rm-node--hovered")); n.addEventListener("mouseleave", () => n.classList.remove("rm-node--hovered")); });
       if (gsap) { const hdr = document.querySelector(".rm-section__header"); if (hdr) gsap.fromTo(hdr, { opacity: 0, y: -36 }, { opacity: 1, y: 0, duration: 1.0, ease: "power3.out" }); }
-      return () => { if (rafId) cancelAnimationFrame(rafId); ro?.disconnect(); };
+      return () => { if (rafId) cancelAnimationFrame(rafId); if (tracerRafId) cancelAnimationFrame(tracerRafId); ro?.disconnect(); };
     };
     let cleanup: (() => void) | undefined; boot().then((fn) => { cleanup = fn as any; }); return () => cleanup?.();
   });

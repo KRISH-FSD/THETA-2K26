@@ -156,7 +156,7 @@ export default component$(() => {
 
   /* ─── render ─────────────────────────────────────────── */
   return (
-    <div class="relative min-h-screen overflow-x-hidden bg-[#020402] px-4 pt-28 pb-20 sm:px-6 lg:px-8">
+    <div class="relative min-h-screen overflow-x-hidden bg-[#020402] px-4 pt-28 pb-8 sm:px-6 lg:px-8">
       {/* ── Cinematic Background System ── */}
       <div class="pointer-events-none fixed inset-0 z-0">
         <div class="absolute inset-0 opacity-[0.03]"
@@ -265,90 +265,6 @@ export default component$(() => {
         })}
       </section>
 
-      {/* ══════════════════════════════════════════
-          FOOTER CTA — s-cta-shell (exact sponsors pattern)
-      ══════════════════════════════════════════ */}
-      <section class="relative z-10 mx-auto mt-16 max-w-7xl pb-6">
-        <div class="ct-footer-grid s-reveal grid gap-6 lg:grid-cols-2">
-          {/* WebTek panel */}
-          <div
-            class="ct-footer-panel s-cta-shell"
-            style={{ opacity: 0, maxWidth: "none" }}
-          >
-            <div class="s-cta-shell__grid" />
-            <div class="s-cta-shell__orb s-cta-shell__orb--left" />
-            <div class="s-cta-shell__orb s-cta-shell__orb--right" />
-            <div class="s-cta-shell__inner" style={{ gridTemplateColumns: "1fr" }}>
-              <div class="s-cta-copy">
-                <div class="s-cta-copy__meta">
-                  <span class="t-badge s-cta-copy__badge">WebTek Team</span>
-                  <div class="s-cta-copy__logo">
-                    <span class="s-cta-copy__logo-glow" />
-                    <img src="/ben10/ben10-logo.png" alt="" class="s-cta-copy__logo-img" />
-                  </div>
-                </div>
-                <h3 class="s-cta-copy__title">
-                  Engineering &{" "}
-                  <span class="s-cta-copy__accent">Platform</span>
-                </h3>
-                <p class="s-cta-copy__desc">
-                  Build, deployment, and experience optimization powered by WebTek.
-                </p>
-                <div class="s-cta-copy__actions">
-                  <a href={teamData.value.webtek.github} target="_blank" rel="noopener noreferrer" class="t-btn-ghost">
-                    GitHub
-                  </a>
-                  <a href={teamData.value.webtek.linkedin} target="_blank" rel="noopener noreferrer" class="t-btn-ghost">
-                    LinkedIn
-                  </a>
-                  <a href={`mailto:${teamData.value.webtek.email}`} class="t-btn-primary">
-                    Email Team
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Questions panel */}
-          <div
-            class="ct-footer-panel s-cta-shell"
-            style={{ opacity: 0, maxWidth: "none" }}
-          >
-            <div class="s-cta-shell__grid" />
-            <div class="s-cta-shell__orb s-cta-shell__orb--left" />
-            <div class="s-cta-shell__orb s-cta-shell__orb--right" />
-            <div class="s-cta-shell__inner" style={{ gridTemplateColumns: "1fr" }}>
-              <div class="s-cta-copy">
-                <div class="s-cta-copy__meta">
-                  <span class="t-badge s-cta-copy__badge">Support Line</span>
-                  <div class="s-cta-copy__logo">
-                    <span class="s-cta-copy__logo-glow" />
-                    <svg class="s-cta-copy__logo-img" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                    </svg>
-                  </div>
-                </div>
-                <h3 class="s-cta-copy__title">
-                  Still have{" "}
-                  <span class="s-cta-copy__accent">questions?</span>
-                </h3>
-                <p class="s-cta-copy__desc">
-                  Feel free to transceive a message to our coordinators. We respond to all queries within 24 hours.
-                </p>
-                <div class="s-cta-copy__actions">
-                  <a href={`mailto:${teamData.value.webtek.email}`} class="t-btn-primary">
-                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
-                    Open Comm Channel
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Float keyframes (mirrors sponsors page) */}
       <style>{`
         @keyframes float {
@@ -361,6 +277,7 @@ export default component$(() => {
           33%      { transform: translateY(18px) rotate(-3deg); }
           66%      { transform: translateY(-12px) rotate(2deg); }
         }
+
         @media (max-width:1024px) {
           .s-benefits-grid,
           [style*="grid-template-columns: repeat(4"] {

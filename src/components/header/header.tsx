@@ -52,6 +52,8 @@ export const Header = component$(() => {
       ? `px-2 text-[0.65rem] font-bold tracking-widest uppercase transition-colors lg:text-xs t-spider-nav-active t-spider-nav-hover`
       : `px-2 text-[0.65rem] font-bold tracking-widest uppercase transition-colors lg:text-xs text-[#8ca38c] t-spider-nav-hover`;
 
+  const developerButtonActive = isActive("/developers");
+
   return (
     <>
       <header class="pointer-events-none fixed top-6 right-0 left-0 z-[110] flex w-full items-center justify-between px-3 sm:px-4 md:top-8 md:px-6">
@@ -118,11 +120,49 @@ export const Header = component$(() => {
         </div>
 
         {/* Right: Register + Hamburger */}
-        <div class="pointer-events-auto flex flex-1 items-center justify-end gap-2 sm:gap-3 md:flex-initial md:w-[220px] lg:w-[280px]">
-          <div class="group pointer-events-auto relative hidden cursor-pointer md:flex">
+        <div class="pointer-events-auto flex flex-1 items-center justify-end gap-2 sm:gap-3 md:flex-initial md:w-[260px] lg:w-[390px]">
+          <div class="group pointer-events-auto relative hidden md:flex">
+            <Link
+              href="/developers"
+              class="relative z-10 flex items-center justify-center gap-2 overflow-hidden rounded-full border px-5 py-2.5 text-[0.6rem] font-black tracking-[0.24em] whitespace-nowrap uppercase text-[#f7fbff] backdrop-blur-xl transition-all duration-300 active:scale-95 lg:px-6 lg:py-3"
+              style={
+                developerButtonActive
+                  ? "border-color:rgba(111,255,253,0.72);box-shadow:0 0 0 1px rgba(255,0,184,0.15),0 0 24px rgba(111,255,253,0.22),0 0 52px rgba(255,0,184,0.2);"
+                  : "border-color:rgba(255,255,255,0.12);box-shadow:0 0 18px rgba(111,255,253,0.14),0 0 36px rgba(255,0,184,0.12);"
+              }
+            >
+              <span
+                class="absolute inset-0"
+                style="background:linear-gradient(135deg,rgba(6,18,38,0.95),rgba(31,8,50,0.92));"
+              />
+              <span
+                class="absolute inset-y-[-120%] left-[-20%] w-[70%] rotate-12 opacity-80 blur-2xl transition-transform duration-500 group-hover:translate-x-6"
+                style="background:linear-gradient(180deg,rgba(111,255,253,0.6),rgba(255,0,184,0.55),rgba(171,255,57,0.34));"
+              />
+              <span class="relative flex h-2.5 w-2.5">
+                <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#6ffffd] opacity-70" />
+                <span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#ff4fd8] shadow-[0_0_14px_rgba(255,79,216,0.75)]" />
+              </span>
+              <span class="relative">Developers</span>
+              <svg
+                class="relative h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M5 12h14" />
+                <path d="m12 5 7 7-7 7" />
+              </svg>
+            </Link>
+          </div>
+
+          <div class="group pointer-events-auto relative hidden cursor-pointer lg:flex">
             <Link
               href="/events"
-              class="t-spider-register relative z-10 flex items-center justify-center gap-2.5 overflow-hidden rounded-full border bg-[#050505]/40 px-5 py-2.5 text-[0.6rem] font-black tracking-[0.2em] whitespace-nowrap uppercase backdrop-blur-md transition-all duration-300 active:scale-95 lg:px-8 lg:py-3.5 lg:text-[0.7rem]"
+              class="t-spider-register relative z-10 hidden items-center justify-center gap-2.5 overflow-hidden rounded-full border bg-[#050505]/40 px-5 py-2.5 text-[0.6rem] font-black tracking-[0.2em] whitespace-nowrap uppercase backdrop-blur-md transition-all duration-300 active:scale-95 lg:flex lg:px-8 lg:py-3.5 lg:text-[0.7rem]"
               style={`border-color:${accent};color:${accent};box-shadow:0 0 15px ${accentBg},inset 0 0 10px ${accentBg};`}
             >
               <span class="relative flex h-2 w-2">
@@ -186,6 +226,17 @@ export const Header = component$(() => {
           <Link href="/contact"
             class="t-spider-mobile-hover block rounded-2xl border border-[rgba(255,255,255,0.05)] bg-[#111111]/80 px-5 py-4 text-center text-sm font-bold tracking-widest text-[#f0fff0] uppercase shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] transition-colors">
             Contacts
+          </Link>
+          <Link
+            href="/developers"
+            class="block rounded-2xl border px-5 py-4 text-center text-sm font-black tracking-[0.22em] uppercase text-[#f7fbff] shadow-[0_0_18px_rgba(111,255,253,0.16)] transition-all"
+            style={
+              developerButtonActive
+                ? "border-color:rgba(111,255,253,0.65);background:linear-gradient(135deg,rgba(8,22,42,0.96),rgba(34,8,44,0.94));box-shadow:0 0 20px rgba(111,255,253,0.22),0 0 44px rgba(255,0,184,0.16);"
+                : "border-color:rgba(255,255,255,0.08);background:linear-gradient(135deg,rgba(8,18,35,0.92),rgba(27,10,38,0.9));box-shadow:0 0 16px rgba(111,255,253,0.14),0 0 28px rgba(255,0,184,0.1);"
+            }
+          >
+            Developers
           </Link>
           <Link href="/events"
             class="t-spider-mobile-register mt-6 block rounded-2xl px-5 py-4 text-center text-sm font-black tracking-widest text-white uppercase transition-colors"

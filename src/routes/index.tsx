@@ -133,6 +133,18 @@ const parseFestStart = (datesText: string, isoDate?: string): Date => {
   return new Date("2026-03-15T09:00:00");
 };
 
+const isMobilePerfMode = (): boolean => {
+  if (typeof window === "undefined") return false;
+  const coarse = window.matchMedia("(pointer: coarse)").matches;
+  const narrow = window.matchMedia("(max-width: 900px)").matches;
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const lowCpu = typeof navigator !== "undefined"
+    && typeof navigator.hardwareConcurrency === "number"
+    && navigator.hardwareConcurrency > 0
+    && navigator.hardwareConcurrency <= 4;
+  return reducedMotion || coarse || narrow || lowCpu;
+};
+
 const dayAliases: Record<string, string[]> = {
   "Day One": ["Day 1", "Day One"],
   "Day Two": ["Day 2", "Day Two"],
@@ -259,9 +271,29 @@ export default component$(() => {
   const sphereRotation = useSignal({ x: 0, y: 0 });
   const globalMouse = useSignal({ x: 0, y: 0 });
   const mouseSmoothing = useSignal({ x: 0, y: 0 });
+  const mobilePerfMode = useSignal(false);
+
+  useVisibleTask$(() => {
+    const syncPerfMode = () => {
+      const enabled = isMobilePerfMode();
+      mobilePerfMode.value = enabled;
+      document.documentElement.dataset.mobilePerf = enabled ? "true" : "false";
+    };
+
+    syncPerfMode();
+    window.addEventListener("resize", syncPerfMode, { passive: true });
+    window.addEventListener("orientationchange", syncPerfMode, { passive: true });
+
+    return () => {
+      window.removeEventListener("resize", syncPerfMode);
+      window.removeEventListener("orientationchange", syncPerfMode);
+      delete document.documentElement.dataset.mobilePerf;
+    };
+  });
 
   /* ── Global Interactive Background Canvas ── */
   useVisibleTask$(() => {
+    if (isMobilePerfMode()) return;
     const canvas = document.querySelector<HTMLCanvasElement>(".home-global-interactive-bg");
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
@@ -365,6 +397,7 @@ export default component$(() => {
   });
 
   useVisibleTask$(() => {
+    if (isMobilePerfMode()) return;
     const trackMouse = (e: MouseEvent) => {
       globalMouse.value = { x: e.clientX, y: e.clientY };
     };
@@ -374,6 +407,7 @@ export default component$(() => {
 
   /* ── Particles Effect ── */
   useVisibleTask$(() => {
+    if (isMobilePerfMode()) return;
     const section = document.querySelector<HTMLElement>(".festival-days-mesh");
     const canvas = document.querySelector<HTMLCanvasElement>(".festival-days-mesh-web");
     if (!section || !canvas) return;
@@ -558,6 +592,18 @@ export default component$(() => {
   useVisibleTask$(() => {
     const section = document.querySelector<HTMLElement>(".festival-days-shell");
     if (!section) return;
+    if (isMobilePerfMode()) {
+      section.style.setProperty("--festival-pointer-left", "0px");
+      section.style.setProperty("--festival-pointer-right", "0px");
+      section.style.setProperty("--festival-pointer-up", "0px");
+      section.style.setProperty("--festival-pointer-down", "0px");
+      section.style.setProperty("--festival-scroll-up", "0px");
+      section.style.setProperty("--festival-scroll-down", "0px");
+      section.style.setProperty("--festival-scroll-left", "0px");
+      section.style.setProperty("--festival-scroll-right", "0px");
+      section.style.setProperty("--festival-scroll-soft", "0px");
+      return;
+    }
 
     const raf = 0;
     const resetPointer = () => {
@@ -640,16 +686,20 @@ export default component$(() => {
   });
 
   useVisibleTask$(() => {
-    gsap.registerPlugin(ScrollTrigger);
-
-    const section = document.getElementById("theta-stats");
-    if (!section) return;
-
     const targets = {
       events: parseStatNumber(configData.value.stats.events),
       participants: parseStatNumber(configData.value.stats.participants),
       colleges: parseStatNumber(configData.value.stats.colleges)
     };
+    if (isMobilePerfMode()) {
+      counterDisplay.value = targets;
+      return;
+    }
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    const section = document.getElementById("theta-stats");
+    if (!section) return;
 
     const tl = gsap.timeline({
       scrollTrigger: {
@@ -679,6 +729,7 @@ export default component$(() => {
   });
 
   useVisibleTask$(() => {
+    if (isMobilePerfMode()) return;
     gsap.registerPlugin(ScrollTrigger);
 
     const section = document.getElementById("home-cta");
@@ -739,6 +790,7 @@ export default component$(() => {
   });
 
   useVisibleTask$(() => {
+    if (isMobilePerfMode()) return;
     const cards = document.querySelectorAll<HTMLElement>("[data-tilt]");
     const cleanups: any[] = [];
     cards.forEach(card => {
@@ -770,6 +822,7 @@ export default component$(() => {
   });
 
   useVisibleTask$(() => {
+    if (isMobilePerfMode()) return;
     gsap.registerPlugin(ScrollTrigger);
     const marks = document.querySelectorAll<HTMLElement>(".t-day-card__mark");
     const overlays = document.querySelectorAll<HTMLElement>(".t-knockout-overlay");
@@ -828,6 +881,7 @@ export default component$(() => {
   });
 
   useVisibleTask$(() => {
+    if (isMobilePerfMode()) return;
     const sphere = document.querySelector<HTMLElement>(".theta-stats-core");
     if (!sphere) return;
 
@@ -878,6 +932,14 @@ export default component$(() => {
   );
 
   useVisibleTask$(() => {
+    if (isMobilePerfMode()) {
+      counterDisplay.value = {
+        events: parseStatNumber(configData.value.stats.events),
+        participants: parseStatNumber(configData.value.stats.participants),
+        colleges: parseStatNumber(configData.value.stats.colleges),
+      };
+      return;
+    }
     gsap.registerPlugin(ScrollTrigger);
 
     const section = document.getElementById("browse-events-section");
@@ -971,11 +1033,13 @@ export default component$(() => {
       <HeroSlider />
 
       {/* ── Global Interactive Background (Entire Page) ── */}
-      <canvas class="home-global-interactive-bg fixed inset-0 z-0 pointer-events-none opacity-40" />
-      
-      <div class="home-neural-grid pointer-events-none fixed inset-0 z-0 opacity-0 bg-[radial-gradient(circle_at_center,rgba(0,255,85,0.03)_0%,transparent_70%)]">
-        <div class="absolute inset-0 bg-[url('/grid.svg')] bg-[size:100px_100px] [mask-image:radial-gradient(ellipse_at_center,black,transparent)] opacity-[0.07]" />
-      </div>
+      {!mobilePerfMode.value && <canvas class="home-global-interactive-bg fixed inset-0 z-0 pointer-events-none opacity-40" />}
+
+      {!mobilePerfMode.value && (
+        <div class="home-neural-grid pointer-events-none fixed inset-0 z-0 opacity-0 bg-[radial-gradient(circle_at_center,rgba(0,255,85,0.03)_0%,transparent_70%)]">
+          <div class="absolute inset-0 bg-[url('/grid.svg')] bg-[size:100px_100px] [mask-image:radial-gradient(ellipse_at_center,black,transparent)] opacity-[0.07]" />
+        </div>
+      )}
 
       {/* ═══════════════ DAY CARDS ═══════════════ */}
       <section class="festival-days-shell py-20 relative overflow-hidden">
@@ -1103,7 +1167,7 @@ export default component$(() => {
 
         {/* Global Mesh Background for this section */}
         <div class="festival-days-mesh absolute inset-0 z-0">
-          <canvas class="festival-days-mesh-web pointer-events-none" />
+          {!mobilePerfMode.value && <canvas class="festival-days-mesh-web pointer-events-none" />}
           <div class="festival-days-logo-glow" aria-hidden="true">
             <img src="/backgrounds/sastra-3.png" alt="" class="festival-days-logo-mark" />
           </div>
@@ -1205,11 +1269,11 @@ export default component$(() => {
                   <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000" style={{ background: `radial-gradient(420px circle at var(--mouse-x) var(--mouse-y), ${dayAccents[index]}12, transparent 42%)` }} />
 
                   {/* Layer 1: Base Visibility */}
-                  <div class="relative z-10 flex flex-col h-full">
-                    <div class="flex justify-end mb-10">
+                  <div class="relative z-10 flex h-full flex-col items-center text-center">
+                    <div class="mb-10 flex justify-center">
                       <span class="t-label t-day-card__date">{day.date}</span>
                     </div>
-                    <div class="mb-8">
+                    <div class="mb-8 text-center">
                       <h3 class="t-heading text-4xl sm:text-5xl font-black"
                         style={{
                           background: dayGradients[index],
@@ -1219,16 +1283,16 @@ export default component$(() => {
                         }}>{day.day}</h3>
                       <p class="t-day-card__meta mt-2 text-[10px] uppercase tracking-widest">{day.highlight}</p>
                     </div>
-                    <div class="flex flex-wrap gap-2 mb-10">
+                    <div class="mb-10 flex flex-wrap justify-center gap-2">
                       {day.events.slice(0, 3).map(e => <span key={e} class="t-day-card__tag rounded-lg px-3 py-1.5 text-[9px] uppercase font-black">{e}</span>)}
                     </div>
                     <div class="flex-grow" />
-                    <div class="t-day-card__line flex justify-between border-t pt-6">
-                      <div class="flex items-center gap-2">
+                    <div class="t-day-card__line flex w-full flex-col items-center gap-3 border-t pt-6 text-center">
+                      <div class="flex items-center justify-center gap-2">
                         <div class="h-1 w-1 rounded-full animate-pulse" style={{ background: dayAccents[index], boxShadow: `0 0 5px ${dayAccents[index]}` }} />
                         <span class="t-day-card__meta text-[9px] uppercase">Mission Files: {day.events.length}</span>
                       </div>
-                      <span class="text-[10px] font-black group-hover:translate-x-2 transition-transform flex items-center gap-1.5"
+                      <span class="flex items-center justify-center gap-1.5 text-[10px] font-black transition-transform group-hover:translate-x-2"
                         style={{
                           background: dayGradients[index],
                           WebkitBackgroundClip: "text",
@@ -1240,7 +1304,7 @@ export default component$(() => {
 
                   {/* Layer 2: Knockout Overlay (Black text on white logo) */}
                   <div
-                    class="t-knockout-overlay absolute inset-x-8 inset-y-8 flex flex-col h-full pointer-events-none z-20"
+                    class="t-knockout-overlay absolute inset-x-8 inset-y-8 flex h-full flex-col items-center text-center pointer-events-none z-20"
                     style={{
                       WebkitMaskImage: `url(${index === 2 ? "/spidy/spider-logo.png" : (index === 1 ? "/onepeice/one-peice-logo.png" : "/ben10/ben10-logo.png")})`,
                       WebkitMaskSize: index === 0 ? "11rem" : (index === 1 ? "11rem" : "10.5rem"),
@@ -1254,7 +1318,7 @@ export default component$(() => {
                   >
                     <div class="flex justify-between mb-10 opacity-0"> {/* Hide icons in knockout */}
                     </div>
-                    <div class="mb-8">
+                    <div class="mb-8 text-center">
                       <h3 class="t-heading text-4xl sm:text-5xl font-black text-black">{day.day}</h3>
                     </div>
                   </div>

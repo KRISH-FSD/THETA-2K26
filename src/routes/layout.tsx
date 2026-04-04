@@ -426,8 +426,20 @@ export default component$(() => {
                 <p class="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em]">{copy.value.footer.copyright}</p>
               </div>
               <div class="flex gap-8">
-                <p class="text-[10px] font-bold text-white/20 uppercase tracking-[0.2em]">
-                  {copy.value.footer.madeWithPrefix} <span class="text-white/40">QWIK</span> {copy.value.footer.madeBy}
+                <p class="flex items-center gap-2 text-[10px] font-bold text-white/20 uppercase tracking-[0.2em]">
+                  <span class="text-white/35">Developed By</span>
+                  <Link
+                    href="/developers"
+                    class="rounded-full border px-3 py-1 text-[10px] font-black tracking-[0.24em] text-white transition-all duration-300 hover:scale-105"
+                    style={{
+                      borderColor: "rgba(var(--t-brand-rgb), 0.35)",
+                      backgroundColor: "rgba(var(--t-brand-rgb), 0.12)",
+                      boxShadow: "0 0 20px rgba(var(--t-brand-rgb), 0.18)",
+                      color: "var(--t-brand-accent)",
+                    }}
+                  >
+                    WebTek
+                  </Link>
                 </p>
               </div>
             </div>

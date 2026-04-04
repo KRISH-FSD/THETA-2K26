@@ -309,17 +309,20 @@ export default component$(function Day1Roadmap() {
 
       const pageRoot = document.querySelector(".rm-page--day1") as HTMLElement | null;
       const container = document.getElementById("rm-timeline") as HTMLElement | null;
-      const svgEl = document.getElementById("rm-line-svg") as SVGSVGElement | null;
-      const pathBase = document.getElementById("rm-line-base") as SVGPathElement | null;
-      const pathAccent = document.getElementById("rm-line-accent") as SVGPathElement | null;
-      const pathGlow = document.getElementById("rm-line-glow") as SVGPathElement | null;
-      const tracer = document.getElementById("rm-tracer") as SVGGElement | null;
+      const svgEl = document.getElementById("rm-line-svg") as unknown as SVGSVGElement | null;
+      const pathBase = document.getElementById("rm-line-base") as unknown as SVGPathElement | null;
+      const pathAccent = document.getElementById("rm-line-accent") as unknown as SVGPathElement | null;
+      const pathGlow = document.getElementById("rm-line-glow") as unknown as SVGPathElement | null;
+      const tracer = document.getElementById("rm-tracer") as unknown as SVGGElement | null;
       if (!container || !svgEl || !pathBase || !pathAccent || !pathGlow) return;
       const finalRow = container.querySelector(".rm-row--final") as HTMLElement | null;
       const finalNode = finalRow?.querySelector(".rm-node--finish") as HTMLElement | null;
 
       let totalLen = 0, rafId = 0, scheduled = false, needsBuild = true;
+      let targetProg = 0, renderProg = 0, tracerRafId = 0;
       let ro: ResizeObserver | undefined;
+      const lateRebuildTimers: number[] = [];
+      const smoothFactor = window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 767 ? 0.16 : 0.32;
       const revealed = new Set<Element>();
 
       const liveNodes = () =>
@@ -364,21 +367,7 @@ export default component$(function Day1Roadmap() {
         tracer.style.opacity = cl > 0.005 && cl < 0.998 ? "1" : "0";
       };
 
-      const rows = Array.from(container.querySelectorAll<HTMLElement>(".rm-row:not(.rm-row--final)"));
-
-      const update = () => {
-        if (totalLen === 0) return;
-        const VH = window.innerHeight;
-        const ns = liveNodes();
-        if (ns.length < 2) return;
-        const firstRect = ns[0].getBoundingClientRect();
-        const lastRect = ns[ns.length - 1].getBoundingClientRect();
-        const startY = firstRect.top + firstRect.height / 2;
-        const endY = lastRect.top + lastRect.height / 2;
-        const targetY = VH * 0.55;
-        const span = Math.max(endY - startY, 1);
-        const prog = Math.max(0, Math.min(1, (targetY - startY) / span));
-
+      const applyProgress = (prog: number, ns: HTMLElement[], VH: number) => {
         const currentIdx = Math.floor(prog * (ns.length - 1) + 0.1);
         if (currentIdx >= 0 && currentIdx < EVENTS.length) {
           const ev = EVENTS[currentIdx];
@@ -398,6 +387,7 @@ export default component$(function Day1Roadmap() {
         finalRow?.classList.toggle("is-end-reached", endReached);
         finalNode?.classList.toggle("rm-node--lit", endReached);
         if (tracer && endReached) tracer.style.opacity = "0";
+
         rows.forEach((row, idx) => {
           const card = row.querySelector<HTMLElement>(".rm-card");
           const isLeft = row.classList.contains("rm-row--left");
@@ -418,13 +408,63 @@ export default component$(function Day1Roadmap() {
         });
       };
 
+      const animateTracer = () => {
+        tracerRafId = 0;
+        if (totalLen === 0) return;
+        const VH = window.innerHeight;
+        const ns = liveNodes();
+        if (ns.length < 2) return;
+        renderProg += (targetProg - renderProg) * smoothFactor;
+        if (Math.abs(targetProg - renderProg) < 0.0012) renderProg = targetProg;
+        applyProgress(renderProg, ns, VH);
+        if (Math.abs(targetProg - renderProg) >= 0.0012) {
+          tracerRafId = requestAnimationFrame(animateTracer);
+        }
+      };
+
+      const queueTracer = () => {
+        if (tracerRafId) return;
+        tracerRafId = requestAnimationFrame(animateTracer);
+      };
+
+      const rows = Array.from(container.querySelectorAll<HTMLElement>(".rm-row:not(.rm-row--final)"));
+
+      const update = () => {
+        if (totalLen === 0) return;
+        const VH = window.innerHeight;
+        const ns = liveNodes();
+        if (ns.length < 2) return;
+        const firstRect = ns[0].getBoundingClientRect();
+        const lastRect = ns[ns.length - 1].getBoundingClientRect();
+        const startY = firstRect.top + firstRect.height / 2;
+        const endY = lastRect.top + lastRect.height / 2;
+        const targetY = VH * 0.55;
+        const span = Math.max(endY - startY, 1);
+        targetProg = Math.max(0, Math.min(1, (targetY - startY) / span));
+        if (!tracerRafId && Math.abs(renderProg - targetProg) < 0.0012) {
+          renderProg = targetProg;
+        }
+        queueTracer();
+      };
+
       const flush = () => { scheduled = false; if (needsBuild) needsBuild = !buildPath(); if (!needsBuild) update(); };
       const go = (rebuild = false) => { needsBuild = needsBuild || rebuild; if (scheduled) return; scheduled = true; rafId = requestAnimationFrame(flush); };
       Array.from(container.querySelectorAll<HTMLImageElement>("img"))
         .forEach((img) => { if (!img.complete) img.addEventListener("load", () => go(true)); });
+      const onScroll = () => go(false);
+      const onResize = () => go(true);
+      const onLoad = () => go(true);
+      const onViewportResize = () => go(true);
+      const onViewportScroll = () => go(false);
       if ("ResizeObserver" in window) { ro = new ResizeObserver(() => go(true)); ro.observe(container); }
-      window.addEventListener("scroll", () => go(false), { passive: true });
-      window.addEventListener("resize", () => go(true), { passive: true });
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("resize", onResize, { passive: true });
+      window.addEventListener("load", onLoad, { passive: true });
+      window.visualViewport?.addEventListener("resize", onViewportResize, { passive: true });
+      window.visualViewport?.addEventListener("scroll", onViewportScroll, { passive: true });
+      [120, 320, 720, 1200].forEach((delay) => {
+        lateRebuildTimers.push(window.setTimeout(() => go(true), delay));
+      });
       setTimeout(() => go(true), 180); go(true);
       container.querySelectorAll<HTMLElement>(".rm-node").forEach((n) => {
         n.addEventListener("mouseenter", () => n.classList.add("rm-node--hovered"));
@@ -434,7 +474,17 @@ export default component$(function Day1Roadmap() {
         const hdr = document.querySelector(".rm-section__header");
         if (hdr) gsap.fromTo(hdr, { opacity: 0, y: -36 }, { opacity: 1, y: 0, duration: 1.0, ease: "power3.out" });
       }
-      return () => { if (rafId) cancelAnimationFrame(rafId); ro?.disconnect(); };
+      return () => {
+        if (rafId) cancelAnimationFrame(rafId);
+        if (tracerRafId) cancelAnimationFrame(tracerRafId);
+        lateRebuildTimers.forEach((timer) => window.clearTimeout(timer));
+        ro?.disconnect();
+        window.removeEventListener("scroll", onScroll);
+        window.removeEventListener("resize", onResize);
+        window.removeEventListener("load", onLoad);
+        window.visualViewport?.removeEventListener("resize", onViewportResize);
+        window.visualViewport?.removeEventListener("scroll", onViewportScroll);
+      };
     };
 
     let cleanup: (() => void) | undefined;
@@ -491,6 +541,26 @@ export default component$(function Day1Roadmap() {
            background: rgba(8, 16, 8, 0.94);
            backdrop-filter: blur(20px);
            border-color: rgba(99, 255, 44, 0.28);
+        }
+        .rm-page--day1 .rm-dock__inner {
+          border-color: rgba(99, 255, 44, 0.24);
+          background: linear-gradient(180deg, rgba(10, 20, 8, 0.96), rgba(5, 12, 4, 0.92));
+          box-shadow: 0 24px 64px rgba(0, 0, 0, 0.42), 0 0 0 1px rgba(99, 255, 44, 0.08);
+        }
+        .rm-page--day1 .rm-dock__item.is-active {
+          border-color: rgba(99, 255, 44, 0.42);
+          background: linear-gradient(135deg, rgba(99, 255, 44, 0.2), rgba(99, 255, 44, 0.08));
+          color: #d7ff4a;
+          box-shadow: 0 10px 24px rgba(99, 255, 44, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        }
+        .rm-page--day1 .rm-dock__status {
+          border-color: rgba(99, 255, 44, 0.16);
+          background: linear-gradient(180deg, rgba(22, 40, 12, 0.82), rgba(10, 20, 8, 0.74));
+          color: #d7ff4a;
+        }
+        .rm-page--day1 .rm-dock__status-dot {
+          background: #63ff2c;
+          box-shadow: 0 0 10px rgba(99, 255, 44, 0.85);
         }
         .rm-page--day1 .rm-popup {
            background: rgba(8, 16, 8, 0.98);
@@ -627,6 +697,33 @@ export default component$(function Day1Roadmap() {
         .rm-page--day1.is-end-reached .rm-end-popup, .rm-page--day1 .rm-row--final.is-end-reached .rm-end-popup { opacity: 1; transform: translate(0, -50%) scale(1); }
         .rm-page--day1.is-end-reached .rm-row--final .rm-node--finish { box-shadow: 0 0 0 4px rgba(215,255,74,0.16), 0 0 28px rgba(99,255,44,0.52), 0 0 72px rgba(99,255,44,0.22), 0 24px 50px rgba(0,0,0,0.44); }
         @media (max-width: 767px) {
+          .rm-page--day1 .rm-timeline { isolation: isolate; }
+          .rm-page--day1 .rm-line-svg { z-index: 5; overflow: visible; }
+          .rm-page--day1 .rm-line-glow {
+            stroke: #63ff2c !important;
+            stroke-width: 22 !important;
+            opacity: 0.34 !important;
+            filter: blur(5px);
+          }
+          .rm-page--day1 .rm-line-base {
+            stroke: rgba(215, 255, 74, 0.92) !important;
+            stroke-width: 3.4 !important;
+            opacity: 0.96 !important;
+          }
+          .rm-page--day1 .rm-line-accent {
+            stroke: #f6ffd6 !important;
+            stroke-width: 2.25 !important;
+            opacity: 1 !important;
+            filter: drop-shadow(0 0 12px rgba(153, 255, 79, 0.9)) !important;
+          }
+          .rm-page--day1 #rm-tracer-shell {
+            fill: rgba(215, 255, 74, 0.62) !important;
+            filter: drop-shadow(0 0 16px rgba(99, 255, 44, 0.92)) !important;
+          }
+          .rm-page--day1 #rm-tracer-arrow {
+            fill: #ffffff !important;
+            filter: drop-shadow(0 0 14px rgba(215, 255, 74, 1)) !important;
+          }
           .rm-page--day1 .rm-end-popup { left: 50%; right: auto; top: auto; bottom: calc(100% + 0.8rem); transform: translate(-50%, 14px) scale(0.92); min-width: 9.75rem; padding: 0.62rem 0.72rem; }
           .rm-page--day1 .rm-end-popup::after { left: 50%; right: auto; top: auto; bottom: -0.45rem; transform: translateX(-50%) rotate(45deg); }
           .rm-page--day1.is-end-reached .rm-end-popup, .rm-page--day1 .rm-row--final.is-end-reached .rm-end-popup { transform: translate(-50%, 0) scale(1); }
@@ -685,9 +782,9 @@ export default component$(function Day1Roadmap() {
               <path id="rm-line-accent" class="rm-line-accent" fill="none" stroke="rgba(255,255,255,0.7)" filter="url(#rm-glow-f)" />
               <g id="rm-tracer" style="opacity:0;will-change:transform;">
                 {/* Outer Glow Arrow */}
-                <path d="M -14,-10 L 18,0 L -14,10 C -10,4 -10,-4 -14,-10 Z" fill="url(#rm-tracer-fill)" filter="url(#rm-glow-f)" opacity="0.6" />
+                <path id="rm-tracer-shell" d="M -14,-10 L 18,0 L -14,10 C -10,4 -10,-4 -14,-10 Z" fill="url(#rm-tracer-fill)" filter="url(#rm-glow-f)" opacity="0.6" />
                 {/* Sleek Core Arrow */}
-                <path d="M -12,-8 L 14,0 L -12,8 C -9,3 -9,-3 -12,-8 Z" fill="#fff" filter="url(#rm-glow-f)" />
+                <path id="rm-tracer-arrow" d="M -12,-8 L 14,0 L -12,8 C -9,3 -9,-3 -12,-8 Z" fill="#fff" filter="url(#rm-glow-f)" />
                 
                 {/* Fast Inner Pulse */}
                 <circle cx="0" cy="0" r="18" fill="none" stroke="url(#rm-grad-line)" stroke-width="1.5" opacity="0.6">

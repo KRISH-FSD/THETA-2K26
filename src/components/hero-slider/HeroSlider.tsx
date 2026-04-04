@@ -146,11 +146,15 @@ export const HeroSlider = component$(() => {
     const tick = () => {
       const now = performance.now();
       const elapsed = now - state.startTime;
-      progress.value = Math.min((elapsed / duration) * 100, 100);
+      const pct = Math.min((elapsed / duration) * 100, 100);
+      
+      const bar = document.getElementById("hs-progress-bar");
+      if (bar) {
+        bar.style.width = `${pct}%`;
+      }
       
       if (elapsed >= duration) {
         state.startTime = now; 
-        progress.value = 0;
         const nextIdx = (active.value + 1) % heroSlides.length;
         goTo(nextIdx);
       }
