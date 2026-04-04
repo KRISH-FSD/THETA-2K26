@@ -835,14 +835,14 @@ export default component$(() => {
       </div>
 
       {/* Command Dock — Moves naturally with scrolling */}
-      <div class="event-command-dock absolute top-40 left-1/2 -translate-x-1/2 z-[100] w-fit">
-        <div class="relative flex items-center gap-2 p-2 rounded-full border border-white/10 bg-black/60 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+      <div class="event-command-dock absolute top-32 sm:top-40 left-1/2 -translate-x-1/2 z-[100] w-[calc(100%-1rem)] max-w-[22rem] sm:w-fit">
+        <div class="relative flex w-full items-center justify-between gap-1.5 rounded-[1.6rem] border border-white/10 bg-black/60 p-2 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] sm:w-auto sm:justify-start sm:gap-2 sm:rounded-full">
           {DAY_ORDER.map((day) => (
             <button
               key={day}
               onClick$={() => (selectedDay.value = day)}
               class={[
-                "relative flex items-center justify-center px-6 py-2.5 rounded-full text-xs font-black uppercase tracking-widest transition-all duration-300",
+                "relative flex min-w-0 flex-1 items-center justify-center rounded-full px-3 py-2.5 text-[0.58rem] font-black uppercase tracking-[0.18em] transition-all duration-300 sm:flex-none sm:px-6 sm:text-xs sm:tracking-widest",
                 selectedDay.value === day
                   ? "text-black dock-item-active"
                   : "text-white/40 hover:text-white/80 hover:bg-white/5",
@@ -860,14 +860,17 @@ export default component$(() => {
             </button>
           ))}
           
-          <div class="relative ml-2 pl-4 pr-1 py-1 border-l border-white/10 flex items-center gap-2">
+          <div class="relative ml-1 flex items-center gap-1 border-l border-white/10 pl-2 pr-0.5 py-0.5 sm:ml-2 sm:gap-2 sm:pl-4 sm:pr-1 sm:py-1">
             <button 
               onClick$={() => (isFilterOpen.value = !isFilterOpen.value)}
-              class="flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-white/10 transition-colors"
+              class="flex items-center gap-1 rounded-full px-2 py-1.5 transition-colors hover:bg-white/10 sm:gap-2 sm:px-3"
             >
               <div class={["w-1.5 h-1.5 rounded-full animate-pulse", isDay3 ? "bg-[#ef4444]" : isDay2 ? "bg-[#eab308]" : "bg-[#0ea935]"]}></div>
-              <span class="text-[0.6rem] font-bold text-white uppercase tracking-widest leading-none">
+              <span class="hidden text-[0.6rem] font-bold uppercase tracking-widest leading-none text-white sm:inline">
                 {selectedCluster.value === ALL_CLUSTERS ? "Filter Clusters" : selectedCluster.value}
+              </span>
+              <span class="text-[0.52rem] font-bold uppercase tracking-[0.18em] leading-none text-white sm:hidden">
+                Filter
               </span>
               <svg class={["w-3 h-3 text-white/50 transition-transform", isFilterOpen.value ? "rotate-180" : ""]} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
@@ -876,7 +879,7 @@ export default component$(() => {
 
             {/* Dropdown Menu */}
             {isFilterOpen.value && (
-              <div class="absolute top-full mt-3 right-0 w-48 py-2 rounded-2xl border border-white/10 bg-black/80 backdrop-blur-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-50 overflow-hidden">
+              <div class="absolute top-full right-0 z-50 mt-3 w-44 overflow-hidden rounded-2xl border border-white/10 bg-black/80 py-2 backdrop-blur-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] sm:w-48">
                 {availableClusters.map(cluster => (
                   <button
                     key={cluster}
@@ -885,7 +888,7 @@ export default component$(() => {
                       isFilterOpen.value = false;
                     }}
                     class={[
-                      "w-full text-left px-4 py-2.5 text-[0.65rem] font-bold uppercase tracking-widest transition-colors",
+                      "w-full px-4 py-2.5 text-left text-[0.58rem] font-bold uppercase tracking-[0.16em] transition-colors sm:text-[0.65rem] sm:tracking-widest",
                       selectedCluster.value === cluster 
                         ? (isDay3 ? "text-[#ef4444] bg-white/5" : isDay2 ? "text-[#eab308] bg-white/5" : "text-[#0ea935] bg-white/5")
                         : "text-white/60 hover:text-white hover:bg-white/5"

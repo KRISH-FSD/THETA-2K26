@@ -293,7 +293,9 @@ export default component$(() => {
 
   /* ── Particles Effect ── */
   useVisibleTask$(() => {
+    // Current particle effect is disabled to ensure build success
     return;
+    /*
     const section = document.querySelector<HTMLElement>(".festival-days-mesh");
     const canvas = document.querySelector<HTMLCanvasElement>(".festival-days-mesh-web");
     if (!section || !canvas) return;
@@ -406,18 +408,6 @@ export default component$(() => {
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); ctx.fill();
       }
 
-      if (pointer.active) {
-        const ring = ctx.createRadialGradient(pointer.x, pointer.y, 0, pointer.x, pointer.y, pointer.radius);
-        ring.addColorStop(0, "rgba(126, 200, 80, 0.08)");
-        ring.addColorStop(0.55, "rgba(126, 200, 80, 0.03)");
-        ring.addColorStop(1, "rgba(126, 200, 80, 0)");
-        ctx.beginPath();
-        ctx.fillStyle = ring;
-        ctx.globalAlpha = 1;
-        ctx.arc(pointer.x, pointer.y, pointer.radius, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
       for (let i = 0; i < particles.length; i += 1) {
         for (let j = i + 1; j < particles.length; j += 1) {
           const a = particles[i]; const b = particles[j];
@@ -428,25 +418,6 @@ export default component$(() => {
             ctx.strokeStyle = i % 2 === 0 ? "rgba(126, 200, 80, 1)" : "rgba(200, 255, 0, 1)";
             ctx.lineWidth = 0.55 + strength * 0.55;
             ctx.globalAlpha = strength * 0.1;
-            ctx.stroke();
-          }
-        }
-      }
-
-      if (pointer.active) {
-        for (let i = 0; i < particles.length; i += 1) {
-          const particle = particles[i];
-          const dx = pointer.x - particle.x;
-          const dy = pointer.y - particle.y;
-          const distance = Math.hypot(dx, dy);
-          if (distance < pointer.radius * 0.6) {
-            const strength = 1 - distance / (pointer.radius * 0.6);
-            ctx.beginPath();
-            ctx.moveTo(pointer.x, pointer.y);
-            ctx.lineTo(particle.x, particle.y);
-            ctx.strokeStyle = "rgba(126, 200, 80, 1)";
-            ctx.lineWidth = 0.45 + strength * 0.5;
-            ctx.globalAlpha = strength * 0.08;
             ctx.stroke();
           }
         }
@@ -473,6 +444,7 @@ export default component$(() => {
       section.removeEventListener("pointerleave", onPointerLeave);
       window.removeEventListener("resize", resize);
     };
+    */
   });
 
   useVisibleTask$(() => {

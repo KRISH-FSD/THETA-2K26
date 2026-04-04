@@ -332,7 +332,7 @@ export const HeroSlider = component$(() => {
               class="absolute inset-0 h-full w-full object-cover"
               data-hero-video
               src={slide.bgVideo}
-              autoPlay
+              autoplay
               muted
               playsInline
               preload="none"
