@@ -209,7 +209,9 @@ export default component$(function Day3Roadmap() {
   useVisibleTask$(() => {
     const page = document.querySelector(".rm-page--sp") as HTMLElement | null;
     if (!page) return;
+    let rafId = 0;
     const updateScroll = () => {
+      rafId = 0;
       const scrollMax = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
       const scrollRatio = window.scrollY / scrollMax;
       page.style.setProperty("--rm-scroll-progress", scrollRatio.toFixed(4));
@@ -225,9 +227,16 @@ export default component$(function Day3Roadmap() {
       page.style.setProperty("--rm-bg2-shift", `${(140 * (img1 - img3)).toFixed(1)}px`);
       page.style.setProperty("--rm-bg3-shift", `${(140 * (1 - img3)).toFixed(1)}px`);
     };
-    window.addEventListener("scroll", updateScroll, { passive: true });
+    const onScroll = () => {
+      if (rafId) return;
+      rafId = requestAnimationFrame(updateScroll);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
     updateScroll();
-    return () => { window.removeEventListener("scroll", updateScroll); };
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
   });
 
   useVisibleTask$(() => {
@@ -448,7 +457,7 @@ export default component$(function Day3Roadmap() {
         }
         .rm-page--sp .rm-card { background: rgba(4, 0, 8, 0.95); backdrop-filter: blur(24px); border-color: rgba(255, 32, 32, 0.22); }
         .rm-scene-gallery { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
-        .rm-scene-art { position: absolute; inset: 0; overflow: hidden; will-change: transform; transition: opacity 220ms linear, transform 220ms linear; }
+        .rm-scene-art { position: absolute; inset: 0; overflow: hidden; will-change: transform, opacity; transition: opacity 220ms linear, transform 220ms linear; }
         .rm-scene-art::after {
           content: ""; position: absolute; inset: 0;
           background: linear-gradient(180deg, rgba(4, 0, 6, 0.42) 0%, rgba(4, 0, 6, 0.18) 24%, rgba(4, 0, 6, 0.18) 68%, rgba(4, 0, 6, 0.52) 82%, rgba(4, 0, 6, 1) 100%);
@@ -466,6 +475,10 @@ export default component$(function Day3Roadmap() {
           transition: opacity 320ms ease, transform 380ms cubic-bezier(0.22, 1, 0.36, 1); z-index: 4;
         }
         .rm-page--sp.is-end-reached .rm-end-popup { opacity: 1; transform: translate(0, -50%) scale(1); }
+        @media (max-width: 767px) {
+          .rm-page--sp .rm-end-popup { left: calc(100% + 0.95rem) !important; right: auto !important; top: 50% !important; bottom: auto !important; transform: translate(12px, -50%) scale(0.92) !important; min-width: 12rem !important; padding: 0.62rem 0.72rem !important; z-index: 10 !important; }
+          .rm-page--sp.is-end-reached .rm-end-popup, .rm-page--sp .rm-row--final.is-end-reached .rm-end-popup { transform: translate(0, -50%) scale(1) !important; }
+        }
         .rm-row--final { margin-bottom: 0 !important; }
         .rm-timeline { padding-bottom: 0 !important; }
       `}</style>

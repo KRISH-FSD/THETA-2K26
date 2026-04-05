@@ -538,11 +538,16 @@ export default component$(() => {
     const themeStr = selectedDay.value === "Day 3" ? "spider" : selectedDay.value === "Day 2" ? "onepiece" : "default";
     document.body.setAttribute("data-theme", themeStr);
 
-    // Animate cards on filter change
-    gsap.fromTo(".event-card",
-      { y: 40, opacity: 0, scale: 0.95 },
-      { y: 0, opacity: 1, scale: 1, duration: 0.6, stagger: 0.05, ease: "power3.out", clearProps: "all" }
-    );
+    // Animate cards on Day change (Desktop only for smoother mobile performance)
+    if (window.innerWidth >= 768) {
+      gsap.fromTo(".event-card",
+        { y: 40, opacity: 0, scale: 0.95 },
+        { y: 0, opacity: 1, scale: 1, duration: 0.6, stagger: 0.05, ease: "power3.out", clearProps: "all" }
+      );
+    } else {
+      // Ensure no residual values
+      gsap.set(".event-card", { clearProps: "all" });
+    }
   });
 
   useVisibleTask$(() => {
@@ -600,11 +605,13 @@ export default component$(() => {
 
         .omnitrix-bg-image {
           opacity: 0.12;
-          filter:
-            drop-shadow(0 0 18px rgba(var(--tc-light), 0.08))
-            drop-shadow(0 0 42px rgba(var(--tc), 0.08))
-            drop-shadow(0 0 88px rgba(var(--tc), 0.04));
-          transform: translateZ(0);
+          transform: translateZ(0); /* Hardware accelerate */
+        }
+
+        @media (min-width: 768px) {
+          .omnitrix-bg-image {
+            filter: drop-shadow(0 0 18px rgba(var(--tc-light), 0.08)) drop-shadow(0 0 42px rgba(var(--tc), 0.08)) drop-shadow(0 0 88px rgba(var(--tc), 0.04));
+          }
         }
 
         .omnitrix-bg-core {
@@ -612,63 +619,29 @@ export default component$(() => {
           inset: 0;
           opacity: 0.18;
           mix-blend-mode: screen;
-          filter:
-            saturate(1.18)
-            brightness(1.12)
-            contrast(1.08)
-            drop-shadow(0 0 18px rgba(110, 255, 158, 0.12))
-            drop-shadow(0 0 46px rgba(14, 169, 53, 0.12))
-            drop-shadow(0 0 96px rgba(14, 169, 53, 0.08));
-            drop-shadow(0 0 18px rgba(var(--tc-light), 0.12))
-            drop-shadow(0 0 46px rgba(var(--tc), 0.12))
-            drop-shadow(0 0 96px rgba(var(--tc), 0.08));
           animation: omnitrixWatchBlink 5s ease-in-out infinite;
           transform: translateZ(0);
+          will-change: opacity;
+        }
+
+        @media (min-width: 768px) {
+          .omnitrix-bg-core {
+            filter: saturate(1.18) brightness(1.12) contrast(1.08) drop-shadow(0 0 18px rgba(var(--tc-light), 0.12)) drop-shadow(0 0 46px rgba(var(--tc), 0.12)) drop-shadow(0 0 96px rgba(var(--tc), 0.08));
+          }
         }
 
         @keyframes omnitrixWatchBlink {
           0%, 80%, 100% {
-            opacity: 0.18;
-            filter:
-              saturate(1.18)
-              brightness(1.12)
-              contrast(1.08)
-              drop-shadow(0 0 18px rgba(var(--tc-light), 0.12))
-              drop-shadow(0 0 46px rgba(var(--tc), 0.12))
-              drop-shadow(0 0 96px rgba(var(--tc), 0.08));
+            opacity: 0.15;
           }
-
           86% {
-            opacity: 0.26;
-            filter:
-              saturate(1.32)
-              brightness(1.24)
-              contrast(1.12)
-              drop-shadow(0 0 24px rgba(var(--tc-light), 0.18))
-              drop-shadow(0 0 58px rgba(var(--tc), 0.18))
-              drop-shadow(0 0 124px rgba(var(--tc), 0.12));
+            opacity: 0.35;
           }
-
           90% {
-            opacity: 0.21;
-            filter:
-              saturate(1.22)
-              brightness(1.16)
-              contrast(1.09)
-              drop-shadow(0 0 20px rgba(var(--tc-light), 0.14))
-              drop-shadow(0 0 50px rgba(var(--tc), 0.14))
-              drop-shadow(0 0 104px rgba(var(--tc), 0.1));
+            opacity: 0.20;
           }
-
           94% {
-            opacity: 0.3;
-            filter:
-              saturate(1.42)
-              brightness(1.32)
-              contrast(1.14)
-              drop-shadow(0 0 28px rgba(var(--tc-light), 0.22))
-              drop-shadow(0 0 70px rgba(var(--tc), 0.2))
-              drop-shadow(0 0 140px rgba(var(--tc), 0.14));
+            opacity: 0.40;
           }
         }
 
@@ -715,14 +688,14 @@ export default component$(() => {
             ? { border: "border-[#ef4444]/40", glow: "rgba(239,68,68,0.25)", badge: "bg-[#ef4444] text-white", ring: "#ef4444" } 
             : isDay2 
             ? { border: "border-[#eab308]/40", glow: "rgba(234,179,8,0.25)", badge: "bg-[#eab308] text-black", ring: "#eab308" } 
-            : baseC;
+            : { border: "border-[#0ea935]/40", glow: "rgba(14,169,53,0.25)", badge: "bg-[#0ea935] text-white", ring: "#0ea935" };
 
           return (
             <div
               key={event.id}
               onClick$={() => openEvent(event)}
               data-cat={event.theme}
-              class={`event-card group relative flex flex-col rounded-[1.75rem] overflow-hidden cursor-pointer border ${c.border} bg-[#06090a] transition-all duration-500 hover:-translate-y-3`}
+              class={`event-card group relative flex flex-col rounded-[1.75rem] overflow-hidden cursor-pointer border ${c.border} bg-[#06090a] transition-all duration-500 md:hover:-translate-y-3`}
               style={`transition: box-shadow 0.4s ease, transform 0.4s ease;`}
             >
               {/* Animated glowing bottom border line */}
@@ -750,22 +723,6 @@ export default component$(() => {
                 <div class="absolute inset-0 opacity-0 group-hover:opacity-40 transition-opacity duration-700 z-10"
                   style={`background: radial-gradient(circle at 50% 80%, ${c.ring}55, transparent 70%);`}></div>
 
-                {/* Omnitrix-style spinning rings centred on image */}
-                <div class="absolute inset-0 flex items-center justify-center z-20 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                  <div class="relative w-28 h-28">
-                    <div class="absolute inset-0 rounded-full border-[1.5px] border-dashed animate-[spin_6s_linear_infinite]"
-                      style={`border-color: ${c.ring}60;`}></div>
-                    <div class="absolute inset-3 rounded-full border animate-[spin_10s_linear_infinite_reverse]"
-                      style={`border-color: ${c.ring}40;`}></div>
-                    <div class="absolute inset-6 rounded-full border-[1.5px] border-dashed animate-[spin_14s_linear_infinite]"
-                      style={`border-color: ${c.ring}30;`}></div>
-                    {/* Centre dot */}
-                    <div class="absolute inset-0 flex items-center justify-center">
-                      <div class="w-4 h-4 rounded-full animate-pulse"
-                        style={`background: ${c.ring}; box-shadow: 0 0 12px 4px ${c.ring}80;`}></div>
-                    </div>
-                  </div>
-                </div>
 
                 {/* Category badge */}
                 <span class={`absolute top-4 left-4 z-30 max-w-[65%] truncate rounded-full px-3 py-1 text-[0.6rem] font-black uppercase tracking-widest shadow-lg ${c.badge}`}>
@@ -821,12 +778,14 @@ export default component$(() => {
                   </span>
                 </div>
 
-                {/* CTA arrow */}
-                <div class="mt-4 flex items-center gap-2 opacity-0 group-hover:opacity-100 translate-x-[-8px] group-hover:translate-x-0 transition-all duration-400">
-                  <span class="text-xs font-bold uppercase tracking-widest" style={`color:${c.ring};`}>View Details</span>
-                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={`color:${c.ring};`}>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-                  </svg>
+                {/* CTA Button Actions */}
+                <div class="mt-5 flex flex-wrap gap-2 relative z-30 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-400">
+                  <a href="/register" onClick$={(e) => e.stopPropagation()} class="flex-1 py-2.5 px-3 rounded-xl font-extrabold text-[0.65rem] uppercase tracking-widest flex items-center justify-center gap-1.5 transition-transform hover:scale-[1.03] active:scale-95 text-[#06090a]" style={`background: ${c.ring}; box-shadow: 0 0 16px ${c.ring}40;`}>
+                    Register
+                  </a>
+                  <button class="flex-1 py-2.5 px-3 rounded-xl border font-bold text-[0.65rem] uppercase tracking-widest text-white transition-colors flex items-center justify-center hover:bg-white/10" style={`border-color: ${c.ring}30;`}>
+                    Details
+                  </button>
                 </div>
               </div>
             </div>
@@ -914,10 +873,10 @@ export default component$(() => {
           ? { border: "border-[#ef4444]/40", glow: "rgba(239,68,68,0.25)", badge: "bg-[#ef4444] text-white", ring: "#ef4444" } 
           : isDay2 
           ? { border: "border-[#eab308]/40", glow: "rgba(234,179,8,0.25)", badge: "bg-[#eab308] text-black", ring: "#eab308" } 
-          : baseC;
+          : { border: "border-[#0ea935]/40", glow: "rgba(14,169,53,0.25)", badge: "bg-[#0ea935] text-white", ring: "#0ea935" };
 
         return (
-          <div class="fixed inset-0 z-[110] flex items-end sm:items-center justify-center p-0 sm:p-6">
+          <div class="fixed inset-0 z-[110] flex items-center justify-center p-3 sm:p-6">
             {/* Blurred backdrop */}
             <div
               class="absolute inset-0 bg-black/80 backdrop-blur-2xl"
@@ -927,8 +886,8 @@ export default component$(() => {
 
             {/* Modal shell */}
             <div
-              class={`relative z-20 w-full sm:max-w-5xl max-h-[94vh] rounded-t-[2.5rem] sm:rounded-[2.5rem] border ${c.border} bg-[#06090a] shadow-2xl flex flex-col md:flex-row overflow-hidden modal-animate-in`}
-              style={`box-shadow: 0 0 0 1px ${c.ring}30, 0 30px 80px -20px ${c.ring}40, 0 0 120px -30px ${c.glow};`}
+              class={`relative z-20 w-full max-w-[94%] md:max-w-5xl max-h-[90dvh] md:max-h-[85vh] rounded-2xl md:rounded-[2.5rem] border ${c.border} bg-[#06090a] shadow-2xl flex flex-col md:flex-row overflow-hidden modal-animate-in`}
+              style={`box-shadow: 0 0 0 1px ${c.ring}30, 0 10px 50px -15px ${c.ring}30, 0 0 120px -30px ${c.glow};`}
             >
 
 
@@ -939,14 +898,16 @@ export default component$(() => {
               ></div>
 
               {/* ══════════ LEFT — IMAGE PANEL ══════════ */}
-              <div class="relative w-full md:w-[42%] min-h-[240px] md:min-h-full flex-shrink-0 overflow-hidden">
+              <div class="relative w-full md:w-[42%] flex-1 min-h-[180px] md:min-h-full md:flex-none overflow-y-auto md:overflow-hidden modal-scroll border-b border-white/10 md:border-none">
 
-                {/* Image */}
-                <img
-                  src={ev.image}
-                  alt={ev.name}
-                  class="absolute inset-0 w-full h-full object-cover brightness-[0.55] scale-105 modal-img-enter"
-                />
+                {/* Mobile scrollable image container / Desktop absolute cover */}
+                <div class="w-full min-h-[280px] md:absolute md:inset-0 flex flex-col justify-start">
+                  <img
+                    src={ev.image}
+                    alt={ev.name}
+                    class="w-full h-auto md:h-full md:absolute md:inset-0 object-cover brightness-[0.55] transition-transform duration-700 hover:scale-[1.02] modal-img-enter"
+                  />
+                </div>
 
                 {/* Colour wash overlay */}
                 <div
@@ -999,7 +960,7 @@ export default component$(() => {
               </div>
 
               {/* ══════════ RIGHT — DETAILS PANEL ══════════ */}
-              <div class="relative z-10 flex flex-col flex-1 p-8 md:p-10 overflow-y-auto modal-scroll">
+              <div class="relative z-10 flex flex-col flex-shrink md:flex-1 min-h-[250px] md:min-h-0 p-5 md:p-6 md:px-8 overflow-y-auto modal-scroll bg-[#06090a] pb-6">
 
                 {/* ── BEN 10 LOGO WATERMARK — right panel only, rotated to span full width ── */}
                 <div class="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden z-0">
@@ -1015,91 +976,91 @@ export default component$(() => {
                 {/* Close button */}
                 <button
                   onClick$={closeEvent}
-                  class="absolute top-5 right-5 text-white/30 hover:text-white bg-white/5 hover:bg-white/10 rounded-full p-2.5 transition-all duration-200 border border-white/5 z-40"
+                  class="absolute top-4 md:top-6 right-4 md:right-6 text-white/30 hover:text-white bg-white/5 hover:bg-white/10 rounded-full p-2 transition-all duration-200 border border-white/5 z-40"
                 >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <svg class="w-4 h-4 md:w-[18px] md:h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
                     <line x1="6" y1="6" x2="18" y2="18"></line>
                   </svg>
                 </button>
 
                 {/* Event title */}
-                <div class="mb-8 pr-10">
+                <div class="mb-4 md:mb-5 pr-8 md:pr-10 flex-shrink-0">
                   <p
-                    class="text-[0.65rem] font-bold uppercase tracking-[0.25em] mb-3"
+                    class="text-[0.55rem] md:text-[0.6rem] font-bold uppercase tracking-[0.25em] mb-1"
                     style={`color: ${c.ring};`}
                   >
                     Theta schedule / {ev.day}
                   </p>
-                  <h2 class="text-4xl md:text-5xl font-black text-white tracking-tighter leading-none mb-5">
+                  <h2 class="text-3xl md:text-4xl font-black text-white tracking-tighter leading-none mb-2 md:mb-3">
                     {ev.name}
                   </h2>
-                  <p class="text-white/55 text-sm leading-relaxed font-medium">
+                  <p class="text-white/55 text-[0.7rem] md:text-xs leading-relaxed font-medium">
                     {ev.description}
                   </p>
                 </div>
 
                 {/* Divider line */}
-                <div class="h-px bg-white/5 mb-8"></div>
+                <div class="h-px bg-white/5 mb-4 md:mb-5 flex-shrink-0"></div>
 
                 {/* Meta grid */}
-                <div class="grid grid-cols-2 gap-3 mb-8">
+                <div class="grid grid-cols-2 gap-2 mb-4 md:mb-5 flex-shrink-0">
                   {/* Location */}
                   <div
-                    class="flex flex-col rounded-2xl p-4 border"
+                    class="flex flex-col rounded-xl md:rounded-2xl p-3 border"
                     style={`background: ${c.ring}08; border-color: ${c.ring}20;`}
                   >
-                    <div class="flex items-center gap-2 mb-2">
-                      <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={`color: ${c.ring};`}>
+                    <div class="flex items-center gap-1.5 mb-1.5">
+                      <svg class="w-3 h-3 md:w-3.5 md:h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={`color: ${c.ring};`}>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                       </svg>
-                      <span class="text-white/35 text-[0.6rem] font-bold uppercase tracking-widest">Venue</span>
+                      <span class="text-white/35 text-[0.55rem] md:text-[0.6rem] font-bold uppercase tracking-widest">Venue</span>
                     </div>
-                    <span class="font-bold text-white/90 text-sm">{ev.location}</span>
+                    <span class="font-bold text-white/90 text-xs md:text-sm">{ev.location}</span>
                   </div>
 
                   {/* Timing */}
                   <div
-                    class="flex flex-col rounded-2xl p-4 border"
+                    class="flex flex-col rounded-xl md:rounded-2xl p-3 border"
                     style={`background: ${c.ring}08; border-color: ${c.ring}20;`}
                   >
-                    <div class="flex items-center gap-2 mb-2">
-                      <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={`color: ${c.ring};`}>
+                    <div class="flex items-center gap-1.5 mb-1.5">
+                      <svg class="w-3 h-3 md:w-3.5 md:h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={`color: ${c.ring};`}>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                       </svg>
-                      <span class="text-white/35 text-[0.6rem] font-bold uppercase tracking-widest">Timing</span>
+                      <span class="text-white/35 text-[0.55rem] md:text-[0.6rem] font-bold uppercase tracking-widest">Timing</span>
                     </div>
-                    <span class="font-bold text-white/90 text-sm">{ev.timing}</span>
+                    <span class="font-bold text-white/90 text-xs md:text-sm">{ev.timing}</span>
                   </div>
 
                   {/* Cluster */}
                   <div
-                    class="flex flex-col rounded-2xl p-4 border"
+                    class="flex flex-col rounded-xl md:rounded-2xl p-3 border"
                     style={`background: ${c.ring}08; border-color: ${c.ring}20;`}
                   >
-                    <div class="flex items-center gap-2 mb-2">
-                      <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={`color: ${c.ring};`}>
+                    <div class="flex items-center gap-1.5 mb-1.5">
+                      <svg class="w-3 h-3 md:w-3.5 md:h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={`color: ${c.ring};`}>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7h16M4 12h16M4 17h10"></path>
                       </svg>
-                      <span class="text-white/35 text-[0.6rem] font-bold uppercase tracking-widest">Cluster</span>
+                      <span class="text-white/35 text-[0.55rem] md:text-[0.6rem] font-bold uppercase tracking-widest">Cluster</span>
                     </div>
-                    <span class="font-bold text-white/90 text-sm">{ev.cluster}</span>
+                    <span class="font-bold text-white/90 text-xs md:text-sm">{ev.cluster}</span>
                   </div>
 
                   {/* Activities count */}
                   <div
-                    class="flex flex-col rounded-2xl p-4 border"
+                    class="flex flex-col rounded-xl md:rounded-2xl p-3 border"
                     style={`background: ${c.ring}08; border-color: ${c.ring}20;`}
                   >
-                    <div class="flex items-center gap-2 mb-2">
-                      <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={`color: ${c.ring};`}>
+                    <div class="flex items-center gap-1.5 mb-1.5">
+                      <svg class="w-3 h-3 md:w-3.5 md:h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={`color: ${c.ring};`}>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v2m12-4h2a2 2 0 012 2v2M9 19H7a2 2 0 01-2-2v-2m12 4h2a2 2 0 002-2v-2"></path>
                       </svg>
-                      <span class="text-white/35 text-[0.6rem] font-bold uppercase tracking-widest">Activities</span>
+                      <span class="text-white/35 text-[0.55rem] md:text-[0.6rem] font-bold uppercase tracking-widest">Activities</span>
                     </div>
                     <span
-                      class="text-2xl font-black leading-none"
+                      class="text-[1.35rem] md:text-xl font-black leading-none"
                       style={`color: ${c.ring}; text-shadow: 0 0 20px ${c.ring}60;`}
                     >
                       {ev.activities.length}
@@ -1108,35 +1069,50 @@ export default component$(() => {
                 </div>
 
                 <div
-                  class="relative overflow-hidden rounded-2xl border px-6 py-5"
+                  class="relative overflow-hidden rounded-xl md:rounded-2xl border px-4 py-4 md:px-5 md:py-4 flex-shrink-0"
                   style={`background: linear-gradient(135deg, ${c.ring}10 0%, ${c.ring}05 100%); border-color: ${c.ring}30; box-shadow: 0 0 30px ${c.ring}18;`}
                 >
-                  <div class="mb-4 flex items-center justify-between gap-3">
-                    <span class="text-sm font-black uppercase tracking-[0.15em]" style={`color: ${c.ring};`}>
+                  <div class="flex items-start sm:items-center justify-between gap-3">
+                    <span class="text-xs md:text-sm font-black uppercase tracking-[0.15em] leading-tight" style={`color: ${c.ring};`}>
                       Activity Lineup
                     </span>
-                    <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[0.6rem] font-bold uppercase tracking-widest text-white/70">
+                    <span class="rounded-full border border-white/10 bg-white/5 px-2 md:px-3 py-1 text-[0.55rem] font-bold uppercase tracking-widest text-white/70 whitespace-nowrap">
                       {getActivityLabel(ev.activities)}
                     </span>
                   </div>
 
-                  {ev.activities.length > 0 ? (
-                    <div class="flex flex-wrap gap-2">
+                  {ev.activities.length > 0 && (
+                    <div class="mt-3 md:mt-3 flex flex-wrap gap-1.5 md:gap-2">
                       {ev.activities.map((activity) => (
                         <span
                           key={activity}
-                          class="rounded-full border px-3 py-1.5 text-[0.7rem] font-semibold text-white/90"
+                          class="rounded-full border px-2.5 py-1 md:px-3 md:py-1.5 text-[0.6rem] font-semibold text-white/90"
                           style={`border-color: ${c.ring}35; background: ${c.ring}14;`}
                         >
                           {activity}
                         </span>
                       ))}
                     </div>
-                  ) : (
-                    <p class="text-sm leading-relaxed text-white/72">
-                      This event is listed as a standalone format without sub-activities.
+                  )}
+
+                  {ev.activities.length === 0 && (
+                    <p class="mt-2 md:mt-2 text-[0.65rem] md:text-xs leading-relaxed text-white/60 font-medium">
+                      This event is listed as a standalone format without separate track activities.
                     </p>
                   )}
+                </div>
+
+                {/* CTA Action Buttons */}
+                <div class="mt-4 md:mt-5 flex flex-col sm:flex-row gap-2.5 md:gap-3 relative z-20 flex-shrink-0">
+                  <a href="/register" class="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-black text-xs md:text-sm uppercase tracking-widest text-[#06090a] transition-all duration-300 hover:scale-[1.02] active:scale-95" style={`background: ${c.ring}; box-shadow: 0 0 24px ${c.ring}50;`}>
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    Register Now
+                  </a>
+                  <button onClick$={closeEvent} class="sm:flex-1 py-3 rounded-xl border font-bold text-xs md:text-sm uppercase tracking-widest transition-all duration-300 hover:bg-white/5 text-white/70" style={`border-color: ${c.ring}30;`}>
+                    Close Panel
+                  </button>
                 </div>
 
                 {/* Bottom corner rings decoration */}

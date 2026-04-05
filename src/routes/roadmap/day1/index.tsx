@@ -274,7 +274,9 @@ export default component$(function Day1Roadmap() {
   useVisibleTask$(() => {
     const page = document.querySelector(".rm-page--day1") as HTMLElement | null;
     if (!page) return;
+    let rafId = 0;
     const updateScroll = () => {
+      rafId = 0;
       const scrollMax = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
       const scrollRatio = window.scrollY / scrollMax;
       page.style.setProperty("--rm-scroll-progress", scrollRatio.toFixed(4));
@@ -286,9 +288,16 @@ export default component$(function Day1Roadmap() {
       page.style.setProperty("--rm-bg1-shift", `${(-140 * (1 - img1)).toFixed(1)}px`);
       page.style.setProperty("--rm-bg2-shift", `${(140 * (1 - img2)).toFixed(1)}px`);
     };
-    window.addEventListener("scroll", updateScroll, { passive: true });
+    const onScroll = () => {
+      if (rafId) return;
+      rafId = requestAnimationFrame(updateScroll);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
     updateScroll();
-    return () => { window.removeEventListener("scroll", updateScroll); };
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
   });
 
   useVisibleTask$(() => {
@@ -671,7 +680,7 @@ export default component$(function Day1Roadmap() {
           position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
         }
         .rm-scene-art {
-          position: absolute; inset: 0; overflow: hidden; will-change: transform; transition: opacity 180ms linear, transform 180ms linear;
+          position: absolute; inset: 0; overflow: hidden; will-change: transform, opacity; transition: opacity 180ms linear, transform 180ms linear;
         }
         .rm-scene-art::after {
           content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(6, 14, 6, 0.42) 0%, rgba(6, 14, 6, 0.18) 24%, rgba(6, 14, 6, 0.18) 68%, rgba(6, 14, 6, 0.52) 82%, rgba(6, 14, 6, 1) 100%);
@@ -725,9 +734,9 @@ export default component$(function Day1Roadmap() {
             fill: #ffffff !important;
             filter: drop-shadow(0 0 14px rgba(215, 255, 74, 1)) !important;
           }
-          .rm-page--day1 .rm-end-popup { left: 50%; right: auto; top: auto; bottom: calc(100% + 0.8rem); transform: translate(-50%, 14px) scale(0.92); min-width: 9.75rem; padding: 0.62rem 0.72rem; }
-          .rm-page--day1 .rm-end-popup::after { left: 50%; right: auto; top: auto; bottom: -0.45rem; transform: translateX(-50%) rotate(45deg); }
-          .rm-page--day1.is-end-reached .rm-end-popup, .rm-page--day1 .rm-row--final.is-end-reached .rm-end-popup { transform: translate(-50%, 0) scale(1); }
+          .rm-page--day1 .rm-end-popup { left: calc(100% + 0.95rem) !important; right: auto !important; top: 50% !important; bottom: auto !important; transform: translate(12px, -50%) scale(0.92) !important; min-width: 12rem !important; padding: 0.62rem 0.72rem !important; z-index: 10 !important; }
+          .rm-page--day1 .rm-end-popup::after { left: -0.45rem !important; right: auto !important; top: 50% !important; bottom: auto !important; transform: translateY(-50%) rotate(45deg) !important; border-right: none !important; border-bottom: 1px solid rgba(215,255,74,0.24) !important; border-left: 1px solid rgba(215,255,74,0.24) !important; border-top: none !important; }
+          .rm-page--day1.is-end-reached .rm-end-popup, .rm-page--day1 .rm-row--final.is-end-reached .rm-end-popup { transform: translate(0, -50%) scale(1) !important; }
         }
         .rm-row--final { margin-bottom: 0 !important; }
         .rm-timeline { padding-bottom: 0 !important; }

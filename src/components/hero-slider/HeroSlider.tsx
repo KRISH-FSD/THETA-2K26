@@ -192,6 +192,7 @@ export const HeroSlider = component$(() => {
     const progressBar = progressBarRef.value;
 
     if (progressBar) {
+      progressBar.style.transition = "none";
       progressBar.style.width = "0%";
     }
 
@@ -199,26 +200,29 @@ export const HeroSlider = component$(() => {
       return;
     }
 
+    // Video handles its own progress in the next task block
     if (activeSlide.bgVideo && isDesktop.value) {
       return;
     }
 
     const duration = 6000;
-    state.startTime = performance.now();
-    const intervalId = window.setInterval(() => {
-      const elapsed = performance.now() - state.startTime;
-      const pct = Math.min((elapsed / duration) * 100, 100);
-      if (progressBar) {
-        progressBar.style.width = `${pct}%`;
-      }
+    if (progressBar) {
+      // Small delay to allow the 0% reset to be painted
+      const rafId = window.requestAnimationFrame(() => {
+        if (progressBar) {
+          progressBar.style.transition = `width ${duration}ms linear`;
+          progressBar.style.width = "100%";
+        }
+      });
+      cleanup(() => window.cancelAnimationFrame(rafId));
+    }
 
-      if (elapsed >= duration) {
-        const nextIdx = (active.value + 1) % heroSlides.length;
-        goTo(nextIdx);
-      }
-    }, 120);
+    const timeoutId = window.setTimeout(() => {
+      const nextIdx = (active.value + 1) % heroSlides.length;
+      goTo(nextIdx);
+    }, duration);
 
-    cleanup(() => window.clearInterval(intervalId));
+    cleanup(() => window.clearTimeout(timeoutId));
   });
 
   useVisibleTask$(({ cleanup, track }) => {
@@ -438,7 +442,6 @@ export const HeroSlider = component$(() => {
              style={{ 
                width: "0%", 
                background: slide.accentColor,
-               transition: "width 120ms linear",
                willChange: "width"
              }} />
       </div>}
