@@ -13,6 +13,8 @@ interface ClusterEventInput {
   activities: string[];
   image?: string;
   regLink?: string;
+  fee?: string;
+  description?: string;
 }
 
 interface DayCluster {
@@ -33,6 +35,7 @@ interface Event {
   image: string;
   activities: string[];
   regLink?: string;
+  fee?: string;
 }
 
 const DAY_ORDER: DayLabel[] = ["Day 1", "Day 2", "Day 3"];
@@ -80,7 +83,7 @@ const clusterThemeMap: Record<string, EventTheme> = {
   BIOGENISIS: "logic",
   MATHEMATICA: "logic",
   STRATEGIA: "innovation",
-  ACCESS: "innovation",
+  "ACCESS INDIA": "innovation",
   INFORMATICA: "innovation",
   OPTICA: "logic",
   EQUILIBRIA: "creative",
@@ -167,31 +170,25 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
           image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=1000",
           regLink: "https://forms.gle/pBETMEayh8sBm1Q69",
         },
-        {
-          name: "FunFusion Arena",
-          time: "2 PM - 4 PM",
-          venue: "Room 303",
-          focus: "Fun",
-          activities: ["Gaming Challenges", "Strategy Puzzles"],
-          image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000",
-          regLink: "https://forms.gle/WQ9LPHHknA5keGKJ8",
-        },
       ],
     },
     {
-      cluster: "ACCESS",
+      cluster: "ACCESS INDIA",
       events: [
         {
           name: "IRON FIST AI",
-          time: "11 AM - 1 PM",
-          venue: "Room 410",
+          time: "10.00 AM - 12.00 PM",
+          venue: "ROOM NO.410",
           focus: "Tech",
+          fee: "Rs. 75 per team",
+          description: "Iron Fist AI is a tri-phase semi-technical competition where teams of three compete in digital, physical, and AI-driven challenges, testing coordination, memory, and creativity across diverse tasks.",
           activities: [
             "Mini Militia Team Battle",
             "Memory Relay",
             "Vision Challenge",
           ],
-          image: "https://images.unsplash.com/photo-1531746790731-6c087fecd05a?q=80&w=1000",
+          image: "https://images.unsplash.com/photo-1541728472741-03e45a58cf88?auto=format&fit=crop&w=800&q=80",
+          regLink: "https://docs.google.com/forms/d/e/1FAIpQLSdbmoFbrB1bmYrfSQTIVNCjRTSDziAhSheJio7vq4YnrXUA5A/viewform?usp=sharing&ouid=104165202810433780029",
         },
       ],
     },
@@ -237,15 +234,6 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
           image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=1000",
           regLink: "https://forms.gle/TEuppmExeMsJTLGSA",
         },
-        {
-          name: "Tech Fun Fusion- Think pana matum podhum",
-          time: "2 PM - 3:30 PM",
-          venue: "Room 110",
-          focus: "Fun",
-          activities: ["Connect the Tech", "Meme Creation"],
-          image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000",
-          regLink: "https://forms.gle/nSdmEU97op36WiDn7",
-        },
       ],
     },
     {
@@ -286,24 +274,6 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
           image: "https://images.unsplash.com/photo-1546776310-eef45dd6d63c?q=80&w=1000",
           regLink: "https://forms.gle/CDKpnNqdNx85rvPi9",
         },
-        {
-          name: "Fun-Technical Event: Sumo Challenge",
-          time: "2 PM - 4 PM",
-          venue: "ECE Lab",
-          focus: "Tech",
-          activities: ["Bot Wrestling", "Arena Combat"],
-          image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=1000",
-          regLink: "https://forms.gle/Z9saAA2xU2YKoqj8A",
-        },
-        {
-          name: "Technical Hackathon: RoboAI Challenge",
-          time: "10 AM - 4 PM",
-          venue: "ECE Lab",
-          focus: "Tech",
-          activities: ["AI Integration", "Path Planning"],
-          image: "https://images.unsplash.com/photo-1531239669496-e1789bb5ad27?q=80&w=1000",
-          regLink: "https://forms.gle/5dpnrrhJAhrSU6zd7",
-        },
       ],
     },
     {
@@ -340,23 +310,29 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
       cluster: "STRATEGIA",
       events: [
         {
-          name: "Non Technical Arena",
-          time: "11 AM - 1 PM",
+          name: "FunFusion Arena",
+          time: "2 PM - 4 PM",
           venue: "Room 303",
-          focus: "Non-Tech",
-          activities: ["Cup Tower", "Mystery Box", "Bidding Challenge"],
+          focus: "Fun",
+          activities: ["Gaming Challenges", "Strategy Puzzles"],
+          image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000",
+          regLink: "https://forms.gle/WQ9LPHHknA5keGKJ8",
         },
       ],
     },
     {
-      cluster: "ACCESS",
+      cluster: "ACCESS INDIA",
       events: [
         {
-          name: "Technical Vibe",
-          time: "2 PM - 4 PM",
-          venue: "Room 410",
+          name: "VIP: VIBE IN PROMPT",
+          time: "2.00 PM - 4.00 PM",
+          venue: "ROOM NO.410",
           focus: "Tech",
+          fee: "Rs. 50 per team",
+          description: "VIP (Vibe in Prompt) is a three-round generative AI competition by Access India where teams of two use prompt engineering to create high-quality visual, motion, and audio outputs.",
           activities: ["Prompt Engineering", "AI Trailer", "QR Rhapsody"],
+          regLink: "https://docs.google.com/forms/d/e/1FAIpQLSdM2ZwG7i8FtWrBiwbFg4GrMScIgcbJTBHWSLdvlj2R4QIg1w/viewform?usp=sharing&ouid=104165202810433780029",
+          image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=80",
         },
       ],
     },
@@ -385,14 +361,16 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
       ],
     },
     {
-      cluster: "PODHIGAI",
+      cluster: "EQUILIBRIA",
       events: [
         {
-          name: "Fun Event",
-          time: "10 AM - 11:30 AM",
+          name: "Tech Fun Fusion- Think pana matum podhum",
+          time: "2 PM - 3:30 PM",
           venue: "Room 110",
-          focus: "Fun",
-          activities: ["Dizzy Balance", "Comedy Number Remix", "Memory Flip"],
+          focus: "Non-Tech",
+          activities: ["Connect the Tech", "Meme Creation"],
+          image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000",
+          regLink: "https://forms.gle/nSdmEU97op36WiDn7",
         },
       ],
     },
@@ -417,6 +395,20 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
           venue: "Basketball Court",
           focus: "Sports",
           activities: ["One Over Cricket", "Mind on Leg", "Lucky Box"],
+        },
+      ],
+    },
+    {
+      cluster: "ROBOTICS CLUSTER",
+      events: [
+        {
+          name: "Fun-Technical Event: Sumo Challenge",
+          time: "2 PM - 4 PM",
+          venue: "ECE Lab",
+          focus: "Tech",
+          activities: ["Bot Wrestling", "Arena Combat"],
+          image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=1000",
+          regLink: "https://forms.gle/Z9saAA2xU2YKoqj8A",
         },
       ],
     },
@@ -459,14 +451,18 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
       ],
     },
     {
-      cluster: "ACCESS",
+      cluster: "ACCESS INDIA",
       events: [
         {
-          name: "Funverse",
-          time: "11 AM - 1 PM",
-          venue: "Room 410/411",
+          name: "FUNIVERSE",
+          time: "11.00 AM - 2.00 PM",
+          venue: "ROOM NO.410 & 411",
           focus: "Fun",
+          fee: "Rs. 50 per team",
+          description: "Funiverse is a high-energy, three-level event blending fandom, creativity, and performance, where teams of two take on fun, chaotic challenges and showcase their unique strengths.",
           activities: ["Imposter Arc", "Chaos Carnival", "MegaVerse Battle"],
+          regLink: "https://docs.google.com/forms/d/e/1FAIpQLSe7KnkFXECkXDLroyUXsvMvx7811qLI-XbBugH3hJ8kVBrHtg/viewform?usp=sharing&ouid=104165202810433780029",
+          image: "https://images.unsplash.com/photo-1549443542-f47285513903?auto=format&fit=crop&w=800&q=80",
         },
       ],
     },
@@ -495,14 +491,16 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
       ],
     },
     {
-      cluster: "ROBOTICS",
+      cluster: "ROBOTICS CLUSTER",
       events: [
         {
-          name: "Hackathon",
-          time: "11 AM - 1 PM",
-          venue: "Room 106",
+          name: "Technical Hackathon: RoboAI Challenge",
+          time: "10 AM - 4 PM",
+          venue: "ECE Lab",
           focus: "Tech",
-          activities: [],
+          activities: ["AI Integration", "Path Planning"],
+          image: "https://images.unsplash.com/photo-1531239669496-e1789bb5ad27?q=80&w=1000",
+          regLink: "https://forms.gle/5dpnrrhJAhrSU6zd7",
         },
       ],
     },
@@ -527,6 +525,20 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
           venue: "Basketball Court",
           focus: "Sports",
           activities: ["Basketball", "Pass the Ball", "Tug of War"],
+        },
+      ],
+    },
+    {
+      cluster: "EQUILIBRIA",
+      events: [
+        {
+          name: "Ultimate Entertainment Round- Inga serious ku entry kidayathu",
+          time: "11 AM - 1 PM",
+          venue: "Room 110",
+          focus: "Fun",
+          activities: ["Entertainment Challenges", "Comedy Showdown"],
+          image: "https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=1000",
+          regLink: "https://forms.gle/Xa8WaGHWfvToyyUQA",
         },
       ],
     },
@@ -573,7 +585,7 @@ const allEvents: Event[] = DAY_ORDER.flatMap((day) =>
         day,
         timing: event.time,
         location: event.venue,
-        description: buildDescription(
+        description: event.description || buildDescription(
           cluster,
           event.name,
           event.venue,
@@ -582,6 +594,7 @@ const allEvents: Event[] = DAY_ORDER.flatMap((day) =>
         image: event.image || themeImageMap[theme],
         activities: event.activities,
         regLink: event.regLink,
+        fee: event.fee,
       };
     }),
   ),
@@ -594,7 +607,7 @@ export default component$(() => {
   const selectedFocus = useSignal<string>(ALL_CATEGORIES);
   const tempCluster = useSignal<string>(ALL_CLUSTERS);
   const tempFocus = useSignal<string>(ALL_CATEGORIES);
-  const isFilterOpen = useSignal<boolean>(false);
+  const activeFilterPanel = useSignal<"cluster" | "focus" | null>(null);
 
   useVisibleTask$(({ track, cleanup }) => {
     track(() => selectedEvent.value);
@@ -617,9 +630,9 @@ export default component$(() => {
   useVisibleTask$(({ track }) => {
     track(() => selectedDay.value);
 
-    // Reset cluster filter when day changes
-    selectedCluster.value = ALL_CLUSTERS;
-    isFilterOpen.value = false;
+    // Reset cluster filter when day changes (DISABLED for persistence as requested)
+    // selectedCluster.value = ALL_CLUSTERS;
+    activeFilterPanel.value = null;
 
     // Global Theme Sync
     const themeStr = selectedDay.value === "Day 3" ? "spider" : selectedDay.value === "Day 2" ? "onepiece" : "default";
@@ -627,6 +640,24 @@ export default component$(() => {
 
     // Theme transition is now instant for better performance
     gsap.set(".event-card", { clearProps: "all" });
+  });
+
+  useVisibleTask$(({ track }) => {
+    track(() => activeFilterPanel.value);
+    if (activeFilterPanel.value) {
+      // Staggered entrance for filter pills
+      gsap.fromTo(".filter-pill",
+        { y: 20, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.5,
+          stagger: 0.03,
+          ease: "back.out(1.7)",
+          delay: 0.1
+        }
+      );
+    }
   });
 
   useVisibleTask$(() => {
@@ -643,16 +674,27 @@ export default component$(() => {
   });
 
 
-  const openFilter = $(() => {
-    tempCluster.value = selectedCluster.value;
-    tempFocus.value = selectedFocus.value;
-    isFilterOpen.value = true;
+  const toggleFilter = $((panel: "cluster" | "focus") => {
+    if (activeFilterPanel.value === panel) {
+      activeFilterPanel.value = null;
+    } else {
+      activeFilterPanel.value = panel;
+      // Sync temp values for immediate display feel
+      tempCluster.value = selectedCluster.value;
+      tempFocus.value = selectedFocus.value;
+    }
   });
 
-  const applyFilters = $(() => {
-    selectedCluster.value = tempCluster.value;
-    selectedFocus.value = tempFocus.value;
-    isFilterOpen.value = false;
+  const selectFilter = $((type: "cluster" | "focus", value: string) => {
+    if (type === "cluster") {
+      selectedCluster.value = value;
+      tempCluster.value = value;
+    } else {
+      selectedFocus.value = value;
+      tempFocus.value = value;
+    }
+    // Auto-close on selection for immediate feedback
+    activeFilterPanel.value = null;
   });
 
   const openEvent = $((event: Event) => {
@@ -814,8 +856,8 @@ export default component$(() => {
             key={bgLogo + "-1"}
             class={[
               "transition-all duration-700",
-              isDay3 
-                ? "w-screen h-screen object-cover opacity-[0.14] scale-100 grayscale-0" 
+              isDay3
+                ? "w-screen h-screen object-cover opacity-[0.14] scale-100 grayscale-0"
                 : "omnitrix-bg-image w-[90vw] sm:w-[50vw] object-contain contrast-110 grayscale-0 mix-blend-screen scale-110"
             ]}
             style={isDay3 ? "transition: none;" : "transition: all 0.7s ease;"}
@@ -934,7 +976,7 @@ export default component$(() => {
                           {event.focus}
                         </span>
                       </div>
-                      
+
                       <span class="flex-shrink-0 flex items-center gap-1.5 rounded-full border border-white/20 bg-black/60 backdrop-blur-sm px-2.5 py-1 text-[0.55rem] md:text-[0.6rem] font-bold text-white uppercase tracking-widest shadow-lg">
                         <span class="w-1.5 h-1.5 rounded-full bg-[#0ea935] animate-pulse"></span>
                         Scheduled
@@ -986,12 +1028,12 @@ export default component$(() => {
 
                     {/* CTA Button Actions */}
                     <div class="mt-5 flex flex-wrap gap-2 relative z-30 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-400">
-                      <a 
-                        href={event.regLink || "/register"} 
+                      <a
+                        href={event.regLink || "/register"}
                         target={event.regLink ? "_blank" : "_self"}
                         rel={event.regLink ? "noopener noreferrer" : ""}
-                        onClick$={(e) => e.stopPropagation()} 
-                        class="flex-1 py-2.5 px-3 rounded-xl font-extrabold text-[0.65rem] uppercase tracking-widest flex items-center justify-center gap-1.5 transition-transform hover:scale-[1.03] active:scale-95 text-[#06090a]" 
+                        onClick$={(e) => e.stopPropagation()}
+                        class="flex-1 py-2.5 px-3 rounded-xl font-extrabold text-[0.65rem] uppercase tracking-widest flex items-center justify-center gap-1.5 transition-transform hover:scale-[1.03] active:scale-95 text-[#06090a]"
                         style={`background: ${c.ring}; box-shadow: 0 0 16px ${c.ring}40;`}
                       >
                         Register
@@ -1009,7 +1051,7 @@ export default component$(() => {
       </div>
 
       {/* Command Dock — Moves naturally with scrolling */}
-      <div class="event-command-dock absolute top-32 sm:top-40 left-1/2 -translate-x-1/2 z-[100] w-[calc(100%-1.5rem)] max-w-[28rem] sm:max-w-none sm:w-auto flex justify-center">
+      <div class="event-command-dock absolute top-24 sm:top-28 left-1/2 -translate-x-1/2 z-[100] w-[calc(100%-1.5rem)] max-w-[32rem] sm:max-w-none sm:w-auto flex justify-center">
         <div class="relative flex h-12 sm:h-14 items-center gap-1 sm:gap-2 rounded-full border border-white/10 bg-black/60 p-1.5 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.65)]">
 
           <div class="flex h-full items-center gap-1 sm:gap-2 pr-1">
@@ -1037,19 +1079,38 @@ export default component$(() => {
             ))}
           </div>
 
-          <div class="flex h-8 items-center gap-1 border-l border-white/15 pl-1.5 sm:pl-4 sm:pr-2">
+          <div class="flex h-8 items-center gap-2 sm:gap-4 border-l border-white/15 pl-1.5 sm:pl-3">
             <button
-              onClick$={openFilter}
-              class="flex items-center gap-2 rounded-full px-2 py-2 transition-colors hover:bg-white/10 sm:px-3"
+              onClick$={() => toggleFilter("cluster")}
+              class={[
+                "flex items-center gap-1.5 rounded-full px-2 py-1.5 transition-all duration-300 sm:px-3 sm:gap-2",
+                activeFilterPanel.value === "cluster" ? "bg-white/20 shadow-lg" : "hover:bg-white/10"
+              ]}
             >
-              <div class={["w-1.5 h-1.5 rounded-full animate-pulse shrink-0", isDay3 ? "bg-[#ef4444]" : isDay2 ? "bg-[#eab308]" : "bg-[#0ea935]"]}></div>
-              <span class="text-[0.6rem] font-black uppercase tracking-[0.16em] leading-none text-white whitespace-nowrap sm:text-[0.68rem] sm:tracking-widest">
-                {selectedCluster.value === ALL_CLUSTERS && selectedFocus.value === ALL_CATEGORIES ? "Filter" :
-                  selectedCluster.value !== ALL_CLUSTERS ? selectedCluster.value : selectedFocus.value}
-                <span class="hidden sm:inline ml-1">Clusters</span>
+              <div class={["w-1.5 h-1.5 rounded-full shrink-0", isDay3 ? "bg-[#ef4444]" : isDay2 ? "bg-[#eab308]" : "bg-[#0ea935]"]}></div>
+              <span class="text-[0.6rem] font-bold uppercase tracking-widest text-white whitespace-nowrap sm:text-[0.65rem] truncate max-w-[80px] sm:max-w-[120px]">
+                {selectedCluster.value === ALL_CLUSTERS ? "Clusters" : selectedCluster.value}
               </span>
-              <svg class="w-3 h-3 text-white/50 transition-transform shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6" d="M19 9l-7 7-7-7" />
+              <svg class={["w-2.5 h-2.5 text-white/40 transition-transform", activeFilterPanel.value === "cluster" && "rotate-180"]} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path d="M19 9l-7 7-7-7" stroke-width="3" />
+              </svg>
+            </button>
+
+            <div class="h-4 w-px bg-white/10 hidden sm:block mx-1"></div>
+
+            <button
+              onClick$={() => toggleFilter("focus")}
+              class={[
+                "flex items-center gap-1.5 rounded-full px-2 py-1.5 transition-all duration-300 sm:px-3 sm:gap-2",
+                activeFilterPanel.value === "focus" ? "bg-white/20 shadow-lg" : "hover:bg-white/10"
+              ]}
+            >
+              <div class={["w-1.5 h-1.5 rounded-full shrink-0", isDay3 ? "bg-[#ef4444]" : isDay2 ? "bg-[#eab308]" : "bg-[#0ea935]"]}></div>
+              <span class="text-[0.6rem] font-bold uppercase tracking-widest text-white whitespace-nowrap sm:text-[0.65rem] truncate max-w-[60px] sm:max-w-[100px]">
+                {selectedFocus.value === ALL_CATEGORIES ? "Focus" : selectedFocus.value}
+              </span>
+              <svg class={["w-2.5 h-2.5 text-white/40 transition-transform", activeFilterPanel.value === "focus" && "rotate-180"]} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path d="M19 9l-7 7-7-7" stroke-width="3" />
               </svg>
             </button>
           </div>
@@ -1057,94 +1118,78 @@ export default component$(() => {
       </div>
 
       {/* ═══════════════════════════════════════════════════
-            FILTER SELECTION MODAL — CINEMATIC FULLSCREEN
+            DECOUPLED FILTER PANELS — INSTANT & PERSISTENT
           ═══════════════════════════════════════════════════ */}
-      {isFilterOpen.value && (
-        <div class="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-8">
-          {/* Blurred backdrop with scale effect */}
+      {activeFilterPanel.value && (
+        <div class="fixed inset-0 z-[150] flex items-end sm:items-center justify-center p-4 sm:p-8">
+          {/* Backdrop */}
           <div
-            class="absolute inset-0 bg-black/90 backdrop-blur-3xl transition-opacity animate-in fade-in duration-500"
-            onClick$={() => (isFilterOpen.value = false)}
+            class="absolute inset-0 bg-black/40 backdrop-blur-md transition-opacity animate-in fade-in duration-300"
+            onClick$={() => (activeFilterPanel.value = null)}
           ></div>
 
-          {/* Modal Container */}
-          <div class="relative z-10 w-full max-w-4xl max-h-[85vh] overflow-hidden rounded-[2.5rem] border border-white/10 bg-[#080a0b]/80 shadow-[0_0_100px_rgba(0,0,0,0.8)] flex flex-col md:flex-row animate-in zoom-in-95 duration-500">
+          {/* Panel Container */}
+          <div
+            class="relative z-10 w-full max-w-lg mb-20 sm:mb-0 rounded-[2rem] border border-white/10 bg-[#080a0b]/90 backdrop-blur-3xl shadow-[0_30px_100px_rgba(0,0,0,0.8)] overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-10 duration-400"
+            style={`border-color: ${bgGlowColor}30; box-shadow: 0 0 60px ${bgGlowColor}15;`}
+          >
+            {/* Header */}
+            <div class="flex items-center justify-between p-6 border-b border-white/5">
+              <div class="flex flex-col gap-1">
+                <h3 class="text-[0.7rem] font-black uppercase tracking-[0.3em] text-white/40">
+                  {activeFilterPanel.value === "cluster" ? "Select Cluster" : "Discover Focus"}
+                </h3>
+                <p class="text-[0.55rem] text-white/25 font-medium tracking-wider">
+                  {activeFilterPanel.value === "cluster"
+                    ? "Filter by departmental organization"
+                    : "Discover events by category type"}
+                </p>
+              </div>
+              <button
+                onClick$={() => (activeFilterPanel.value = null)}
+                class="p-2 text-white/30 hover:text-white transition-colors"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
 
-            {/* Close Button */}
-            <button
-              onClick$={() => (isFilterOpen.value = false)}
-              class="absolute top-6 right-6 z-50 p-2 text-white/50 hover:text-white transition-colors"
-            >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <path d="M18 6L6 18M6 6l12 12" />
-              </svg>
-            </button>
+            {/* List Content */}
+            <div class="p-6 pt-2 pb-10 sm:pb-12 max-h-[60vh] overflow-y-auto cluster-scrollbar">
+              <div class="flex flex-wrap items-center justify-center gap-3">
+                {(activeFilterPanel.value === "cluster" ? availableClusters : availableFocusForDay).map(item => {
+                  const isActive = activeFilterPanel.value === "cluster"
+                    ? selectedCluster.value === item
+                    : selectedFocus.value === item;
 
-            {/* Sidebar — Clusters */}
-            <div class="w-full md:w-1/2 border-b md:border-b-0 md:border-r border-white/10 p-6 sm:p-10 pb-5 md:pb-24 overflow-y-auto cluster-scrollbar">
-              <h3 class="mb-6 text-[0.75rem] font-black uppercase tracking-[0.3em] text-white/30">Select Cluster</h3>
-              <div class="grid grid-cols-1 gap-2">
-                {availableClusters.map(cluster => (
-                  <button
-                    key={cluster}
-                    onClick$={() => (tempCluster.value = cluster)}
-                    class={[
-                      "group relative flex w-full items-center justify-between rounded-2xl px-5 py-4 text-left transition-all duration-300",
-                      tempCluster.value === cluster
-                        ? (isDay3 ? "bg-[#ef4444] text-white" : isDay2 ? "bg-[#eab308] text-black" : "bg-[#0ea935] text-white")
-                        : "bg-white/5 text-white/60 hover:bg-white/10 hover:text-white"
-                    ]}
-                  >
-                    <span class="text-[0.65rem] font-black uppercase tracking-[0.2em]">{cluster}</span>
-                    {tempCluster.value === cluster && (
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4">
-                        <path d="M20 6L9 17l-5-5" />
-                      </svg>
-                    )}
-                  </button>
-                ))}
+                  const glowColor = isDay3 ? "#ef4444" : isDay2 ? "#eab308" : "#0ea935";
+
+                  return (
+                    <button
+                      key={item}
+                      onClick$={() => selectFilter(activeFilterPanel.value!, item)}
+                      class={[
+                        "filter-pill group relative rounded-full px-5 py-2.5 sm:px-8 sm:py-3 text-[0.6rem] sm:text-[0.65rem] font-black uppercase tracking-widest transition-all duration-300",
+                        isActive
+                          ? "text-black shadow-2xl scale-105"
+                          : "bg-white/5 text-white/50 border border-white/10 hover:bg-white/10 hover:text-white"
+                      ]}
+                      style={isActive ? `background: ${glowColor}; box-shadow: 0 0 30px ${glowColor}60; border-color: transparent;` : ""}
+                    >
+                      {item}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
-            {/* Sidebar — Categories */}
-            <div class="w-full md:w-1/2 p-6 sm:p-10 pb-32 md:pb-24 overflow-y-auto cluster-scrollbar bg-black/20">
-              <h3 class="mb-6 text-[0.75rem] font-black uppercase tracking-[0.3em] text-white/30">Discover Focus</h3>
-              <div class="grid grid-cols-1 gap-2">
-                {availableFocusForDay.map(focus => (
-                  <button
-                    key={focus}
-                    onClick$={() => (tempFocus.value = focus)}
-                    class={[
-                      "group relative flex w-full items-center justify-between rounded-2xl px-5 py-4 text-left transition-all duration-300",
-                      tempFocus.value === focus
-                        ? (isDay3 ? "bg-[#ef4444] text-white shadow-[0_0_20px_rgba(239,68,68,0.4)]" :
-                          isDay2 ? "bg-[#eab308] text-black shadow-[0_0_20px_rgba(234,179,8,0.4)]" :
-                            "bg-[#0ea935] text-white shadow-[0_0_20px_rgba(14,169,53,0.4)]")
-                        : "bg-white/5 text-white/60 hover:bg-white/10 hover:text-white"
-                    ]}
-                  >
-                    <span class="text-[0.65rem] font-black uppercase tracking-[0.2em]">{focus}</span>
-                    {tempFocus.value === focus && (
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4">
-                        <path d="M20 6L9 17l-5-5" />
-                      </svg>
-                    )}
-                  </button>
-                ))}
-              </div>
-
-              {/* Bottom Sticky Apply Area */}
-              <div class="absolute bottom-0 left-0 right-0 p-6 md:p-8 bg-gradient-to-t from-[#080a0b] via-[#080a0b] to-transparent z-40">
-                <button
-                  onClick$={applyFilters}
-                  class="flex w-full items-center justify-center gap-3 rounded-2xl py-4 text-[0.7rem] font-black uppercase tracking-[0.3em] shadow-2xl transition-all duration-300 hover:scale-[1.02] active:scale-95"
-                  style={`background: ${bgGlowColor}; color: ${isDay2 ? "black" : "white"}; box-shadow: 0 0 30px ${bgGlowColor}40;`}
-                >
-                  Apply Filters
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                    <path d="M5 12h14m-7-7 7 7-7 7" />
-                  </svg>
-                </button>
+            {/* Subtle Footer indicator */}
+            <div class="p-4 bg-white/5 flex justify-center">
+              <div class="flex items-center gap-2">
+                <div class="w-1 h-1 rounded-full bg-white/20"></div>
+                <span class="text-[0.5rem] font-bold uppercase tracking-[0.3em] text-white/20">Theta Command Center</span>
+                <div class="w-1 h-1 rounded-full bg-white/20"></div>
               </div>
             </div>
           </div>
@@ -1358,6 +1403,22 @@ export default component$(() => {
                       {ev.activities.length}
                     </span>
                   </div>
+
+                  {/* Registration Fee */}
+                  {ev.fee && (
+                    <div
+                      class="flex flex-col rounded-xl md:rounded-2xl p-3 border col-span-2 sm:col-span-1"
+                      style={`background: ${c.ring}15; border-color: ${c.ring}40; box-shadow: 0 0 15px ${c.ring}10;`}
+                    >
+                      <div class="flex items-center gap-1.5 mb-1.5">
+                        <svg class="w-3 h-3 md:w-3.5 md:h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={`color: ${c.ring};`}>
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span class="text-white/35 text-[0.55rem] md:text-[0.6rem] font-bold uppercase tracking-widest">Reg. Fee</span>
+                      </div>
+                      <span class="font-bold text-white text-xs md:text-sm">{ev.fee}</span>
+                    </div>
+                  )}
                 </div>
 
                 <div
@@ -1396,11 +1457,11 @@ export default component$(() => {
 
                 {/* CTA Action Buttons */}
                 <div class="mt-4 md:mt-5 flex flex-col sm:flex-row gap-2.5 md:gap-3 relative z-20 flex-shrink-0">
-                  <a 
-                    href={ev.regLink || "/register"} 
+                  <a
+                    href={ev.regLink || "/register"}
                     target={ev.regLink ? "_blank" : "_self"}
                     rel={ev.regLink ? "noopener noreferrer" : ""}
-                    class="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-black text-xs md:text-sm uppercase tracking-widest text-[#06090a] transition-all duration-300 hover:scale-[1.02] active:scale-95" 
+                    class="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-black text-xs md:text-sm uppercase tracking-widest text-[#06090a] transition-all duration-300 hover:scale-[1.02] active:scale-95"
                     style={`background: ${c.ring}; box-shadow: 0 0 24px ${c.ring}50;`}
                   >
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
