@@ -571,19 +571,10 @@ export default component$(() => {
     tl.fromTo(".theta-stats-copy", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" })
       .fromTo(".theta-stats-visual-wrap", { opacity: 0, scale: 0.8, y: 20 }, { opacity: 1, scale: 1, y: 0, duration: 1, ease: "back.out(1.2)" }, "-=0.6")
       .fromTo(".theta-stats-node", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.6, stagger: 0.15, ease: "power2.out" }, "-=0.8")
-      .to({ val: 0 }, {
-        val: 1,
-        duration: 2.2,
-        ease: "power2.inOut",
-        onUpdate: function () {
-          const p = this.targets()[0].val;
-          counterDisplay.value = {
-            events: Math.floor(targets.events * p),
-            participants: Math.floor(targets.participants * p),
-            colleges: Math.floor(targets.colleges * p)
-          };
-        }
-      }, "-=1.2");
+      .add(() => {
+        // Set final numbers immediately without counting animation for a smoother experience
+        counterDisplay.value = targets;
+      }, "-=0.5");
   });
 
   useVisibleTask$(() => {

@@ -42,6 +42,7 @@ export const heroSlides = [
     accentColor: "#ff3333",
     accentRgb: "255,51,51",
     bgImage: "/homepage/i3.png",
+    mobileBgImage: "/homepage/i3-mobile.png",
     thumb: "/homepage/i3.png",
   },
 ];
@@ -137,7 +138,15 @@ export const HeroSlider = component$(() => {
       progressBarRef.value.style.width = "0%";
     }
 
+    /* Content Entrance Animations */
     const tl = gsap.timeline();
+    
+    // Background Swap Animation (Zoom-Fade)
+    gsap.fromTo(".hs-media-container", 
+      { opacity: 0.4, scale: 1.06, filter: "blur(8px)" }, 
+      { opacity: 1, scale: 1, filter: "blur(0px)", duration: 1.4, ease: "expo.out" }
+    );
+
     tl.fromTo(".hs-badge", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power4.out" });
     tl.fromTo(".hs-title", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power4.out" }, "-=0.4");
     tl.fromTo(".hs-desc", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power4.out" }, "-=0.5");
@@ -353,14 +362,14 @@ export const HeroSlider = component$(() => {
           <div
             class="absolute inset-0 h-full w-full bg-cover"
             style={{ 
-              backgroundImage: `url(${slide.bgImage})`,
+              backgroundImage: `url(${(!isDesktop.value && (slide as any).mobileBgImage) ? (slide as any).mobileBgImage : slide.bgImage})`,
               backgroundPosition: slide.id === 2 ? 'center 15%' : 'center' 
             }}
           />
         )}
-        {/* Dynamic Overlay: Day 3 gets light bottom darkness only, others get cinematic text-readability darkness */}
+        {/* Dynamic Overlay: Day 1 & 3 get light bottom darkness only to showcase visuals, Day 2 gets cinematic darkness for navigation visibility */}
         <div class="hs-overlay" style={{ 
-          background: slide.id === 2 
+          background: (slide.id === 0 || slide.id === 2)
             ? "linear-gradient(to top, rgba(5,3,15,0.85) 0%, rgba(5,3,15,0.4) 20%, transparent 50%)" 
             : "linear-gradient(108deg, rgba(5,3,15,0.65) 0%, rgba(5,3,15,0.45) 45%, rgba(5,3,15,0.1) 100%), linear-gradient(to top, rgba(5,3,15,1) 0%, rgba(5,3,15,0.44) 32%, transparent 100%)" 
         }} />
