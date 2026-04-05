@@ -317,9 +317,9 @@ export const HeroSlider = component$(() => {
   const isDay1DesktopVideo = slide.id === 0 && !!slide.bgVideo && isDesktop.value;
 
   return (
-    <section id="hero-slider" ref={heroRef} class="hs-root relative overflow-hidden" 
-             style={`--hs-accent:${slide.accentColor};--hs-accent-rgb:${slide.accentRgb};`}>
-      
+    <section id="hero-slider" ref={heroRef} class="hs-root relative overflow-hidden"
+      style={`--hs-accent:${slide.accentColor};--hs-accent-rgb:${slide.accentRgb};`}>
+
       {/* Backgrounds */}
       <div
         key={slide.id}
@@ -351,11 +351,19 @@ export const HeroSlider = component$(() => {
           )
         ) : (
           <div
-            class="absolute inset-0 h-full w-full bg-cover bg-center"
-            style={{ backgroundImage: `url(${slide.bgImage})` }}
+            class="absolute inset-0 h-full w-full bg-cover"
+            style={{ 
+              backgroundImage: `url(${slide.bgImage})`,
+              backgroundPosition: slide.id === 2 ? 'center 15%' : 'center' 
+            }}
           />
         )}
-        <div class="hs-overlay" style={{ background: `linear-gradient(108deg, rgba(5,3,15,0.65) 0%, rgba(5,3,15,0.45) 45%, rgba(5,3,15,0.1) 100%), linear-gradient(to top, rgba(5,3,15,1) 0%, rgba(5,3,15,0.44) 32%, transparent 100%)` }} />
+        {/* Dynamic Overlay: Day 3 gets light bottom darkness only, others get cinematic text-readability darkness */}
+        <div class="hs-overlay" style={{ 
+          background: slide.id === 2 
+            ? "linear-gradient(to top, rgba(5,3,15,0.85) 0%, rgba(5,3,15,0.4) 20%, transparent 50%)" 
+            : "linear-gradient(108deg, rgba(5,3,15,0.65) 0%, rgba(5,3,15,0.45) 45%, rgba(5,3,15,0.1) 100%), linear-gradient(to top, rgba(5,3,15,1) 0%, rgba(5,3,15,0.44) 32%, transparent 100%)" 
+        }} />
         <div class="hs-tint" style={{ background: `radial-gradient(ellipse 70% 60% at 80% 40%, rgba(${slide.accentRgb},0.08), transparent 70%)`, opacity: "1" }} />
         {isDay1DesktopVideo && isVideoLoading.value && (
           <div class="hs-video-loader">
@@ -373,16 +381,16 @@ export const HeroSlider = component$(() => {
 
       <div class="hs-grain" />
 
-      {/* Content */}
-      {!isDay1DesktopVideo && slide.id !== 2 && <div class={`hs-content ${slide.id === 0 ? "hs-content--mobile-day1" : ""}`}>
+      {/* Content: Hidden for Day 3 alone to favor visuals */}
+      {!isDay1DesktopVideo && slide.id !== 2 && <div class="hs-content">
         <div class="hs-badge">
           <span class="hs-badge-text">{slide.day} · {slide.subtitle}</span>
         </div>
-        <h1 class="hs-title font-black uppercase">{slide.title}</h1>
-        <p class="hs-desc">{slide.description}</p>
+        <h1 class="hs-title font-black uppercase text-center">{slide.title}</h1>
+        <p class="hs-desc text-center">{slide.description}</p>
         <div class="hs-actions">
           <div class="hs-actions__row">
-            <a href="/roadmap/day1" class="hs-cta hs-cta--primary">
+            <a href={`/roadmap/day${slide.id + 1}`} class="hs-cta hs-cta--primary">
               View Roadmap
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
             </a>
@@ -408,24 +416,24 @@ export const HeroSlider = component$(() => {
           <img src="/sponsors/general/sastra-university-logo.jpg" alt="SASTRA" class="hs-video-branding__logo hs-video-branding__logo--sastra" />
         </div>
       )}
-      
+
       {/* Dots */}
       <div class="hs-dots">
         {heroSlides.map((s, i) => (
-          <button key={s.id} 
-                  class={`hs-dot ${active.value === i ? "hs-dot--active" : ""}`}
-                  style={active.value === i ? { background: slide.accentColor, boxShadow: `0 0 8px ${slide.accentColor}` } : {}}
-                  onClick$={() => goTo(i)} />
+          <button key={s.id}
+            class={`hs-dot ${active.value === i ? "hs-dot--active" : ""}`}
+            style={active.value === i ? { background: slide.accentColor, boxShadow: `0 0 8px ${slide.accentColor}` } : {}}
+            onClick$={() => goTo(i)} />
         ))}
       </div>
 
       {/* Thumbs */}
       <div class="hs-thumbs">
         {heroSlides.map((s, i) => (
-          <button key={s.id} 
-                  class={`hs-thumb ${active.value === i ? "hs-thumb--active" : ""}`}
-                  style={active.value === i ? { borderColor: s.accentColor, boxShadow: `0 0 0 2px ${s.accentColor}44, 0 8px 24px rgba(0,0,0,0.5)` } : {}}
-                  onClick$={() => goTo(i)}>
+          <button key={s.id}
+            class={`hs-thumb ${active.value === i ? "hs-thumb--active" : ""}`}
+            style={active.value === i ? { borderColor: s.accentColor, boxShadow: `0 0 0 2px ${s.accentColor}44, 0 8px 24px rgba(0,0,0,0.5)` } : {}}
+            onClick$={() => goTo(i)}>
             <img src={s.thumb} alt={s.day} class="hs-thumb-img" loading="lazy" />
             <div class="hs-thumb-overlay" style={active.value === i ? { background: `linear-gradient(to top, rgba(${s.accentRgb},0.55), transparent)` } : {}} />
             <span class="hs-thumb-label" style={active.value === i ? { color: s.accentColor } : {}}>{s.day}</span>
@@ -437,13 +445,13 @@ export const HeroSlider = component$(() => {
       {/* UNSTOPPABLE PROGRESS BAR (Absolute Bottom) */}
       {!isDesktop.value && <div class="absolute bottom-0 left-0 z-50 h-[2.5px] w-full bg-white/5 pointer-events-none overflow-hidden">
         <div
-             ref={progressBarRef}
-             class="h-full shadow-[0_0_15px_var(--hs-accent)]"
-             style={{ 
-               width: "0%", 
-               background: slide.accentColor,
-               willChange: "width"
-             }} />
+          ref={progressBarRef}
+          class="h-full shadow-[0_0_15px_var(--hs-accent)]"
+          style={{
+            width: "0%",
+            background: slide.accentColor,
+            willChange: "width"
+          }} />
       </div>}
     </section>
   );

@@ -11,6 +11,8 @@ interface ClusterEventInput {
   venue: string;
   focus: string;
   activities: string[];
+  image?: string;
+  regLink?: string;
 }
 
 interface DayCluster {
@@ -30,6 +32,7 @@ interface Event {
   description: string;
   image: string;
   activities: string[];
+  regLink?: string;
 }
 
 const DAY_ORDER: DayLabel[] = ["Day 1", "Day 2", "Day 3"];
@@ -80,10 +83,10 @@ const clusterThemeMap: Record<string, EventTheme> = {
   ACCESS: "innovation",
   INFORMATICA: "innovation",
   OPTICA: "logic",
-  PODHIGAI: "creative",
+  EQUILIBRIA: "creative",
   "VINODHA VAHINI": "fun",
   ELECTRONICA: "innovation",
-  ROBOTICS: "innovation",
+  "ROBOTICS CLUSTER": "innovation",
   SPORTIVA: "sports",
 };
 
@@ -111,6 +114,7 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
           venue: "IED Hall",
           focus: "Fun",
           activities: ["Focus Freaks", "Zero Vision Zone", "Error Hunt"],
+          image: "https://images.unsplash.com/photo-1596720426673-e47744bd2185?q=80&w=1000",
         },
         {
           name: "Bio Architect",
@@ -118,6 +122,7 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
           venue: "IED Hall",
           focus: "Learning",
           activities: [],
+          image: "https://images.unsplash.com/photo-1541888946425-d81bb19480c5?q=80&w=1000",
         },
       ],
     },
@@ -134,6 +139,7 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
             "Think Fast Move Smart",
             "Clue Connection",
           ],
+          image: "https://images.unsplash.com/photo-1544383335-df4d10037ec3?q=80&w=1000",
         },
         {
           name: "Infinity Beats",
@@ -141,6 +147,7 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
           venue: "Room 211",
           focus: "Fun",
           activities: ["Balance Blitz", "Tap & Drop", "Spin & Solve"],
+          image: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=1000",
         },
       ],
     },
@@ -148,7 +155,7 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
       cluster: "STRATEGIA",
       events: [
         {
-          name: "Venture Forge Hackathon",
+          name: "Venture Forge Hackathon - Marketing Edition",
           time: "11 AM - 1 PM",
           venue: "Room 303",
           focus: "Tech",
@@ -157,6 +164,17 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
             "Marketing Solution Design",
             "Pitch",
           ],
+          image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=1000",
+          regLink: "https://forms.gle/pBETMEayh8sBm1Q69",
+        },
+        {
+          name: "FunFusion Arena",
+          time: "2 PM - 4 PM",
+          venue: "Room 303",
+          focus: "Fun",
+          activities: ["Gaming Challenges", "Strategy Puzzles"],
+          image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000",
+          regLink: "https://forms.gle/WQ9LPHHknA5keGKJ8",
         },
       ],
     },
@@ -173,6 +191,7 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
             "Memory Relay",
             "Vision Challenge",
           ],
+          image: "https://images.unsplash.com/photo-1531746790731-6c087fecd05a?q=80&w=1000",
         },
       ],
     },
@@ -185,6 +204,7 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
           venue: "Lab",
           focus: "Tech",
           activities: [],
+          image: "https://images.unsplash.com/photo-1536240478700-b869070f9279?q=80&w=1000",
         },
       ],
     },
@@ -201,25 +221,30 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
             "Binary Code Game",
             "Bernoulli Binary Blast",
           ],
+          image: "https://images.unsplash.com/photo-1581093191605-a1d35581177b?q=80&w=1000",
         },
       ],
     },
     {
-      cluster: "PODHIGAI",
+      cluster: "EQUILIBRIA",
       events: [
         {
-          name: "AI Prompt App Creation",
+          name: "AI prompt App Creation- Na oru thadava prompt kudutha AI aayiram App create panum",
           time: "11:30 AM - 1 PM",
           venue: "Room 110",
           focus: "Tech",
           activities: [],
+          image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=1000",
+          regLink: "https://forms.gle/TEuppmExeMsJTLGSA",
         },
         {
-          name: "Tech Fun Fusion",
+          name: "Tech Fun Fusion- Think pana matum podhum",
           time: "2 PM - 3:30 PM",
           venue: "Room 110",
           focus: "Fun",
           activities: ["Connect the Tech", "Meme Creation"],
+          image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000",
+          regLink: "https://forms.gle/nSdmEU97op36WiDn7",
         },
       ],
     },
@@ -232,6 +257,7 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
           venue: "Room 406",
           focus: "Fun",
           activities: [],
+          image: "https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?q=80&w=1000",
         },
       ],
     },
@@ -244,25 +270,39 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
           venue: "Room 402",
           focus: "Tech",
           activities: ["Tech Spark", "Design & Develop", "Start-up Showcase"],
+          image: "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?q=80&w=1000",
         },
       ],
     },
     {
-      cluster: "ROBOTICS",
+      cluster: "ROBOTICS CLUSTER",
       events: [
         {
-          name: "Maze Bot",
+          name: "Technical Event – Gesture Controlled Bot: Obstacle Maze",
           time: "11 AM - 1 PM",
           venue: "ECE Lab",
           focus: "Tech",
-          activities: [],
+          activities: ["Bot Maze Run", "Gesture Calibration"],
+          image: "https://images.unsplash.com/photo-1546776310-eef45dd6d63c?q=80&w=1000",
+          regLink: "https://forms.gle/CDKpnNqdNx85rvPi9",
         },
         {
-          name: "Sumo Bot",
+          name: "Fun-Technical Event: Sumo Challenge",
           time: "2 PM - 4 PM",
           venue: "ECE Lab",
           focus: "Tech",
-          activities: [],
+          activities: ["Bot Wrestling", "Arena Combat"],
+          image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=1000",
+          regLink: "https://forms.gle/Z9saAA2xU2YKoqj8A",
+        },
+        {
+          name: "Technical Hackathon: RoboAI Challenge",
+          time: "10 AM - 4 PM",
+          venue: "ECE Lab",
+          focus: "Tech",
+          activities: ["AI Integration", "Path Planning"],
+          image: "https://images.unsplash.com/photo-1531239669496-e1789bb5ad27?q=80&w=1000",
+          regLink: "https://forms.gle/5dpnrrhJAhrSU6zd7",
         },
       ],
     },
@@ -403,11 +443,18 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
       cluster: "STRATEGIA",
       events: [
         {
-          name: "Stock Wars",
+          name: "Stock War - The Trading Arena",
           time: "11 AM - 1 PM",
           venue: "Room 303",
           focus: "Tech",
-          activities: ["Market Entry", "News Impact", "Market Shock"],
+          activities: [
+            "Team Size: 2 Members",
+            "Entry Fee: ₹50 (In-house) / ₹59 (External)",
+            "Market Simulation",
+            "Risk Analysis & Strategy",
+          ],
+          image: "https://images.unsplash.com/photo-1611974714028-ac6096ac72e8?q=80&w=1000",
+          regLink: "https://forms.gle/6jL2YA3VvscgGiUf9",
         },
       ],
     },
@@ -532,8 +579,9 @@ const allEvents: Event[] = DAY_ORDER.flatMap((day) =>
           event.venue,
           event.activities,
         ),
-        image: themeImageMap[theme],
+        image: event.image || themeImageMap[theme],
         activities: event.activities,
+        regLink: event.regLink,
       };
     }),
   ),
@@ -857,10 +905,10 @@ export default component$(() => {
 
                     {/* Image */}
                     <img
-                      src={isDay3 ? "/spidy/spidy-event-bg" : isDay2 ? "https://images.unsplash.com/photo-1518837691861-152e4d31716b?q=80&w=1000" : "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1000"}
+                      src={event.image || (isDay3 ? "/spidy/spidy-event-bg" : isDay2 ? "https://images.unsplash.com/photo-1518837691861-152e4d31716b?q=80&w=1000" : "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1000")}
                       alt={event.name}
                       class={[
-                        "absolute inset-0 h-full w-full object-cover brightness-[0.55] group-hover:brightness-[0.8]",
+                        "absolute inset-0 h-full w-full object-cover brightness-[0.55] group-hover:brightness-[0.8] text-transparent",
                         !isDay3 && "transition-transform duration-700 group-hover:scale-110"
                       ]}
                       loading="lazy"
@@ -876,22 +924,22 @@ export default component$(() => {
                     <div class="absolute inset-0 opacity-0 group-hover:opacity-40 transition-opacity duration-700 z-10"
                       style={`background: radial-gradient(circle at 50% 80%, ${c.ring}55, transparent 70%);`}></div>
 
-
-                    {/* Category badge */}
-                    <div class="absolute top-4 left-4 z-30 flex flex-wrap gap-2 max-w-[80%]">
-                      <span class={`rounded-full px-3 py-1 text-[0.6rem] font-black uppercase tracking-widest shadow-lg ${c.badge}`}>
-                        {event.cluster}
-                      </span>
-                      <span class="rounded-full border border-white/20 bg-black/60 backdrop-blur-sm px-3 py-1 text-[0.6rem] font-black text-white uppercase tracking-widest shadow-lg">
-                        {event.focus}
+                    {/* Top Badges & Status - Flex row with wrapping protection */}
+                    <div class="absolute top-4 left-4 right-4 z-30 flex justify-between items-start gap-2">
+                      <div class="flex flex-col sm:flex-row flex-wrap gap-1.5 max-w-[70%]">
+                        <span class={`rounded-full px-2.5 py-1 text-[0.55rem] md:text-[0.6rem] font-bold uppercase tracking-widest shadow-lg whitespace-nowrap ${c.badge}`}>
+                          {event.cluster}
+                        </span>
+                        <span class="rounded-full border border-white/20 bg-black/60 backdrop-blur-sm px-2.5 py-1 text-[0.55rem] md:text-[0.6rem] font-bold text-white uppercase tracking-widest shadow-lg whitespace-nowrap">
+                          {event.focus}
+                        </span>
+                      </div>
+                      
+                      <span class="flex-shrink-0 flex items-center gap-1.5 rounded-full border border-white/20 bg-black/60 backdrop-blur-sm px-2.5 py-1 text-[0.55rem] md:text-[0.6rem] font-bold text-white uppercase tracking-widest shadow-lg">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#0ea935] animate-pulse"></span>
+                        Scheduled
                       </span>
                     </div>
-
-                    {/* Schedule indicator */}
-                    <span class="absolute top-4 right-4 z-30 flex items-center gap-1.5 rounded-full border border-white/20 bg-black/60 backdrop-blur-sm px-3 py-1 text-[0.6rem] font-black text-white uppercase tracking-widest">
-                      <span class="w-1.5 h-1.5 rounded-full bg-[#0ea935] animate-pulse"></span>
-                      Scheduled
-                    </span>
 
                     {/* Day label bottom-left on image */}
                     <span class="absolute bottom-3 left-4 z-30 text-[0.6rem] font-bold uppercase tracking-[0.2em] text-white/50">
@@ -938,7 +986,14 @@ export default component$(() => {
 
                     {/* CTA Button Actions */}
                     <div class="mt-5 flex flex-wrap gap-2 relative z-30 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-400">
-                      <a href="/register" onClick$={(e) => e.stopPropagation()} class="flex-1 py-2.5 px-3 rounded-xl font-extrabold text-[0.65rem] uppercase tracking-widest flex items-center justify-center gap-1.5 transition-transform hover:scale-[1.03] active:scale-95 text-[#06090a]" style={`background: ${c.ring}; box-shadow: 0 0 16px ${c.ring}40;`}>
+                      <a 
+                        href={event.regLink || "/register"} 
+                        target={event.regLink ? "_blank" : "_self"}
+                        rel={event.regLink ? "noopener noreferrer" : ""}
+                        onClick$={(e) => e.stopPropagation()} 
+                        class="flex-1 py-2.5 px-3 rounded-xl font-extrabold text-[0.65rem] uppercase tracking-widest flex items-center justify-center gap-1.5 transition-transform hover:scale-[1.03] active:scale-95 text-[#06090a]" 
+                        style={`background: ${c.ring}; box-shadow: 0 0 16px ${c.ring}40;`}
+                      >
                         Register
                       </a>
                       <button class="flex-1 py-2.5 px-3 rounded-xl border font-bold text-[0.65rem] uppercase tracking-widest text-white transition-colors flex items-center justify-center hover:bg-white/10" style={`border-color: ${c.ring}30;`}>
@@ -1137,7 +1192,7 @@ export default component$(() => {
                 {/* Mobile scrollable image container / Desktop absolute cover */}
                 <div class="w-full min-h-[280px] md:absolute md:inset-0 flex flex-col justify-start">
                   <img
-                    src={isDay3 ? "/spidy/spidy-event-bg" : isDay2 ? "https://images.unsplash.com/photo-1518837691861-152e4d31716b?q=80&w=1000" : "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1000"}
+                    src={ev.image || (isDay3 ? "/spidy/spidy-event-bg" : isDay2 ? "https://images.unsplash.com/photo-1518837691861-152e4d31716b?q=80&w=1000" : "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1000")}
                     alt={ev.name}
                     class={[
                       "w-full h-auto md:h-full md:absolute md:inset-0 object-cover brightness-[0.55]",
@@ -1341,7 +1396,13 @@ export default component$(() => {
 
                 {/* CTA Action Buttons */}
                 <div class="mt-4 md:mt-5 flex flex-col sm:flex-row gap-2.5 md:gap-3 relative z-20 flex-shrink-0">
-                  <a href="/register" class="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-black text-xs md:text-sm uppercase tracking-widest text-[#06090a] transition-all duration-300 hover:scale-[1.02] active:scale-95" style={`background: ${c.ring}; box-shadow: 0 0 24px ${c.ring}50;`}>
+                  <a 
+                    href={ev.regLink || "/register"} 
+                    target={ev.regLink ? "_blank" : "_self"}
+                    rel={ev.regLink ? "noopener noreferrer" : ""}
+                    class="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-black text-xs md:text-sm uppercase tracking-widest text-[#06090a] transition-all duration-300 hover:scale-[1.02] active:scale-95" 
+                    style={`background: ${c.ring}; box-shadow: 0 0 24px ${c.ring}50;`}
+                  >
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
