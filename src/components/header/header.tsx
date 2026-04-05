@@ -204,28 +204,55 @@ export const Header = component$(() => {
       {/* Mobile Menu */}
       <div
         class={[
-          "fixed inset-x-4 top-[74px] z-[99] overflow-hidden rounded-[2.5rem] border border-[rgba(255,255,255,0.1)] bg-[rgba(10,10,10,0.85)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.1),0_24px_60px_rgba(0,0,0,0.8)] backdrop-blur-3xl transition-all duration-300 md:hidden",
+          "fixed inset-x-4 top-[84px] z-[200] overflow-hidden rounded-[2.5rem] border border-[rgba(255,255,255,0.1)] bg-[rgba(10,10,10,0.85)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.1),0_24px_60px_rgba(0,0,0,0.8)] backdrop-blur-3xl transition-all duration-500 md:hidden",
           open.value
-            ? "pointer-events-auto max-h-[34rem] py-6 opacity-100"
-            : "pointer-events-none max-h-0 py-0 opacity-0",
+            ? "pointer-events-auto max-h-[36rem] py-8 opacity-100 translate-y-0"
+            : "pointer-events-none max-h-0 py-0 opacity-0 -translate-y-4",
         ]}
       >
         <div class="space-y-3 px-6">
           <Link href="/events"
-            class="t-spider-mobile-hover block rounded-2xl border border-[rgba(255,255,255,0.05)] bg-[#111111]/80 px-5 py-4 text-center text-sm font-bold tracking-widest text-[#f0fff0] uppercase shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] transition-colors">
+            class={[
+              "block rounded-2xl border px-5 py-4 text-center text-sm font-bold tracking-widest uppercase transition-colors",
+              isActive("/events") 
+                ? "t-spider-mobile-highlight shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]" 
+                : "t-spider-mobile-hover border-[rgba(255,255,255,0.05)] bg-[#111111]/80 text-[#f0fff0]"
+            ]}
+            style={isActive("/events") ? `border:1px solid ${accentLight};background:${accentBg};color:${accent};box-shadow:inset 0 1px 1px rgba(255,255,255,0.05),0 0 12px ${accentBg};` : ""}
+          >
             Events
           </Link>
           <Link href="/sponsors"
-            class="t-spider-mobile-highlight block rounded-2xl px-5 py-4 text-center text-sm font-bold tracking-widest uppercase shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] transition-colors"
-            style={`border:1px solid ${accentLight};background:${accentBg};color:${accent};box-shadow:inset 0 1px 1px rgba(255,255,255,0.05),0 0 12px ${accentBg};`}>
+            class={[
+              "block rounded-2xl border px-5 py-4 text-center text-sm font-bold tracking-widest uppercase transition-colors",
+              isActive("/sponsors") 
+                ? "t-spider-mobile-highlight shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]" 
+                : "t-spider-mobile-hover border-[rgba(255,255,255,0.05)] bg-[#111111]/80 text-[#f0fff0]"
+            ]}
+            style={isActive("/sponsors") ? `border:1px solid ${accentLight};background:${accentBg};color:${accent};box-shadow:inset 0 1px 1px rgba(255,255,255,0.05),0 0 12px ${accentBg};` : ""}
+          >
             Sponsors
           </Link>
           <Link href="/roadmap/day1"
-            class="t-spider-mobile-hover block rounded-2xl border border-[rgba(255,255,255,0.05)] bg-[#111111]/80 px-5 py-4 text-center text-sm font-bold tracking-widest text-[#f0fff0] uppercase shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] transition-colors">
+            class={[
+              "block rounded-2xl border px-5 py-4 text-center text-sm font-bold tracking-widest uppercase transition-colors",
+              isActive("/roadmap") 
+                ? "t-spider-mobile-highlight shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]" 
+                : "t-spider-mobile-hover border-[rgba(255,255,255,0.05)] bg-[#111111]/80 text-[#f0fff0]"
+            ]}
+            style={isActive("/roadmap") ? `border:1px solid ${accentLight};background:${accentBg};color:${accent};box-shadow:inset 0 1px 1px rgba(255,255,255,0.05),0 0 12px ${accentBg};` : ""}
+          >
             Roadmap
           </Link>
           <Link href="/contact"
-            class="t-spider-mobile-hover block rounded-2xl border border-[rgba(255,255,255,0.05)] bg-[#111111]/80 px-5 py-4 text-center text-sm font-bold tracking-widest text-[#f0fff0] uppercase shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] transition-colors">
+            class={[
+              "block rounded-2xl border px-5 py-4 text-center text-sm font-bold tracking-widest uppercase transition-colors",
+              isActive("/contact") 
+                ? "t-spider-mobile-highlight shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]" 
+                : "t-spider-mobile-hover border-[rgba(255,255,255,0.05)] bg-[#111111]/80 text-[#f0fff0]"
+            ]}
+            style={isActive("/contact") ? `border:1px solid ${accentLight};background:${accentBg};color:${accent};box-shadow:inset 0 1px 1px rgba(255,255,255,0.05),0 0 12px ${accentBg};` : ""}
+          >
             Contacts
           </Link>
           <Link

@@ -400,19 +400,11 @@ export default component$(function Day1Roadmap() {
 
         rows.forEach((row, idx) => {
           const card = row.querySelector<HTMLElement>(".rm-card");
-          const isLeft = row.classList.contains("rm-row--left");
           if (card && !revealed.has(card)) {
             const r = card.getBoundingClientRect();
-            if (r.top < VH * 0.9) {
+            if (r.top < VH * 0.92) {
               revealed.add(card);
-              if (gsap && enableCardReveal) {
-                gsap.fromTo(card,
-                  { opacity: 0, x: isLeft ? -70 : 70, y: 28, scale: 0.88, rotateY: isLeft ? -14 : 14 },
-                  {
-                    opacity: 1, x: 0, y: 0, scale: 1, rotateY: 0,
-                    duration: 0.85, ease: "back.out(1.4)", delay: idx * 0.04, clearProps: "transform"
-                  });
-              } else { card.style.opacity = "1"; card.style.transform = "none"; }
+              card.classList.add("is-revealed");
             }
           }
         });
@@ -551,6 +543,22 @@ export default component$(function Day1Roadmap() {
            background: rgba(8, 16, 8, 0.94);
            backdrop-filter: blur(20px);
            border-color: rgba(99, 255, 44, 0.28);
+           opacity: 0;
+           will-change: transform, opacity;
+        }
+        .rm-row--left .rm-card.is-revealed {
+          animation: rmCardRotateLeft 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        .rm-row--right .rm-card.is-revealed {
+          animation: rmCardRotateRight 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        @keyframes rmCardRotateLeft {
+          0% { opacity: 0; transform: translateX(-60px) translateY(20px) scale(0.9) rotateY(-10deg); }
+          100% { opacity: 1; transform: translateX(0) translateY(0) scale(1) rotateY(0); }
+        }
+        @keyframes rmCardRotateRight {
+          0% { opacity: 0; transform: translateX(60px) translateY(20px) scale(0.9) rotateY(10deg); }
+          100% { opacity: 1; transform: translateX(0) translateY(0) scale(1) rotateY(0); }
         }
         .rm-page--day1 .rm-dock__inner {
           border-color: rgba(99, 255, 44, 0.24);

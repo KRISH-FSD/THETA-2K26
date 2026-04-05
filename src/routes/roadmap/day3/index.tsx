@@ -317,9 +317,9 @@ export default component$(function Day3Roadmap() {
           if (card && !revealed.has(card)) {
             const top = card.getBoundingClientRect().top;
             const isLeft = row.classList.contains("rm-row--left");
-            if (top < VH * 0.9) {
+            if (top < VH * 0.92) {
               revealed.add(card);
-              if (gsap && enableCardReveal) { gsap.fromTo(card, { opacity: 0, x: isLeft ? -70 : 70, y: 28, scale: 0.88, rotateY: isLeft ? -14 : 14 }, { opacity: 1, x: 0, y: 0, scale: 1, rotateY: 0, duration: 0.85, ease: "back.out(1.4)", delay: idx * 0.04, clearProps: "transform" }); } else { card.style.opacity = "1"; card.style.transform = "none"; }
+              card.classList.add("is-revealed");
             }
           }
         });
@@ -455,7 +455,17 @@ export default component$(function Day3Roadmap() {
             linear-gradient(180deg, rgba(8, 0, 12, 0.52) 0%, rgba(12, 0, 18, 0.35) 18%, rgba(12, 0, 18, 0.46) 56%, rgba(4, 0, 6, 0.82) 100%),
             radial-gradient(circle at 50% 20%, rgba(255, 32, 32, 0.08), transparent 25%);
         }
-        .rm-page--sp .rm-card { background: rgba(4, 0, 8, 0.95); backdrop-filter: blur(24px); border-color: rgba(255, 32, 32, 0.22); }
+        .rm-page--sp .rm-card { background: rgba(4, 0, 8, 0.95); backdrop-filter: blur(24px); border-color: rgba(255, 32, 32, 0.22); opacity: 0; will-change: transform, opacity; }
+        .rm-row--left .rm-card.is-revealed { animation: rmCardRotateLeft 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        .rm-row--right .rm-card.is-revealed { animation: rmCardRotateRight 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        @keyframes rmCardRotateLeft {
+          0% { opacity: 0; transform: translateX(-60px) translateY(20px) scale(0.9) rotateY(-10deg); }
+          100% { opacity: 1; transform: translateX(0) translateY(0) scale(1) rotateY(0); }
+        }
+        @keyframes rmCardRotateRight {
+          0% { opacity: 0; transform: translateX(60px) translateY(20px) scale(0.9) rotateY(10deg); }
+          100% { opacity: 1; transform: translateX(0) translateY(0) scale(1) rotateY(0); }
+        }
         .rm-scene-gallery { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
         .rm-scene-art { position: absolute; inset: 0; overflow: hidden; will-change: transform, opacity; transition: opacity 220ms linear, transform 220ms linear; }
         .rm-scene-art::after {

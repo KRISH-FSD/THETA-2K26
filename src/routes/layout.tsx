@@ -84,6 +84,7 @@ export default component$(() => {
   const copy = useSignal<LayoutCopy>(defaultLayoutCopy);
   const isSponsorsRoute = loc.url.pathname.startsWith("/sponsors");
   const isDevelopersRoute = loc.url.pathname.startsWith("/developers");
+  const isEventsRoute = loc.url.pathname.startsWith("/events");
   const isDay2 = loc.url.pathname.includes("/roadmap/day2");
   const footerLogo = isDay2 ? "/onepeice/one-peice-logo.png" : "/theta-logo.png";
 
@@ -272,7 +273,7 @@ export default component$(() => {
         )}
 
         {/* ── Footer: Neural Grid Redesign ── */}
-        {!isDevelopersRoute && (
+        {!isDevelopersRoute && !isEventsRoute && (
           <footer class="footer-neural-grid mt-12 border-t border-white/5 pt-12 pb-12 relative overflow-hidden backdrop-blur-2xl bg-black/40">
           {/* Ambient Blurred Glows (Modern Layout) */}
           <div class="footer-ambient-glow footer-ambient-glow--1 absolute -top-[20%] -left-[10%] h-[150%] w-[50%] opacity-20 blur-[120px] rounded-full pointer-events-none" />
