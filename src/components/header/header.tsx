@@ -38,35 +38,48 @@ export const Header = component$(() => {
   });
 
   /* Derived accent color for current theme */
-  const accent = theme.value === "spider"   ? "#ff4040" 
-               : theme.value === "onepiece" ? "#ffd700" 
-               : theme.value === "red-ben10" ? "#ff4d4f" 
-               : "#0ea935";
-  const accentLight = theme.value === "spider"   ? "rgba(220,16,16,0.35)" 
-                    : theme.value === "onepiece" ? "rgba(255,215,0,0.35)" 
-                    : theme.value === "red-ben10" ? "rgba(255,16,16,0.35)" 
-                    : "rgba(14,169,53,0.35)";
-  const accentBg    = theme.value === "spider"   ? "rgba(220,16,16,0.1)"  
-                    : theme.value === "onepiece" ? "rgba(255,215,0,0.1)"  
-                    : theme.value === "red-ben10" ? "rgba(255,16,16,0.1)"  
-                    : "rgba(14,169,53,0.1)";
-  const accentGlow  = theme.value === "spider"   ? "rgba(220,16,16,0.5)"  
-                    : theme.value === "onepiece" ? "rgba(200,160,0,0.5)"  
-                    : theme.value === "red-ben10" ? "rgba(255,40,40,0.5)"  
-                    : "rgba(14,169,53,0.5)";
-  const logoSrc     = theme.value === "spider"   ? "/spidy/image.png"
-                    : theme.value === "onepiece" ? "/onepeice/one-peice-logo.png"
-                    : theme.value === "red-ben10" ? "/red-ben10/red-ben10.png"
-                    : "/ben10/ben10-logo.png";
-  const logoAlt     = theme.value === "spider"   ? "Spider-Man"
-                    : theme.value === "onepiece" ? "One Piece"
-                    : theme.value === "red-ben10" ? "Red Ben 10"
-                    : "Ben 10 Logo";
+  const accent = theme.value === "spider" ? "#ff4040"
+    : theme.value === "onepiece" ? "#ffd700"
+      : theme.value === "red-ben10" ? "#ff4d4f"
+        : "#0ea935";
+  const accentLight = theme.value === "spider" ? "rgba(220,16,16,0.35)"
+    : theme.value === "onepiece" ? "rgba(255,215,0,0.35)"
+      : theme.value === "red-ben10" ? "rgba(255,16,16,0.35)"
+        : "rgba(14,169,53,0.35)";
+  const accentBg = theme.value === "spider" ? "rgba(220,16,16,0.1)"
+    : theme.value === "onepiece" ? "rgba(255,215,0,0.1)"
+      : theme.value === "red-ben10" ? "rgba(255,16,16,0.1)"
+        : "rgba(14,169,53,0.1)";
+  const accentGlow = theme.value === "spider" ? "rgba(220,16,16,0.5)"
+    : theme.value === "onepiece" ? "rgba(200,160,0,0.5)"
+      : theme.value === "red-ben10" ? "rgba(255,40,40,0.5)"
+        : "rgba(14,169,53,0.5)";
+  const logoSrc = theme.value === "spider" ? "/spidy/image.png"
+    : theme.value === "onepiece" ? "/onepeice/one-peice-logo.png"
+      : theme.value === "red-ben10" ? "/red-ben10/red-ben10.png"
+        : "/ben10/ben10-logo.png";
+  const logoAlt = theme.value === "spider" ? "Spider-Man"
+    : theme.value === "onepiece" ? "One Piece"
+      : theme.value === "red-ben10" ? "Red Ben 10"
+        : "Ben 10 Logo";
 
   const navLinkActive = (href: string) =>
     isActive(href)
       ? `px-2 text-[0.65rem] font-bold tracking-widest uppercase transition-colors lg:text-xs t-spider-nav-active t-spider-nav-hover`
       : `px-2 text-[0.65rem] font-bold tracking-widest uppercase transition-colors lg:text-xs ${theme.value === 'red-ben10' ? 'text-[#a38c8c]' : 'text-[#8ca38c]'} t-spider-nav-hover`;
+
+  const mobilePrimaryLinkClass = (href: string) =>
+    [
+      "flex min-w-0 items-center justify-center rounded-full border px-3 py-2 text-[0.6rem] font-black tracking-[0.18em] uppercase backdrop-blur-xl transition-colors",
+      isActive(href)
+        ? "t-spider-mobile-highlight shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]"
+        : "border-[rgba(255,255,255,0.08)] bg-[rgba(10,10,10,0.55)] text-[#f0fff0]",
+    ].join(" ");
+
+  const mobilePrimaryLinkStyle = (href: string) =>
+    isActive(href)
+      ? `border:1px solid ${accentLight};background:${accentBg};color:${accent};box-shadow:inset 0 1px 1px rgba(255,255,255,0.05),0 0 12px ${accentBg};`
+      : "";
 
   const developerButtonActive = isActive("/developers");
 
@@ -82,7 +95,7 @@ export const Header = component$(() => {
             <img
               src="/theta-logo.png"
               alt="Theta"
-              class="h-14 w-auto object-contain opacity-95 [filter:brightness(0)_invert(1)] transition-opacity hover:opacity-100 sm:h-16 md:h-20"
+              class="h-8 w-auto object-contain opacity-95 [filter:brightness(0)_invert(1)] transition-opacity hover:opacity-100 sm:h-12 md:h-20"
             />
           </Link>
         </div>
@@ -100,7 +113,7 @@ export const Header = component$(() => {
             >
               <span
                 class="t-ben10-shell-glow"
-                style={`background:radial-gradient(circle,${accentBg.replace("0.1","0.55")},transparent 70%);transition:background 0.5s;`}
+                style={`background:radial-gradient(circle,${accentBg.replace("0.1", "0.55")},transparent 70%);transition:background 0.5s;`}
               />
               <img
                 src={logoSrc}
@@ -112,27 +125,43 @@ export const Header = component$(() => {
           </Link>
 
           <Link href="/roadmap/day1" class={navLinkActive("/roadmap")}>Roadmap</Link>
-          <Link href="/contact"      class={navLinkActive("/contact")}>Contacts</Link>
+          <Link href="/contact" class={navLinkActive("/contact")}>Contacts</Link>
         </nav>
 
-        {/* Center: Mobile Logo */}
-        <div class="pointer-events-auto flex flex-1 justify-center md:hidden">
-          <Link
-            href="/"
-            class="t-ben10-link t-ben10-shell relative z-10 flex h-14 w-14 items-center justify-center overflow-hidden rounded-full border border-[rgba(255,255,255,0.15)] bg-[rgba(10,10,10,0.6)] backdrop-blur-xl"
-            style={`border-color:${accentLight};box-shadow:0 0 20px ${accentBg};transition:border-color 0.5s,box-shadow 0.5s;`}
-          >
-            <span
-              class="t-ben10-shell-glow"
-              style={`background:radial-gradient(circle,${accentBg.replace("0.1","0.55")},transparent 70%);transition:background 0.5s;`}
-            />
-            <img
-              src={logoSrc}
-              alt={logoAlt}
-              class={`t-ben10-icon w-auto object-contain transition-all duration-500 ${theme.value === 'red-ben10' ? 'h-11 translate-y-[1px]' : 'h-10'}`}
-              style="transition:opacity 0.4s,transform 0.4s;"
-            />
-          </Link>
+        {/* Mobile: compact Ben 10 navbar */}
+        <div class="pointer-events-auto absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center md:hidden">
+          <div class="flex items-center gap-1 rounded-full border border-[rgba(255,255,255,0.12)] bg-[rgba(10,10,10,0.52)] px-2 py-1 shadow-[inset_0_1px_1px_rgba(255,255,255,0.14),0_10px_24px_rgba(0,0,0,0.45)] backdrop-blur-2xl">
+            <Link
+              href="/events"
+              class={mobilePrimaryLinkClass("/events")}
+              style={mobilePrimaryLinkStyle("/events")}
+            >
+              Events
+            </Link>
+            <Link
+              href="/"
+              class="t-ben10-link t-ben10-shell relative z-10 flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[rgba(255,255,255,0.15)] bg-[rgba(10,10,10,0.7)] backdrop-blur-xl"
+              style={`border-color:${accentLight};box-shadow:0 0 16px ${accentBg};transition:border-color 0.5s,box-shadow 0.5s;`}
+            >
+              <span
+                class="t-ben10-shell-glow"
+                style={`background:radial-gradient(circle,${accentBg.replace("0.1", "0.55")},transparent 70%);transition:background 0.5s;`}
+              />
+              <img
+                src={logoSrc}
+                alt={logoAlt}
+                class={`t-ben10-icon w-auto object-contain transition-all duration-500 ${theme.value === 'red-ben10' ? 'h-8 translate-y-[1px]' : 'h-7'}`}
+                style="transition:opacity 0.4s,transform 0.4s;"
+              />
+            </Link>
+            <Link
+              href="/roadmap/day1"
+              class={mobilePrimaryLinkClass("/roadmap")}
+              style={mobilePrimaryLinkStyle("/roadmap")}
+            >
+              Roadmap
+            </Link>
+          </div>
         </div>
 
         {/* Right: Developers + Hamburger */}
@@ -173,7 +202,7 @@ export const Header = component$(() => {
           <button
             type="button"
             onClick$={toggleMenu}
-            class="t-spider-hamburger flex h-12 w-12 items-center justify-center rounded-full border border-[rgba(255,255,255,0.15)] bg-[rgba(10,10,10,0.5)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_8px_20px_rgba(0,0,0,0.4)] backdrop-blur-2xl md:hidden"
+            class="t-spider-hamburger flex h-10 w-10 items-center justify-center rounded-full border border-[rgba(255,255,255,0.15)] bg-[rgba(10,10,10,0.5)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_8px_20px_rgba(0,0,0,0.4)] backdrop-blur-2xl md:hidden"
             style={`color:${accent};`}
           >
             {open.value ? (
@@ -201,44 +230,22 @@ export const Header = component$(() => {
         ]}
       >
         <div class="space-y-3 px-6">
-          <Link href="/events"
-            class={[
-              "block rounded-2xl border px-5 py-4 text-center text-sm font-bold tracking-widest uppercase transition-colors",
-              isActive("/events") 
-                ? "t-spider-mobile-highlight shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]" 
-                : "t-spider-mobile-hover border-[rgba(255,255,255,0.05)] bg-[#111111]/80 text-[#f0fff0]"
-            ]}
-            style={isActive("/events") ? `border:1px solid ${accentLight};background:${accentBg};color:${accent};box-shadow:inset 0 1px 1px rgba(255,255,255,0.05),0 0 12px ${accentBg};` : ""}
-          >
-            Events
-          </Link>
           <Link href="/sponsors"
             class={[
               "block rounded-2xl border px-5 py-4 text-center text-sm font-bold tracking-widest uppercase transition-colors",
-              isActive("/sponsors") 
-                ? "t-spider-mobile-highlight shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]" 
+              isActive("/sponsors")
+                ? "t-spider-mobile-highlight shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]"
                 : "t-spider-mobile-hover border-[rgba(255,255,255,0.05)] bg-[#111111]/80 text-[#f0fff0]"
             ]}
             style={isActive("/sponsors") ? `border:1px solid ${accentLight};background:${accentBg};color:${accent};box-shadow:inset 0 1px 1px rgba(255,255,255,0.05),0 0 12px ${accentBg};` : ""}
           >
             Sponsors
           </Link>
-          <Link href="/roadmap/day1"
-            class={[
-              "block rounded-2xl border px-5 py-4 text-center text-sm font-bold tracking-widest uppercase transition-colors",
-              isActive("/roadmap") 
-                ? "t-spider-mobile-highlight shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]" 
-                : "t-spider-mobile-hover border-[rgba(255,255,255,0.05)] bg-[#111111]/80 text-[#f0fff0]"
-            ]}
-            style={isActive("/roadmap") ? `border:1px solid ${accentLight};background:${accentBg};color:${accent};box-shadow:inset 0 1px 1px rgba(255,255,255,0.05),0 0 12px ${accentBg};` : ""}
-          >
-            Roadmap
-          </Link>
           <Link href="/contact"
             class={[
               "block rounded-2xl border px-5 py-4 text-center text-sm font-bold tracking-widest uppercase transition-colors",
-              isActive("/contact") 
-                ? "t-spider-mobile-highlight shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]" 
+              isActive("/contact")
+                ? "t-spider-mobile-highlight shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]"
                 : "t-spider-mobile-hover border-[rgba(255,255,255,0.05)] bg-[#111111]/80 text-[#f0fff0]"
             ]}
             style={isActive("/contact") ? `border:1px solid ${accentLight};background:${accentBg};color:${accent};box-shadow:inset 0 1px 1px rgba(255,255,255,0.05),0 0 12px ${accentBg};` : ""}

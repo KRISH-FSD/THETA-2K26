@@ -1,4 +1,4 @@
-import { $, component$, useSignal, useVisibleTask$ } from "@builder.io/qwik";
+import { component$, useVisibleTask$ } from "@builder.io/qwik";
 import { Link, type DocumentHead } from "@builder.io/qwik-city";
 
 type Cat = "opening" | "tech" | "workshop" | "quiz" | "fun" | "cultural";
@@ -10,8 +10,7 @@ interface EventData {
 }
 interface CatMeta { label: string; short: string; color: string; rgb: string; }
 interface EventCardProps {
-  ev: EventData; meta: CatMeta; isActive: boolean;
-  side: "left" | "right"; onToggle$: () => void;
+  ev: EventData; meta: CatMeta; canRegister: boolean; isActive: boolean;
 }
 interface PopupPanelProps { ev: EventData; meta: CatMeta; side: "left" | "right"; canRegister: boolean; inlineMobile?: boolean; }
 
@@ -225,14 +224,8 @@ const PopupPanel = component$<PopupPanelProps>(({ ev, meta, side, canRegister, i
 
 /* ─── Event Card ───────────────────────────────── */
 const EventCard = component$<EventCardProps>(
-  ({ ev, meta, isActive, side, onToggle$ }) => (
-    <article
-      class={["rm-card", isActive ? "is-active" : "", `rm-card--${side}`]}
-      style={`--rm-accent:${meta.color};--rm-accent-rgb:${meta.rgb};`}
-      onClick$={onToggle$}
-      onKeyDown$={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onToggle$(); } }}
-      role="button" tabIndex={0} aria-expanded={isActive}
-    >
+  ({ ev, meta, canRegister, isActive }) => (
+    <article class="rm-card" style={`--rm-accent:${meta.color};--rm-accent-rgb:${meta.rgb};`}>
       <div class="rm-card__sheen" />
       <div class="rm-card__media">
         <img src={ev.img} alt={ev.title} width={1200} height={640} loading="lazy" class="rm-card__image" />
@@ -260,6 +253,29 @@ const EventCard = component$<EventCardProps>(
           <span class="rm-card__meta-pill">{ev.venue}</span>
           <span class="rm-card__meta-pill">{ev.time} – {ev.endTime}</span>
         </div>
+        <div class="rm-card__stat-grid">
+          <div class="rm-card__stat">
+            <span class="rm-card__stat-label">Entry</span>
+            <strong class="rm-card__stat-value">{ev.fee}</strong>
+          </div>
+          <div class="rm-card__stat">
+            <span class="rm-card__stat-label">Team</span>
+            <strong class="rm-card__stat-value">{ev.team}</strong>
+          </div>
+          <div class="rm-card__stat">
+            <span class="rm-card__stat-label">Prize</span>
+            <strong class="rm-card__stat-value">{ev.prize}</strong>
+          </div>
+        </div>
+        <div class="rm-card__tags">
+          {ev.tags.map((t) => <span key={t} class="rm-card__tag">{t}</span>)}
+        </div>
+        <div class="rm-card__actions">
+          <Link href="/events" class="rm-card__action rm-card__action--primary">View Event Hub</Link>
+          {canRegister
+            ? <Link href="/events" class="rm-card__action rm-card__action--ghost">Register Now</Link>
+            : <span class="rm-card__status">Open Access</span>}
+        </div>
         {isActive && (
           <p class="rm-card__popup-hint">← See details panel →</p>
         )}
@@ -269,7 +285,6 @@ const EventCard = component$<EventCardProps>(
 );
 
 export default component$(function Day1Roadmap() {
-  const activeEventId = useSignal<number | null>(null);
 
   useVisibleTask$(() => {
     const page = document.querySelector(".rm-page--day1") as HTMLElement | null;
@@ -467,10 +482,6 @@ export default component$(function Day1Roadmap() {
 
     const cleanup = boot();
     return () => cleanup?.();
-  });
-
-  const toggleEvent = $((id: number) => {
-    activeEventId.value = activeEventId.value === id ? null : id;
   });
 
   return (
@@ -756,14 +767,14 @@ export default component$(function Day1Roadmap() {
             {EVENTS.map((event, index) => {
               const meta = CAT[event.cat];
               const side: "left" | "right" = index % 2 === 0 ? "left" : "right";
-              const isActive = activeEventId.value === event.id;
+              const isActive = false;
               const canRegister = event.cat !== "opening" && event.cat !== "cultural";
               return (
                 <div key={event.id} class={["rm-row", `rm-row--${side}`]}>
                   <div class="rm-row__side rm-row__side--left">
                     {side === "left" ? (
                       <>
-                        <EventCard ev={event} meta={meta} isActive={isActive} side="left" onToggle$={() => toggleEvent(event.id)} />
+                      <EventCard ev={event} meta={meta} isActive={isActive} canRegister={canRegister} />
                         {isActive && <PopupPanel ev={event} meta={meta} side="left" canRegister={canRegister} inlineMobile />}
                       </>
                     ) : (
@@ -771,7 +782,11 @@ export default component$(function Day1Roadmap() {
                     )}
                   </div>
                   <div class={["rm-row__center", `rm-row__center--${side === "left" ? "r" : "l"}`]}>
-                    <div class="rm-node" style={`--rm-accent:${meta.color};--rm-accent-rgb:${meta.rgb};`} data-snake-node="">
+                    <div
+                      class="rm-node"
+                      style={`--rm-accent:${meta.color};--rm-accent-rgb:${meta.rgb};`}
+                      data-snake-node=""
+                    >
                       <span class="rm-node__pulse" /><span class="rm-node__halo" /><span class="rm-node__impact" />
                       <span class="rm-node__code">{meta.short}</span>
                       <span class="rm-node__time">{event.time}</span>
@@ -780,7 +795,7 @@ export default component$(function Day1Roadmap() {
                   <div class="rm-row__side rm-row__side--right">
                     {side === "right" ? (
                       <>
-                        <EventCard ev={event} meta={meta} isActive={isActive} side="right" onToggle$={() => toggleEvent(event.id)} />
+                      <EventCard ev={event} meta={meta} isActive={isActive} canRegister={canRegister} />
                         {isActive && <PopupPanel ev={event} meta={meta} side="right" canRegister={canRegister} inlineMobile />}
                       </>
                     ) : (

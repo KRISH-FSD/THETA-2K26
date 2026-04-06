@@ -6366,6 +6366,8 @@ header.scrolled {
 .rm-row__side,
 .rm-row__panel {
   min-width: 0;
+  position: relative;
+  z-index: 1;
 }
 
 .rm-row__side--left,
@@ -6389,7 +6391,7 @@ header.scrolled {
   align-items: center;
   padding-top: 1.2rem;
   min-height: 100%;
-  z-index: 2;
+  z-index: 5;
 }
 
 /* S-curve alignment: node right/left/center within spine */
@@ -6906,18 +6908,17 @@ header.scrolled {
 }
 
 .rm-card {
-  cursor: pointer;
+  cursor: default;
   border-radius: 0.95rem;
-  transition:
-    transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 280ms ease,
-    box-shadow 280ms ease,
-    background 280ms ease;
+  transition: none;
+  transform: none !important;
+  animation: none !important;
+  opacity: 1 !important;
 }
 
 .rm-card:hover,
 .rm-card.is-active {
-  transform: translateY(-6px);
+  transform: none;
   border-color: rgba(var(--rm-accent-rgb), 0.34);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.07),
@@ -6954,14 +6955,12 @@ header.scrolled {
 .rm-card__image {
   object-fit: cover;
   filter: saturate(0.88) brightness(0.44) contrast(1.08);
-  transition:
-    transform 760ms ease,
-    filter 320ms ease;
+  transition: none;
 }
 
 .rm-card:hover .rm-card__image,
 .rm-card.is-active .rm-card__image {
-  transform: scale(1.08);
+  transform: none;
   filter: saturate(0.98) brightness(0.52) contrast(1.12);
 }
 
@@ -7173,15 +7172,18 @@ header.scrolled {
   font-weight: 900;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  transition:
-    transform 220ms ease,
-    border-color 220ms ease,
-    box-shadow 220ms ease,
-    background 220ms ease;
+  transition: none;
 }
 
 .rm-card__action:hover {
-  transform: translateY(-2px);
+  transform: none;
+}
+
+.rm-row--left .rm-card.is-revealed,
+.rm-row--right .rm-card.is-revealed {
+  animation: none !important;
+  opacity: 1 !important;
+  transform: none !important;
 }
 
 .rm-card__action--primary {
@@ -8043,6 +8045,7 @@ header.scrolled {
   --rm-accent-rgb: 224, 224, 224;
   position: relative;
   width: 100%;
+  z-index: 1;
   overflow: visible;
   will-change: transform, opacity;
   animation: rm-drop-in 0.52s cubic-bezier(0.22, 1.5, 0.36, 1) both;
@@ -9229,7 +9232,7 @@ body[data-theme="onepiece"] .t-spider-mobile-hover:hover {
   pointer-events: none;
   background-color: #05030f;
   overflow: hidden;
-  will-change: transform, opacity, filter;
+  will-change: opacity;
   backface-visibility: hidden;
 }
 
@@ -9242,20 +9245,6 @@ body[data-theme="onepiece"] .t-spider-mobile-hover:hover {
 .hs-bg--inactive {
   z-index: 1;
   opacity: 0;
-}
-
-/* Ken Burns (Premium Slow Zoom) */
-.hs-ken-burns {
-  animation: hsKenBurns 28s ease-in-out infinite alternate;
-}
-
-@keyframes hsKenBurns {
-  0% {
-    transform: scale(1) translate(0, 0);
-  }
-  100% {
-    transform: scale(1.18) translate(-1%, -1.5%);
-  }
 }
 
 /* Video Loader refinement */

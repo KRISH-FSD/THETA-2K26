@@ -22,6 +22,7 @@ export const heroSlides = [
     bgVideo: "/homepage/v1.mp4",
     thumb: "/homepage/i1.png",
   },
+  /* 
   {
     id: 1,
     day: "Day 2",
@@ -32,7 +33,8 @@ export const heroSlides = [
     accentRgb: "245,200,66",
     bgImage: "/day/day-2.png",
     thumb: "/day/day-2.png",
-  },
+  }, 
+  */
   {
     id: 2,
     day: "Day 3",
@@ -136,12 +138,6 @@ export const HeroSlider = component$(() => {
 
     /* Content Entrance Animations */
     const tl = gsap.timeline();
-
-    // Background Swap Animation (Zoom-Fade)
-    gsap.fromTo(".hs-bg",
-      { opacity: 0, scale: 1.08, filter: "blur(12px)" },
-      { opacity: 1, scale: 1, filter: "blur(0px)", duration: 1.6, ease: "power4.out" }
-    );
 
     tl.fromTo(".hs-badge", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power4.out" });
     tl.fromTo(".hs-title", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power4.out" }, "-=0.4");
@@ -334,8 +330,8 @@ export const HeroSlider = component$(() => {
           style={{
             zIndex: active.value === i ? 2 : 1,
             opacity: active.value === i ? 1 : 0,
-            transition: 'opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1), transform 1.5s cubic-bezier(0.4, 0, 0.2, 1)',
-            transform: active.value === i ? 'scale(1)' : 'scale(1.05)'
+            transition: "none",
+            transform: "none"
           }}
         >
           {s.bgVideo && isDesktop.value ? (
@@ -361,11 +357,11 @@ export const HeroSlider = component$(() => {
             )
           ) : (
             <div
-              class={["absolute inset-0 h-full w-full bg-cover", active.value === i && "hs-ken-burns"]}
+              class="absolute inset-0 h-full w-full bg-cover"
               style={{
                 backgroundImage: `url(${(!isDesktop.value && (s as any).mobileBgImage) ? (s as any).mobileBgImage : s.bgImage})`,
                 backgroundPosition: s.id === 2 ? 'center 15%' : 'center',
-                willChange: "transform, opacity"
+                willChange: "opacity"
               }}
             />
           )}
@@ -425,7 +421,7 @@ export const HeroSlider = component$(() => {
         <div class="hs-video-branding" aria-label="Theta and SASTRA logos">
           <img src="/theta-logo.png" alt="Theta" class="hs-video-branding__logo hs-video-branding__logo--theta" />
           <div class="hs-video-branding__divider" />
-          <img src="/sponsors/general/sastra-university-logo.jpg" alt="SASTRA" class="hs-video-branding__logo hs-video-branding__logo--sastra" />
+          <img src="/sastra.png" alt="SASTRA" class="hs-video-branding__logo hs-video-branding__logo--sastra" />
         </div>
       )}
 
