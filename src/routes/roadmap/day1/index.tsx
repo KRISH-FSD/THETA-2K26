@@ -75,7 +75,7 @@ const EVENTS: EventData[] = [
     id: 8, time: "11:00 AM", endTime: "04:00 PM", title: "FInfinity Challenge",
     subtitle: "Mathematical guess & win", venue: "Room 203", cat: "tech",
     fee: "Rs 50", team: "Individual", prize: "Rs 2,000",
-    img: "https://images.unsplash.com/photo-1509228627152-72ae9ae6848d?q=80&w=1200",
+    img: "https://images.unsplash.com/photo-1509228468518-180dd4864904?q=80&w=1200",
     tags: ["Math", "Guess", "Logic"],
     desc: "Think fast and move smart in this mathematical clue connection and guessing game."
   },
@@ -207,8 +207,8 @@ const PopupPanel = component$<PopupPanelProps>(({ ev, meta, side, canRegister, i
         {ev.tags.map((t) => <span key={t} class="rm-popup__tag">{t}</span>)}
       </div>
 
-      {/* Action buttons */}
-      <div class="rm-popup__actions">
+      {/* Action buttons - Hidden on mobile as per request */}
+      <div class="rm-popup__actions hidden md:flex">
         <Link href="/events" class="rm-popup__action rm-popup__action--primary"
           onClick$={(e: Event) => e.stopPropagation()}>
           View Event Hub
@@ -243,15 +243,15 @@ const EventCard = component$<EventCardProps>(
       <div class="rm-card__body">
         <div class="rm-card__heading">
           <div>
-            <p class="rm-card__overline">Node {String(ev.id).padStart(2, "0")}</p>
+            {/* <p class="rm-card__overline">Node {String(ev.id).padStart(2, "0")}</p> */}
             <h3 class="rm-card__title">{ev.title}</h3>
           </div>
-          <span class="rm-card__toggle">{isActive ? "Collapse" : "Details →"}</span>
+          <span class="rm-card__toggle">{isActive ? "Collapse" : "Details \u2192"}</span>
         </div>
         <p class="rm-card__desc">{ev.desc}</p>
         <div class="rm-card__quick-meta">
           <span class="rm-card__meta-pill">{ev.venue}</span>
-          <span class="rm-card__meta-pill">{ev.time} – {ev.endTime}</span>
+          <span class="rm-card__meta-pill">{ev.time} \u2013 {ev.endTime}</span>
         </div>
         <div class="rm-card__stat-grid">
           <div class="rm-card__stat">
@@ -270,14 +270,15 @@ const EventCard = component$<EventCardProps>(
         <div class="rm-card__tags">
           {ev.tags.map((t) => <span key={t} class="rm-card__tag">{t}</span>)}
         </div>
-        <div class="rm-card__actions">
+        {/* Actions - Hidden on mobile as per request */}
+        <div class="rm-card__actions hidden md:flex">
           <Link href="/events" class="rm-card__action rm-card__action--primary">View Event Hub</Link>
           {canRegister
             ? <Link href="/events" class="rm-card__action rm-card__action--ghost">Register Now</Link>
             : <span class="rm-card__status">Open Access</span>}
         </div>
         {isActive && (
-          <p class="rm-card__popup-hint">← See details panel →</p>
+          <p class="rm-card__popup-hint">\u2190 See details panel \u2192</p>
         )}
       </div>
     </article>
@@ -300,6 +301,13 @@ export default component$(function Day1Roadmap() {
       const img2 = 1 - img1;
       page.style.setProperty("--rm-bg1-opacity", img1.toFixed(4));
       page.style.setProperty("--rm-bg2-opacity", img2.toFixed(4));
+
+      const isMobile = window.innerWidth <= 767;
+      if (isMobile) {
+        page.style.setProperty("--rm-bg1-opacity", "0.5");
+        page.style.setProperty("--rm-bg2-opacity", "0.5");
+        return;
+      }
       page.style.setProperty("--rm-bg1-shift", `${(-140 * (1 - img1)).toFixed(1)}px`);
       page.style.setProperty("--rm-bg2-shift", `${(140 * (1 - img2)).toFixed(1)}px`);
     };
@@ -332,7 +340,8 @@ export default component$(function Day1Roadmap() {
       let targetProg = 0, renderProg = 0, tracerRafId = 0;
       let ro: ResizeObserver | undefined;
       const lateRebuildTimers: number[] = [];
-      const smoothFactor = window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 767 ? 0.16 : 0.32;
+      const isMobile = window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 767;
+      const smoothFactor = isMobile ? 0.08 : 0.32;
       const revealed = new Set<Element>();
 
       const liveNodes = () =>
@@ -349,15 +358,15 @@ export default component$(function Day1Roadmap() {
           const r = n.getBoundingClientRect();
           return { x: r.left - cr.left + r.width / 2, y: r.top - cr.top + r.height / 2 };
         });
-        let d = `M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`;
+        let d = `M \${pts[0].x.toFixed(1)} \${pts[0].y.toFixed(1)}`;
         for (let i = 1; i < pts.length; i++) {
           const p = pts[i - 1], c = pts[i];
           const dy = c.y - p.y, bend = Math.max(60, dy * 0.42);
-          d += ` C ${p.x.toFixed(1)} ${(p.y + bend).toFixed(1)},`
-            + ` ${c.x.toFixed(1)} ${(c.y - bend).toFixed(1)},`
-            + ` ${c.x.toFixed(1)} ${c.y.toFixed(1)}`;
+          d += ` C \${p.x.toFixed(1)} \${(p.y + bend).toFixed(1)},`
+            + ` \${c.x.toFixed(1)} \${(c.y - bend).toFixed(1)},`
+            + ` \${c.x.toFixed(1)} \${c.y.toFixed(1)}`;
         }
-        svgEl.setAttribute("viewBox", `0 0 ${W} ${H}`);
+        svgEl.setAttribute("viewBox", `0 0 \${W} \${H}`);
         svgEl.setAttribute("width", String(W)); svgEl.setAttribute("height", String(H));
         for (const p of [pathBase, pathAccent, pathGlow]) {
           p.setAttribute("d", d); p.style.strokeDasharray = String(p.getTotalLength());
@@ -373,7 +382,7 @@ export default component$(function Day1Roadmap() {
         const pt = pathBase.getPointAtLength(off);
         const ptN = pathBase.getPointAtLength(Math.min(totalLen, off + 18));
         const ang = Math.atan2(ptN.y - pt.y, ptN.x - pt.x) * (180 / Math.PI);
-        tracer.setAttribute("transform", `translate(${pt.x.toFixed(2)},${pt.y.toFixed(2)}) rotate(${ang.toFixed(1)})`);
+        tracer.setAttribute("transform", `translate(\${pt.x.toFixed(2)},\${pt.y.toFixed(2)}) rotate(\${ang.toFixed(1)})`);
         tracer.style.opacity = cl >= 0 && cl <= 1 ? "1" : "0";
       };
 
@@ -493,7 +502,7 @@ export default component$(function Day1Roadmap() {
           --rm-bg2-opacity: 0;
           --rm-bg1-shift: 0px;
           --rm-bg2-shift: 0px;
-          background: #030803;
+          background: #020617;
           color: #f0fff2;
           position: relative;
         }
@@ -764,27 +773,37 @@ export default component$(function Day1Roadmap() {
           </div>
 
           <div id="rm-timeline" class="rm-timeline">
+            <svg id="rm-line-svg" class="rm-timeline__svg" aria-hidden="true">
+              <path id="rm-line-base" class="rm-timeline__path rm-timeline__path--base" />
+              <path id="rm-line-accent" class="rm-timeline__path rm-timeline__path--accent" />
+              <path id="rm-line-glow" class="rm-timeline__path rm-timeline__path--glow" />
+              <g id="rm-tracer" class="rm-timeline__tracer">
+                <circle id="rm-tracer-shell" r="14" />
+                <path id="rm-tracer-arrow" d="M -5 -4 L 6 0 L -5 4 Z" />
+              </g>
+            </svg>
+
             {EVENTS.map((event, index) => {
               const meta = CAT[event.cat];
               const side: "left" | "right" = index % 2 === 0 ? "left" : "right";
               const isActive = false;
               const canRegister = event.cat !== "opening" && event.cat !== "cultural";
               return (
-                <div key={event.id} class={["rm-row", `rm-row--${side}`]}>
+                <div key={event.id} class={["rm-row", `rm-row--\${side}`]}>
                   <div class="rm-row__side rm-row__side--left">
                     {side === "left" ? (
                       <>
-                      <EventCard ev={event} meta={meta} isActive={isActive} canRegister={canRegister} />
+                        <EventCard ev={event} meta={meta} isActive={isActive} canRegister={canRegister} />
                         {isActive && <PopupPanel ev={event} meta={meta} side="left" canRegister={canRegister} inlineMobile />}
                       </>
                     ) : (
                       isActive && <PopupPanel ev={event} meta={meta} side="left" canRegister={canRegister} />
                     )}
                   </div>
-                  <div class={["rm-row__center", `rm-row__center--${side === "left" ? "r" : "l"}`]}>
+                  <div class={["rm-row__center", `rm-row__center--\${side === "left" ? "r" : "l"}`]}>
                     <div
                       class="rm-node"
-                      style={`--rm-accent:${meta.color};--rm-accent-rgb:${meta.rgb};`}
+                      style={`--rm-accent:\${meta.color};--rm-accent-rgb:\${meta.rgb};`}
                       data-snake-node=""
                     >
                       <span class="rm-node__pulse" /><span class="rm-node__halo" /><span class="rm-node__impact" />
@@ -795,7 +814,7 @@ export default component$(function Day1Roadmap() {
                   <div class="rm-row__side rm-row__side--right">
                     {side === "right" ? (
                       <>
-                      <EventCard ev={event} meta={meta} isActive={isActive} canRegister={canRegister} />
+                        <EventCard ev={event} meta={meta} isActive={isActive} canRegister={canRegister} />
                         {isActive && <PopupPanel ev={event} meta={meta} side="right" canRegister={canRegister} inlineMobile />}
                       </>
                     ) : (
@@ -806,87 +825,31 @@ export default component$(function Day1Roadmap() {
               );
             })}
 
-            <svg id="rm-line-svg" class="rm-line-svg" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <defs>
-                <linearGradient id="rm-grad-line" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stop-color="#d9ff4a" />
-                  <stop offset="55%" stop-color="#63ff2c" />
-                  <stop offset="100%" stop-color="#f4ff9b" />
-                </linearGradient>
-                <filter id="rm-glow-f" x="-40%" y="-10%" width="180%" height="120%">
-                  <feGaussianBlur stdDeviation="10" result="b" />
-                  <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
-                </filter>
-                <radialGradient id="rm-tracer-fill" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stop-color="#fff" stop-opacity="1" />
-                  <stop offset="45%" stop-color="#d7ff4a" stop-opacity="0.9" />
-                  <stop offset="100%" stop-color="#63ff2c" stop-opacity="0" />
-                </radialGradient>
-              </defs>
-              <path id="rm-line-glow" class="rm-line-glow" fill="none" stroke="url(#rm-grad-line)" />
-              <path id="rm-line-base" class="rm-line-base" fill="none" stroke="url(#rm-grad-line)" />
-              <path id="rm-line-accent" class="rm-line-accent" fill="none" stroke="rgba(255,255,255,0.7)" filter="url(#rm-glow-f)" />
-              <g id="rm-tracer" style="opacity:0;will-change:transform;">
-                {/* Outer Glow Arrow */}
-                <path id="rm-tracer-shell" d="M -14,-10 L 18,0 L -14,10 C -10,4 -10,-4 -14,-10 Z" fill="url(#rm-tracer-fill)" filter="url(#rm-glow-f)" opacity="0.6" />
-                {/* Sleek Core Arrow */}
-                <path id="rm-tracer-arrow" d="M -12,-8 L 14,0 L -12,8 C -9,3 -9,-3 -12,-8 Z" fill="#fff" filter="url(#rm-glow-f)" opacity="0.85" />
-                
-                {/* Fast Inner Pulse */}
-                <circle cx="0" cy="0" r="18" fill="none" stroke="url(#rm-grad-line)" stroke-width="1.5" opacity="0.6">
-                  <animate attributeName="r" from="12" to="35" dur="1s" repeatCount="indefinite" />
-                  <animate attributeName="opacity" from="0.8" to="0" dur="1s" repeatCount="indefinite" />
-                </circle>
-                
-                {/* Slow Outer Pulse */}
-                <circle cx="0" cy="0" r="25" fill="none" stroke="url(#rm-grad-line)" stroke-width="1" opacity="0.3">
-                  <animate attributeName="r" from="15" to="50" dur="2s" repeatCount="indefinite" />
-                  <animate attributeName="opacity" from="0.4" to="0" dur="2s" repeatCount="indefinite" />
-                </circle>
-              </g>
-            </svg>
-
-
             <div class="rm-row rm-row--final">
-              <div class="rm-row__side rm-row__side--left" />
-              <div class="rm-row__center rm-row__center--c">
-                <div class="rm-node rm-node--finish" data-snake-node="">
+              <div class="rm-row__side" />
+              <div class="rm-row__center">
+                <div class="rm-node rm-node--finish">
                   <span class="rm-node__pulse" /><span class="rm-node__halo" />
-                  <span class="rm-node__code">END</span><span class="rm-node__time">09:00 PM</span>
-                  <div class="rm-end-popup">
-                    <span class="rm-end-popup__label">Omnitrix Synced</span>
-                    <p>Day 1 locked in. Recharge the crew and get ready for Day 2.</p>
-                  </div>
+                  <span class="rm-node__code">END</span>
                 </div>
               </div>
-              <div class="rm-row__side rm-row__side--right">
-                <div class="rm-end-card">
-                  <span class="rm-pill">Finish</span>
-                  <h3>Day 1 completed.</h3>
-                  <p>Day 2 starts at 09:00 AM.</p>
-                  <div class="rm-end-card__meta">
-                    <span>Next sync ready</span><Link href="/events">Open events</Link>
-                  </div>
+              <div class="rm-row__side">
+                <div class="rm-end-popup" aria-live="polite">
+                  <div class="rm-end-popup__label">Mission Complete</div>
+                  <p>Day 1 systems standby. Transmission resumes at dawn.</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </section>
-
-      <div class="rm-dock">
-        <div class="rm-dock__inner">
-          <Link href="/roadmap/day1" class="rm-dock__item is-active">Day 1</Link>
-          <Link href="/roadmap/day2" class="rm-dock__item">Day 2</Link>
-          <Link href="/roadmap/day3" class="rm-dock__item">Day 3</Link>
-          <span class="rm-dock__status"><span class="rm-dock__status-dot" />Ben 10 theme</span>
-        </div>
-      </div>
     </div>
   );
 });
 
 export const head: DocumentHead = {
-  title: "Day 1 Roadmap | Theta 2026",
-  meta: [{ name: "description", content: "Day 1 roadmap redesign — Scene Gallery, auto-opening popups, Ben 10 theme." }],
+  title: "Roadmap: Day 1 | THETA 2026",
+  meta: [
+    { name: "description", content: "Explore the live event timeline for Day 1 of THETA 2026." },
+  ],
 };

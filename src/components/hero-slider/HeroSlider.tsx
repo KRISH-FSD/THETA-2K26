@@ -16,8 +16,8 @@ export const heroSlides = [
     title: "The Grand Inauguration",
     subtitle: "THETA 2026",
     description: "Musical Fusion · Opening Ceremony · Cultural Night",
-    accentColor: "#00ff44",
-    accentRgb: "0,255,68",
+    accentColor: "#38bdf8",
+    accentRgb: "56, 189, 248",
     bgImage: "/homepage/i1.png",
     bgVideo: "/homepage/v1.mp4",
     thumb: "/homepage/i1.png",
@@ -389,26 +389,26 @@ export const HeroSlider = component$(() => {
 
       <div class="hs-grain" />
 
-      {/* Content: Hidden for Day 3 alone to favor visuals */}
-      {!isDay1DesktopVideo && slide.id !== 2 && <div class="hs-content">
+      {/* Content: Hidden for Day 1 on desktop and Day 3 alone to favor visuals */}
+      {!(slide.id === 0 && isDesktop.value) && slide.id !== 2 && <div class="hs-content">
         <div class="hs-badge">
-          <span class="hs-badge-text">{slide.day} · {slide.subtitle}</span>
+          <span class="hs-badge-text">{slide.subtitle}</span>
         </div>
-        <h1 class="hs-title font-black uppercase text-center">{slide.title}</h1>
+        <h1 class="hs-title font-black uppercase text-center t-gradient-blue">{slide.title}</h1>
         <p class="hs-desc text-center">{slide.description}</p>
         <div class="hs-actions">
           <div class="hs-actions__row">
-            <a href={`/roadmap/day${slide.id + 1}`} class="hs-cta hs-cta--primary">
+            <a href={`/roadmap/day${slide.id + 1}`} class="t-button-neon hs-cta--primary">
               View Roadmap
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
             </a>
           </div>
           <div class="hs-actions__row">
-            <a href="/events" class="hs-cta hs-cta--secondary">
+            <a href="/events" class="t-button-neon hs-cta--secondary">
               Explore All
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
             </a>
-            <Link href="/contact" class="hs-cta hs-cta--ghost">Contact Team</Link>
+            <Link href="/contact" class="t-button-neon hs-cta--ghost">Contact Team</Link>
           </div>
         </div>
       </div>}
@@ -442,9 +442,8 @@ export const HeroSlider = component$(() => {
             class={`hs-thumb ${active.value === i ? "hs-thumb--active" : ""}`}
             style={active.value === i ? { borderColor: s.accentColor, boxShadow: `0 0 0 2px ${s.accentColor}44, 0 8px 24px rgba(0,0,0,0.5)` } : {}}
             onClick$={() => goTo(i)}>
-            <img src={s.thumb} alt={s.day} class="hs-thumb-img" loading="lazy" />
+            <img src={s.thumb} alt={s.title} class="hs-thumb-img" loading="lazy" />
             <div class="hs-thumb-overlay" style={active.value === i ? { background: `linear-gradient(to top, rgba(${s.accentRgb},0.55), transparent)` } : {}} />
-            <span class="hs-thumb-label" style={active.value === i ? { color: s.accentColor } : {}}>{s.day}</span>
             <div class={["hs-thumb-line-bg", active.value === i ? "opacity-100" : "opacity-0"]} />
             {active.value === i && (
               <div

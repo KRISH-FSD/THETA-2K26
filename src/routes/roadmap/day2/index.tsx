@@ -140,7 +140,7 @@ const PopupPanel = component$<PopupPanelProps>(({ ev, meta, side, canRegister, i
       <div class="rm-popup__tags">
         {ev.tags.map((t) => <span key={t} class="rm-popup__tag">{t}</span>)}
       </div>
-      <div class="rm-popup__actions">
+      <div class="rm-popup__actions hidden md:flex">
         <Link href="/events" class="rm-popup__action rm-popup__action--primary"
           onClick$={(e: Event) => e.stopPropagation()}>View Event Hub</Link>
         {canRegister
@@ -173,7 +173,7 @@ const EventCard = component$<EventCardProps>(
       <div class="rm-card__body">
         <div class="rm-card__heading">
           <div>
-            <p class="rm-card__overline">Island {String(ev.id).padStart(2, "0")}</p>
+            {/* <p class="rm-card__overline">Island {String(ev.id).padStart(2, "0")}</p> */}
             <h3 class="rm-card__title">{ev.title}</h3>
           </div>
           <span class="rm-card__toggle">{isActive ? "Retreat" : "Sail →"}</span>
@@ -200,7 +200,7 @@ const EventCard = component$<EventCardProps>(
         <div class="rm-card__tags">
           {ev.tags.map((t) => <span key={t} class="rm-card__tag">{t}</span>)}
         </div>
-        <div class="rm-card__actions">
+        <div class="rm-card__actions hidden md:flex">
           <Link href="/events" class="rm-card__action rm-card__action--primary">View Event Hub</Link>
           {canRegister
             ? <Link href="/events" class="rm-card__action rm-card__action--ghost">Register Now</Link>
@@ -275,7 +275,8 @@ export default component$(function Day2Roadmap() {
       let targetProg = 0, renderProg = 0, tracerRafId = 0;
       let ro: ResizeObserver | undefined;
       const lateRebuildTimers: number[] = [];
-      const smoothFactor = window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 767 ? 0.16 : 0.32;
+      const isMobile = window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 767;
+      const smoothFactor = isMobile ? 0.08 : 0.32;
       const revealed = new Set<Element>();
       const liveNodes = () => Array.from(container.querySelectorAll<HTMLElement>(".rm-row:not(.rm-row--final) .rm-node, .rm-node--finish")).filter((n) => n.offsetParent !== null && n.offsetWidth > 0);
       const buildPath = (): boolean => {

@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800&family=Rajdhani:wght@500;600;700&family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=Rajdhani:wght@500;600;700&family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;700&display=swap");
 @import "tailwindcss";
 
 @plugin "daisyui" {
@@ -23,7 +23,7 @@
   --t-text: #f0fff0;
   --t-muted: #8ca38c;
   --t-dim: #4d5c4d;
-  /* Brand Accents (Adaptive) */
+  /* Brand Accents (Adaptive Green) */
   --t-brand-accent: #00ff55;
   --t-brand-rgb: 0, 255, 85;
   --t-brand-deep: #0ea935;
@@ -39,11 +39,12 @@
   --t-gold-soft: rgba(245, 200, 66, 0.12);
 
   /* Gradients */
-  --t-grad-hero: linear-gradient(135deg, #ff00f7 0%, #7a0076 100%);
-  --t-grad-text: linear-gradient(92deg, #ff00f7 0%, #ffffff 50%, #7a0076 100%);
+  --t-grad-hero: linear-gradient(135deg, #00ff55 0%, #0ea935 100%);
+  --t-grad-text: linear-gradient(92deg, #00ff55 0%, #ffffff 50%, #0ea935 100%);
+  --t-grad-blue: linear-gradient(92deg, #38bdf8 0%, #ffffff 50%, #2563eb 100%);
   --t-grad-card: linear-gradient(145deg,
-      rgba(25, 10, 25, 0.95),
-      rgba(12, 5, 12, 0.98));
+      rgba(10, 25, 12, 0.95),
+      rgba(5, 12, 6, 0.98));
   --t-grad-glow: radial-gradient(ellipse at 50% 0%,
       rgba(var(--t-brand-rgb), 0.32) 0%,
       transparent 70%);
@@ -89,10 +90,10 @@ body[data-theme="red-ben10"] {
 
   /* Shadows */
   --t-shadow-card:
-    0 0 0 1px rgba(255, 0, 247, 0.12), 0 24px 64px rgba(0, 0, 0, 0.6),
-    0 0 80px rgba(255, 0, 247, 0.08);
+    0 0 0 1px rgba(0, 255, 85, 0.12), 0 24px 64px rgba(0, 0, 0, 0.6),
+    0 0 80px rgba(0, 255, 85, 0.08);
   --t-shadow-glow:
-    0 0 40px rgba(255, 0, 247, 0.4), 0 0 80px rgba(255, 0, 247, 0.15);
+    0 0 40px rgba(0, 255, 85, 0.4), 0 0 80px rgba(0, 255, 85, 0.15);
   --t-shadow-cyan:
     0 0 40px rgba(255, 255, 255, 0.3), 0 0 80px rgba(255, 255, 255, 0.1);
 }
@@ -162,6 +163,97 @@ body {
   background-clip: text;
   color: transparent;
   animation: gradShift 8s ease infinite;
+}
+
+.t-gradient-blue {
+  background: var(--t-grad-blue);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradShift 8s ease infinite;
+}
+
+/* ============================================================
+   BUTTONS & INTERACTIONS
+   ============================================================ */
+
+.t-button-neon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.85rem 2rem;
+  border-radius: 9999px;
+  background: #000;
+  color: #fff !important;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  z-index: 1;
+  text-decoration: none;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+  /* Optimization: ensure a clear stacking context */
+  isolation: isolate;
+}
+
+.t-button-neon::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 20%,
+    #00ff55 35%,
+    #38bdf8 50%,
+    #00ff55 65%,
+    transparent 80%
+  );
+  z-index: -2;
+  will-change: transform;
+  transform: translateZ(0) rotate(0deg);
+  /* Optimization: Disable infinite animation on all by default to save GPU */
+  animation: none;
+}
+
+/* Only the absolute primary buttons on the page get the idle animation */
+.hs-cta--primary.t-button-neon::before {
+  animation: rotateNeon 3.5s linear infinite;
+}
+
+/* Others only animate on hover to prevent "hangs" when dozens are present */
+.t-button-neon:hover::before {
+  animation: rotateNeon 1.5s linear infinite;
+}
+
+.t-button-neon::after {
+  content: '';
+  position: absolute;
+  inset: 1.5px;
+  background: #121212;
+  border-radius: 9999px;
+  z-index: -1;
+  transition: all 0.3s ease;
+}
+
+.t-button-neon:hover::after {
+  background: rgba(10, 20, 10, 0.95);
+  box-shadow: inset 0 0 15px rgba(0, 255, 85, 0.15);
+}
+
+.t-button-neon:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 12px 30px rgba(0, 255, 85, 0.25), 0 0 20px rgba(56, 189, 248, 0.15);
+  color: #fff !important;
+}
+
+@keyframes rotateNeon {
+  from { transform: translateZ(0) rotate(0deg); }
+  to { transform: translateZ(0) rotate(360deg); }
 }
 
 @keyframes gradShift {

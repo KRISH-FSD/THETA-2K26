@@ -568,7 +568,7 @@ export default component$(() => {
       return;
     }
 
-    gsap.registerPlugin(ScrollTrigger);
+    // GSAP ScrollTrigger already registered in layout.tsx
 
     const section = document.getElementById("theta-stats");
     if (!section) return;
@@ -593,7 +593,7 @@ export default component$(() => {
 
   useVisibleTask$(() => {
     if (isMobilePerfMode()) return;
-    gsap.registerPlugin(ScrollTrigger);
+    // GSAP ScrollTrigger already registered in layout.tsx
 
     const section = document.getElementById("home-cta");
     if (!section) return;
@@ -686,7 +686,7 @@ export default component$(() => {
 
   useVisibleTask$(() => {
     if (isMobilePerfMode()) return;
-    gsap.registerPlugin(ScrollTrigger);
+    // GSAP ScrollTrigger already registered in layout.tsx
     const marks = document.querySelectorAll<HTMLElement>(".t-day-card__mark");
     const overlays = document.querySelectorAll<HTMLElement>(".t-knockout-overlay");
     const glowTargets = document.querySelectorAll<HTMLElement>(".t-glow-text");
@@ -800,7 +800,7 @@ export default component$(() => {
       };
       return;
     }
-    gsap.registerPlugin(ScrollTrigger);
+    // GSAP ScrollTrigger already registered in layout.tsx
 
     const section = document.getElementById("browse-events-section");
     if (!section) return;
@@ -1173,7 +1173,6 @@ export default component$(() => {
                     <div class="flex justify-between mb-10 opacity-0"> {/* Hide icons in knockout */}
                     </div>
                     <div class="mb-8 text-center">
-                      <h3 class="t-heading text-4xl sm:text-5xl font-black text-black">{day.day}</h3>
                     </div>
                   </div>
 

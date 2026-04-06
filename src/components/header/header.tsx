@@ -95,7 +95,7 @@ export const Header = component$(() => {
             <img
               src="/theta-logo.png"
               alt="Theta"
-              class="h-8 w-auto object-contain opacity-95 [filter:brightness(0)_invert(1)] transition-opacity hover:opacity-100 sm:h-12 md:h-20"
+              class="h-18 w-auto object-contain opacity-95 [filter:brightness(0)_invert(1)] transition-opacity hover:opacity-100 sm:h-20 md:h-20"
             />
           </Link>
         </div>
