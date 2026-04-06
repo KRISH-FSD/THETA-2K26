@@ -33,7 +33,7 @@ function fixMojibake(text: string) {
 function mdToHtml(text: string) {
   if (!text) return "";
   
-  let formatted = text
+  const formatted = text
     .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
     .replace(/_(.*?)_/g, "<em>$1</em>");
   
