@@ -13,7 +13,7 @@ interface EventCardProps {
   ev: EventData; meta: CatMeta; isActive: boolean;
   side: "left" | "right"; onToggle$: () => void;
 }
-interface PopupPanelProps { ev: EventData; meta: CatMeta; side: "left" | "right"; canRegister: boolean; }
+interface PopupPanelProps { ev: EventData; meta: CatMeta; side: "left" | "right"; canRegister: boolean; inlineMobile?: boolean; }
 
 const EVENTS: EventData[] = [
   {
@@ -83,7 +83,7 @@ const EVENTS: EventData[] = [
 ];
 
 const CAT: Record<Cat, CatMeta> = {
-  opening: { label: "Opening", short: "OP", color: "#ff2020", rgb: "255,32,32" },
+  opening: { label: "Opening", short: "OP", color: "#ff3333", rgb: "255,51,51" },
   tech: { label: "Tech", short: "TK", color: "#4488ff", rgb: "68,136,255" },
   workshop: { label: "Workshop", short: "WS", color: "#bb77ff", rgb: "187,119,255" },
   quiz: { label: "Quiz", short: "QZ", color: "#ffaa33", rgb: "255,170,51" },
@@ -92,9 +92,9 @@ const CAT: Record<Cat, CatMeta> = {
 };
 
 /* ─── Popup Panel ─────────────────────────────── */
-const PopupPanel = component$<PopupPanelProps>(({ ev, meta, side, canRegister }) => (
+const PopupPanel = component$<PopupPanelProps>(({ ev, meta, side, canRegister, inlineMobile }) => (
   <div
-    class={["rm-popup", `rm-popup--${side}`]}
+    class={["rm-popup", `rm-popup--${side}`, inlineMobile ? "rm-popup--inline-mobile" : ""]}
     style={`--rm-accent:${meta.color};--rm-accent-rgb:${meta.rgb};`}
   >
     <span class="rm-popup__ripple rm-popup__ripple--1" />
@@ -240,20 +240,7 @@ export default component$(function Day3Roadmap() {
   });
 
   useVisibleTask$(() => {
-    const loadGSAP = () =>
-      new Promise<void>((res) => {
-        // @ts-ignore
-        if (window.gsap) { res(); return; }
-        const s = document.createElement("script");
-        s.src = "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js";
-        s.onload = () => res(); s.onerror = () => res();
-        document.head.appendChild(s);
-      });
-
-    const boot = async () => {
-      await loadGSAP();
-      // @ts-ignore
-      const gsap: any = window.gsap;
+    const boot = () => {
       const pageRoot = document.querySelector(".rm-page--sp") as HTMLElement | null;
       const container = document.getElementById("rm-timeline") as HTMLElement | null;
       const svgEl = document.getElementById("rm-line-svg") as unknown as SVGSVGElement | null;
@@ -267,10 +254,9 @@ export default component$(function Day3Roadmap() {
       let totalLen = 0, rafId = 0, scheduled = false, needsBuild = true;
       let targetProg = 0, renderProg = 0, tracerRafId = 0;
       let ro: ResizeObserver | undefined;
-      const enableCardReveal = !(window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 767);
       const smoothFactor = window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 767 ? 0.16 : 0.32;
       const revealed = new Set<Element>();
-      const liveNodes = () => Array.from(container.querySelectorAll<HTMLElement>("[data-snake-node]")).filter((n) => n.offsetParent !== null && n.offsetWidth > 0);
+      const liveNodes = () => Array.from(container.querySelectorAll<HTMLElement>(".rm-row:not(.rm-row--final) .rm-node, .rm-node--finish")).filter((n) => n.offsetParent !== null && n.offsetWidth > 0);
       const buildPath = (): boolean => {
         const nodes = liveNodes();
         if (nodes.length < 2) return false;
@@ -296,27 +282,32 @@ export default component$(function Day3Roadmap() {
         const cl = Math.max(0, Math.min(1, prog)), off = cl * totalLen, pt = pathBase.getPointAtLength(off), ptN = pathBase.getPointAtLength(Math.min(totalLen, off + 18));
         const ang = Math.atan2(ptN.y - pt.y, ptN.x - pt.x) * (180 / Math.PI);
         tracer.setAttribute("transform", `translate(${pt.x.toFixed(2)},${pt.y.toFixed(2)}) rotate(${ang.toFixed(1)})`);
-        tracer.style.opacity = cl > 0.005 && cl < 0.998 ? "1" : "0";
+        tracer.style.opacity = cl >= 0 && cl <= 1 ? "1" : "0";
       };
       const applyProgress = (prog: number, ns: HTMLElement[], VH: number) => {
         const currentIdx = Math.floor(prog * (ns.length - 1) + 0.1);
-        if (currentIdx >= 0 && currentIdx < EVENTS.length) { const ev = EVENTS[currentIdx]; if (activeEventId.value !== ev.id) activeEventId.value = ev.id; } else if (currentIdx >= EVENTS.length) { activeEventId.value = null; }
+        rows.forEach((row, i) => {
+          row.classList.toggle("is-current", i === currentIdx);
+          row.classList.toggle("is-passed", i < currentIdx);
+        });
 
         const off = totalLen * (1 - prog);
-        const endReached = prog >= 0.97;
+        const endReached = prog >= 0.995;
 
-        pathBase.style.strokeDashoffset = String(off); pathAccent.style.strokeDashoffset = String(Math.max(0, off - 26)); pathGlow.style.strokeDashoffset = String(off);
+        pathBase.style.strokeDashoffset = String(off);
+        pathAccent.style.strokeDashoffset = String(Math.max(0, off - 26));
+        pathGlow.style.strokeDashoffset = String(off);
         posTracer(prog);
         ns.forEach((n, i) => n.classList.toggle("rm-node--lit", prog >= i / Math.max(ns.length - 1, 1) - 0.02));
 
-        pageRoot?.classList.toggle("is-end-reached", endReached); finalRow?.classList.toggle("is-end-reached", endReached); finalNode?.classList.toggle("rm-node--lit", endReached);
+        pageRoot?.classList.toggle("is-end-reached", endReached);
+        finalRow?.classList.toggle("is-end-reached", endReached);
+        finalNode?.classList.toggle("rm-node--lit", endReached);
         if (tracer && endReached) tracer.style.opacity = "0";
 
-        Array.from(container.querySelectorAll<HTMLElement>(".rm-row:not(.rm-row--final)")).forEach((row, idx) => {
-          const card = row.querySelector<HTMLElement>(".rm-card");
+        rowCards.forEach((card) => {
           if (card && !revealed.has(card)) {
             const top = card.getBoundingClientRect().top;
-            const isLeft = row.classList.contains("rm-row--left");
             if (top < VH * 0.92) {
               revealed.add(card);
               card.classList.add("is-revealed");
@@ -338,29 +329,14 @@ export default component$(function Day3Roadmap() {
         if (tracerRafId) return;
         tracerRafId = requestAnimationFrame(animateTracer);
       };
+      const rows = Array.from(container.querySelectorAll<HTMLElement>(".rm-row:not(.rm-row--final)"));
+      const rowCards = rows.map((row) => row.querySelector<HTMLElement>(".rm-card"));
       const update = () => {
         if (totalLen === 0) return;
         const ns = liveNodes();
         if (ns.length < 2) return;
-        
-        // --- READ PHASE ---
         const firstRect = ns[0].getBoundingClientRect();
         const lastRect = ns[ns.length - 1].getBoundingClientRect();
-        
-        const unrevealedCards: { card: HTMLElement; top: number; isLeft: boolean; idx: number }[] = [];
-        Array.from(container.querySelectorAll<HTMLElement>(".rm-row:not(.rm-row--final)")).forEach((row, idx) => {
-          const card = row.querySelector<HTMLElement>(".rm-card");
-          if (card && !revealed.has(card)) {
-            unrevealedCards.push({
-              card,
-              top: card.getBoundingClientRect().top,
-              isLeft: row.classList.contains("rm-row--left"),
-              idx
-            });
-          }
-        });
-
-        // --- COMPUTE PHASE ---
         const startY = firstRect.top + firstRect.height / 2;
         const endY = lastRect.top + lastRect.height / 2;
         const targetY = window.innerHeight * 0.55;
@@ -373,13 +349,21 @@ export default component$(function Day3Roadmap() {
       const go = (rebuild = false) => { needsBuild = needsBuild || rebuild; if (scheduled) return; scheduled = true; rafId = requestAnimationFrame(flush); };
       Array.from(container.querySelectorAll<HTMLImageElement>("img")).forEach((img) => { if (!img.complete) img.addEventListener("load", () => go(true)); });
       if ("ResizeObserver" in window) { ro = new ResizeObserver(() => go(true)); ro.observe(container); }
-      window.addEventListener("scroll", () => go(false), { passive: true }); window.addEventListener("resize", () => go(true), { passive: true });
+      const onScroll = () => go(false);
+      const onResize = () => go(true);
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("resize", onResize, { passive: true });
       setTimeout(() => go(true), 180); go(true);
-      container.querySelectorAll<HTMLElement>(".rm-node").forEach((n) => { n.addEventListener("mouseenter", () => n.classList.add("rm-node--hovered")); n.addEventListener("mouseleave", () => n.classList.remove("rm-node--hovered")); });
-      if (gsap) { const hdr = document.querySelector(".rm-section__header"); if (hdr) gsap.fromTo(hdr, { opacity: 0, y: -36 }, { opacity: 1, y: 0, duration: 1.0, ease: "power3.out" }); }
-      return () => { if (rafId) cancelAnimationFrame(rafId); if (tracerRafId) cancelAnimationFrame(tracerRafId); ro?.disconnect(); };
+      return () => {
+        if (rafId) cancelAnimationFrame(rafId);
+        if (tracerRafId) cancelAnimationFrame(tracerRafId);
+        ro?.disconnect();
+        window.removeEventListener("scroll", onScroll);
+        window.removeEventListener("resize", onResize);
+      };
     };
-    let cleanup: (() => void) | undefined; boot().then((fn) => { cleanup = fn as any; }); return () => cleanup?.();
+    const cleanup = boot();
+    return () => cleanup?.();
   });
 
   const toggleEvent = $((id: number) => { activeEventId.value = activeEventId.value === id ? null : id; });
@@ -398,8 +382,8 @@ export default component$(function Day3Roadmap() {
         .rm-page--sp .rm-popup {
           background: rgba(4, 0, 8, 0.98);
           backdrop-filter: blur(28px);
-          border-color: rgba(255, 32, 32, 0.35);
-          box-shadow: 0 32px 84px rgba(0,0,0,0.64), 0 0 24px rgba(255, 32, 32, 0.08);
+          border-color: rgba(255, 51, 51, 0.35);
+          box-shadow: 0 32px 84px rgba(0,0,0,0.64), 0 0 24px rgba(255, 51, 51, 0.08);
           animation: rmPopupEnter 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
           max-width: 360px;
           width: calc(100vw - 4rem);
@@ -453,9 +437,9 @@ export default component$(function Day3Roadmap() {
           content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0;
           background: 
             linear-gradient(180deg, rgba(8, 0, 12, 0.52) 0%, rgba(12, 0, 18, 0.35) 18%, rgba(12, 0, 18, 0.46) 56%, rgba(4, 0, 6, 0.82) 100%),
-            radial-gradient(circle at 50% 20%, rgba(255, 32, 32, 0.08), transparent 25%);
+            radial-gradient(circle at 50% 20%, rgba(255, 51, 51, 0.08), transparent 25%);
         }
-        .rm-page--sp .rm-card { background: rgba(4, 0, 8, 0.95); backdrop-filter: blur(24px); border-color: rgba(255, 32, 32, 0.22); opacity: 0; will-change: transform, opacity; }
+        .rm-page--sp .rm-card { background: rgba(4, 0, 8, 0.95); backdrop-filter: blur(24px); border-color: rgba(255, 51, 51, 0.22); opacity: 0; will-change: transform, opacity; }
         .rm-row--left .rm-card.is-revealed { animation: rmCardRotateLeft 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
         .rm-row--right .rm-card.is-revealed { animation: rmCardRotateRight 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
         @keyframes rmCardRotateLeft {
@@ -479,16 +463,13 @@ export default component$(function Day3Roadmap() {
 
         .rm-page--sp .rm-end-popup {
           position: absolute; right: calc(100% + 0.95rem); top: 50%; transform: translate(-12px, -50%) scale(0.92);
-          min-width: 12rem; padding: 0.75rem 0.9rem; border-radius: 1rem; border: 1px solid rgba(255, 32, 32, 0.24);
-          background: linear-gradient(135deg, rgba(255, 32, 32, 0.1), rgba(184, 0, 0, 0.05)), rgba(4, 0, 8, 0.94);
-          box-shadow: 0 18px 42px rgba(0,0,0,0.42), 0 0 24px rgba(255, 32, 32, 0.12); opacity: 0; pointer-events: none;
+          min-width: 12rem; padding: 0.75rem 0.9rem; border-radius: 1rem; border: 1px solid rgba(255, 51, 51, 0.24);
+          background: linear-gradient(135deg, rgba(255, 51, 51, 0.1), rgba(184, 0, 0, 0.05)), rgba(4, 0, 8, 0.94);
+          box-shadow: 0 18px 42px rgba(0,0,0,0.42), 0 0 24px rgba(255, 51, 51, 0.12); opacity: 0; pointer-events: none;
           transition: opacity 320ms ease, transform 380ms cubic-bezier(0.22, 1, 0.36, 1); z-index: 4;
         }
         .rm-page--sp.is-end-reached .rm-end-popup { opacity: 1; transform: translate(0, -50%) scale(1); }
-        @media (max-width: 767px) {
-          .rm-page--sp .rm-end-popup { left: calc(100% + 0.95rem) !important; right: auto !important; top: 50% !important; bottom: auto !important; transform: translate(12px, -50%) scale(0.92) !important; min-width: 12rem !important; padding: 0.62rem 0.72rem !important; z-index: 10 !important; }
-          .rm-page--sp.is-end-reached .rm-end-popup, .rm-page--sp .rm-row--final.is-end-reached .rm-end-popup { transform: translate(0, -50%) scale(1) !important; }
-        }
+          .rm-page--sp .rm-timeline { position: relative; }
         .rm-row--final { margin-bottom: 0 !important; }
         .rm-timeline { padding-bottom: 0 !important; }
       `}</style>
@@ -507,7 +488,7 @@ export default component$(function Day3Roadmap() {
           <div class="rm-section__header">
             <div class="rm-section__header-text">
               <span class="rm-pill">Timeline</span>
-              <h1 class="rm-section__title">Day 3: Spider-Verse</h1>
+              <h1 class="rm-section__title">Day 3: Neural Finale</h1>
               <p class="rm-section__copy">Tap any card to reveal its event, team & prize details.</p>
             </div>
             <div class="rm-event-glass">
@@ -518,12 +499,46 @@ export default component$(function Day3Roadmap() {
           </div>
 
           <div id="rm-timeline" class="rm-timeline">
+            {EVENTS.map((event, index) => {
+              const meta = CAT[event.cat], side = index % 2 === 0 ? "left" : "right", isActive = activeEventId.value === event.id, canRegister = event.cat !== "opening" && event.cat !== "cultural";
+              return (
+                <div key={event.id} class={["rm-row", `rm-row--${side}`]}>
+                  <div class="rm-row__side rm-row__side--left">
+                    {side === "left" ? (
+                      <>
+                        <EventCard ev={event} meta={meta} isActive={isActive} side="left" onToggle$={() => toggleEvent(event.id)} />
+                        {isActive && <PopupPanel ev={event} meta={meta} side="left" canRegister={canRegister} inlineMobile />}
+                      </>
+                    ) : (
+                      isActive && <PopupPanel ev={event} meta={meta} side="left" canRegister={canRegister} />
+                    )}
+                  </div>
+                  <div class={["rm-row__center", `rm-row__center--${side === "left" ? "r" : "l"}`]}>
+                    <div class="rm-node" style={`--rm-accent:${meta.color};--rm-accent-rgb:${meta.rgb};`} data-snake-node="">
+                      <span class="rm-node__pulse" /><span class="rm-node__halo" /><span class="rm-node__impact" />
+                      <span class="rm-node__code">{meta.short}</span><span class="rm-node__time">{event.time}</span>
+                    </div>
+                  </div>
+                  <div class="rm-row__side rm-row__side--right">
+                    {side === "right" ? (
+                      <>
+                        <EventCard ev={event} meta={meta} isActive={isActive} side="right" onToggle$={() => toggleEvent(event.id)} />
+                        {isActive && <PopupPanel ev={event} meta={meta} side="right" canRegister={canRegister} inlineMobile />}
+                      </>
+                    ) : (
+                      isActive && <PopupPanel ev={event} meta={meta} side="right" canRegister={canRegister} />
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+
             <svg id="rm-line-svg" class="rm-line-svg" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <defs>
                 <linearGradient id="rm-grad-line" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stop-color="#ff2020" />
-                  <stop offset="50%" stop-color="#ff4444" />
-                  <stop offset="100%" stop-color="#ff2020" />
+                  <stop offset="0%" stop-color="#ff3333" />
+                  <stop offset="50%" stop-color="#ff6666" />
+                  <stop offset="100%" stop-color="#ff3333" />
                 </linearGradient>
                 <filter id="rm-glow-f" x="-40%" y="-10%" width="180%" height="120%">
                   <feGaussianBlur stdDeviation="15" result="b" />
@@ -531,8 +546,8 @@ export default component$(function Day3Roadmap() {
                 </filter>
                 <radialGradient id="rm-tracer-fill" cx="50%" cy="50%" r="50%">
                   <stop offset="0%" stop-color="#fff" stop-opacity="1" />
-                  <stop offset="45%" stop-color="#ff2020" stop-opacity="0.9" />
-                  <stop offset="100%" stop-color="#ff4444" stop-opacity="0" />
+                  <stop offset="45%" stop-color="#ff3333" stop-opacity="0.9" />
+                  <stop offset="100%" stop-color="#ff6666" stop-opacity="0" />
                 </radialGradient>
               </defs>
               <path id="rm-line-glow" class="rm-line-glow" fill="none" stroke="url(#rm-grad-line)" />
@@ -542,7 +557,7 @@ export default component$(function Day3Roadmap() {
                 {/* Outer Glow Arrow */}
                 <path d="M -14,-10 L 18,0 L -14,10 C -10,4 -10,-4 -14,-10 Z" fill="url(#rm-tracer-fill)" filter="url(#rm-glow-f)" opacity="0.6" />
                 {/* Sleek Core Arrow */}
-                <path d="M -12,-8 L 14,0 L -12,8 C -9,3 -9,-3 -12,-8 Z" fill="#fff" filter="url(#rm-glow-f)" />
+                <path d="M -12,-8 L 14,0 L -12,8 C -9,3 -9,-3 -12,-8 Z" fill="#fff" filter="url(#rm-glow-f)" opacity="0.85" />
                 
                 {/* Fast Inner Pulse */}
                 <circle cx="0" cy="0" r="18" fill="none" stroke="url(#rm-grad-line)" stroke-width="1.5" opacity="0.6">
@@ -558,25 +573,6 @@ export default component$(function Day3Roadmap() {
               </g>
             </svg>
 
-            {EVENTS.map((event, index) => {
-              const meta = CAT[event.cat], side = index % 2 === 0 ? "left" : "right", isActive = activeEventId.value === event.id, canRegister = event.cat !== "opening" && event.cat !== "cultural";
-              return (
-                <div key={event.id} class={["rm-row", `rm-row--${side}`]}>
-                  <div class="rm-row__side rm-row__side--left">
-                    {side === "left" ? <EventCard ev={event} meta={meta} isActive={isActive} side="left" onToggle$={() => toggleEvent(event.id)} /> : isActive && <PopupPanel ev={event} meta={meta} side="left" canRegister={canRegister} />}
-                  </div>
-                  <div class={["rm-row__center", `rm-row__center--${side === "left" ? "r" : "l"}`]}>
-                    <div class="rm-node" style={`--rm-accent:${meta.color};--rm-accent-rgb:${meta.rgb};`} data-snake-node="">
-                      <span class="rm-node__pulse" /><span class="rm-node__halo" /><span class="rm-node__impact" />
-                      <span class="rm-node__code">{meta.short}</span><span class="rm-node__time">{event.time}</span>
-                    </div>
-                  </div>
-                  <div class="rm-row__side rm-row__side--right">
-                    {side === "right" ? <EventCard ev={event} meta={meta} isActive={isActive} side="right" onToggle$={() => toggleEvent(event.id)} /> : isActive && <PopupPanel ev={event} meta={meta} side="right" canRegister={canRegister} />}
-                  </div>
-                </div>
-              );
-            })}
 
             <div class="rm-row rm-row--final">
               <div class="rm-row__side rm-row__side--left" />
@@ -602,7 +598,7 @@ export default component$(function Day3Roadmap() {
           <Link href="/roadmap/day1" class="rm-dock__item">Day 1</Link>
           <Link href="/roadmap/day2" class="rm-dock__item">Day 2</Link>
           <Link href="/roadmap/day3" class="rm-dock__item is-active">Day 3</Link>
-          <span class="rm-dock__status"><span class="rm-dock__status-dot" />Spider theme</span>
+          <span class="rm-dock__status"><span class="rm-dock__status-dot" />Neural theme</span>
         </div>
       </div>
     </div>
@@ -611,5 +607,5 @@ export default component$(function Day3Roadmap() {
 
 export const head: DocumentHead = {
   title: "Day 3 Roadmap | Theta 2026",
-  meta: [{ name: "description", content: "Day 3 roadmap - Spider-Verse finale. Final mission schedule and interactive timeline." }],
+  meta: [{ name: "description", content: "Day 3 roadmap - Neural finale. Final mission schedule and interactive timeline." }],
 };

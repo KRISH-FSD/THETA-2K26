@@ -13,7 +13,7 @@ interface EventCardProps {
   ev: EventData; meta: CatMeta; isActive: boolean;
   side: "left" | "right"; onToggle$: () => void;
 }
-interface PopupPanelProps { ev: EventData; meta: CatMeta; side: "left" | "right"; canRegister: boolean; }
+interface PopupPanelProps { ev: EventData; meta: CatMeta; side: "left" | "right"; canRegister: boolean; inlineMobile?: boolean; }
 
 const EVENTS: EventData[] = [
   {
@@ -92,9 +92,9 @@ const CAT: Record<Cat, CatMeta> = {
 };
 
 /* ─── Popup Panel ─────────────────────────────── */
-const PopupPanel = component$<PopupPanelProps>(({ ev, meta, side, canRegister }) => (
+const PopupPanel = component$<PopupPanelProps>(({ ev, meta, side, canRegister, inlineMobile }) => (
   <div
-    class={["rm-popup", `rm-popup--${side}`]}
+    class={["rm-popup", `rm-popup--${side}`, inlineMobile ? "rm-popup--inline-mobile" : ""]}
     style={`--rm-accent:${meta.color};--rm-accent-rgb:${meta.rgb};`}
   >
     <span class="rm-popup__ripple rm-popup__ripple--1" />
@@ -245,20 +245,7 @@ export default component$(function Day2Roadmap() {
   });
 
   useVisibleTask$(() => {
-    const loadGSAP = () =>
-      new Promise<void>((res) => {
-        // @ts-ignore
-        if (window.gsap) { res(); return; }
-        const s = document.createElement("script");
-        s.src = "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js";
-        s.onload = () => res(); s.onerror = () => res();
-        document.head.appendChild(s);
-      });
-
-    const boot = async () => {
-      await loadGSAP();
-      // @ts-ignore
-      const gsap: any = window.gsap;
+    const boot = () => {
       const pageRoot = document.querySelector(".rm-page--op") as HTMLElement | null;
       const container = document.getElementById("rm-timeline") as HTMLElement | null;
       const svgEl = document.getElementById("rm-line-svg") as unknown as SVGSVGElement | null;
@@ -273,10 +260,9 @@ export default component$(function Day2Roadmap() {
       let targetProg = 0, renderProg = 0, tracerRafId = 0;
       let ro: ResizeObserver | undefined;
       const lateRebuildTimers: number[] = [];
-      const enableCardReveal = !(window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 767);
       const smoothFactor = window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 767 ? 0.16 : 0.32;
       const revealed = new Set<Element>();
-      const liveNodes = () => Array.from(container.querySelectorAll<HTMLElement>("[data-snake-node]")).filter((n) => n.offsetParent !== null && n.offsetWidth > 0);
+      const liveNodes = () => Array.from(container.querySelectorAll<HTMLElement>(".rm-row:not(.rm-row--final) .rm-node, .rm-node--finish")).filter((n) => n.offsetParent !== null && n.offsetWidth > 0);
       const buildPath = (): boolean => {
         const nodes = liveNodes();
         if (nodes.length < 2) return false;
@@ -304,34 +290,40 @@ export default component$(function Day2Roadmap() {
         const cl = Math.max(0, Math.min(1, prog)), off = cl * totalLen, pt = pathBase.getPointAtLength(off), ptN = pathBase.getPointAtLength(Math.min(totalLen, off + 18));
         const ang = Math.atan2(ptN.y - pt.y, ptN.x - pt.x) * (180 / Math.PI);
         tracer.setAttribute("transform", `translate(${pt.x.toFixed(2)},${pt.y.toFixed(2)}) rotate(${ang.toFixed(1)})`);
-        tracer.style.opacity = cl > 0.005 && cl < 0.998 ? "1" : "0";
+        tracer.style.opacity = cl >= 0 && cl <= 1 ? "1" : "0";
       };
 
       const applyProgress = (prog: number, ns: HTMLElement[], VH: number) => {
         const currentIdx = Math.floor(prog * (ns.length - 1) + 0.1);
-        if (currentIdx >= 0 && currentIdx < EVENTS.length) { const ev = EVENTS[currentIdx]; if (activeEventId.value !== ev.id) activeEventId.value = ev.id; } else if (currentIdx >= EVENTS.length) { activeEventId.value = null; }
+        // --- Class management for rows ---
+        rows.forEach((row, i) => {
+          row.classList.toggle("is-current", i === currentIdx);
+          row.classList.toggle("is-passed", i < currentIdx);
+        });
 
         const off = totalLen * (1 - prog);
-        const endReached = prog >= 0.97;
+        const endReached = prog >= 0.995;
 
-        pathBase.style.strokeDashoffset = String(off); pathAccent.style.strokeDashoffset = String(Math.max(0, off - 26)); pathGlow.style.strokeDashoffset = String(off);
+        pathBase.style.strokeDashoffset = String(off);
+        pathAccent.style.strokeDashoffset = String(Math.max(0, off - 26));
+        pathGlow.style.strokeDashoffset = String(off);
         posTracer(prog);
         ns.forEach((n, i) => n.classList.toggle("rm-node--lit", prog >= i / Math.max(ns.length - 1, 1) - 0.02));
 
-        pageRoot?.classList.toggle("is-end-reached", endReached); finalRow?.classList.toggle("is-end-reached", endReached); finalNode?.classList.toggle("rm-node--lit", endReached);
+        pageRoot?.classList.toggle("is-end-reached", endReached);
+        finalRow?.classList.toggle("is-end-reached", endReached);
+        finalNode?.classList.toggle("rm-node--lit", endReached);
         if (tracer && endReached) tracer.style.opacity = "0";
 
-        for (const [idx, row] of rows.entries()) {
-          const card = row.querySelector<HTMLElement>(".rm-card");
+        rowCards.forEach((card) => {
           if (card && !revealed.has(card)) {
             const top = card.getBoundingClientRect().top;
-            const isLeft = row.classList.contains("rm-row--left");
             if (top < VH * 0.92) {
               revealed.add(card);
               card.classList.add("is-revealed");
             }
           }
-        }
+        });
       };
 
       const animateTracer = () => {
@@ -350,29 +342,13 @@ export default component$(function Day2Roadmap() {
         tracerRafId = requestAnimationFrame(animateTracer);
       };
       const rows = Array.from(container.querySelectorAll<HTMLElement>(".rm-row:not(.rm-row--final)"));
+      const rowCards = rows.map((row) => row.querySelector<HTMLElement>(".rm-card"));
       const update = () => {
         if (totalLen === 0) return;
         const ns = liveNodes();
         if (ns.length < 2) return;
-        
-        // --- READ PHASE ---
         const firstRect = ns[0].getBoundingClientRect();
         const lastRect = ns[ns.length - 1].getBoundingClientRect();
-        
-        const unrevealedCards: { card: HTMLElement; top: number; isLeft: boolean; idx: number }[] = [];
-        rows.forEach((row, idx) => {
-          const card = row.querySelector<HTMLElement>(".rm-card");
-          if (card && !revealed.has(card)) {
-            unrevealedCards.push({
-              card,
-              top: card.getBoundingClientRect().top,
-              isLeft: row.classList.contains("rm-row--left"),
-              idx
-            });
-          }
-        });
-
-        // --- COMPUTE PHASE ---
         const startY = firstRect.top + firstRect.height / 2;
         const endY = lastRect.top + lastRect.height / 2;
         const targetY = window.innerHeight * 0.55;
@@ -399,8 +375,6 @@ export default component$(function Day2Roadmap() {
         lateRebuildTimers.push(window.setTimeout(() => go(true), delay));
       });
       setTimeout(() => go(true), 180); go(true);
-      container.querySelectorAll<HTMLElement>(".rm-node").forEach((n) => { n.addEventListener("mouseenter", () => n.classList.add("rm-node--hovered")); n.addEventListener("mouseleave", () => n.classList.remove("rm-node--hovered")); });
-      if (gsap) { const hdr = document.querySelector(".rm-section__header"); if (hdr) gsap.fromTo(hdr, { opacity: 0, y: -36 }, { opacity: 1, y: 0, duration: 1.0, ease: "power3.out" }); }
       return () => {
         if (rafId) cancelAnimationFrame(rafId);
         if (tracerRafId) cancelAnimationFrame(tracerRafId);
@@ -413,7 +387,8 @@ export default component$(function Day2Roadmap() {
         window.visualViewport?.removeEventListener("scroll", onViewportScroll);
       };
     };
-    let cleanup: (() => void) | undefined; boot().then((fn) => { cleanup = fn as any; }); return () => cleanup?.();
+    const cleanup = boot();
+    return () => cleanup?.();
   });
 
   const toggleEvent = $((id: number) => { activeEventId.value = activeEventId.value === id ? null : id; });
@@ -521,8 +496,8 @@ export default component$(function Day2Roadmap() {
         }
         .rm-page--op.is-end-reached .rm-end-popup { opacity: 1; transform: translate(0, -50%) scale(1); }
         @media (max-width: 767px) {
-          .rm-page--op .rm-timeline { isolation: isolate; }
-          .rm-page--op .rm-line-svg { z-index: 5; overflow: visible; }
+          .rm-page--op .rm-timeline { position: relative; }
+          .rm-page--op .rm-line-svg { overflow: visible; }
           .rm-page--op .rm-line-glow {
             stroke: #ffb72b !important;
             stroke-width: 22 !important;
@@ -580,6 +555,44 @@ export default component$(function Day2Roadmap() {
           </div>
 
           <div id="rm-timeline" class="rm-timeline">
+            {EVENTS.map((event, index) => {
+              const meta = CAT[event.cat];
+              const side: "left" | "right" = index % 2 === 0 ? "left" : "right";
+              const isActive = activeEventId.value === event.id;
+              const canRegister = event.cat !== "opening" && event.cat !== "cultural";
+              return (
+                <div key={event.id} class={["rm-row", `rm-row--${side}`]}>
+                  <div class="rm-row__side rm-row__side--left">
+                    {side === "left" ? (
+                      <>
+                        <EventCard ev={event} meta={meta} isActive={isActive} side="left" onToggle$={() => toggleEvent(event.id)} />
+                        {isActive && <PopupPanel ev={event} meta={meta} side="left" canRegister={canRegister} inlineMobile />}
+                      </>
+                    ) : (
+                      isActive && <PopupPanel ev={event} meta={meta} side="left" canRegister={canRegister} />
+                    )}
+                  </div>
+                  <div class={["rm-row__center", `rm-row__center--${side === "left" ? "r" : "l"}`]}>
+                    <div class="rm-node" style={`--rm-accent:${meta.color};--rm-accent-rgb:${meta.rgb};`} data-snake-node="">
+                      <span class="rm-node__pulse" /><span class="rm-node__halo" /><span class="rm-node__impact" />
+                      <span class="rm-node__code">{meta.short}</span>
+                      <span class="rm-node__time">{event.time}</span>
+                    </div>
+                  </div>
+                  <div class="rm-row__side rm-row__side--right">
+                    {side === "right" ? (
+                      <>
+                        <EventCard ev={event} meta={meta} isActive={isActive} side="right" onToggle$={() => toggleEvent(event.id)} />
+                        {isActive && <PopupPanel ev={event} meta={meta} side="right" canRegister={canRegister} inlineMobile />}
+                      </>
+                    ) : (
+                      isActive && <PopupPanel ev={event} meta={meta} side="right" canRegister={canRegister} />
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+
             <svg id="rm-line-svg" class="rm-line-svg" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <defs>
                 <linearGradient id="rm-grad-line" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -604,7 +617,7 @@ export default component$(function Day2Roadmap() {
                 {/* Outer Glow Arrow */}
                 <path id="rm-tracer-shell" d="M -14,-10 L 18,0 L -14,10 C -10,4 -10,-4 -14,-10 Z" fill="url(#rm-tracer-fill)" filter="url(#rm-glow-f)" opacity="0.6" />
                 {/* Sleek Core Arrow */}
-                <path id="rm-tracer-arrow" d="M -12,-8 L 14,0 L -12,8 C -9,3 -9,-3 -12,-8 Z" fill="#fff" filter="url(#rm-glow-f)" />
+                <path id="rm-tracer-arrow" d="M -12,-8 L 14,0 L -12,8 C -9,3 -9,-3 -12,-8 Z" fill="#fff" filter="url(#rm-glow-f)" opacity="0.85" />
                 
                 {/* Fast Inner Pulse */}
                 <circle cx="0" cy="0" r="18" fill="none" stroke="url(#rm-grad-line)" stroke-width="1.5" opacity="0.6">
@@ -620,29 +633,6 @@ export default component$(function Day2Roadmap() {
               </g>
             </svg>
 
-            {EVENTS.map((event, index) => {
-              const meta = CAT[event.cat];
-              const side: "left" | "right" = index % 2 === 0 ? "left" : "right";
-              const isActive = activeEventId.value === event.id;
-              const canRegister = event.cat !== "opening" && event.cat !== "cultural";
-              return (
-                <div key={event.id} class={["rm-row", `rm-row--${side}`]}>
-                  <div class="rm-row__side rm-row__side--left">
-                    {side === "left" ? <EventCard ev={event} meta={meta} isActive={isActive} side="left" onToggle$={() => toggleEvent(event.id)} /> : isActive && <PopupPanel ev={event} meta={meta} side="left" canRegister={canRegister} />}
-                  </div>
-                  <div class={["rm-row__center", `rm-row__center--${side === "left" ? "r" : "l"}`]}>
-                    <div class="rm-node" style={`--rm-accent:${meta.color};--rm-accent-rgb:${meta.rgb};`} data-snake-node="">
-                      <span class="rm-node__pulse" /><span class="rm-node__halo" /><span class="rm-node__impact" />
-                      <span class="rm-node__code">{meta.short}</span>
-                      <span class="rm-node__time">{event.time}</span>
-                    </div>
-                  </div>
-                  <div class="rm-row__side rm-row__side--right">
-                    {side === "right" ? <EventCard ev={event} meta={meta} isActive={isActive} side="right" onToggle$={() => toggleEvent(event.id)} /> : isActive && <PopupPanel ev={event} meta={meta} side="right" canRegister={canRegister} />}
-                  </div>
-                </div>
-              );
-            })}
 
             <div class="rm-row rm-row--final">
               <div class="rm-row__side rm-row__side--left" />

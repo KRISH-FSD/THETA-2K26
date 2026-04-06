@@ -127,22 +127,22 @@ export const Header = component$(() => {
               class="relative z-10 flex min-w-[9.75rem] items-center justify-center gap-2 overflow-hidden rounded-full border px-3 py-2.5 text-[0.54rem] font-black tracking-[0.2em] uppercase text-[#f7fbff] backdrop-blur-xl transition-all duration-300 active:scale-95 md:min-w-[10.5rem] md:px-4 lg:min-w-[12rem] lg:gap-2.5 lg:px-6 lg:py-3 lg:text-[0.62rem]"
               style={
                 developerButtonActive
-                  ? "border-color:rgba(111,255,253,0.72);background:linear-gradient(135deg,rgba(8,20,42,0.96),rgba(38,8,54,0.94));box-shadow:0 0 0 1px rgba(255,0,184,0.16),0 0 26px rgba(111,255,253,0.3),0 0 58px rgba(255,0,184,0.24);"
-                  : "border-color:rgba(255,255,255,0.12);background:linear-gradient(135deg,rgba(7,16,34,0.92),rgba(31,8,50,0.9));box-shadow:0 0 18px rgba(111,255,253,0.18),0 0 40px rgba(255,0,184,0.14);"
+                  ? "border-color:rgba(111,255,253,0.72);background:linear-gradient(135deg,rgba(8,20,42,0.96),rgba(38,8,54,0.94));box-shadow:0 0 0 1px rgba(255,51,51,0.16),0 0 26px rgba(111,255,253,0.3),0 0 58px rgba(255,51,51,0.24);"
+                  : "border-color:rgba(255,255,255,0.12);background:linear-gradient(135deg,rgba(7,16,34,0.92),rgba(31,8,50,0.9));box-shadow:0 0 18px rgba(111,255,253,0.18),0 0 40px rgba(255,51,51,0.14);"
               }
             >
               <span
                 class="absolute inset-0 opacity-90"
-                style="background:linear-gradient(135deg,rgba(92,255,247,0.08),transparent 35%,rgba(255,0,184,0.12) 100%);"
+                style="background:linear-gradient(135deg,rgba(92,255,247,0.08),transparent 35%,rgba(255,51,51,0.12) 100%);"
               />
               <span
                 class="absolute inset-y-[-120%] left-[-18%] w-[68%] rotate-12 opacity-80 blur-2xl transition-transform duration-500 group-hover:translate-x-7"
-                style="background:linear-gradient(180deg,rgba(111,255,253,0.72),rgba(255,0,184,0.58),rgba(171,255,57,0.38));"
+                style="background:linear-gradient(180deg,rgba(111,255,253,0.72),rgba(255,51,51,0.58),rgba(171,255,57,0.38));"
               />
               <span class="pointer-events-none absolute inset-[1px] rounded-full border border-white/10 opacity-70" />
               <span class="relative flex h-2.5 w-2.5 shrink-0 lg:h-3 lg:w-3">
                 <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#6ffffd] opacity-75" />
-                <span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#ff4fd8] shadow-[0_0_16px_rgba(255,79,216,0.82)] lg:h-3 lg:w-3" />
+                <span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#ff3333] shadow-[0_0_16px_rgba(255,51,51,0.82)] lg:h-3 lg:w-3" />
               </span>
               <span class="relative truncate">Developers</span>
               <svg
@@ -265,7 +265,7 @@ export const Header = component$(() => {
             }
           >
             <span class="inline-flex items-center justify-center gap-2">
-              <span class="inline-flex h-2.5 w-2.5 rounded-full bg-[#ff4fd8] shadow-[0_0_14px_rgba(255,79,216,0.78)]" />
+              <span class="inline-flex h-2.5 w-2.5 rounded-full bg-[#ff3333] shadow-[0_0_14px_rgba(255,51,51,0.78)]" />
               <span>Developers</span>
             </span>
           </Link>

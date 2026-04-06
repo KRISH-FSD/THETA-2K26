@@ -112,20 +112,13 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
       cluster: "BIOGENISIS",
       events: [
         {
-          name: "FunKart",
-          time: "2 PM - 5 PM",
-          venue: "IED Hall",
-          focus: "Fun",
-          activities: ["Focus Freaks", "Zero Vision Zone", "Error Hunt"],
-          image: "https://images.unsplash.com/photo-1596720426673-e47744bd2185?q=80&w=1000",
-        },
-        {
           name: "Bio Architect",
-          time: "10 AM - 1 PM",
+          time: "11 AM - 2 PM",
           venue: "IED Hall",
           focus: "Learning",
           activities: [],
           image: "https://images.unsplash.com/photo-1541888946425-d81bb19480c5?q=80&w=1000",
+          regLink: "https://forms.gle/6WUW1J79fncoE8Zt7",
         },
       ],
     },
@@ -209,7 +202,7 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
       cluster: "OPTICA",
       events: [
         {
-          name: "Optica Event 1",
+          name: "Physics Freeze Game",
           time: "11 AM - 1 PM",
           venue: "Room 310",
           focus: "Non-Tech",
@@ -219,6 +212,7 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
             "Bernoulli Binary Blast",
           ],
           image: "https://images.unsplash.com/photo-1581093191605-a1d35581177b?q=80&w=1000",
+          regLink: "https://docs.google.com/forms/d/e/1FAIpQLSeABawd4zOkl772rRy8v4HWKkHKmVOtEtJS5ma5WeettAcnww/viewform?usp=dialog",
         },
       ],
     },
@@ -253,12 +247,19 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
       cluster: "ELECTRONICA",
       events: [
         {
-          name: "Tech Startup Challenge",
+          name: "TECH - STARTUP CHALLENGE",
           time: "11 AM - 2 PM",
           venue: "Room 402",
           focus: "Tech",
-          activities: ["Tech Spark", "Design & Develop", "Start-up Showcase"],
+          fee: "Rs. 50",
+          activities: [
+            "Tech Spark",
+            "Design & Develop",
+            "Start-up Showcase",
+            "Prize Pool: 1st - ₹500, 2nd - ₹300, 3rd - ₹200",
+          ],
           image: "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?q=80&w=1000",
+          regLink: "https://forms.gle/vdZds3WZAW5Q7jJ96",
         },
       ],
     },
@@ -294,15 +295,13 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
       cluster: "BIOGENISIS",
       events: [
         {
-          name: "Clash of Champions",
-          time: "10 AM - 1 PM",
+          name: "FunKart",
+          time: "2 PM - 5 PM",
           venue: "IED Hall",
           focus: "Fun",
-          activities: [
-            "Cup Stack Game",
-            "Ping Pong Bounce",
-            "Fast Word / Movie / Song",
-          ],
+          activities: ["Focus Freaks", "Zero Vision Zone", "Error Hunt"],
+          image: "https://images.unsplash.com/photo-1596720426673-e47744bd2185?q=80&w=1000",
+          regLink: "https://forms.gle/8k7SXNPL32wLh88C7",
         },
       ],
     },
@@ -352,11 +351,12 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
       cluster: "OPTICA",
       events: [
         {
-          name: "Optica Event 2",
+          name: "The Gravity Defier",
           time: "9:30 AM - 11:30 AM",
           venue: "Room 310",
           focus: "Learning",
           activities: ["Number Grid Race", "Memory Snap", "Gravity Defier"],
+          regLink: "https://docs.google.com/forms/d/e/1FAIpQLSd1EzJorBtCHd79RyI4M14qd6MjS6az9tfgHONC7spq6CggNw/viewform?usp=publish-editor",
         },
       ],
     },
@@ -378,11 +378,18 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
       cluster: "ELECTRONICA",
       events: [
         {
-          name: "Tech Mayhem",
+          name: "Tech mayhem",
           time: "10 AM - 1 PM",
           venue: "Room 402",
           focus: "Tech",
-          activities: ["Real or Fake Tech", "Resistor Rush", "Memory Match"],
+          fee: "Rs. 50",
+          activities: [
+            "Real or Fake Tech",
+            "Resistor Rush",
+            "Memory Match",
+            "Prize Pool: 1st - ₹500, 2nd - ₹300, 3rd - ₹200",
+          ],
+          regLink: "https://forms.gle/u1TAKaa7LF1Ge4UR9",
         },
       ],
     },
@@ -414,6 +421,23 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
     },
   ],
   "Day 3": [
+    {
+      cluster: "BIOGENISIS",
+      events: [
+        {
+          name: "Clash of Champions",
+          time: "10 AM - 1 PM",
+          venue: "IED Hall",
+          focus: "Fun",
+          activities: [
+            "Cup Stack Game",
+            "Ping Pong Bounce",
+            "Fast Word / Movie / Song",
+          ],
+          regLink: "https://forms.gle/4a9Ws7WHz8SEMh1U6",
+        },
+      ],
+    },
     {
       cluster: "MATHEMATICA",
       events: [
@@ -482,11 +506,12 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
       cluster: "OPTICA",
       events: [
         {
-          name: "Optica Event 3",
+          name: "The Final Pyramid",
           time: "9:30 AM - 11:30 AM",
           venue: "Room 310",
           focus: "Learning",
           activities: ["Sonar Sprint", "Hopscotch Pyramid", "Hoops & Scoops"],
+          regLink: "https://docs.google.com/forms/d/e/1FAIpQLSeiG0W_7I7wdPsc4S35B9A9fDPtf2ogKsUXxaZxcHTYAnGnyA/viewform?usp=publish-editor",
         },
       ],
     },
@@ -508,11 +533,18 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
       cluster: "ELECTRONICA",
       events: [
         {
-          name: "ThinkZone Challenge",
+          name: "THINKZONE CHALLENGE",
           time: "10 AM - 1 PM",
           venue: "Room 402",
           focus: "Creative",
-          activities: ["Artistic", "Kandupidi", "Scavenger Hunt"],
+          fee: "Rs. 50",
+          activities: [
+            "Artistic",
+            "Kandupidi",
+            "Scavenger Hunt",
+            "Prize Pool: 1st - ₹500, 2nd - ₹300, 3rd - ₹200",
+          ],
+          regLink: "https://forms.gle/2GMW1XW9sQ5h8QZ68",
         },
       ],
     },
@@ -709,9 +741,9 @@ export default component$(() => {
   const isDay3 = selectedDay.value === "Day 3";
 
   const bgLogo = isDay3 ? "/spidy/spidy-event-bg" : isDay2 ? "/onepeice/one-peice-logo.png" : "/ben10/ben10-logo.png";
-  const bgGlowColor = isDay3 ? "#ef4444" : isDay2 ? "#eab308" : "#0ea935";
-  const tc = isDay3 ? "239, 68, 68" : isDay2 ? "234, 179, 8" : "14, 169, 53";
-  const tcLight = isDay3 ? "252, 165, 165" : isDay2 ? "253, 224, 71" : "110, 255, 158";
+  const bgGlowColor = isDay3 ? "#f02aa2" : isDay2 ? "#eab308" : "#0ea935";
+  const tc = isDay3 ? "240, 42, 162" : isDay2 ? "234, 179, 8" : "14, 169, 53";
+  const tcLight = isDay3 ? "255, 100, 200" : isDay2 ? "253, 224, 71" : "110, 255, 158";
 
   // Filter events based on selected day and active cluster
   const eventsForSelectedDay = allEvents.filter((e) => e.day === selectedDay.value);
@@ -735,7 +767,7 @@ export default component$(() => {
       style={{
         '--tc': tc,
         '--tc-light': tcLight,
-        '--theme-glow': isDay3 ? 'rgba(239, 68, 68, 0.4)' : isDay2 ? 'rgba(234, 179, 8, 0.4)' : 'rgba(14, 169, 53, 0.4)'
+        '--theme-glow': isDay3 ? 'rgba(240, 42, 162, 0.4)' : isDay2 ? 'rgba(234, 179, 8, 0.4)' : 'rgba(14, 169, 53, 0.4)'
       }}
     >
       <style>{`
@@ -925,7 +957,7 @@ export default component$(() => {
             {filteredEvents.map((event) => {
               const baseC = themeStyles[event.theme];
               const c = isDay3
-                ? { border: "border-[#ef4444]/40", glow: "rgba(239,68,68,0.25)", badge: "bg-[#ef4444] text-white", ring: "#ef4444" }
+                ? { border: "border-[#f02aa2]/40", glow: "rgba(240,42,162,0.25)", badge: "bg-[#f02aa2] text-white", ring: "#f02aa2" }
                 : isDay2
                   ? { border: "border-[#eab308]/40", glow: "rgba(234,179,8,0.25)", badge: "bg-[#eab308] text-black", ring: "#eab308" }
                   : { border: "border-[#0ea935]/40", glow: "rgba(14,169,53,0.25)", badge: "bg-[#0ea935] text-white", ring: "#0ea935" };
@@ -1069,7 +1101,7 @@ export default component$(() => {
                 {selectedDay.value === day && (
                   <div class={[
                     "absolute inset-0 rounded-full z-0 bg-gradient-to-tr",
-                    day === "Day 3" ? "from-[#ef4444] via-[#dc2626] to-[#f87171]" :
+                    day === "Day 3" ? "from-[#ff3333] via-[#cc1111] to-[#ff6666]" :
                       day === "Day 2" ? "from-[#eab308] via-[#ca8a04] to-[#fde047]" :
                         "from-[#0ea935] via-[#12cb42] to-[#8cff7a]"
                   ]}></div>
@@ -1087,7 +1119,7 @@ export default component$(() => {
                 activeFilterPanel.value === "cluster" ? "bg-white/20 shadow-lg" : "hover:bg-white/10"
               ]}
             >
-              <div class={["w-1.5 h-1.5 rounded-full shrink-0", isDay3 ? "bg-[#ef4444]" : isDay2 ? "bg-[#eab308]" : "bg-[#0ea935]"]}></div>
+              <div class={["w-1.5 h-1.5 rounded-full shrink-0", isDay3 ? "bg-[#ff3333]" : isDay2 ? "bg-[#eab308]" : "bg-[#0ea935]"]}></div>
               <span class="text-[0.6rem] font-bold uppercase tracking-widest text-white whitespace-nowrap sm:text-[0.65rem] truncate max-w-[80px] sm:max-w-[120px]">
                 {selectedCluster.value === ALL_CLUSTERS ? "Clusters" : selectedCluster.value}
               </span>

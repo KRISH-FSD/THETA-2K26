@@ -7,6 +7,7 @@ interface Sponsor {
   name: string;
   logo: string;
   order?: number;
+  isActive?: boolean;
 }
 
 interface SponsorsConfig {
@@ -122,13 +123,13 @@ const getOuterTierTheme = (
 ) =>
   tier.key === "platinum"
     ? {
-        accent: "#ff4d4f",
-        glow: "rgba(255,77,79,0.26)",
-      }
+      accent: "#ff4d4f",
+      glow: "rgba(255,77,79,0.26)",
+    }
     : {
-        accent: tier.accent,
-        glow: tier.glow,
-      };
+      accent: tier.accent,
+      glow: tier.glow,
+    };
 
 export default component$(() => {
   const sponsors = useSignal<SponsorsConfig>(defaultSponsors);
@@ -303,7 +304,7 @@ export default component$(() => {
   const availableTiers = sponsorTierMeta
     .map((tier) => ({
       ...tier,
-      sponsors: sponsors.value[tier.key],
+      sponsors: sponsors.value[tier.key].filter((s) => s.isActive),
     }))
     .filter((tier) => tier.sponsors.length > 0);
 
@@ -503,11 +504,11 @@ export default component$(() => {
                     {spotlight.description}
                   </p>
 
-                  <div class="mt-4 grid gap-2.5 sm:grid-cols-2">
+                  <div class="mt-4 flex flex-wrap justify-center gap-3">
                     {spotlight.sponsors.slice(0, 4).map((sponsor) => (
                       <div
                         key={`${spotlight.key}-${sponsor.name}`}
-                        class="s-spotlight-item group flex min-h-[8.75rem] flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/5 p-3 backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:bg-white/10 hover:shadow-[0_10px_20px_rgba(255,255,255,0.05)] sm:min-h-[9.5rem]"
+                        class="s-spotlight-item group flex min-h-[8.75rem] w-full max-w-[13rem] flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/5 p-3 backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:bg-white/10 hover:shadow-[0_10px_20px_rgba(255,255,255,0.05)] sm:min-h-[9.5rem]"
                         style={`border-color: ${spotlight.glow};`}
                       >
                         <div class="flex h-14 w-full items-center justify-center overflow-hidden rounded-xl bg-white/95 p-2 mix-blend-screen shadow-inner transition-all duration-500 group-hover:mix-blend-normal sm:h-16">
@@ -595,11 +596,10 @@ export default component$(() => {
                   "s-reveal relative overflow-hidden rounded-[1.75rem] border bg-[rgba(5,5,5,0.72)] p-6 text-left backdrop-blur-2xl transition-all duration-300",
                   active ? "translate-y-[-4px]" : "hover:-translate-y-1",
                 ]}
-                style={`border-color: ${outerTheme.glow}; box-shadow: ${
-                  active
+                style={`border-color: ${outerTheme.glow}; box-shadow: ${active
                     ? `0 24px 70px ${outerTheme.glow}`
                     : "0 20px 50px rgba(0,0,0,0.22)"
-                };`}
+                  };`}
               >
                 <div
                   class="pointer-events-none absolute inset-0"
@@ -649,7 +649,7 @@ export default component$(() => {
               {copy.value.hallDescription}
             </p>
           </div>
-          <span class="t-sticker">Sponsor Legacy</span>
+          <span class="t-sticker">Alliance Hall</span>
         </div>
 
         <div class="space-y-8">
@@ -663,11 +663,10 @@ export default component$(() => {
                   id={`sponsor-tier-${tier.key}`}
                   key={tier.key}
                   class="s-reveal scroll-mt-28 rounded-[2.25rem] border bg-[rgba(5,5,5,0.72)] p-5 backdrop-blur-2xl sm:p-6 lg:p-7"
-                  style={`border-color: ${outerTheme.glow}; box-shadow: ${
-                    active
+                  style={`border-color: ${outerTheme.glow}; box-shadow: ${active
                       ? `0 24px 90px ${outerTheme.glow}`
                       : "0 26px 70px rgba(0,0,0,0.2)"
-                  };`}
+                    };`}
                 >
                   <div class="grid gap-6 lg:grid-cols-[320px_1fr]">
                     <div
@@ -708,12 +707,18 @@ export default component$(() => {
                     </div>
 
                     <div class="rounded-[1.75rem] border border-white/8 bg-black/20 p-4 sm:p-5">
-                      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                      <div class="flex flex-wrap justify-center gap-4">
                         {tier.sponsors.map((sponsor) => (
                           <article
                             key={`${tier.key}-${sponsor.name}`}
-                            class="group flex flex-col items-center justify-center rounded-[1.5rem] border border-white/10 bg-white/5 p-4 backdrop-blur-md transition-all duration-300 hover:-translate-y-2 hover:bg-white/10 hover:shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
+                            class="group relative flex w-full max-w-[17rem] flex-col items-center justify-center rounded-[1.5rem] border border-white/10 bg-white/5 p-4 backdrop-blur-md transition-all duration-300 hover:-translate-y-2 hover:bg-white/10 hover:shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
                           >
+                            {sponsor.isActive && (
+                              <div class="pointer-events-none absolute -top-2 -right-2 z-20 flex items-center gap-1 rounded-full border border-[#0ea935]/40 bg-[#0ea935] px-2 py-0.5 text-[0.45rem] font-black tracking-widest text-black uppercase shadow-[0_0_15px_rgba(14,169,53,0.5)]">
+                                <span class="h-1 w-1 animate-pulse rounded-full bg-black"></span>
+                                Active 2026
+                              </div>
+                            )}
                             <div class="flex h-24 w-full items-center justify-center overflow-hidden rounded-xl bg-white/95 p-4 shadow-inner">
                               <img
                                 src={sponsor.logo}

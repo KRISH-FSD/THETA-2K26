@@ -192,16 +192,16 @@ const sponsorTierMeta: Record<(typeof sponsorTiers)[number]["key"], {
 
 /* Day icons */
 const dayIcons = ["", "", ""];
-const dayAccents = ["#00ff55", "#ffce00", "#ff1a1a"];
+const dayAccents = ["#00ff55", "#ffce00", "#f02aa2"];
 const dayGradients = [
   "linear-gradient(135deg, #00ff55 0%, #00f2ff 100%)", // Day 1: Ben 10 Cyber
   "linear-gradient(135deg, #f6ff00 0%, #ff8c00 100%)", // Day 2: Hyper Volt
-  "linear-gradient(135deg, #ff1a1a 0%, #ff0099 100%)", // Day 3: Neural Red
+  "linear-gradient(135deg, #f02aa2 0%, #ff00ff 100%)", // Day 3: Neural Purple
 ];
 const dayBorderColors = [
   "rgba(0,255,85,0.25)",
   "rgba(255,206,0,0.25)",
-  "rgba(255,26,26,0.25)",
+  "rgba(255,51,51,0.25)",
 ];
 const dayCardSurfaces = [
   "linear-gradient(180deg, rgba(8,14,10,0.96) 0%, rgba(10,18,12,0.94) 100%)",
@@ -211,7 +211,7 @@ const dayCardSurfaces = [
 const dayCardGlow = [
   "radial-gradient(120% 120% at 100% 0%, rgba(0,255,85,0.12) 0%, transparent 48%)",
   "radial-gradient(120% 120% at 100% 0%, rgba(255,206,0,0.12) 0%, transparent 48%)",
-  "radial-gradient(120% 120% at 100% 0%, rgba(255,26,95,0.14) 0%, transparent 48%)",
+  "radial-gradient(120% 120% at 100% 0%, rgba(255,51,51,0.14) 0%, transparent 48%)",
 ];
 
 const statSpotlight: Array<{
@@ -249,10 +249,10 @@ const statSpotlight: Array<{
       eyebrow: "Campus footprint",
       note: "Institutions across the circuit plug into Theta and widen the reach every year.",
       signal: "Reach map expanding",
-      accent: "#ff1a1a",
-      glow: "rgba(255,26,26,0.24)",
+      accent: "#ff3333",
+      glow: "rgba(255,51,51,0.24)",
       progress: "68%",
-      surface: "linear-gradient(145deg, rgba(255,26,26,0.18), rgba(12,8,10,0.96) 62%)",
+      surface: "linear-gradient(145deg, rgba(255,51,51,0.18), rgba(12,8,10,0.96) 62%)",
     },
   ];
 
@@ -543,7 +543,8 @@ export default component$(() => {
     sync(); const id = setInterval(sync, 1000); return () => clearInterval(id);
   });
 
-  useVisibleTask$(() => {
+  useVisibleTask$(({ track }) => {
+    track(() => configData.value.stats);
     const targets = {
       events: parseStatNumber(configData.value.stats.events),
       participants: parseStatNumber(configData.value.stats.participants),
@@ -1157,7 +1158,6 @@ export default component$(() => {
             <img src="/theta-logo.png" alt="" class="theta-bento-card__watermark" aria-hidden="true" />
 
             {/* --- AMBIENT HUD LAYERS --- */}
-            <div class="theta-bento-card__ambient-matrix" aria-hidden="true" />
 
             <div class="theta-stats-copy">
               <span class="t-badge flex items-center gap-2 w-fit">
@@ -1230,7 +1230,7 @@ export default component$(() => {
             {statSpotlight.map((item, index) => (
               <article
                 key={item.key}
-                class="theta-bento-card theta-bento-card--stat reveal-right p-6 sm:p-8 h-full min-h-[160px] relative overflow-hidden"
+                class="theta-bento-card theta-bento-card--stat theta-stats-node reveal-right p-6 sm:p-8 h-full min-h-[160px] relative overflow-hidden"
                 style={`--theta-stat-accent:${item.accent}; --theta-stat-glow:${item.glow}; --theta-stat-progress:${item.progress}; --theta-stat-surface:${item.surface}; transition-delay:${index * 120}ms`}
               >
                 <div class="theta-stats-node__meta mb-3">

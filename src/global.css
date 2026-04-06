@@ -51,11 +51,11 @@
 
 /* Spider-Man Theme Override */
 body[data-theme="spider"] {
-  --t-brand-accent: #ff2020;
-  --t-brand-rgb: 255, 32, 32;
-  --t-brand-deep: #cc1010;
-  --t-bg: #0a0005;
-  --t-bg2: #130010;
+  --t-brand-accent: #ff3333;
+  --t-brand-rgb: 255, 51, 51;
+  --t-brand-deep: #cc1111;
+  --t-bg: #0d0101;
+  --t-bg2: #1a0101;
   --t-muted: #a38c8c;
   --t-dim: #5c4d4d;
 }
@@ -1466,16 +1466,7 @@ html[data-mobile-perf="true"] .theta-stats-node {
   transform: rotate(-10deg);
 }
 
-.theta-bento-card__ambient-matrix {
-  position: absolute;
-  inset: 0;
-  opacity: 0.03;
-  pointer-events: none;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Ctext x='0' y='20' font-family='monospace' font-size='10' fill='%23bdff00'%3E1011010110%3C/text%3E%3Ctext x='0' y='40' font-family='monospace' font-size='10' fill='%23bdff00'%3E0010110010%3C/text%3E%3Ctext x='0' y='60' font-family='monospace' font-size='10' fill='%23bdff00'%3E1100101101%3C/text%3E%3Ctext x='0' y='80' font-family='monospace' font-size='10' fill='%23bdff00'%3E0111010111%3C/text%3E%3C/svg%3E");
-  mask-image: linear-gradient(180deg, transparent, black 20%, black 80%, transparent);
-  animation: matrixScroll 20s linear infinite;
-  z-index: 1;
-}
+
 
 .theta-bento-card__hud-corners {
   position: absolute;
@@ -1572,15 +1563,7 @@ html[data-mobile-perf="true"] .theta-stats-node {
   animation: railPulse 3s ease-in-out infinite;
 }
 
-@keyframes matrixScroll {
-  from {
-    background-position: 0 0;
-  }
 
-  to {
-    background-position: 0 1000px;
-  }
-}
 
 @keyframes railPulse {
 
@@ -4540,9 +4523,13 @@ header.scrolled {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
-  /* More space between primary and secondary rows */
+  gap: 2rem;
   width: 100%;
+  position: relative;
+  z-index: 10;
+  /* Backside Dark: Premium radial shade for button legibility */
+  background: radial-gradient(circle at center, rgba(0, 0, 0, 0.45) 0%, transparent 75%);
+  padding: 2.5rem 0;
 }
 
 .hs-actions__row {
@@ -5912,8 +5899,7 @@ header.scrolled {
   height: 100%;
   overflow: visible;
   pointer-events: none;
-  z-index: 2;
-  /* above canvas, below row content */
+  z-index: 5 !important; /* Low base for the roadmap line */
 }
 
 .rm-line-glow,
@@ -6350,7 +6336,7 @@ header.scrolled {
    ═══════════════════════════════════════ */
 .rm-row {
   position: relative;
-  z-index: 3;
+  z-index: 10 !important; /* Middle layer for rows */
   display: grid;
   /* Wider center column (8rem) → more S-curve amplitude */
   grid-template-columns: minmax(0, 1fr) clamp(6rem, 8vw, 8rem) minmax(0, 1fr);
@@ -6393,6 +6379,7 @@ header.scrolled {
   align-items: center;
   padding-top: 1.2rem;
   min-height: 100%;
+  z-index: 2;
 }
 
 /* S-curve alignment: node right/left/center within spine */
@@ -6423,6 +6410,22 @@ header.scrolled {
 /* Final row always visible */
 .rm-row--final .rm-end-card {
   opacity: 1;
+}
+
+.rm-page .rm-section__header {
+  animation: rm-section-header-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes rm-section-header-in {
+  from {
+    opacity: 0;
+    transform: translateY(-36px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ══════════════════════════════════
@@ -6599,19 +6602,32 @@ header.scrolled {
   width: 3.45rem;
   height: 3.45rem;
   border-radius: 50%;
-  border: 1px solid rgba(220, 225, 240, 0.3);
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
   background: radial-gradient(circle at 50% 32%,
-      rgba(220, 225, 240, 0.22),
-      rgba(5, 7, 12, 0.96) 70%);
+      rgba(15, 20, 25, 0.98) 0%,
+      rgba(5, 7, 12, 0.99) 100%);
   transition:
-    transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 220ms ease,
-    box-shadow 220ms ease,
-    filter 220ms ease;
+    transform 280ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    border-color 240ms ease,
+    box-shadow 240ms ease,
+    filter 240ms ease;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.07),
-    0 0 40px rgba(220, 225, 240, 0.1),
-    0 24px 50px rgba(0, 0, 0, 0.35);
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 0 40px rgba(0, 0, 0, 0.45),
+    0 15px 35px rgba(0, 0, 0, 0.5);
+  z-index: 50 !important; /* Extremely high layer for nodes */
+}
+
+.rm-node::before {
+  content: "";
+  position: absolute;
+  inset: 0.18rem;
+  border-radius: inherit;
+  background: radial-gradient(circle at 50% 32%,
+      rgba(15, 20, 25, 0.99) 0%,
+      rgba(5, 7, 12, 1) 100%);
+  z-index: 0;
+  pointer-events: none;
 }
 
 .rm-node__pulse,
@@ -6774,7 +6790,9 @@ header.scrolled {
 }
 
 /* ── Node hovered state ── */
-.rm-node--hovered {
+.rm-node--hovered,
+.rm-node:hover,
+.rm-node:focus-visible {
   transform: scale(1.18);
   border-color: rgba(var(--rm-accent-rgb), 1);
   filter: saturate(1.3);
@@ -6785,10 +6803,12 @@ header.scrolled {
     0 0 120px rgba(var(--rm-accent-rgb), 0.24),
     0 28px 60px rgba(0, 0, 0, 0.5);
   cursor: pointer;
-  z-index: 10;
+  z-index: 25;
 }
 
-.rm-node--hovered .rm-node__impact {
+.rm-node--hovered .rm-node__impact,
+.rm-node:hover .rm-node__impact,
+.rm-node:focus-visible .rm-node__impact {
   animation: rm-node-impact 0.78s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -7628,6 +7648,9 @@ header.scrolled {
   .rm-row--right .rm-row__side--right {
     grid-column: 2;
     grid-row: 1;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.9rem;
   }
 
   .rm-row__center {
@@ -7664,7 +7687,7 @@ header.scrolled {
     min-width: 0;
   }
 
-  /* Hide the popup/opposite side panel on mobile — card details expand inline */
+  /* Keep the event card side visible and stack the active popup below it on mobile */
   .rm-row--left .rm-row__side--right,
   .rm-row--right .rm-row__side--left {
     display: none !important;
@@ -8015,6 +8038,10 @@ header.scrolled {
   animation: rm-drop-in 0.52s cubic-bezier(0.22, 1.5, 0.36, 1) both;
 }
 
+.rm-popup--inline-mobile {
+  display: none;
+}
+
 /* Right-side popup: drop originates from card edge (left) */
 .rm-popup--right {
   transform-origin: left center;
@@ -8270,13 +8297,15 @@ header.scrolled {
 
 /* ── Mobile: popup hidden, card details shown ── */
 @media (max-width: 767px) {
-  .rm-popup {
+  .rm-popup:not(.rm-popup--inline-mobile) {
     display: none;
   }
 
-  .rm-row__side--left:has(.rm-popup),
-  .rm-row__side--right:has(.rm-popup) {
-    display: none !important;
+  .rm-popup--inline-mobile {
+    display: block;
+    width: 100% !important;
+    max-width: none !important;
+    transform-origin: center top;
   }
 
   .rm-card__popup-hint {
@@ -8286,6 +8315,10 @@ header.scrolled {
 
 /* ── Tablet (768–1023): popup visible but compact ── */
 @media (min-width: 768px) and (max-width: 1023px) {
+  .rm-popup--inline-mobile {
+    display: none !important;
+  }
+
   .rm-popup__title {
     font-size: 0.85rem;
   }
@@ -8302,6 +8335,12 @@ header.scrolled {
   .rm-popup__action {
     font-size: 0.55rem;
     padding: 0.52rem 0.72rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .rm-popup--inline-mobile {
+    display: none !important;
   }
 }
 
@@ -8347,17 +8386,7 @@ header.scrolled {
   pointer-events: none;
 }
 
-/* Energy Spheres (Round objects) */
-.energy-sphere {
-  position: absolute;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1), transparent);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(0, 200, 80, 0.12);
-  box-shadow: 0 0 30px rgba(0, 200, 80, 0.04);
-  pointer-events: none;
-  z-index: 1;
-}
+
 
 .footer-tracer-line {
   position: absolute;
@@ -8796,7 +8825,9 @@ body[data-theme="spider"] .rm-node--lit {
     0 24px 50px rgba(0, 0, 0, 0.45) !important;
 }
 
-body[data-theme="spider"] .rm-node--hovered {
+body[data-theme="spider"] .rm-node--hovered,
+body[data-theme="spider"] .rm-node:hover,
+body[data-theme="spider"] .rm-node:focus-visible {
   border-color: #ff4040 !important;
   box-shadow:
     0 0 45px rgba(255, 32, 32, 0.85),
@@ -9175,4 +9206,116 @@ body[data-theme="onepiece"] .t-spider-mobile-hover:hover {
   .t-bg-cells::before {
     opacity: 0.12 !important;
   }
+}
+
+/* ============================================================
+   HERO SLIDER — PREMIUM TRANSITIONS
+   ============================================================ */
+.hs-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background-color: #05030f;
+  overflow: hidden;
+  will-change: transform, opacity, filter;
+  backface-visibility: hidden;
+}
+
+/* Cinematic Cross-Fade */
+.hs-bg--active {
+  z-index: 2;
+  opacity: 1;
+}
+
+.hs-bg--inactive {
+  z-index: 1;
+  opacity: 0;
+}
+
+/* Ken Burns (Premium Slow Zoom) */
+.hs-ken-burns {
+  animation: hsKenBurns 28s ease-in-out infinite alternate;
+}
+
+@keyframes hsKenBurns {
+  0% {
+    transform: scale(1) translate(0, 0);
+  }
+  100% {
+    transform: scale(1.18) translate(-1%, -1.5%);
+  }
+}
+
+/* Video Loader refinement */
+.hs-video-loader {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  background: #05030f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hs-video-loader__poster {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(20px) brightness(0.6);
+  opacity: 0.5;
+}
+
+.hs-video-loader__veil {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, transparent 0%, #05030f 100%);
+}
+
+.hs-video-loader__content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+}
+
+.hs-video-loader__label {
+  font-family: var(--font-hero-display);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #fff;
+  opacity: 0.8;
+  animation: hsPulseLoader 2.5s ease-in-out infinite;
+}
+
+@keyframes hsPulseLoader {
+  0%, 100% { opacity: 0.3; transform: scale(0.96); }
+  50% { opacity: 0.8; transform: scale(1); }
+}
+
+/* Thumbnail Progress Lines */
+.hs-thumb-line-bg {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  z-index: 5;
+  transition: opacity 0.3s ease;
+}
+
+.hs-thumb-line {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  border-radius: 2px;
+  z-index: 6;
+  box-shadow: 0 0 10px currentColor;
+  transition: width 0.1s linear;
 }

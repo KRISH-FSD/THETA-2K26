@@ -121,11 +121,11 @@ export const HeroSlider = component$(() => {
   const active = useSignal(0);
   const isAnimating = useSignal(false);
   const heroRef = useSignal<HTMLElement>();
-  const progressBarRef = useSignal<HTMLElement>();
   const videoRef = useSignal<HTMLVideoElement>();
   const isDesktop = useSignal(false);
   const isHeroInView = useSignal(true);
   const isVideoLoading = useSignal(false);
+  const slideProgress = useSignal(0);
   const state = useStore({ startTime: 0 });
 
   const goTo = $((idx: number) => {
@@ -134,17 +134,13 @@ export const HeroSlider = component$(() => {
     active.value = idx;
     state.startTime = performance.now();
 
-    if (progressBarRef.value) {
-      progressBarRef.value.style.width = "0%";
-    }
-
     /* Content Entrance Animations */
     const tl = gsap.timeline();
-    
+
     // Background Swap Animation (Zoom-Fade)
-    gsap.fromTo(".hs-media-container", 
-      { opacity: 0.4, scale: 1.06, filter: "blur(8px)" }, 
-      { opacity: 1, scale: 1, filter: "blur(0px)", duration: 1.4, ease: "expo.out" }
+    gsap.fromTo(".hs-bg",
+      { opacity: 0, scale: 1.08, filter: "blur(12px)" },
+      { opacity: 1, scale: 1, filter: "blur(0px)", duration: 1.6, ease: "power4.out" }
     );
 
     tl.fromTo(".hs-badge", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power4.out" });
@@ -198,12 +194,6 @@ export const HeroSlider = component$(() => {
     track(() => isHeroInView.value);
 
     const activeSlide = heroSlides[active.value];
-    const progressBar = progressBarRef.value;
-
-    if (progressBar) {
-      progressBar.style.transition = "none";
-      progressBar.style.width = "0%";
-    }
 
     if (!isHeroInView.value) {
       return;
@@ -215,24 +205,33 @@ export const HeroSlider = component$(() => {
     }
 
     const duration = 6000;
-    if (progressBar) {
-      // Small delay to allow the 0% reset to be painted
-      const rafId = window.requestAnimationFrame(() => {
-        if (progressBar) {
-          progressBar.style.transition = `width ${duration}ms linear`;
-          progressBar.style.width = "100%";
-        }
-      });
-      cleanup(() => window.cancelAnimationFrame(rafId));
-    }
+    const rafId = window.requestAnimationFrame(() => {
+    });
+    // Sync signal for thumbnails
+    let start = performance.now();
+    const updateSignal = (time: number) => {
+      const elapsed = time - start;
+      slideProgress.value = Math.min((elapsed / duration) * 100, 100);
+      if (elapsed < duration) requestAnimationFrame(updateSignal);
+    };
+    const signalRaf = requestAnimationFrame(updateSignal);
+
+    cleanup(() => {
+      window.cancelAnimationFrame(rafId);
+      window.cancelAnimationFrame(signalRaf);
+    });
 
     const timeoutId = window.setTimeout(() => {
       const nextIdx = (active.value + 1) % heroSlides.length;
       goTo(nextIdx);
     }, duration);
 
-    cleanup(() => window.clearTimeout(timeoutId));
-  });
+    cleanup(() => {
+      window.clearTimeout(timeoutId);
+      slideProgress.value = 0;
+    });
+  },
+  );
 
   useVisibleTask$(({ cleanup, track }) => {
     track(() => active.value);
@@ -287,10 +286,9 @@ export const HeroSlider = component$(() => {
     });
 
     const currentVideo = videoRef.value;
-    const progressBar = progressBarRef.value;
     const activeSlide = heroSlides[active.value];
 
-    if (!currentVideo || !progressBar || !activeSlide.bgVideo || !isDesktop.value) {
+    if (!currentVideo || !activeSlide.bgVideo || !isDesktop.value) {
       return;
     }
 
@@ -302,11 +300,10 @@ export const HeroSlider = component$(() => {
       }
 
       const pct = Math.min((currentVideo.currentTime / duration) * 100, 100);
-      progressBar.style.width = `${pct}%`;
+      slideProgress.value = pct;
     };
 
     const handleEnded = () => {
-      progressBar.style.width = "100%";
       const nextIdx = (active.value + 1) % heroSlides.length;
       void goTo(nextIdx);
     };
@@ -329,64 +326,68 @@ export const HeroSlider = component$(() => {
     <section id="hero-slider" ref={heroRef} class="hs-root relative overflow-hidden"
       style={`--hs-accent:${slide.accentColor};--hs-accent-rgb:${slide.accentRgb};`}>
 
-      {/* Backgrounds */}
-      <div
-        key={slide.id}
-        class="hs-bg"
-        style={{
-          opacity: "1",
-          transform: "scale(1)",
-        }}
-      >
-        {slide.bgVideo && isDesktop.value ? (
-          isHeroInView.value ? (
-            <video
-              ref={videoRef}
-              class="absolute inset-0 h-full w-full object-cover"
-              data-hero-video
-              src={slide.bgVideo}
-              autoplay
-              muted
-              playsInline
-              preload="none"
-              poster={slide.bgImage}
-              disablePictureInPicture
-            />
+      {/* Backgrounds - Map all for crossfade */}
+      {heroSlides.map((s, i) => (
+        <div
+          key={s.id}
+          class={["hs-bg", active.value === i ? "hs-bg--active" : "hs-bg--inactive"]}
+          style={{
+            zIndex: active.value === i ? 2 : 1,
+            opacity: active.value === i ? 1 : 0,
+            transition: 'opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1), transform 1.5s cubic-bezier(0.4, 0, 0.2, 1)',
+            transform: active.value === i ? 'scale(1)' : 'scale(1.05)'
+          }}
+        >
+          {s.bgVideo && isDesktop.value ? (
+            isHeroInView.value && active.value === i ? (
+              <video
+                ref={videoRef}
+                class="absolute inset-0 h-full w-full object-cover"
+                data-hero-video
+                src={s.bgVideo}
+                autoplay
+                muted
+                playsInline
+                preload="none"
+                poster={s.bgImage}
+                disablePictureInPicture
+              />
+            ) : (
+              <div
+                class="absolute inset-0 h-full w-full bg-cover bg-center"
+                style={{ backgroundImage: `url(${s.bgImage})` }}
+              />
+            )
           ) : (
             <div
-              class="absolute inset-0 h-full w-full bg-cover bg-center"
-              style={{ backgroundImage: `url(${slide.bgImage})` }}
+              class={["absolute inset-0 h-full w-full bg-cover", active.value === i && "hs-ken-burns"]}
+              style={{
+                backgroundImage: `url(${(!isDesktop.value && (s as any).mobileBgImage) ? (s as any).mobileBgImage : s.bgImage})`,
+                backgroundPosition: s.id === 2 ? 'center 15%' : 'center'
+              }}
             />
-          )
-        ) : (
-          <div
-            class="absolute inset-0 h-full w-full bg-cover"
-            style={{ 
-              backgroundImage: `url(${(!isDesktop.value && (slide as any).mobileBgImage) ? (slide as any).mobileBgImage : slide.bgImage})`,
-              backgroundPosition: slide.id === 2 ? 'center 15%' : 'center' 
-            }}
-          />
-        )}
-        {/* Dynamic Overlay: Day 1 & 3 get light bottom darkness only to showcase visuals, Day 2 gets cinematic darkness for navigation visibility */}
-        <div class="hs-overlay" style={{ 
-          background: (slide.id === 0 || slide.id === 2)
-            ? "linear-gradient(to top, rgba(5,3,15,0.85) 0%, rgba(5,3,15,0.4) 20%, transparent 50%)" 
-            : "linear-gradient(108deg, rgba(5,3,15,0.65) 0%, rgba(5,3,15,0.45) 45%, rgba(5,3,15,0.1) 100%), linear-gradient(to top, rgba(5,3,15,1) 0%, rgba(5,3,15,0.44) 32%, transparent 100%)" 
-        }} />
-        <div class="hs-tint" style={{ background: `radial-gradient(ellipse 70% 60% at 80% 40%, rgba(${slide.accentRgb},0.08), transparent 70%)`, opacity: "1" }} />
-        {isDay1DesktopVideo && isVideoLoading.value && (
-          <div class="hs-video-loader">
-            <div
-              class="hs-video-loader__poster"
-              style={{ backgroundImage: `url(${slide.bgImage})` }}
-            />
-            <div class="hs-video-loader__veil" />
-            <div class="hs-video-loader__content">
-              <span class="hs-video-loader__label">Loading Day 1 video...</span>
+          )}
+          {/* Dynamic Overlay: Day 1 & 3 get light bottom darkness only to showcase visuals, Day 2 gets cinematic darkness for navigation visibility */}
+          <div class="hs-overlay" style={{
+            background: (s.id === 0 || s.id === 2)
+              ? "linear-gradient(to top, rgba(5,3,15,0.85) 0%, rgba(5,3,15,0.4) 20%, transparent 50%)"
+              : "linear-gradient(108deg, rgba(5,3,15,0.65) 0%, rgba(5,3,15,0.45) 45%, rgba(5,3,15,0.1) 100%), linear-gradient(to top, rgba(5,3,15,1) 0%, rgba(5,3,15,0.44) 32%, transparent 100%)"
+          }} />
+          <div class="hs-tint" style={{ background: `radial-gradient(ellipse 70% 60% at 80% 40%, rgba(${s.accentRgb},0.08), transparent 70%)` }} />
+          {i === 0 && isDesktop.value && isVideoLoading.value && active.value === 0 && (
+            <div class="hs-video-loader">
+              <div
+                class="hs-video-loader__poster"
+                style={{ backgroundImage: `url(${s.bgImage})` }}
+              />
+              <div class="hs-video-loader__veil" />
+              <div class="hs-video-loader__content">
+                <span class="hs-video-loader__label">Loading Day 1 video...</span>
+              </div>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      ))}
 
       <div class="hs-grain" />
 
@@ -446,22 +447,20 @@ export const HeroSlider = component$(() => {
             <img src={s.thumb} alt={s.day} class="hs-thumb-img" loading="lazy" />
             <div class="hs-thumb-overlay" style={active.value === i ? { background: `linear-gradient(to top, rgba(${s.accentRgb},0.55), transparent)` } : {}} />
             <span class="hs-thumb-label" style={active.value === i ? { color: s.accentColor } : {}}>{s.day}</span>
-            {active.value === i && <div class="hs-thumb-line" style={{ background: s.accentColor }} />}
+            <div class={["hs-thumb-line-bg", active.value === i ? "opacity-100" : "opacity-0"]} />
+            {active.value === i && (
+              <div
+                class="hs-thumb-line"
+                style={{
+                  background: s.accentColor,
+                  width: `${slideProgress.value}%`
+                }}
+              />
+            )}
           </button>
         ))}
       </div>
 
-      {/* UNSTOPPABLE PROGRESS BAR (Absolute Bottom) */}
-      {!isDesktop.value && <div class="absolute bottom-0 left-0 z-50 h-[2.5px] w-full bg-white/5 pointer-events-none overflow-hidden">
-        <div
-          ref={progressBarRef}
-          class="h-full shadow-[0_0_15px_var(--hs-accent)]"
-          style={{
-            width: "0%",
-            background: slide.accentColor,
-            willChange: "width"
-          }} />
-      </div>}
     </section>
   );
 });
