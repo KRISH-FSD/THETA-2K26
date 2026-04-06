@@ -4,7 +4,7 @@ import { Link, useLocation } from "@builder.io/qwik-city";
 export const Header = component$(() => {
   const location = useLocation();
   const open = useSignal(false);
-  const theme = useSignal<"default" | "spider" | "onepiece">("default");
+  const theme = useSignal<"default" | "spider" | "onepiece" | "red-ben10">("default");
 
   const isActive = (href: string) => {
     const p = location.url.pathname.replace(/\/$/, "") || "/";
@@ -25,7 +25,7 @@ export const Header = component$(() => {
     /* Observe future body attribute changes (set by page useVisibleTask$) */
     const obs = new MutationObserver(() => {
       const val = document.body.getAttribute("data-theme") as typeof theme.value | null;
-      theme.value = val === "spider" ? "spider" : val === "onepiece" ? "onepiece" : "default";
+      theme.value = val === "spider" ? "spider" : val === "onepiece" ? "onepiece" : val === "red-ben10" ? "red-ben10" : "default";
     });
     obs.observe(document.body, { attributes: true, attributeFilter: ["data-theme"] });
     return () => obs.disconnect();
@@ -36,21 +36,35 @@ export const Header = component$(() => {
   });
 
   /* Derived accent color for current theme */
-  const accent = theme.value === "spider" ? "#ff4040" : theme.value === "onepiece" ? "#ffd700" : "#0ea935";
-  const accentLight = theme.value === "spider" ? "rgba(220,16,16,0.35)" : theme.value === "onepiece" ? "rgba(255,215,0,0.35)" : "rgba(14,169,53,0.35)";
-  const accentBg    = theme.value === "spider" ? "rgba(220,16,16,0.1)"  : theme.value === "onepiece" ? "rgba(255,215,0,0.1)"  : "rgba(14,169,53,0.1)";
-  const accentGlow  = theme.value === "spider" ? "rgba(220,16,16,0.5)"  : theme.value === "onepiece" ? "rgba(200,160,0,0.5)"  : "rgba(14,169,53,0.5)";
+  const accent = theme.value === "spider"   ? "#ff4040" 
+               : theme.value === "onepiece" ? "#ffd700" 
+               : theme.value === "red-ben10" ? "#ff4d4f" 
+               : "#0ea935";
+  const accentLight = theme.value === "spider"   ? "rgba(220,16,16,0.35)" 
+                    : theme.value === "onepiece" ? "rgba(255,215,0,0.35)" 
+                    : theme.value === "red-ben10" ? "rgba(255,16,16,0.35)" 
+                    : "rgba(14,169,53,0.35)";
+  const accentBg    = theme.value === "spider"   ? "rgba(220,16,16,0.1)"  
+                    : theme.value === "onepiece" ? "rgba(255,215,0,0.1)"  
+                    : theme.value === "red-ben10" ? "rgba(255,16,16,0.1)"  
+                    : "rgba(14,169,53,0.1)";
+  const accentGlow  = theme.value === "spider"   ? "rgba(220,16,16,0.5)"  
+                    : theme.value === "onepiece" ? "rgba(200,160,0,0.5)"  
+                    : theme.value === "red-ben10" ? "rgba(255,40,40,0.5)"  
+                    : "rgba(14,169,53,0.5)";
   const logoSrc     = theme.value === "spider"   ? "/spidy/image.png"
                     : theme.value === "onepiece" ? "/onepeice/one-peice-logo.png"
+                    : theme.value === "red-ben10" ? "/red-ben10/red-ben10.png"
                     : "/ben10/ben10-logo.png";
   const logoAlt     = theme.value === "spider"   ? "Spider-Man"
                     : theme.value === "onepiece" ? "One Piece"
+                    : theme.value === "red-ben10" ? "Red Ben 10"
                     : "Ben 10 Logo";
 
   const navLinkActive = (href: string) =>
     isActive(href)
       ? `px-2 text-[0.65rem] font-bold tracking-widest uppercase transition-colors lg:text-xs t-spider-nav-active t-spider-nav-hover`
-      : `px-2 text-[0.65rem] font-bold tracking-widest uppercase transition-colors lg:text-xs text-[#8ca38c] t-spider-nav-hover`;
+      : `px-2 text-[0.65rem] font-bold tracking-widest uppercase transition-colors lg:text-xs ${theme.value === 'red-ben10' ? 'text-[#a38c8c]' : 'text-[#8ca38c]'} t-spider-nav-hover`;
 
   const developerButtonActive = isActive("/developers");
 
@@ -89,7 +103,7 @@ export const Header = component$(() => {
               <img
                 src={logoSrc}
                 alt={logoAlt}
-                class="t-ben10-icon h-7 w-auto object-contain lg:h-10"
+                class={`t-ben10-icon w-auto object-contain transition-all duration-500 ${theme.value === 'red-ben10' ? 'h-[2.15rem] lg:h-[3.35rem] translate-y-[1px]' : 'h-7 lg:h-10'}`}
                 style="transition:opacity 0.4s,transform 0.4s;"
               />
             </div>
@@ -113,69 +127,43 @@ export const Header = component$(() => {
             <img
               src={logoSrc}
               alt={logoAlt}
-              class="t-ben10-icon h-10 w-auto object-contain"
+              class={`t-ben10-icon w-auto object-contain transition-all duration-500 ${theme.value === 'red-ben10' ? 'h-11 translate-y-[1px]' : 'h-10'}`}
               style="transition:opacity 0.4s,transform 0.4s;"
             />
           </Link>
         </div>
 
-        {/* Right: Register + Hamburger */}
+        {/* Right: Developers + Hamburger */}
         <div class="pointer-events-auto flex flex-1 items-center justify-end gap-2 sm:gap-3 md:flex-initial md:w-[290px] lg:w-[420px]">
           <div class="group pointer-events-auto relative hidden md:flex">
             <Link
               href="/developers"
-              class="relative z-10 flex min-w-[9.75rem] items-center justify-center gap-2 overflow-hidden rounded-full border px-3 py-2.5 text-[0.54rem] font-black tracking-[0.2em] uppercase text-[#f7fbff] backdrop-blur-xl transition-all duration-300 active:scale-95 md:min-w-[10.5rem] md:px-4 lg:min-w-[12rem] lg:gap-2.5 lg:px-6 lg:py-3 lg:text-[0.62rem]"
+              class="relative z-10 flex items-center justify-center gap-2.5 overflow-hidden rounded-full border bg-[#050505]/40 px-5 py-2.5 text-[0.6rem] font-black tracking-[0.2em] whitespace-nowrap uppercase backdrop-blur-md transition-all duration-300 active:scale-95 lg:px-8 lg:py-3.5 lg:text-[0.7rem]"
               style={
                 developerButtonActive
-                  ? "border-color:rgba(111,255,253,0.72);background:linear-gradient(135deg,rgba(8,20,42,0.96),rgba(38,8,54,0.94));box-shadow:0 0 0 1px rgba(255,51,51,0.16),0 0 26px rgba(111,255,253,0.3),0 0 58px rgba(255,51,51,0.24);"
-                  : "border-color:rgba(255,255,255,0.12);background:linear-gradient(135deg,rgba(7,16,34,0.92),rgba(31,8,50,0.9));box-shadow:0 0 18px rgba(111,255,253,0.18),0 0 40px rgba(255,51,51,0.14);"
+                  ? `border-color:${accent};background:${accentBg};color:${accent};box-shadow:0 0 20px ${accentBg},inset 0 0 10px ${accentBg};`
+                  : `border-color:${accent}44;color:${accent};box-shadow:0 0 15px ${accentBg};`
               }
             >
-              <span
-                class="absolute inset-0 opacity-90"
-                style="background:linear-gradient(135deg,rgba(92,255,247,0.08),transparent 35%,rgba(255,51,51,0.12) 100%);"
-              />
-              <span
-                class="absolute inset-y-[-120%] left-[-18%] w-[68%] rotate-12 opacity-80 blur-2xl transition-transform duration-500 group-hover:translate-x-7"
-                style="background:linear-gradient(180deg,rgba(111,255,253,0.72),rgba(255,51,51,0.58),rgba(171,255,57,0.38));"
-              />
-              <span class="pointer-events-none absolute inset-[1px] rounded-full border border-white/10 opacity-70" />
-              <span class="relative flex h-2.5 w-2.5 shrink-0 lg:h-3 lg:w-3">
-                <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#6ffffd] opacity-75" />
-                <span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#ff3333] shadow-[0_0_16px_rgba(255,51,51,0.82)] lg:h-3 lg:w-3" />
+              <span class="relative flex h-2 w-2">
+                <span
+                  class="absolute inline-flex h-full w-full animate-ping rounded-full bg-current opacity-70"
+                  style={developerButtonActive ? "" : "animation-duration: 3s;"}
+                ></span>
+                <span class="relative inline-flex h-2 w-2 rounded-full bg-current"></span>
               </span>
-              <span class="relative truncate">Developers</span>
+              <span class="mt-[1px]">Developers</span>
               <svg
-                class="relative h-3.5 w-3.5 shrink-0 transition-transform duration-300 group-hover:translate-x-1"
+                class="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                stroke-width="2.5"
+                stroke-width="3"
                 stroke-linecap="round"
                 stroke-linejoin="round"
               >
                 <path d="M5 12h14" />
                 <path d="m12 5 7 7-7 7" />
-              </svg>
-            </Link>
-          </div>
-
-          <div class="group pointer-events-auto relative hidden cursor-pointer lg:flex">
-            <Link
-              href="/events"
-              class="t-spider-register relative z-10 hidden items-center justify-center gap-2.5 overflow-hidden rounded-full border bg-[#050505]/40 px-5 py-2.5 text-[0.6rem] font-black tracking-[0.2em] whitespace-nowrap uppercase backdrop-blur-md transition-all duration-300 active:scale-95 lg:flex lg:px-8 lg:py-3.5 lg:text-[0.7rem]"
-              style={`border-color:${accent};color:${accent};box-shadow:0 0 15px ${accentBg},inset 0 0 10px ${accentBg};`}
-            >
-              <span class="relative flex h-2 w-2">
-                <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-current opacity-70"></span>
-                <span class="relative inline-flex h-2 w-2 rounded-full bg-current"></span>
-              </span>
-              <span class="mt-[1px]">Register</span>
-              <svg class="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1"
-                viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 12h14"></path>
-                <path d="m12 5 7 7-7 7"></path>
               </svg>
             </Link>
           </div>
@@ -257,22 +245,13 @@ export const Header = component$(() => {
           </Link>
           <Link
             href="/developers"
-            class="block rounded-2xl border px-5 py-4 text-center text-sm font-black tracking-[0.18em] uppercase text-[#f7fbff] shadow-[0_0_18px_rgba(111,255,253,0.16)] transition-all"
-            style={
-              developerButtonActive
-                ? "border-color:rgba(111,255,253,0.68);background:linear-gradient(135deg,rgba(8,22,42,0.96),rgba(42,8,56,0.94));box-shadow:0 0 24px rgba(111,255,253,0.24),0 0 48px rgba(255,0,184,0.18);"
-                : "border-color:rgba(255,255,255,0.08);background:linear-gradient(135deg,rgba(8,18,35,0.94),rgba(31,10,44,0.92));box-shadow:0 0 18px rgba(111,255,253,0.16),0 0 32px rgba(255,0,184,0.12);"
-            }
+            class="mt-6 block rounded-2xl px-5 py-4 text-center text-sm font-black tracking-widest text-white uppercase transition-all active:scale-95"
+            style={`background:${accent};box-shadow:0 0 20px ${accentGlow};`}
           >
             <span class="inline-flex items-center justify-center gap-2">
-              <span class="inline-flex h-2.5 w-2.5 rounded-full bg-[#ff3333] shadow-[0_0_14px_rgba(255,51,51,0.78)]" />
+              <span class="inline-flex h-2 w-2 rounded-full bg-white opacity-90 shadow-[0_0_10px_white]" />
               <span>Developers</span>
             </span>
-          </Link>
-          <Link href="/events"
-            class="t-spider-mobile-register mt-6 block rounded-2xl px-5 py-4 text-center text-sm font-black tracking-widest text-white uppercase transition-colors"
-            style={`background:${accent};box-shadow:0 0 20px ${accentGlow};`}>
-            Register
           </Link>
         </div>
       </div>

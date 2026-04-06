@@ -29,14 +29,16 @@ function fixMojibake(text: string) {
 }
 
 // Safer markdown parser
+// Safer markdown parser
 function mdToHtml(text: string) {
   if (!text) return "";
-  return fixMojibake(text)
+  
+  return text
     .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
     .replace(/_(.*?)_/g, "<em>$1</em>")
-    .replace(/\n/g, "<br/>")
     .replace(/^• (.+)$/gm, "<li>$1</li>")
-    .replace(/(<li>.*<\/li>)/g, "<ul class=\"list-disc pl-4 mb-2\">$1</ul>");
+    .replace(/(<li>.*<\/li>(\s*<li>.*<\/li>)*)/g, '<ul class="list-disc pl-5 mb-2">$1</ul>')
+    .replace(/\n/g, "<br/>");
 }
 
 export const Chatbot = component$(() => {
@@ -47,6 +49,7 @@ export const Chatbot = component$(() => {
   const dataset = useSignal<any>(null);
   const teamData = useSignal<any>(null);
   const messagesEndRef = useSignal<Element>();
+  const activeTheme = useSignal<"green" | "red">("green");
 
   useOnWindow(
     "keydown",
@@ -80,6 +83,17 @@ export const Chatbot = component$(() => {
       quickReplies: DEFAULT_QUICK_REPLIES,
       timestamp: new Date()
     }];
+
+    /* Sync theme with body attribute */
+    const updateTheme = () => {
+      const t = document.body.getAttribute("data-theme");
+      activeTheme.value = t === "red-ben10" ? "red" : "green";
+    };
+    updateTheme();
+
+    const obs = new MutationObserver(updateTheme);
+    obs.observe(document.body, { attributes: true, attributeFilter: ["data-theme"] });
+    return () => obs.disconnect();
   });
 
   useVisibleTask$(({ track }) => {
@@ -213,20 +227,19 @@ export const Chatbot = component$(() => {
     const intent = dataset.value.intents.find((i: any) => i.id === matchedIntentId) || 
                    dataset.value.intents.find((i: any) => i.id === "fallback");
     
-    let responseText = fixMojibake(intent?.response || "I'm not sure how to respond to that.");
+    let responseText = intent?.response || "I'm not sure how to respond to that.";
     
-    if (matchedIntentId === "event_fee" && dataset.value.fee_info) {
-        responseText = fixMojibake(dataset.value.fee_info);
-    } else if (matchedIntentId === "event_fee") {
-        responseText = "Please check the event details page for accurate fee information.";
+    if (matchedIntentId === "event_fee") {
+        responseText = dataset.value.fest_info?.note_on_fees || 
+                      dataset.value._meta?.note_on_fees || 
+                      "Event entry fees are not published on the website. Please check the event details page for accurate fee information.";
     }
 
     if (matchedIntentId === "webtek_contact" && dataset.value.team?.webtek?.members) {
-       responseText = "**WebTek Team:**\n" + dataset.value.team.webtek.members.map((m: any) => `• ${m.name} (${m.role}): ${m.phone}`).join("\n");
-    }
-
-    if (matchedIntentId === "webtek_contact" && dataset.value.team?.webtek?.members) {
-      responseText = "**WebTek Team:**\n" + dataset.value.team.webtek.members.map((m: any) => `• ${m.name} (${m.role})`).join("\n");
+       responseText = "**WebTek Team:**\n" + dataset.value.team.webtek.members.map((m: any) => `• ${m.name} (${m.role})`).join("\n");
+       if (dataset.value.team.webtek.email) {
+         responseText += `\n\n📧 Contact: ${dataset.value.team.webtek.email}`;
+       }
     }
 
     if (matchedIntentId === "president_contact" && teamData.value?.president?.length) {
@@ -268,13 +281,25 @@ export const Chatbot = component$(() => {
       >
         <div class="flex items-center justify-between px-5 py-4 border-b border-white/10 bg-white/5 rounded-t-3xl">
            <div class="flex items-center gap-3">
-              <div class="relative flex items-center justify-center w-8 h-8 rounded-full bg-[#0ea935]/20 text-[#0ea935]">
+              <div 
+                class="relative flex items-center justify-center w-8 h-8 rounded-full transition-colors duration-500"
+                style={{ backgroundColor: activeTheme.value === "red" ? "rgba(255, 77, 79, 0.2)" : "rgba(14, 169, 53, 0.2)", color: activeTheme.value === "red" ? "#ff4d4f" : "#0ea935" }}
+              >
                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
-                 <span class="absolute top-0 right-0 w-2.5 h-2.5 bg-[#0ea935] rounded-full border-2 border-[#06090a]"></span>
+                 <span 
+                    class="absolute top-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-[#06090a] transition-colors duration-500"
+                    style={{ backgroundColor: activeTheme.value === "red" ? "#ff4d4f" : "#0ea935" }}
+                 ></span>
               </div>
               <div class="flex flex-col">
                  <span class="text-sm font-semibold text-white/90">Theta 2026 Assistant</span>
-                 <span class="text-[10px] text-[#0ea935] font-medium tracking-wide uppercase flex items-center gap-1.5"><span class="w-1.5 h-1.5 bg-[#0ea935] rounded-full animate-pulse"></span>Online</span>
+                 <span 
+                    class="text-[10px] font-medium tracking-wide uppercase flex items-center gap-1.5 transition-colors duration-500"
+                    style={{ color: activeTheme.value === "red" ? "#ff4d4f" : "#0ea935" }}
+                 >
+                    <span class="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: activeTheme.value === "red" ? "#ff4d4f" : "#0ea935" }}></span>
+                    Online
+                 </span>
               </div>
            </div>
            <button type="button" class="text-white/50 hover:text-white transition-colors p-1" onClick$={() => { isOpen.value = false; }}>
@@ -285,20 +310,32 @@ export const Chatbot = component$(() => {
         <div class="flex-1 overflow-y-auto p-5 pb-0 space-y-4 font-body scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
           {messages.value.map((msg) => (
              <div key={msg.id} class={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'} max-w-full duration-200 chat-bubble-animate`}>
-                <div class={`px-4 py-3 text-sm leading-relaxed whitespace-pre-line break-words max-w-[85%] ${msg.role === 'user' ? 'bg-white/5 border border-white/10 text-white/85 rounded-2xl rounded-tr-sm' : 'bg-[#0ea935]/10 border border-[#0ea935]/20 text-white/90 rounded-2xl rounded-tl-sm'}`}>
+                <div 
+                    class={`px-4 py-3 text-sm leading-relaxed whitespace-pre-line break-words max-w-[85%] rounded-2xl transition-all duration-500 ${msg.role === 'user' ? 'bg-white/5 border border-white/10 text-white/85 rounded-tr-sm' : 'rounded-tl-sm'}`}
+                    style={msg.role === 'bot' ? { 
+                      backgroundColor: activeTheme.value === "red" ? "rgba(255, 77, 79, 0.1)" : "rgba(14, 169, 53, 0.1)",
+                      borderColor: activeTheme.value === "red" ? "rgba(255, 77, 79, 0.2)" : "rgba(14, 169, 53, 0.2)",
+                      color: "rgba(255, 255, 255, 0.9)"
+                    } : {}}
+                 >
                    {msg.role === 'user' ? msg.text : <div dangerouslySetInnerHTML={mdToHtml(msg.text)} />}
                 </div>
                 {msg.quickReplies && msg.quickReplies.length > 0 && (
                    <div class="flex flex-wrap gap-2 mt-2 max-w-[90%]">
                       {msg.quickReplies.map((chip: string) => (
-                        <button
-                          type="button"
-                          key={chip}
-                          onClick$={() => sendMessage(chip)}
-                          class="px-3 py-1.5 rounded-full text-xs font-bold border border-[#0ea935]/30 text-[#0ea935] bg-[#0ea935]/5 hover:bg-[#0ea935]/15 transition-colors"
-                        >
-                          {chip}
-                        </button>
+                         <button
+                           type="button"
+                           key={chip}
+                           onClick$={() => sendMessage(chip)}
+                           class="px-3 py-1.5 rounded-full text-xs font-bold border transition-all duration-500"
+                           style={{ 
+                             borderColor: activeTheme.value === "red" ? "rgba(255, 77, 79, 0.3)" : "rgba(14, 169, 53, 0.3)",
+                             color: activeTheme.value === "red" ? "#ff4d4f" : "#0ea935",
+                             backgroundColor: activeTheme.value === "red" ? "rgba(255, 77, 79, 0.05)" : "rgba(14, 169, 53, 0.05)"
+                           }}
+                         >
+                           {chip}
+                         </button>
                       ))}
                    </div>
                 )}
@@ -307,10 +344,16 @@ export const Chatbot = component$(() => {
 
           {isTyping.value && (
             <div class="flex flex-col items-start max-w-[85%] chat-bubble-animate">
-              <div class="flex gap-1.5 px-4 py-3 rounded-2xl rounded-tl-sm bg-[#0ea935]/10 border border-[#0ea935]/20 w-fit">
-                <span class="w-2 h-2 rounded-full bg-[#0ea935] animate-bounce" style="animation-delay: 0ms" />
-                <span class="w-2 h-2 rounded-full bg-[#0ea935] animate-bounce" style="animation-delay: 150ms" />
-                <span class="w-2 h-2 rounded-full bg-[#0ea935] animate-bounce" style="animation-delay: 300ms" />
+              <div 
+                class="flex gap-1.5 px-4 py-3 rounded-2xl rounded-tl-sm w-fit border transition-all duration-500"
+                style={{ 
+                  backgroundColor: activeTheme.value === "red" ? "rgba(255, 77, 79, 0.1)" : "rgba(14, 169, 53, 0.1)",
+                  borderColor: activeTheme.value === "red" ? "rgba(255, 77, 79, 0.2)" : "rgba(14, 169, 53, 0.2)"
+                }}
+              >
+                <span class="w-2 h-2 rounded-full animate-bounce" style={{ backgroundColor: activeTheme.value === "red" ? "#ff4d4f" : "#0ea935", animationDelay: "0ms" }} />
+                <span class="w-2 h-2 rounded-full animate-bounce" style={{ backgroundColor: activeTheme.value === "red" ? "#ff4d4f" : "#0ea935", animationDelay: "150ms" }} />
+                <span class="w-2 h-2 rounded-full animate-bounce" style={{ backgroundColor: activeTheme.value === "red" ? "#ff4d4f" : "#0ea935", animationDelay: "300ms" }} />
               </div>
             </div>
           )}
@@ -329,7 +372,10 @@ export const Chatbot = component$(() => {
               <input 
                  type="text"
                  placeholder="Type your message..."
-                 class="w-full bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm rounded-full py-3 pl-4 pr-12 focus:outline-none focus:border-[#0ea935]/50 focus:ring-1 focus:ring-[#0ea935]/50 transition-all font-body"
+                 class="w-full bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm rounded-full py-3 pl-4 pr-12 focus:outline-none transition-all font-body"
+                 style={{ 
+                   borderColor: activeTheme.value === "red" ? "rgba(255, 77, 79, 0.3)" : "rgba(14, 169, 53, 0.1)",
+                 }}
                  bind:value={inputValue}
                  onKeyDown$={$((e) => {
                    if (e.key === "Enter") {
@@ -341,7 +387,8 @@ export const Chatbot = component$(() => {
               <button 
                  type="button"
                  onClick$={() => sendMessage(inputValue.value)}
-                 class="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center bg-[#0ea935] text-white rounded-full hover:bg-[#0ca030] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                 class="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center text-white rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                 style={{ backgroundColor: activeTheme.value === "red" ? "#ff4d4f" : "#0ea935" }}
                  disabled={!inputValue.value.trim() || isTyping.value}
               >
                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" x2="11" y1="2" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
@@ -352,10 +399,17 @@ export const Chatbot = component$(() => {
       </div>
 
       <button 
-        class={`fixed bottom-6 sm:bottom-8 right-6 sm:right-8 w-14 h-14 bg-[#0ea935] rounded-full flex items-center justify-center text-white shadow-[0_0_0_8px_rgba(14,169,53,0.15)] hover:bg-[#0ca030] hover:scale-105 active:scale-95 transition-all z-[9999] group overflow-hidden ${isOpen.value ? 'opacity-0 scale-50 pointer-events-none' : 'opacity-100 scale-100'}`}
+        class={`fixed bottom-6 sm:bottom-8 right-6 sm:right-8 w-14 h-14 rounded-full flex items-center justify-center text-white transition-all z-[9999] group overflow-hidden ${isOpen.value ? 'opacity-0 scale-50 pointer-events-none' : 'opacity-100 scale-100'}`}
+        style={{ 
+          backgroundColor: activeTheme.value === "red" ? "#ff4d4f" : "#0ea935",
+          boxShadow: activeTheme.value === "red" ? "0 0 0 8px rgba(255, 77, 79, 0.15)" : "0 0 0 8px rgba(14, 169, 53, 0.15)"
+        }}
         onClick$={() => { isOpen.value = true; }}
       >
-        <div class="absolute inset-0 rounded-full w-full h-full bg-[#0ea935] animate-[ping_3s_ease-in-out_infinite] opacity-50 block pointer-events-none -z-10 group-hover:hidden"></div>
+        <div 
+          class="absolute inset-0 rounded-full w-full h-full animate-[ping_3s_ease-in-out_infinite] opacity-50 block pointer-events-none -z-10 group-hover:hidden"
+          style={{ backgroundColor: activeTheme.value === "red" ? "#ff4d4f" : "#0ea935" }}
+        ></div>
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="relative z-10 drop-shadow-sm"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"/></svg>
       </button>
     </div>

@@ -1,7 +1,12 @@
 {
   "sponsors": {
-    "platinum": [
+    "diamond": [
       { "name": "CUB", "logo": "/sponsors/platinum/cub-logo.jpg", "order": 1, "isActive": true },
+      { "name": "Palanivel", "logo": "/sponsors/new/diamond/palanivel.png", "order": 2, "isActive": true },
+      { "name": "Veranda", "logo": "/sponsors/new/diamond/veranda.png", "order": 3, "isActive": true }
+    ],
+    "platinum": [
+      { "name": "2IIM", "logo": "/sponsors/new/platinum/2IIM.png", "order": 1, "isActive": true },
       { 
         "name": "IAS Academy", 
         "logo": "/sponsors/new/platinum/ias-academy.jpeg", 

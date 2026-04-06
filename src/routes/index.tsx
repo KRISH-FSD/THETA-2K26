@@ -64,7 +64,11 @@ interface Sponsor {
 }
 
 interface SponsorsConfig {
-  platinum: Sponsor[]; gold: Sponsor[]; silver?: Sponsor[]; media?: Sponsor[];
+  diamond?: Sponsor[];
+  platinum: Sponsor[];
+  gold: Sponsor[];
+  silver?: Sponsor[];
+  media?: Sponsor[];
 }
 
 /* ──────────────────────── defaults ──────────────────────────── */
@@ -111,7 +115,7 @@ const defaultConfig: ConfigData = {
   ],
 };
 
-const defaultSponsors: SponsorsConfig = { platinum: [], gold: [], silver: [], media: [] };
+const defaultSponsors: SponsorsConfig = { diamond: [], platinum: [], gold: [], silver: [], media: [] };
 
 /* ──────────────────────── helpers ───────────────────────────── */
 const parseStatNumber = (value: string): number => {
@@ -152,6 +156,7 @@ const dayAliases: Record<string, string[]> = {
 };
 
 const sponsorTiers = [
+  { key: "diamond", label: "Diamond" },
   { key: "platinum", label: "Platinum" },
   { key: "gold", label: "Gold" },
   { key: "silver", label: "Silver" },
@@ -164,6 +169,12 @@ const sponsorTierMeta: Record<(typeof sponsorTiers)[number]["key"], {
   surface: string;
   eyebrow: string;
 }> = {
+  diamond: {
+    accent: "#70f3ff",
+    glow: "rgba(112, 243, 255, 0.28)",
+    surface: "linear-gradient(160deg, rgba(112, 243, 255, 0.22), rgba(8, 14, 20, 0.94))",
+    eyebrow: "Elite Partners",
+  },
   platinum: {
     accent: "#c9ff7a",
     glow: "rgba(158, 255, 71, 0.22)",
@@ -192,11 +203,11 @@ const sponsorTierMeta: Record<(typeof sponsorTiers)[number]["key"], {
 
 /* Day icons */
 const dayIcons = ["", "", ""];
-const dayAccents = ["#00ff55", "#ffce00", "#f02aa2"];
+const dayAccents = ["#00ff55", "#ffce00", "#ff3131"];
 const dayGradients = [
   "linear-gradient(135deg, #00ff55 0%, #00f2ff 100%)", // Day 1: Ben 10 Cyber
   "linear-gradient(135deg, #f6ff00 0%, #ff8c00 100%)", // Day 2: Hyper Volt
-  "linear-gradient(135deg, #f02aa2 0%, #ff00ff 100%)", // Day 3: Neural Purple
+  "linear-gradient(135deg, #ff003c 0%, #ff5500 100%)", // Day 3: Neural Red
 ];
 const dayBorderColors = [
   "rgba(0,255,85,0.25)",
@@ -682,7 +693,7 @@ export default component$(() => {
     const colors = [
       "rgba(189, 255, 0, 0.85)",
       "rgba(255, 219, 0, 0.85)",
-      "rgba(255, 0, 76, 0.85)"
+      "rgba(255, 49, 49, 0.85)"
     ];
 
     const tl = gsap.timeline({ repeat: -1 });
@@ -896,11 +907,11 @@ export default component$(() => {
           .festival-title {
             font-family: var(--font-hero-ui), var(--font-body), sans-serif;
             font-style: italic;
-            font-weight: 700;
-            letter-spacing: 0.34em;
+            font-weight: 800;
+            letter-spacing: -0.01em;
             text-transform: uppercase;
-            color: rgba(214, 222, 214, 0.72);
-            text-shadow: none;
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
           }
           .festival-title__line {
             display: inline-block;
@@ -1036,7 +1047,7 @@ export default component$(() => {
             <div class="overflow-hidden mb-4">
               <span class="t-badge mx-auto reveal-slide-up block w-fit">Mission Day Selection</span>
             </div>
-            <h2 class="festival-title mt-2 text-[clamp(1.15rem,2.4vw,1.45rem)] leading-[1.2]">
+            <h2 class="festival-title mt-2 text-[clamp(1.5rem,3.2vw,2.2rem)] leading-[1.1] relative">
               <span class="festival-title__line">
                 <span class="festival-title__base">Shine in the </span>
                 <span class="festival-title__accent festival-title__accent--light">light</span>
@@ -1257,40 +1268,89 @@ export default component$(() => {
       </section>
 
       {/* ═══════════════ SPONSORS ═══════════════ */}
-      {marqueeSponsors.length > 0 && (
-        <section class="relative z-10 mx-auto mt-2 max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
-          <div class="s-reveal rounded-[2rem] border border-white/8 bg-black/25 px-5 py-4 backdrop-blur-2xl sm:px-6">
-            <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
-              <span class="t-badge">Sponsor Spectrum</span>
-              <p class="text-sm text-[var(--t-muted)]">
-                A moving glimpse of the partners already in the hall.
-              </p>
-            </div>
+      <section id="sponsors-grid" class="relative z-10 mx-auto mt-12 max-w-7xl px-4 py-8 sm:px-6 sm:py-20 lg:px-8">
+        <div class="mb-16 text-center">
+            <span class="t-badge mx-auto block w-fit mb-4">Partner Ecosystem</span>
+            <h2 class="text-4xl sm:text-6xl font-black uppercase tracking-tighter text-white">
+                The <span class="text-[#70f3ff]">Diamond</span> Standard
+            </h2>
+            <p class="text-[var(--t-muted)] mt-4 max-w-2xl mx-auto text-sm sm:text-base">
+                Explore the elite network of brands supporting Theta 2026. Click any tier to view full partner details.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+            {sponsorTiers.map((tier) => {
+                const tierKey = tier.key as keyof SponsorsConfig;
+                return (
+                <div 
+                    key={tier.key}
+                    onClick$={() => { selectedTier.value = tierKey; }}
+                    class="group relative cursor-pointer p-8 rounded-[2.5rem] border border-white/10 transition-all duration-500 hover:scale-[1.03] hover:border-white/20 overflow-hidden flex flex-col justify-between min-h-[220px]"
+                    style={{ background: sponsorTierMeta[tierKey].surface }}
+                >
+                    {/* Ambient Glow */}
+                    <div 
+                        class="absolute -top-12 -right-12 w-32 h-32 blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" 
+                        style={{ background: sponsorTierMeta[tierKey].accent }}
+                    />
+                    
+                    <div class="relative z-10">
+                        <span class="block text-[10px] uppercase font-black tracking-[0.2em] text-white/30 mb-2">
+                           {sponsorTierMeta[tierKey].eyebrow}
+                        </span>
+                        <h3 class="text-3xl font-black uppercase tracking-tighter" style={{ color: sponsorTierMeta[tierKey].accent }}>
+                           {tier.label}
+                        </h3>
+                    </div>
+
+                    <div class="relative z-10 flex items-center justify-between mt-8">
+                        <div class="flex -space-x-2">
+                            {(sponsors.value[tierKey] || []).slice(0, 3).map((s: any, i: number) => (
+                                <div key={i} class="w-8 h-8 rounded-full border-2 border-black bg-white flex items-center justify-center p-1 overflow-hidden">
+                                     <img src={s.logo} alt="" class="w-full h-full object-contain" />
+                                </div>
+                            ))}
+                            {(sponsors.value[tierKey] || []).length > 3 && (
+                                <div class="w-8 h-8 rounded-full border-2 border-black bg-white/10 backdrop-blur-sm flex items-center justify-center text-[10px] font-black text-white">
+                                    +{(sponsors.value[tierKey] || []).length - 3}
+                                </div>
+                            )}
+                        </div>
+                        <span class="text-[10px] font-black uppercase tracking-widest text-white/40 group-hover:text-white transition-colors duration-300">Explore →</span>
+                    </div>
+                </div>
+                );
+            })}
+        </div>
+
+        {/* Marquee as a secondary moving showcase */}
+        <div class="mt-16 s-reveal rounded-[2.5rem] border border-white/5 bg-white/[0.02] px-5 py-6 backdrop-blur-2xl sm:px-8 overflow-hidden relative">
+            <div class="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-black/40 to-transparent z-10" />
+            <div class="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-black/40 to-transparent z-10" />
+            
             <div class="t-marquee-wrap">
               <div data-marquee-track class="t-marquee-track animate-left">
                 {[...marqueeSponsors, ...marqueeSponsors].map((sponsor, index) => (
                   <article
                     key={`${sponsor.tierKey}-${sponsor.name}-${index}`}
-                    class="group mx-4 w-48 flex-shrink-0 text-center"
+                    class="group mx-5 w-40 flex-shrink-0 text-center"
                   >
-                    <div class="flex h-20 items-center justify-center rounded-2xl border border-white/20 bg-white/95 p-3 shadow-lg transition-transform duration-300 hover:scale-110">
+                    <div class="flex h-16 items-center justify-center rounded-2xl border border-white/10 bg-white/5 p-3 transition-all duration-300 group-hover:bg-white group-hover:scale-110">
                       <img
                         src={sponsor.logo}
                         alt={sponsor.name}
                         loading="lazy"
-                        class="h-full w-full object-contain"
+                        class="h-full w-full object-contain brightness-100 transition-all group-hover:brightness-100"
+                        style={index % 2 === 0 ? "" : "filter: grayscale(1) invert(1) brightness(2)"}
                       />
                     </div>
-                    <p class="mt-3 text-[0.55rem] font-bold tracking-[0.25em] text-[var(--t-dim)] uppercase">
-                      {sponsor.name}
-                    </p>
                   </article>
                 ))}
               </div>
             </div>
-          </div>
-        </section>
-      )}
+        </div>
+      </section>
 
 
       {/* ═══════════════ NEW BROWSE EVENTS CTA ═══════════════ */}

@@ -1,8 +1,44 @@
 {
   "order": [
+    { "key": "convenor", "label": "Convenor" },
+    { "key": "coConvenors", "label": "Co-Convenor" },
     { "key": "president", "label": "President" },
     { "key": "vicePresidents", "label": "Vice President" },
     { "key": "corporateRelations", "label": "Corporate Relations" }
+  ],
+  "convenor": [
+    {
+      "name": "Dr. Srinivasan A",
+      "role": "Convenor",
+      "phone": "+91 70107 45391",
+      "image": "/team/default-avatar.svg"
+    }
+  ],
+  "coConvenors": [
+    {
+      "name": "Major. Senthil Nathan T",
+      "role": "Co-Convenor",
+      "phone": "+91 94432 75916",
+      "image": "/team/default-avatar.svg"
+    },
+    {
+      "name": "Dr. Durga Karthik",
+      "role": "Co-Convenor",
+      "phone": "+91 95974 09257",
+      "image": "/team/default-avatar.svg"
+    },
+    {
+      "name": "Dr. Sundararaman M",
+      "role": "Co-Convenor",
+      "phone": "+91 99407 50345",
+      "image": "/team/default-avatar.svg"
+    },
+    {
+      "name": "Mr. Swaminathan R",
+      "role": "Co-Convenor",
+      "phone": "+91 89402 50154",
+      "image": "/team/default-avatar.svg"
+    }
   ],
   "president": [
     {

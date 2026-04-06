@@ -41,22 +41,24 @@
         },
         {
           "name": "Krish",
-          "role": "UI Engineer",
+          "role": "Frontend Developer",
+          "phone no":"91+ 90036 57036",
+          "email id":"krish-dev@gmail.com",
           "tags": ["Flow", "Grid", "Design Sync"]
         },
         {
           "name": "Abishek",
-          "role": "Motion Developer",
+          "role": "Frontend Developer",
           "tags": ["FX", "Pulse", "Motion Lab"]
         },
         {
           "name": "Lingesh",
-          "role": "Component Developer",
+          "role": "Frontend Developer",
           "tags": ["Build", "Scale", "Systems"]
         },
         {
           "name": "Kowhik",
-          "role": "Platform Developer",
+          "role": "Frontend Developer",
           "tags": ["Ship", "Speed", "Release"]
         }
       ],
