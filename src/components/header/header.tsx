@@ -1,10 +1,12 @@
 import { $, component$, useSignal, useVisibleTask$ } from "@builder.io/qwik";
 import { Link, useLocation } from "@builder.io/qwik-city";
 
+type Theme = "default" | "spider" | "onepiece" | "red-ben10";
+
 export const Header = component$(() => {
   const location = useLocation();
   const open = useSignal(false);
-  const theme = useSignal<"default" | "spider" | "onepiece" | "red-ben10">("default");
+  const theme = useSignal<Theme>("default");
 
   const isActive = (href: string) => {
     const p = location.url.pathname.replace(/\/$/, "") || "/";
@@ -19,12 +21,12 @@ export const Header = component$(() => {
     open.value = false;
 
     /* Read theme set by the page component */
-    const t = document.body.getAttribute("data-theme") as typeof theme.value | null;
-    theme.value = t === "spider" ? "spider" : t === "onepiece" ? "onepiece" : "default";
+    const t = document.body.getAttribute("data-theme") as Theme | null;
+    theme.value = t === "spider" ? "spider" : t === "onepiece" ? "onepiece" : t === "red-ben10" ? "red-ben10" : "default";
 
     /* Observe future body attribute changes (set by page useVisibleTask$) */
     const obs = new MutationObserver(() => {
-      const val = document.body.getAttribute("data-theme") as typeof theme.value | null;
+      const val = document.body.getAttribute("data-theme") as Theme | null;
       theme.value = val === "spider" ? "spider" : val === "onepiece" ? "onepiece" : val === "red-ben10" ? "red-ben10" : "default";
     });
     obs.observe(document.body, { attributes: true, attributeFilter: ["data-theme"] });

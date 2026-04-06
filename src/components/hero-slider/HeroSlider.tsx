@@ -208,7 +208,7 @@ export const HeroSlider = component$(() => {
     const rafId = window.requestAnimationFrame(() => {
     });
     // Sync signal for thumbnails
-    let start = performance.now();
+    const start = performance.now();
     const updateSignal = (time: number) => {
       const elapsed = time - start;
       slideProgress.value = Math.min((elapsed / duration) * 100, 100);
@@ -295,7 +295,7 @@ export const HeroSlider = component$(() => {
     const syncProgress = () => {
       const duration = currentVideo.duration;
       if (!duration || Number.isNaN(duration)) {
-        progressBar.style.width = "0%";
+        slideProgress.value = 0;
         return;
       }
 
