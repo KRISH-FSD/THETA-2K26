@@ -24,6 +24,7 @@ interface ConfigData {
     features: { title: string; description: string }[];
   };
   days: DayEvent[];
+  clusters: { id: string; name: string; color: string }[];
 }
 
 interface HomeCopy {
@@ -60,7 +61,7 @@ interface DayEvent {
 }
 
 interface Sponsor {
-  name: string; logo: string; order?: number;
+  name: string; logo: string; order?: number; isActive?: boolean;
 }
 
 interface SponsorsConfig {
@@ -83,7 +84,7 @@ const defaultHomeCopy: HomeCopy = {
   },
   countdownLabels: { days: "Days", hours: "Hours", minutes: "Mins", seconds: "Secs" },
   about: { badge: "About Theta", titlePrefix: "India's Premier", titleAccent: "Techno-Management", titleSuffix: "Fest" },
-  statsLabels: { events: "Events", participants: "Participants", colleges: "Colleges" },
+  statsLabels: { events: "Registrations", participants: "Participants", colleges: "Visitors" },
   sponsors: {
     badge: "Our Sponsors", titlePrefix: "Powered by", titleAccent: "Partners",
     hallBadge: "Previous Sponsors", hallTitlePrefix: "Past Edition", hallTitleAccent: "Partners",
@@ -98,7 +99,7 @@ const defaultHomeCopy: HomeCopy = {
 
 const defaultConfig: ConfigData = {
   meta: { eventName: "Theta 2026", tagline: "National Level Techno-Management Fest", dates: "March 15-17, 2026", venue: "SASTRA Deemed University" },
-  stats: { events: "50+", participants: "5000+", colleges: "100+" },
+  stats: { events: "1500+", participants: "3000+", colleges: "300+" },
   about: {
     title: "About Theta",
     description: "Theta is a national-level techno-management fest organized by SASTRA Deemed University.",
@@ -113,6 +114,7 @@ const defaultConfig: ConfigData = {
     { day: "Day Two", date: "March 16, 2026", events: ["Hackathon"], highlight: "Flagship Competitions", bgImage: "" },
     { day: "Day Three", date: "March 17, 2026", events: ["Finale"], highlight: "Prize Distribution", bgImage: "" },
   ],
+  clusters: [],
 };
 
 const defaultSponsors: SponsorsConfig = { diamond: [], platinum: [], gold: [], silver: [], media: [] };
@@ -170,34 +172,34 @@ const sponsorTierMeta: Record<(typeof sponsorTiers)[number]["key"], {
   eyebrow: string;
 }> = {
   diamond: {
-    accent: "#70f3ff",
-    glow: "rgba(112, 243, 255, 0.28)",
-    surface: "linear-gradient(160deg, rgba(112, 243, 255, 0.22), rgba(8, 14, 20, 0.94))",
+    accent: "#ff4d4f",
+    glow: "rgba(255, 77, 79, 0.4)",
+    surface: "linear-gradient(160deg, rgba(255, 77, 79, 0.2), rgba(8, 10, 12, 1))",
     eyebrow: "Elite Partners",
   },
   platinum: {
-    accent: "#c9ff7a",
-    glow: "rgba(158, 255, 71, 0.22)",
-    surface: "linear-gradient(160deg, rgba(122,255,51,0.18), rgba(8,18,10,0.9))",
-    eyebrow: "Flagship partners",
+    accent: "#70f3ff",
+    glow: "rgba(112, 243, 255, 0.4)",
+    surface: "linear-gradient(160deg, rgba(112, 243, 255, 0.18), rgba(8, 12, 14, 1))",
+    eyebrow: "Flagship Partners",
   },
   gold: {
-    accent: "#f6ff8f",
-    glow: "rgba(226, 255, 89, 0.18)",
-    surface: "linear-gradient(160deg, rgba(208,255,66,0.16), rgba(16,18,8,0.9))",
-    eyebrow: "Premium backers",
+    accent: "#ffd54a",
+    glow: "rgba(255, 213, 74, 0.4)",
+    surface: "linear-gradient(160deg, rgba(255, 213, 74, 0.16), rgba(12, 12, 8, 1))",
+    eyebrow: "Premium Backers",
   },
   silver: {
-    accent: "#b7ffd1",
-    glow: "rgba(77, 255, 154, 0.18)",
-    surface: "linear-gradient(160deg, rgba(62,255,139,0.14), rgba(7,16,13,0.92))",
-    eyebrow: "Growth partners",
+    accent: "#ffffff",
+    glow: "rgba(255, 255, 255, 0.2)",
+    surface: "linear-gradient(160deg, rgba(255, 255, 255, 0.1), rgba(10, 10, 10, 1))",
+    eyebrow: "Sustaining Partners",
   },
   media: {
-    accent: "#9cffbb",
-    glow: "rgba(61, 214, 160, 0.18)",
-    surface: "linear-gradient(160deg, rgba(38,202,141,0.18), rgba(5,14,12,0.9))",
-    eyebrow: "Broadcast reach",
+    accent: "#7c5cff",
+    glow: "rgba(124, 92, 255, 0.22)",
+    surface: "linear-gradient(160deg, rgba(124, 92, 255, 0.14), rgba(10, 8, 14, 1))",
+    eyebrow: "Broadcast Reach",
   },
 };
 
@@ -237,9 +239,9 @@ const statSpotlight: Array<{
 }> = [
     {
       key: "events",
-      eyebrow: "Competitive spread",
-      note: "Flagship contests, fast workshops, and showcases distributed through the fest grid.",
-      signal: "Mission roster online",
+      eyebrow: "Mission Entries",
+      note: "Total individual and team registrations across the fest.",
+      signal: "Entry feed online",
       accent: "#00ff55",
       glow: "rgba(0, 255, 85, 0.28)",
       progress: "74%",
@@ -247,8 +249,8 @@ const statSpotlight: Array<{
     },
     {
       key: "participants",
-      eyebrow: "National turnout",
-      note: "Builders, designers, and problem-solvers charging the campus experience together.",
+      eyebrow: "Digital Footprint",
+      note: "Builders, designers, and thinkers charging the experience.",
       signal: "Audience pulse active",
       accent: "#ffce00",
       glow: "rgba(255,206,0,0.24)",
@@ -257,9 +259,9 @@ const statSpotlight: Array<{
     },
     {
       key: "colleges",
-      eyebrow: "Campus footprint",
-      note: "Institutions across the circuit plug into Theta and widen the reach every year.",
-      signal: "Reach map expanding",
+      eyebrow: "15+ Institutes",
+      note: "Institutions across the circuit widening the reach.",
+      signal: "Visitor map expanding",
       accent: "#ff3333",
       glow: "rgba(255,51,51,0.24)",
       progress: "68%",
@@ -507,20 +509,20 @@ export default component$(() => {
       const pointerX = (event.clientX - rect.left) / rect.width - 0.5;
       const pointerY = (event.clientY - rect.top) / rect.height - 0.5;
 
-      section.style.setProperty("--festival-pointer-left", `${Math.round(pointerX * -18)}px`);
-      section.style.setProperty("--festival-pointer-right", `${Math.round(pointerX * 18)}px`);
-      section.style.setProperty("--festival-pointer-up", `${Math.round(pointerY * -14)}px`);
-      section.style.setProperty("--festival-pointer-down", `${Math.round(pointerY * 14)}px`);
+      section.style.setProperty("--festival-pointer-left", `${Math.floor(pointerX * -18)}px`);
+      section.style.setProperty("--festival-pointer-right", `${Math.floor(pointerX * 18)}px`);
+      section.style.setProperty("--festival-pointer-up", `${Math.floor(pointerY * -14)}px`);
+      section.style.setProperty("--festival-pointer-down", `${Math.floor(pointerY * 14)}px`);
     };
 
     resetPointer();
-    section.addEventListener("pointermove", onPointerMove);
-    section.addEventListener("pointerleave", resetPointer);
+    section.addEventListener("mousemove", onPointerMove as any);
+    section.addEventListener("mouseleave", resetPointer);
 
     return () => {
       resetPointer();
-      section.removeEventListener("pointermove", onPointerMove);
-      section.removeEventListener("pointerleave", resetPointer);
+      section.removeEventListener("mousemove", onPointerMove as any);
+      section.removeEventListener("mouseleave", resetPointer);
     };
   });
 
@@ -701,37 +703,31 @@ export default component$(() => {
     marks.forEach((mark, i) => {
       const overlay = overlays[i];
       tl.to([mark, overlay], {
-        opacity: i === 2 ? 0.34 : 0.28,
+        opacity: i === 2 ? 0.38 : 0.32,
         scale: 1.025,
-        y: 10,
-        filter: i === 2 ? `drop-shadow(0 0 18px ${colors[i]})` : `drop-shadow(0 0 14px ${colors[i]})`,
-        duration: 1.8,
+        y: 8,
+        duration: 2.2,
         ease: "sine.inOut"
       }, "+=0.2")
         .to(glowTargets, {
           color: dayAccents[i],
-          filter: "blur(0px)",
-          scale: 1.04,
-          y: 1,
-          opacity: 0.9,
-          duration: 1.1,
+          scale: 1.02,
+          opacity: 1,
+          duration: 1.5,
           ease: "sine.out"
         }, "<")
         .to([mark, overlay], {
-          opacity: 0.12,
+          opacity: 0.15,
           scale: 1,
           y: 0,
-          filter: "drop-shadow(0 0 0px transparent)",
-          duration: 1.8,
+          duration: 2.2,
           ease: "sine.inOut"
         })
         .to(glowTargets, {
           color: "rgba(255,255,255,0.4)",
-          filter: "blur(4px)",
           scale: 1,
-          y: 0,
           opacity: 0.72,
-          duration: 1.2,
+          duration: 1.5,
           ease: "sine.inOut"
         }, "<");
     });
@@ -750,11 +746,14 @@ export default component$(() => {
       const rect = sphere.getBoundingClientRect();
       const x = (e.clientX - rect.left) / rect.width - 0.5;
       const y = (e.clientY - rect.top) / rect.height - 0.5;
-      sphereRotation.value = { x: y * 35, y: -x * 40 };
+      // Direct style update for high-frequency parallax to prevent signal-induced re-renders
+      sphere.style.setProperty("--sphere-rx", `${Math.floor(y * 32)}deg`);
+      sphere.style.setProperty("--sphere-ry", `${Math.floor(-x * 38)}deg`);
     };
 
     const onLeave = () => {
-      sphereRotation.value = { x: 0, y: 0 };
+      sphere.style.setProperty("--sphere-rx", "0deg");
+      sphere.style.setProperty("--sphere-ry", "0deg");
     };
 
     sphere.addEventListener("mousemove", onMove);
@@ -894,12 +893,18 @@ export default component$(() => {
       <HeroSlider />
 
       {/* ── Global Interactive Background (Entire Page) ── */}
-
       {!mobilePerfMode.value && (
         <div class="home-neural-grid pointer-events-none fixed inset-0 z-0 opacity-0 bg-[radial-gradient(circle_at_center,rgba(0,255,85,0.03)_0%,transparent_70%)]">
           <div class="absolute inset-0 bg-[url('/grid.svg')] bg-[size:100px_100px] [mask-image:radial-gradient(ellipse_at_center,black,transparent)] opacity-[0.07]" />
         </div>
       )}
+
+      {/* ═══════════════ SECTOR DIVIDER: HERO TO ROADMAP ═══════════════ */}
+      <div class="relative w-full h-px bg-gradient-to-r from-transparent via-[#00ff55]/20 to-transparent my-10 sm:my-16">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-5 py-1 rounded-full border border-[#00ff55]/10 bg-black/80 backdrop-blur-xl text-[8px] font-black uppercase tracking-[0.4em] text-[#00ff55] shadow-[0_0_15px_rgba(0,255,85,0.1)]">
+          Mission Sequence Initialized
+        </div>
+      </div>
 
       {/* ═══════════════ DAY CARDS ═══════════════ */}
       <section class="festival-days-shell py-20 relative overflow-hidden">
@@ -950,6 +955,7 @@ export default component$(() => {
           }
           .t-day-card {
             isolation: isolate;
+            will-change: transform, opacity;
           }
           .t-day-card::before {
             content: "";
@@ -967,6 +973,7 @@ export default component$(() => {
             transition: opacity 0.7s ease, transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
             z-index: 0;
             pointer-events: none;
+            will-change: transform, opacity;
           }
           .t-day-card:hover::after {
             opacity: 1;
@@ -988,17 +995,34 @@ export default component$(() => {
             border-color: color-mix(in srgb, var(--day-accent) 10%, rgba(255,255,255,0.04));
           }
           .t-day-card__mark {
-            transform: translateY(-50%) !important;
+            transform: translateY(-50%) translateZ(0) !important;
             transition: opacity 0.7s ease, filter 0.7s ease !important;
+            will-change: opacity, transform;
           }
           .t-day-card:hover .t-day-card__mark {
-            transform: translateY(-50%) !important;
+            transform: translateY(-50%) translateZ(0) !important;
           }
+          @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(15px, -20px) rotate(2deg); }
+            66% { transform: translate(-10px, 15px) rotate(-1deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+          }
+          @keyframes float-reverse {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(-20px, 25px) rotate(-3deg); }
+            66% { transform: translate(15px, -15px) rotate(2deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+          }
+          .animate-float { animation: float 10s ease-in-out infinite; }
+          .animate-float-reverse { animation: float-reverse 15s ease-in-out infinite; }
+          @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         `}</style>
+
         {/* Animated Tracer Paths */}
         <svg class="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-visible" preserveAspectRatio="none">
-           <path class="home-tracer-path" d="M 0,200 Q 500,300 1440,100" fill="none" stroke="#00ff55" stroke-width="1" stroke-dasharray="1000" stroke-dashoffset="1000" opacity="0.1" />
-           <path class="home-tracer-path" d="M 1440,800 Q 720,600 0,900" fill="none" stroke="#00ff55" stroke-width="1" stroke-dasharray="1000" stroke-dashoffset="1000" opacity="0.1" />
+          <path class="home-tracer-path" d="M 0,200 Q 500,300 1440,100" fill="none" stroke="#00ff55" stroke-width="1" stroke-dasharray="1000" stroke-dashoffset="1000" opacity="0.1" />
+          <path class="home-tracer-path" d="M 1440,800 Q 720,600 0,900" fill="none" stroke="#00ff55" stroke-width="1" stroke-dasharray="1000" stroke-dashoffset="1000" opacity="0.1" />
         </svg>
 
         {/* Global Mesh Background for this section */}
@@ -1160,59 +1184,63 @@ export default component$(() => {
         </div>
       </section>
 
+      {/* ═══════════════ SECTOR DIVIDER: ROADMAP TO STATS ═══════════════ */}
+      <div class="relative w-full h-px bg-gradient-to-r from-transparent via-[#70f3ff]/30 to-transparent my-10 sm:my-16">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-6 py-1 rounded-full border border-[#70f3ff]/20 bg-black backdrop-blur-md text-[9px] font-black uppercase tracking-[0.4em] text-[#70f3ff] shadow-[0_0_15px_rgba(112,243,255,0.1)]">
+          Quantum Telemetry Active
+        </div>
+      </div>
+
       {/* ═══════════════ STATS ═══════════════ */}
-      <section id="theta-stats" class="theta-stats-section px-4 py-12 sm:px-6 lg:px-8 lg:py-0 bg-[#0a0514]/60 min-h-screen lg:h-screen w-full lg:w-screen lg:overflow-hidden flex flex-col lg:flex-row items-center justify-center">
-        <div class="theta-stats-bento grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-6 sm:gap-8 max-w-[90rem] mx-auto h-auto lg:h-full lg:max-h-[90vh] items-center w-full">
+      <section id="theta-stats" class="theta-stats-section px-4 py-12 sm:px-6 lg:px-8 lg:py-0 bg-[#0a0514] min-h-screen lg:min-h-0 lg:h-screen w-full flex flex-col lg:flex-row items-center justify-center overflow-hidden">
+        <div class="theta-stats-bento grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] gap-6 sm:gap-10 max-w-[125rem] mx-auto h-auto lg:h-full lg:max-h-[85vh] items-center w-full">
 
           {/* --- BENTO CARD: VISUAL & TITLE --- */}
-          <div class="theta-bento-card theta-bento-card--visual reveal-left flex flex-col justify-between p-8 sm:p-10 h-full min-h-[400px] relative overflow-hidden">
-            <img src="/theta-logo.png" alt="" class="theta-bento-card__watermark" aria-hidden="true" />
+          <div class="theta-bento-card theta-bento-card--visual reveal-left flex flex-col justify-between p-8 sm:p-10 h-full min-h-[450px] relative overflow-hidden bg-[#050a05]/40 border border-white/5 backdrop-blur-3xl rounded-[3rem]">
+            <img src="/theta-logo.png" alt="" class="theta-bento-card__watermark opacity-[0.03]" aria-hidden="true" />
 
-            {/* --- AMBIENT HUD LAYERS --- */}
-
-            <div class="theta-stats-copy">
-              <span class="t-badge flex items-center gap-2 w-fit">
+            <div class="theta-stats-copy relative z-10">
+              <span class="t-badge flex items-center gap-2 w-fit bg-white/5 border border-white/10 px-3 py-1 rounded-full text-[10px] uppercase font-black tracking-widest text-[#00ff55]">
                 <span class="h-1.5 w-1.5 rounded-full bg-[#00ff55] animate-pulse shadow-[0_0_8px_#00ff55]" />
                 Theta Snapshot
               </span>
-              <h2 class="theta-stats-copy__title t-heading mt-2 text-5xl sm:text-7xl font-black uppercase tracking-tighter">
-                Fest Vitals
+              <h2 class="theta-stats-copy__title t-heading mt-4 text-5xl sm:text-7xl font-black uppercase tracking-tighter text-white">
+                Fest <span class="bg-gradient-to-r from-[#00ff55] to-[#70f3ff] bg-clip-text text-transparent">Vitals</span>
               </h2>
             </div>
 
-            <div class="theta-stats-visual-wrap relative flex flex-1 items-center justify-center py-4">
-              <div class="theta-stats-visual-container relative flex flex-col items-center justify-center">
+            <div class="theta-stats-visual-wrap relative flex flex-1 items-center justify-center py-8">
+              <div class="theta-stats-visual-container relative flex flex-col items-center justify-center scale-90 sm:scale-110">
                 {/* --- QUANTUM ENERGY CORE (BACKGROUND) --- */}
                 <div
                   class="theta-stats-core theta-stats-core--quantum group absolute inset-0 m-auto"
                   style={{
-                    transform: `perspective(1200px) rotateX(${sphereRotation.value.x}deg) rotateY(${sphereRotation.value.y}deg) ${sphereRotation.value.x !== 0 ? "translateY(-12px) scale(1.035)" : "translateY(0) scale(1)"}`,
-                    transition: sphereRotation.value.x === 0 ? "all 1s cubic-bezier(0.2, 1, 0.2, 1)" : "transform 0.12s ease-out, box-shadow 0.4s ease"
+                    transform: `perspective(1200px) rotateX(var(--sphere-rx, 0deg)) rotateY(var(--sphere-ry, 0deg))`,
+                    transition: "transform 0.1s ease-out"
                   }}
                 >
-                  <div class="theta-stats-core__hexagon" aria-hidden="true" />
+                  <div class="theta-stats-core__hexagon border-[#00ff55]/20" aria-hidden="true" />
                   <div class="theta-stats-core__rings" aria-hidden="true">
-                    <div class="theta-stats-core__ring" />
-                    <div class="theta-stats-core__ring" />
-                    <div class="theta-stats-core__ring" />
+                    <div class="theta-stats-core__ring border-[#00ff55]/30" />
+                    <div class="theta-stats-core__ring border-[#70f3ff]/20" />
                   </div>
-                  <div class="theta-stats-core__laser-scan" aria-hidden="true" />
-                  <div class="theta-stats-core__grid" aria-hidden="true" />
+                  <div class="theta-stats-core__laser-scan bg-gradient-to-b from-transparent via-[#00ff55]/40 to-transparent" aria-hidden="true" />
+                  {/* Removed theta-stats-core__grid squares to prevent lag */}
                   <div class="theta-stats-core__shimmer-rim" aria-hidden="true" />
                 </div>
 
                 {/* --- DATA HERO (FOREGROUND) --- */}
-                <div class="theta-stats-data-stack relative z-10 flex flex-col items-center justify-center text-center min-h-[300px]">
-                  <div class="theta-stats-core__copy mb-4">
-                    <span class="theta-stats-core__label">Festival Reach</span>
-                    <strong class="theta-stats-core__value">
+                <div class="theta-stats-data-stack relative z-10 flex flex-col items-center justify-center text-center min-h-[220px]">
+                  <div class="theta-stats-core__copy">
+                    <span class="theta-stats-core__label text-white/40 text-[10px] uppercase font-black tracking-[0.3em]">Festival Reach</span>
+                    <strong class="theta-stats-core__value text-6xl sm:text-8xl font-black text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.2)] mt-2 block">
                       {counterDisplay.value.participants}+
                     </strong>
                   </div>
 
-                  <div class="theta-stats-pulse-wrap">
-                    <div class="theta-stats-core__status">
-                      <span class="theta-stats-core__status-dot bg-[#00ff55] shadow-[0_0_12px_#00ff55] animate-pulse" />
+                  <div class="theta-stats-pulse-wrap mt-6">
+                    <div class="theta-stats-core__status bg-white/5 border border-white/10 px-4 py-2 rounded-full text-[10px] uppercase font-black tracking-widest text-[#00ff55] flex items-center gap-2">
+                      <span class="theta-stats-core__status-dot h-2 w-2 bg-[#00ff55] shadow-[0_0_12px_#00ff55] rounded-full animate-ping" />
                       Live registration pulse
                     </div>
                   </div>
@@ -1220,45 +1248,46 @@ export default component$(() => {
               </div>
             </div>
 
-            {/* --- BRAND INTEGRATION (NEW) --- */}
-            <div class="theta-stats-brand-row flex flex-row items-center justify-center gap-6 sm:gap-12 mt-6 sm:mt-auto pt-2 z-20 w-full relative">
+            {/* --- BRAND INTEGRATION --- */}
+            <div class="theta-stats-brand-row flex flex-row items-center justify-center gap-6 sm:gap-12 mt-auto pt-6 z-20 w-full relative">
               <img
                 src="/theta-logo.png"
                 alt="Theta Logo"
-                class="h-24 sm:h-36 w-auto object-contain brightness-0 invert opacity-80 drop-shadow-xl"
+                class="h-20 sm:h-28 w-auto object-contain brightness-0 invert opacity-60"
               />
-              <div class="h-10 sm:h-16 w-[1px] bg-white/20" aria-hidden="true" />
+              <div class="h-8 sm:h-12 w-[1px] bg-white/10" aria-hidden="true" />
               <img
                 src="/sponsors/general/sastra-university-logo.jpg"
                 alt="SASTRA University"
-                class="h-10 sm:h-14 w-auto object-contain rounded-md opacity-80 drop-shadow-xl"
+                class="h-8 sm:h-12 w-auto object-contain rounded-md opacity-60"
               />
             </div>
           </div>
 
           {/* --- BENTO GRID: STATS RAIL --- */}
-          <div class="theta-stats-side-right h-full flex flex-col gap-6">
+          <div class="theta-stats-side-right h-full flex flex-col justify-center gap-6">
             {statSpotlight.map((item, index) => (
               <article
                 key={item.key}
-                class="theta-bento-card theta-bento-card--stat theta-stats-node reveal-right p-6 sm:p-8 h-full min-h-[160px] relative overflow-hidden"
-                style={`--theta-stat-accent:${item.accent}; --theta-stat-glow:${item.glow}; --theta-stat-progress:${item.progress}; --theta-stat-surface:${item.surface}; transition-delay:${index * 120}ms`}
+                class="theta-bento-card theta-bento-card--stat theta-stats-node reveal-right p-6 sm:p-8 relative overflow-hidden bg-[#0a0a0a]/60 border border-white/5 backdrop-blur-2xl rounded-[2.5rem] transition-all hover:bg-[#0f0f0f]/80"
+                style={`--theta-stat-accent:${item.accent}; --theta-stat-glow:${item.glow}; transition-delay:${index * 120}ms`}
               >
-                <div class="theta-stats-node__meta mb-3">
-                  <span class="theta-stats-node__index text-[rgba(255,255,255,0.2)] text-xs font-black">0{index + 1}</span>
-                  <span class="theta-stats-node__eyebrow uppercase tracking-widest text-[10px] text-white/40 ml-4 font-bold">{item.eyebrow}</span>
+                <div class="theta-stats-node__meta mb-3 flex items-center justify-between">
+                  <span class="theta-stats-node__index text-white/10 text-[2rem] font-black italic absolute right-8 top-4 select-none">0{index + 1}</span>
+                  <span class="theta-stats-node__eyebrow uppercase tracking-[0.25em] text-[9px] text-white/40 font-black">{item.eyebrow}</span>
                 </div>
-                <div class="flex items-end justify-between gap-4">
-                  <div>
-                    <div class="theta-stats-node__value t-heading text-4xl sm:text-5xl font-black mb-1">{counterDisplay.value[item.key]}+</div>
-                    <div class="theta-stats-node__label uppercase tracking-tighter text-sm font-black text-white/60">{homeCopy.value.statsLabels[item.key]}</div>
-                  </div>
-                  <div class="theta-stats-node__signal text-[10px] py-1 px-3 border border-white/10 rounded-full font-black text-white/50">{item.signal}</div>
-                </div>
-                <p class="theta-stats-node__note mt-4 text-[10px] sm:text-xs text-white/40 leading-relaxed max-w-[90%]">{item.note}</p>
+                <div class="relative z-10">
+                  <h4 class="theta-stats-node__label uppercase tracking-widest text-[10px] font-black text-white/40 mb-1">{homeCopy.value.statsLabels[item.key]}</h4>
+                  <div class="theta-stats-node__value t-heading text-4xl sm:text-5xl font-black text-white">{counterDisplay.value[item.key]}+</div>
 
-                <div class="theta-stats-node__meter mt-6 h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                  <span class="theta-stats-node__meter-fill h-full block bg-current" style={`width:${item.progress}; color:var(--theta-stat-accent); box-shadow: 0 0 12px var(--theta-stat-accent)`} />
+                  <div class="flex items-center gap-3 mt-4">
+                    <div class="theta-stats-node__signal text-[9px] py-1 px-3 border border-white/10 rounded-full font-black text-[#70f3ff]/60 uppercase tracking-widest">{item.signal}</div>
+                    <span class="text-[9px] font-bold text-white/20 uppercase tracking-widest leading-none translate-y-[1px]">{item.note}</span>
+                  </div>
+                </div>
+
+                <div class="theta-stats-node__meter mt-8 h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                  <span class="theta-stats-node__meter-fill h-full block" style={`width:${item.progress}; background:${item.accent}; box-shadow: 0 0 15px ${item.accent}`} />
                 </div>
               </article>
             ))}
@@ -1267,94 +1296,192 @@ export default component$(() => {
         </div>
       </section>
 
+      {/* ═══════════════ SECTOR DIVIDER: STATS TO SPONSORS ═══════════════ */}
+      <div class="relative w-full h-px bg-gradient-to-r from-transparent via-[#0ea935]/30 to-transparent my-10 sm:my-16">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-6 py-1 rounded-full border border-[#0ea935]/20 bg-black backdrop-blur-md text-[9px] font-black uppercase tracking-[0.4em] text-[#0ea935] shadow-[0_0_15px_rgba(14,169,53,0.1)]">
+          Partner Ecosystem Signal
+        </div>
+      </div>
+
       {/* ═══════════════ SPONSORS ═══════════════ */}
-      <section id="sponsors-grid" class="relative z-10 mx-auto mt-12 max-w-7xl px-4 py-8 sm:px-6 sm:py-20 lg:px-8">
-        <div class="mb-16 text-center">
-            <span class="t-badge mx-auto block w-fit mb-4">Partner Ecosystem</span>
-            <h2 class="text-4xl sm:text-6xl font-black uppercase tracking-tighter text-white">
-                The <span class="text-[#70f3ff]">Diamond</span> Standard
-            </h2>
-            <p class="text-[var(--t-muted)] mt-4 max-w-2xl mx-auto text-sm sm:text-base">
-                Explore the elite network of brands supporting Theta 2026. Click any tier to view full partner details.
-            </p>
+      <div class="relative w-full overflow-hidden bg-transparent">
+        {/* Focused Background Elements */}
+        <div class="absolute inset-0 z-0 pointer-events-none select-none">
+          {/* Glowing Ben 10 Watch Watermark */}
+          <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[800px] h-[300px] md:h-[800px] opacity-[0.04] grayscale invert brightness-[2] flex items-center justify-center">
+            <div class="absolute inset-0 bg-[#0ea935] blur-[100px] opacity-[0.1]" />
+            <img
+              src="/ben10/ben10-logo.png"
+              alt=""
+              class={`w-full h-full object-contain ${mobilePerfMode.value ? '' : 'filter drop-shadow-[0_0_80px_rgba(14,169,53,0.3)] animate-pulse'}`}
+              style="animation-duration: 6s;"
+            />
+          </div>
+
+          {!mobilePerfMode.value && (
+            <>
+              {/* Vivid Red Bubble - Top Left (Diamond Focus) */}
+              <div class="absolute top-[-5%] left-[-10%] w-[550px] h-[550px] rounded-full border border-[#ff4d4f]/30 bg-gradient-to-br from-[#ff4d4f]/25 to-transparent backdrop-blur-[50px] opacity-70" />
+
+              {/* Glowing Tech Accent - Center Left */}
+              <div class="absolute top-[45%] left-[5%] w-10 h-10 border-2 border-[#0ea935]/60 rounded-lg opacity-60 blur-[1px]" />
+              <div class="absolute top-[47%] left-[6.5%] w-4 h-4 bg-[#0ea935] opacity-80 rounded-full shadow-[0_0_20px_#0ea935]" />
+            </>
+          )}
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-            {sponsorTiers.map((tier) => {
+        <section id="sponsors-grid" class="relative z-10 mx-auto max-w-7xl px-4 py-8 bg-transparent sm:px-6 sm:py-16 lg:px-8">
+          <div class="mb-12 text-center relative z-10">
+            <div class="inline-flex items-center gap-3 px-4 py-1.5 rounded-full border border-white/5 bg-white/5 backdrop-blur-md mb-6 hover:border-white/20 transition-all duration-500 group cursor-default">
+              <span class="w-2 h-2 rounded-full bg-[#0ea935] animate-pulse shadow-[0_0_8px_#0ea935]" />
+              <span class="text-[10px] font-black uppercase tracking-[0.3em] text-white/40 group-hover:text-white/70 transition-colors">Partner Ecosystem</span>
+            </div>
+            <h2 class="text-5xl sm:text-7xl font-black uppercase tracking-tighter text-white mb-6">
+              The <span class="text-[#70f3ff] drop-shadow-[0_0_25px_rgba(112,243,255,0.4)]">Diamond</span> Standard
+            </h2>
+            <p class="text-[var(--t-muted)] max-w-2xl mx-auto text-sm sm:text-lg leading-relaxed font-medium">
+              Explore the elite network of brands supporting Theta 2026. <br class="hidden sm:block" /> Click any tier to view full partner details.
+            </p>
+          </div>
+
+          <div class="flex flex-wrap justify-center gap-6 sm:gap-8 relative z-10">
+            {sponsorTiers
+              .filter((tier) => (sponsors.value[tier.key as keyof SponsorsConfig] || []).some(s => s.isActive))
+              .map((tier) => {
                 const tierKey = tier.key as keyof SponsorsConfig;
+                const activeSponsors = (sponsors.value[tierKey] || []).filter(s => s.isActive);
+                const meta = sponsorTierMeta[tierKey];
                 return (
-                <div 
+                  <div
                     key={tier.key}
                     onClick$={() => { selectedTier.value = tierKey; }}
-                    class="group relative cursor-pointer p-8 rounded-[2.5rem] border border-white/10 transition-all duration-500 hover:scale-[1.03] hover:border-white/20 overflow-hidden flex flex-col justify-between min-h-[220px]"
-                    style={{ background: sponsorTierMeta[tierKey].surface }}
-                >
-                    {/* Ambient Glow */}
-                    <div 
-                        class="absolute -top-12 -right-12 w-32 h-32 blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" 
-                        style={{ background: sponsorTierMeta[tierKey].accent }}
+                    class="group relative cursor-pointer w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.33%-1.5rem)] xl:w-[calc(20%-1.6rem)] min-w-[280px] max-w-[340px] p-8 rounded-[2.5rem] border border-white/10 transition-all duration-500 hover:-translate-y-2 overflow-hidden flex flex-col justify-between min-h-[260px]"
+                    style={{
+                      background: meta.surface,
+                      boxShadow: `0 20px 40px rgba(0,0,0,0.4), inset 0 0 20px ${meta.glow}`
+                    }}
+                  >
+                    {/* Dynamic Hover Glow */}
+                    <div
+                      class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"
+                      style={{ background: `radial-gradient(circle at top right, ${meta.accent}15, transparent 60%)` }}
                     />
-                    
+
                     <div class="relative z-10">
-                        <span class="block text-[10px] uppercase font-black tracking-[0.2em] text-white/30 mb-2">
-                           {sponsorTierMeta[tierKey].eyebrow}
-                        </span>
-                        <h3 class="text-3xl font-black uppercase tracking-tighter" style={{ color: sponsorTierMeta[tierKey].accent }}>
-                           {tier.label}
-                        </h3>
+                      <span class="block text-[11px] uppercase font-black tracking-[0.25em] text-white/40 mb-3 group-hover:text-white/60 transition-colors">
+                        {meta.eyebrow}
+                      </span>
+                      <h3 class="text-4xl font-black uppercase tracking-tighter mb-2" style={{ color: meta.accent, textShadow: `0 0 20px ${meta.glow}` }}>
+                        {tier.label}
+                      </h3>
+                      <div class="w-12 h-1 rounded-full transition-all duration-500 group-hover:w-20" style={{ background: meta.accent, boxShadow: `0 0 10px ${meta.accent}` }} />
                     </div>
 
-                    <div class="relative z-10 flex items-center justify-between mt-8">
-                        <div class="flex -space-x-2">
-                            {(sponsors.value[tierKey] || []).slice(0, 3).map((s: any, i: number) => (
-                                <div key={i} class="w-8 h-8 rounded-full border-2 border-black bg-white flex items-center justify-center p-1 overflow-hidden">
-                                     <img src={s.logo} alt="" class="w-full h-full object-contain" />
-                                </div>
-                            ))}
-                            {(sponsors.value[tierKey] || []).length > 3 && (
-                                <div class="w-8 h-8 rounded-full border-2 border-black bg-white/10 backdrop-blur-sm flex items-center justify-center text-[10px] font-black text-white">
-                                    +{(sponsors.value[tierKey] || []).length - 3}
-                                </div>
-                            )}
-                        </div>
-                        <span class="text-[10px] font-black uppercase tracking-widest text-white/40 group-hover:text-white transition-colors duration-300">Explore →</span>
+                    <div class="relative z-10 flex items-center justify-between mt-10">
+                      <div class="flex -space-x-3">
+                        {activeSponsors.slice(0, 3).map((s: any, i: number) => (
+                          <div key={i} class="w-10 h-10 rounded-full border-2 border-[#0a0f0a] bg-white flex items-center justify-center p-1.5 overflow-hidden shadow-xl transform transition-transform group-hover:scale-110" style={{ transitionDelay: `${i * 100}ms` }}>
+                            <img src={s.logo} alt="" class="w-full h-full object-contain" />
+                          </div>
+                        ))}
+                        {activeSponsors.length > 3 && (
+                          <div class="w-10 h-10 rounded-full border-2 border-[#0a0f0a] bg-[#1a251a] backdrop-blur-md flex items-center justify-center text-[11px] font-black text-white/80 shadow-xl group-hover:bg-[#2a3a2a] transition-colors">
+                            +{activeSponsors.length - 3}
+                          </div>
+                        )}
+                      </div>
+                      <div class="flex items-center gap-2 group/btn">
+                        <span class="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 group-hover:text-white transition-colors duration-300">Explore</span>
+                        <span class="w-6 h-6 rounded-full border border-white/10 flex items-center justify-center text-xs group-hover:bg-white group-hover:text-black transition-all">→</span>
+                      </div>
                     </div>
-                </div>
+
+                    {/* Corner Circuit Decorative */}
+                    <div class="absolute -bottom-2 -right-2 w-16 h-16 opacity-[0.05] group-hover:opacity-[0.15] transition-opacity duration-700 pointer-events-none">
+                      <svg viewBox="0 0 100 100" class="w-full h-full" style={{ fill: meta.accent }}>
+                        <path d="M100,0 L100,100 L0,100 L0,95 L95,95 L95,0 Z" />
+                      </svg>
+                    </div>
+                  </div>
                 );
-            })}
-        </div>
+              })}
+          </div>
 
-        {/* Marquee as a secondary moving showcase */}
-        <div class="mt-16 s-reveal rounded-[2.5rem] border border-white/5 bg-white/[0.02] px-5 py-6 backdrop-blur-2xl sm:px-8 overflow-hidden relative">
-            <div class="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-black/40 to-transparent z-10" />
-            <div class="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-black/40 to-transparent z-10" />
-            
-            <div class="t-marquee-wrap">
-              <div data-marquee-track class="t-marquee-track animate-left">
+          {/* Modern Running Alliance Hall */}
+          <div class="mt-12 relative z-10 w-full text-center">
+            <div class="mb-8 px-4">
+              <div class="inline-flex items-center gap-3 px-4 py-1.5 rounded-full border border-[#0ea935]/20 bg-[#0ea935]/5 backdrop-blur-md mb-6 hover:border-[#0ea935]/40 transition-all cursor-default">
+                <span class="w-2 h-2 rounded-full bg-[#0ea935] shadow-[0_0_10px_#0ea935]" />
+                <span class="text-[10px] font-black uppercase tracking-[0.4em] text-[#0ea935]">Alliance Network</span>
+              </div>
+              <h3 class="text-4xl sm:text-6xl font-black uppercase tracking-tighter text-white">
+                Partner <span class="bg-gradient-to-r from-[#70f3ff] to-[#0ea935] bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(112,243,255,0.2)]">Spectrum</span> 2026
+              </h3>
+            </div>
+
+            <div class="t-marquee-wrap-full relative select-none overflow-hidden">
+              {/* Cinema Gradient Masks - Subtle Fades */}
+              <div class="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-black via-black/40 to-transparent z-20 pointer-events-none" />
+              <div class="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-black via-black/40 to-transparent z-20 pointer-events-none" />
+
+              <div data-marquee-track class="t-marquee-track flex animate-left py-8" style="will-change: transform;">
                 {[...marqueeSponsors, ...marqueeSponsors].map((sponsor, index) => (
                   <article
                     key={`${sponsor.tierKey}-${sponsor.name}-${index}`}
-                    class="group mx-5 w-40 flex-shrink-0 text-center"
+                    class="group relative mx-6 flex-shrink-0 flex w-[260px] flex-col items-center justify-center transition-all duration-700"
                   >
-                    <div class="flex h-16 items-center justify-center rounded-2xl border border-white/10 bg-white/5 p-3 transition-all duration-300 group-hover:bg-white group-hover:scale-110">
-                      <img
-                        src={sponsor.logo}
-                        alt={sponsor.name}
-                        loading="lazy"
-                        class="h-full w-full object-contain brightness-100 transition-all group-hover:brightness-100"
-                        style={index % 2 === 0 ? "" : "filter: grayscale(1) invert(1) brightness(2)"}
-                      />
+                    {/* Floating Background Glow */}
+                    <div class="absolute -inset-4 bg-[#70f3ff]/5 rounded-[2.5rem] blur-2xl opacity-0 group-hover/item:opacity-100 transition-opacity duration-700" />
+
+                    <div class="relative w-full bg-[#0a0f0a]/40 border border-white/5 backdrop-blur-2xl rounded-[2.25rem] p-6 shadow-2xl transition-all duration-500 group-hover:bg-[#101510]/60 group-hover:border-white/20 hover:-translate-y-3">
+                      {sponsor.isActive && (
+                        <div class="absolute -top-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 rounded-full border border-[#ff4d4f]/30 bg-[#ff4d4f] px-4 py-1.5 text-[0.55rem] font-black tracking-widest text-black uppercase shadow-[0_0_25px_rgba(255,77,79,0.35)]">
+                          <span class="h-1.5 w-1.5 animate-pulse rounded-full bg-black"></span>
+                          Active
+                        </div>
+                      )}
+
+                      <div class="relative flex h-24 w-full items-center justify-center overflow-hidden rounded-2xl bg-white/95 p-5 shadow-2xl transform transition-all duration-700 group-hover:scale-[1.08] group-hover:shadow-[0_0_30px_rgba(255,255,255,0.1)]">
+                        <img
+                          src={sponsor.logo}
+                          alt={sponsor.name}
+                          loading="lazy"
+                          class="h-full w-full object-contain mix-blend-multiply"
+                        />
+                        {/* Glassy Overlay on Logo */}
+                        <div class="absolute inset-0 bg-gradient-to-tr from-black/5 to-transparent pointer-events-none" />
+                      </div>
+
+                      <div class="mt-6 text-center">
+                        <p class="text-[0.65rem] font-black tracking-[0.3em] text-white/30 uppercase transition-all duration-500 group-hover:text-white/80 group-hover:tracking-[0.4em]">
+                          {sponsor.name}
+                        </p>
+                        <div class="mx-auto mt-2 h-0.5 w-0 bg-[#0ea935] transition-all duration-500 group-hover:w-12 group-hover:shadow-[0_0_10px_#0ea935]" />
+                      </div>
                     </div>
+
+                    {/* Side Decorative Numbers */}
+                    <span class="absolute -right-2 top-8 text-[4rem] font-black italic text-white/[0.02] pointer-events-none select-none transition-colors group-hover:text-white/[0.05]">
+                      {String((index % marqueeSponsors.length) + 1).padStart(2, '0')}
+                    </span>
                   </article>
                 ))}
               </div>
             </div>
-        </div>
-      </section>
+          </div>
+        </section>
+      </div>
 
+
+      {/* ═══════════════ SECTOR DIVIDER: SPONSORS TO CTA ═══════════════ */}
+      <div class="relative w-full h-px bg-gradient-to-r from-transparent via-[#0ea935]/30 to-transparent mt-12 sm:mt-20">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-6 py-1 rounded-full border border-[#0ea935]/20 bg-black backdrop-blur-md text-[9px] font-black uppercase tracking-[0.4em] text-[#0ea935] shadow-[0_0_15px_rgba(14,169,53,0.1)]">
+          Strategic Network Hub
+        </div>
+      </div>
 
       {/* ═══════════════ NEW BROWSE EVENTS CTA ═══════════════ */}
-      <section id="browse-events-section" class="relative w-full min-h-[80vh] flex flex-col justify-between overflow-hidden bg-[#050508] px-6 py-12 sm:px-12 sm:py-20 lg:px-24 border-t border-[#0ea935]/10 mt-12 sm:mt-24">
+      <section id="browse-events-section" class="relative w-full min-h-[60vh] flex flex-col justify-between overflow-hidden bg-[#050508] px-6 py-12 sm:px-12 sm:py-16 lg:px-24 border-t border-[#0ea935]/10 mt-6 overflow-hidden">
         {/* Background Image */}
         <img src="/backgrounds/sastra-2.jpeg" alt="Sastra Background" class="browse-events-bg absolute inset-0 w-full h-full object-cover object-center z-0 opacity-80" />
 
@@ -1428,20 +1555,34 @@ export default component$(() => {
       {selectedTier.value && (() => {
         const tier = sponsorTiers.find(t => t.key === selectedTier.value);
         if (!tier) return null;
-        const items = sponsors.value[tier.key] || [];
+        const items = (sponsors.value[tier.key] || []).filter(s => s.isActive);
         return (
           <div class="t-modal-backdrop flex items-center justify-center p-4">
             <div class="absolute inset-0" onClick$={closeTier} />
-            <div class="t-modal w-full max-w-3xl bg-[#050a05]/95 border border-white/10 rounded-3xl p-10">
-              <div class="flex justify-between items-center mb-8">
-                <h3 class="text-2xl text-white font-black">{tier.label} Partners</h3>
-                <button onClick$={closeTier} class="text-white/40">✕</button>
+            <div
+              class="t-modal w-full max-w-3xl bg-[#050a05]/95 border rounded-3xl p-10 relative overflow-hidden"
+              style={{
+                boxShadow: `0 0 100px ${sponsorTierMeta[tier.key].glow}, inset 0 0 30px ${sponsorTierMeta[tier.key].glow}`,
+                borderColor: `${sponsorTierMeta[tier.key].accent}44`
+              }}
+            >
+              <div class="flex justify-between items-center mb-8 relative z-10">
+                <h3 class="text-3xl font-black uppercase tracking-tighter" style={{ color: sponsorTierMeta[tier.key].accent }}>
+                  {tier.label} Partners
+                </h3>
+                <button onClick$={closeTier} class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white/40 hover:bg-white hover:text-black transition-all">✕</button>
               </div>
-              <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
+              <div class="grid grid-cols-2 md:grid-cols-3 gap-6 relative z-10">
                 {items.map((s, i) => (
-                  <div key={i} class="t-sponsor-card p-6 flex flex-col items-center justify-center min-h-[120px]">
-                    <img src={s.logo} alt={s.name} class="max-h-12 w-auto" />
-                    <p class="mt-4 text-[10px] text-white/30 uppercase font-bold">{s.name}</p>
+                  <div
+                    key={i}
+                    class="t-sponsor-card p-6 flex flex-col items-center justify-center min-h-[140px] rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] transition-all group/item"
+                    style={{ borderColor: `${sponsorTierMeta[tier.key].accent}22` }}
+                  >
+                    <div class="flex h-16 w-full items-center justify-center overflow-hidden rounded-xl bg-white/95 p-3 group-hover/item:bg-white transition-colors">
+                      <img src={s.logo} alt={s.name} class="h-full w-full object-contain" />
+                    </div>
+                    <p class="mt-4 text-[10px] text-white/30 uppercase font-black tracking-widest group-hover/item:text-white transition-colors text-center">{s.name}</p>
                   </div>
                 ))}
               </div>

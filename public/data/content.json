@@ -80,14 +80,14 @@
       ]
     },
     "statsLabels": {
-      "events": "Events",
+      "events": "Registrations",
       "participants": "Participants",
-      "colleges": "Colleges"
+      "colleges": "Visitors"
     },
     "sponsors": {
       "badge": "Our Sponsors",
       "titlePrefix": "Powered by",
-      "titleAccent": "Excellence",
+      "titleAccent": "Partners",
       "hallBadge": "Previous Sponsors",
       "hallTitlePrefix": "Past Edition",
       "hallTitleAccent": "Partners",

@@ -741,9 +741,9 @@ export default component$(() => {
   const isDay3 = selectedDay.value === "Day 3";
 
   const bgLogo = isDay3 ? "/spidy/spidy-event-bg" : isDay2 ? "/onepeice/one-peice-logo.png" : "/ben10/ben10-logo.png";
-  const bgGlowColor = isDay3 ? "#f02aa2" : isDay2 ? "#eab308" : "#0ea935";
-  const tc = isDay3 ? "240, 42, 162" : isDay2 ? "234, 179, 8" : "14, 169, 53";
-  const tcLight = isDay3 ? "255, 100, 200" : isDay2 ? "253, 224, 71" : "110, 255, 158";
+  const bgGlowColor = isDay3 ? "#ff3333" : isDay2 ? "#eab308" : "#0ea935";
+  const tc = isDay3 ? "255, 51, 51" : isDay2 ? "234, 179, 8" : "14, 169, 53";
+  const tcLight = isDay3 ? "255, 100, 100" : isDay2 ? "253, 224, 71" : "110, 255, 158";
 
   // Filter events based on selected day and active cluster
   const eventsForSelectedDay = allEvents.filter((e) => e.day === selectedDay.value);
@@ -767,7 +767,7 @@ export default component$(() => {
       style={{
         '--tc': tc,
         '--tc-light': tcLight,
-        '--theme-glow': isDay3 ? 'rgba(240, 42, 162, 0.4)' : isDay2 ? 'rgba(234, 179, 8, 0.4)' : 'rgba(14, 169, 53, 0.4)'
+        '--theme-glow': isDay3 ? 'rgba(255, 51, 51, 0.4)' : isDay2 ? 'rgba(234, 179, 8, 0.4)' : 'rgba(14, 169, 53, 0.4)'
       }}
     >
       <style>{`
@@ -957,7 +957,7 @@ export default component$(() => {
             {filteredEvents.map((event) => {
               const baseC = themeStyles[event.theme];
               const c = isDay3
-                ? { border: "border-[#f02aa2]/40", glow: "rgba(240,42,162,0.25)", badge: "bg-[#f02aa2] text-white", ring: "#f02aa2" }
+                ? { border: "border-[#ff3333]/40", glow: "rgba(255,51,51,0.25)", badge: "bg-[#ff3333] text-white", ring: "#ff3333" }
                 : isDay2
                   ? { border: "border-[#eab308]/40", glow: "rgba(234,179,8,0.25)", badge: "bg-[#eab308] text-black", ring: "#eab308" }
                   : { border: "border-[#0ea935]/40", glow: "rgba(14,169,53,0.25)", badge: "bg-[#0ea935] text-white", ring: "#0ea935" };

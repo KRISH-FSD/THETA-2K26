@@ -2520,6 +2520,7 @@ html[data-mobile-perf="true"] .theta-stats-node {
 
 .t-marquee-track.animate-left {
   animation: marqueeLeft 28s linear infinite;
+  will-change: transform;
 }
 
 .t-marquee-track.animate-right {

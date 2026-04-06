@@ -351,11 +351,12 @@ export const HeroSlider = component$(() => {
                 preload="none"
                 poster={s.bgImage}
                 disablePictureInPicture
+                style="will-change: transform;"
               />
             ) : (
               <div
                 class="absolute inset-0 h-full w-full bg-cover bg-center"
-                style={{ backgroundImage: `url(${s.bgImage})` }}
+                style={{ backgroundImage: `url(${s.bgImage})`, willChange: "opacity" }}
               />
             )
           ) : (
@@ -363,7 +364,8 @@ export const HeroSlider = component$(() => {
               class={["absolute inset-0 h-full w-full bg-cover", active.value === i && "hs-ken-burns"]}
               style={{
                 backgroundImage: `url(${(!isDesktop.value && (s as any).mobileBgImage) ? (s as any).mobileBgImage : s.bgImage})`,
-                backgroundPosition: s.id === 2 ? 'center 15%' : 'center'
+                backgroundPosition: s.id === 2 ? 'center 15%' : 'center',
+                willChange: "transform, opacity"
               }}
             />
           )}
