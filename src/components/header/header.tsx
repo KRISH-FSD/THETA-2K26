@@ -118,7 +118,7 @@ export const Header = component$(() => {
               <img
                 src={logoSrc}
                 alt={logoAlt}
-                class={`t-ben10-icon w-auto object-contain transition-all duration-500 ${theme.value === 'red-ben10' ? 'h-[2.15rem] lg:h-[3.35rem] translate-y-[1px]' : 'h-7 lg:h-10'}`}
+                class={`t-ben10-icon w-auto object-contain transition-all duration-500 ${theme.value === 'red-ben10' ? 'h-[2.3rem] lg:h-[3.7rem] scale-[1.06] translate-y-[-1px]' : 'h-7 lg:h-10'}`}
                 style="transition:opacity 0.4s,transform 0.4s;"
               />
             </div>
@@ -134,7 +134,7 @@ export const Header = component$(() => {
             <Link
               href="/events"
               class={mobilePrimaryLinkClass("/events")}
-              style={mobilePrimaryLinkStyle("/events")}
+              style={mobilePrimaryLinkStyle("/events") + "width: 80px; display: flex; justify-content: center;"}
             >
               Events
             </Link>
@@ -150,14 +150,14 @@ export const Header = component$(() => {
               <img
                 src={logoSrc}
                 alt={logoAlt}
-                class={`t-ben10-icon w-auto object-contain transition-all duration-500 ${theme.value === 'red-ben10' ? 'h-8 translate-y-[1px]' : 'h-7'}`}
+                class={`t-ben10-icon w-auto object-contain transition-all duration-500 ${theme.value === 'red-ben10' ? 'h-[2.3rem] scale-[1.06] translate-y-[-1px]' : 'h-7'}`}
                 style="transition:opacity 0.4s,transform 0.4s;"
               />
             </Link>
             <Link
               href="/roadmap/day1"
               class={mobilePrimaryLinkClass("/roadmap")}
-              style={mobilePrimaryLinkStyle("/roadmap")}
+              style={mobilePrimaryLinkStyle("/roadmap") + "width: 80px; display: flex; justify-content: center;"}
             >
               Roadmap
             </Link>

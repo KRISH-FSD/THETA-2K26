@@ -10,8 +10,6 @@ import { Header } from "~/components/header/header";
 import { Chatbot } from "~/components/chatbot/Chatbot";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { MotionPathPlugin } from "gsap/MotionPathPlugin";
-
 interface LayoutCopy {
   underDevelopment: {
     ariaLabel: string;
@@ -98,46 +96,7 @@ export default component$(() => {
   useVisibleTask$(() => {
     underDev.value = import.meta.env.PUBLIC_UNDER_DEV !== "false";
     
-    gsap.registerPlugin(ScrollTrigger, MotionPathPlugin);
-    const footer = document.querySelector("footer.footer-neural-grid");
-    if (!footer) {
-      return;
-    }
-
-    // Tracer Line Animation
-    gsap.to(".footer-tracer-path", {
-      strokeDashoffset: 0,
-      duration: 2,
-      ease: "none",
-      scrollTrigger: {
-        trigger: footer,
-        start: "top 90%",
-        end: "bottom bottom",
-        scrub: 0.5,
-      }
-    });
-
-
-
-    // Signal Tracers (Points moving along paths)
-    gsap.to(".signal-tracer", {
-      motionPath: {
-        path: (i: number) => document.querySelectorAll(".footer-tracer-path")[i] as SVGPathElement,
-        align: (i: number) => document.querySelectorAll(".footer-tracer-path")[i] as SVGPathElement,
-        alignOrigin: [0.5, 0.5],
-        autoRotate: true
-      } as any,
-      duration: 1,
-      ease: "none",
-      scrollTrigger: {
-        trigger: footer,
-        start: "top 90%",
-        end: "bottom bottom",
-        scrub: 0.5,
-      }
-    });
-
-
+    gsap.registerPlugin(ScrollTrigger);
   });
 
   useVisibleTask$(async () => {
@@ -169,7 +128,7 @@ export default component$(() => {
     
     // Roadmap Dock (Bottom Navbar) Hiding Style
     const dock = document.querySelector(".rm-dock");
-    const footer = document.querySelector("footer.footer-neural-grid");
+    const footer = document.querySelector("footer.footer-modern");
     if (dock) {
       gsap.killTweensOf(dock);
       if (footer) {
@@ -233,82 +192,90 @@ export default component$(() => {
           </div>
         )}
 
-        {/* ── Footer: Neural Grid Redesign ── */}
+        {/* ── Footer: Modern Redesign ── */}
         {!isDevelopersRoute && !isEventsRoute && (
-          <footer class="footer-neural-grid mt-12 border-t border-white/5 pt-12 pb-12 relative overflow-hidden backdrop-blur-xl bg-black/40">
-          {/* Ambient Blurred Glows */}
-          <div class="footer-ambient-glow footer-ambient-glow--1 absolute -top-[20%] -left-[10%] h-[150%] w-[50%] opacity-20 blur-[120px] rounded-full pointer-events-none" />
-          <div class="footer-ambient-glow footer-ambient-glow--2 absolute -bottom-[30%] -right-[15%] h-[120%] w-[60%] opacity-[0.15] blur-[100px] rounded-full pointer-events-none" />
+          <footer class="footer-modern mt-12 border-t border-white/10 bg-[#0a0a0a] pt-16 pb-32 md:pb-8 relative z-20">
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+              <div class="grid gap-12 md:gap-8 grid-cols-1 md:grid-cols-4 lg:grid-cols-5">
+                {/* Brand Block */}
+                <div class="col-span-1 md:col-span-2 lg:col-span-2 flex flex-col items-center md:items-start text-center md:text-left">
+                  <img
+                    src={footerLogo}
+                    alt="Theta"
+                    width={isDay2 ? 180 : 140}
+                    height={isDay2 ? 80 : 70}
+                    class={["h-12 w-auto opacity-90 transition-all duration-300 hover:opacity-100", !isDay2 ? "[filter:brightness(0)_invert(1)]" : ""]}
+                  />
+                  <p class="mt-6 text-sm leading-relaxed text-[#8ca38c] max-w-sm">
+                    {copy.value.footer.description}
+                  </p>
+                </div>
 
-          {/* SVG Tracer Lines */}
-          <svg class="footer-tracer-line" viewBox="0 0 1440 600" preserveAspectRatio="none">
-            <defs>
-              <linearGradient id="footer-line-grad" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stop-color="var(--t-brand-accent)" stop-opacity="0" />
-                <stop offset="50%" stop-color="var(--t-brand-accent)" stop-opacity="0.8" />
-                <stop offset="100%" stop-color="var(--t-brand-accent)" stop-opacity="0" />
-              </linearGradient>
-            </defs>
-            <path class="footer-tracer-path" d="M -100,100 C 200,150 400,50 720,100 C 1040,150 1240,50 1540,100" />
-            <path class="footer-tracer-path" d="M -100,300 C 300,250 500,350 720,300 C 940,250 1240,350 1540,300" opacity="0.6" />
-            <path class="footer-tracer-path" d="M -100,500 C 150,450 450,550 720,500 C 990,450 1290,550 1540,500" opacity="0.3" />
-            
-            <circle class="signal-tracer h-2 w-2" style={{ fill: "var(--t-brand-accent)", filter: "drop-shadow(0 0 10px var(--t-brand-accent))" }} r="4" />
-            <circle class="signal-tracer h-2 w-2" style={{ fill: "rgba(var(--t-brand-rgb), 0.6)" }} r="3" />
-          </svg>
+                {/* Navigation Links */}
+                <div class="flex flex-col items-center md:items-start text-center md:text-left">
+                  <h3 class="mb-5 text-xs font-bold uppercase tracking-wider text-white">
+                    Navigation
+                  </h3>
+                  <ul class="flex flex-col gap-3">
+                    {[
+                      { label: copy.value.footer.homeLabel, href: "/" },
+                      { label: copy.value.footer.eventsLabel, href: "/events" },
+                      { label: copy.value.footer.sponsorsLabel, href: "/sponsors" },
+                    ].map((link) => (
+                      <li key={link.label}>
+                        <Link href={link.href} class="text-sm font-medium text-[#8ca38c] transition-colors duration-200 hover:text-white">
+                          {link.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
 
-          <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10 pb-32 md:pb-12">
-            <div class="grid gap-12 md:gap-16 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-              {/* Brand Block */}
-              <div class="flex flex-col items-center md:items-start text-center md:text-left">
-                <img
-                  src={footerLogo}
-                  alt="Theta"
-                  width={isDay2 ? 180 : 140}
-                  height={isDay2 ? 80 : 70}
-                  class={["h-10 w-auto opacity-90", !isDay2 ? "[filter:brightness(0)_invert(1)]" : ""]}
-                />
-                <p class="mt-6 text-sm leading-relaxed text-[#8ca38c] font-medium max-w-xs">
-                  {copy.value.footer.description}
+                {/* Support Links */}
+                <div class="flex flex-col items-center md:items-start text-center md:text-left">
+                  <h3 class="mb-5 text-xs font-bold uppercase tracking-wider text-white">
+                    Support
+                  </h3>
+                  <ul class="flex flex-col gap-3">
+                    {[
+                      { label: copy.value.footer.contactLabel, href: "/contact" },
+                      { label: copy.value.footer.issuesLabel || "Report Issue", href: "https://github.com/cce-sastra/theta-web/issues" },
+                    ].map((link) => (
+                      <li key={link.label}>
+                        <Link href={link.href} target={link.href?.startsWith("http") ? "_blank" : undefined} class="text-sm font-medium text-[#8ca38c] transition-colors duration-200 hover:text-white">
+                          {link.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Coordinates Block */}
+                <div class="flex flex-col items-center md:items-start text-center md:text-left">
+                  <h3 class="mb-5 text-xs font-bold uppercase tracking-wider text-white">
+                    Connect
+                  </h3>
+                  <div class="flex flex-col gap-3 text-sm text-[#8ca38c] font-medium">
+                    <p class="max-w-[200px] leading-relaxed">{copy.value.footer.locationLabel}</p>
+                    <a href={`mailto:${copy.value.footer.emailLabel}`} class="hover:text-white transition-colors duration-200">
+                      {copy.value.footer.emailLabel}
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              {/* Copyright Bar */}
+              <div class="mt-16 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-xs font-medium text-[#6e806e]">
+                  {copy.value.footer.copyright}
                 </p>
-              </div>
-
-              {/* Links Block */}
-              <div class="flex flex-col items-center md:items-start text-center md:text-left">
-                <h3 class="mb-6 md:mb-8 text-[11px] font-black tracking-[0.25em] text-white uppercase" style={{ fontFamily: "var(--font-display)" }}>
-                   Navigation
-                </h3>
-                <div class="flex flex-col items-center md:items-start gap-4">
-                  {[
-                    { label: copy.value.footer.homeLabel, href: "/" },
-                    { label: copy.value.footer.eventsLabel, href: "/events" },
-                    { label: copy.value.footer.sponsorsLabel, href: "/sponsors" },
-                    { label: copy.value.footer.contactLabel, href: "/contact" }
-                  ].map((link) => (
-                    <Link key={link.label} href={link.href} class="footer-link-modern text-sm font-medium text-[#8ca38c] w-fit">
-                      {link.label}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-
-              {/* Contact Block */}
-              <div class="flex flex-col items-center md:items-start text-center md:text-left">
-                <h3 class="mb-6 md:mb-8 text-[11px] font-black tracking-[0.25em] text-white uppercase" style={{ fontFamily: "var(--font-display)" }}>
-                  Coordinates
-                </h3>
-                <div class="flex flex-col items-center md:items-start gap-4 text-sm text-[#8ca38c] font-medium">
-                  <p>{copy.value.footer.locationLabel}</p>
-                  <p>{copy.value.footer.emailLabel}</p>
+                <div class="flex items-center gap-2 text-xs font-medium text-[#6e806e]">
+                  <span>{copy.value.footer.madeWithPrefix}</span>
+                  <span class="text-red-500 animate-pulse">❤️</span>
+                  <span>{copy.value.footer.madeBy}</span>
                 </div>
               </div>
             </div>
-
-            {/* Copyright Bar */}
-            <div class="mt-20 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
-              <p class="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em]">{copy.value.footer.copyright}</p>
-            </div>
-          </div>
           </footer>
         )}
       </div>
