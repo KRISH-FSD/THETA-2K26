@@ -320,7 +320,7 @@ export default component$(function Day2Roadmap() {
         const off = totalLen * (1 - prog);
         const endReached = prog >= 0.995;
 
-        pathBase.style.strokeDashoffset = String(off);
+        pathBase.style.strokeDashoffset = "0"; // Always fully drawn base line
         pathAccent.style.strokeDashoffset = String(Math.max(0, off - 26));
         pathGlow.style.strokeDashoffset = String(off);
         posTracer(prog);
@@ -509,34 +509,35 @@ export default component$(function Day2Roadmap() {
           transition: opacity 320ms ease, transform 380ms cubic-bezier(0.22, 1, 0.36, 1); z-index: 4;
         }
         .rm-page--op.is-end-reached .rm-end-popup { opacity: 1; transform: translate(0, -50%) scale(1); }
+        .rm-page--op .rm-timeline { position: relative; }
+        .rm-page--op .rm-line-svg { overflow: visible; position: absolute; pointer-events: none; top: 0; left: 0; z-index: 10; width: 100%; height: 100%; }
+        .rm-page--op .rm-line-glow {
+          stroke: #ffb72b !important;
+          stroke-width: 22 !important;
+          opacity: 0.28 !important;
+          filter: blur(8px);
+        }
+        .rm-page--op .rm-line-base {
+          stroke: rgba(255, 205, 85, 0.45) !important;
+          stroke-width: 4 !important;
+          opacity: 0.8 !important;
+        }
+        .rm-page--op .rm-line-accent {
+          stroke: #fff7df !important;
+          stroke-width: 2.25 !important;
+          opacity: 1 !important;
+          filter: drop-shadow(0 0 14px rgba(255, 183, 43, 0.9)) !important;
+        }
+        .rm-page--op #rm-tracer-shell {
+          fill: rgba(255, 183, 43, 0.62) !important;
+          filter: drop-shadow(0 0 16px rgba(255, 183, 43, 0.92)) !important;
+        }
+        .rm-page--op #rm-tracer-arrow {
+          fill: #ffffff !important;
+          filter: drop-shadow(0 0 14px rgba(255, 183, 43, 1)) !important;
+        }
+
         @media (max-width: 767px) {
-          .rm-page--op .rm-timeline { position: relative; }
-          .rm-page--op .rm-line-svg { overflow: visible; }
-          .rm-page--op .rm-line-glow {
-            stroke: #ffb72b !important;
-            stroke-width: 22 !important;
-            opacity: 0.34 !important;
-            filter: blur(5px);
-          }
-          .rm-page--op .rm-line-base {
-            stroke: rgba(255, 205, 85, 0.92) !important;
-            stroke-width: 3.4 !important;
-            opacity: 0.96 !important;
-          }
-          .rm-page--op .rm-line-accent {
-            stroke: #fff7df !important;
-            stroke-width: 2.25 !important;
-            opacity: 1 !important;
-            filter: drop-shadow(0 0 12px rgba(255, 183, 43, 0.9)) !important;
-          }
-          .rm-page--op #rm-tracer-shell {
-            fill: rgba(255, 183, 43, 0.62) !important;
-            filter: drop-shadow(0 0 16px rgba(255, 183, 43, 0.92)) !important;
-          }
-          .rm-page--op #rm-tracer-arrow {
-            fill: #ffffff !important;
-            filter: drop-shadow(0 0 14px rgba(255, 183, 43, 1)) !important;
-          }
           .rm-page--op .rm-end-popup { left: calc(100% + 0.95rem) !important; right: auto !important; top: 50% !important; bottom: auto !important; transform: translate(12px, -50%) scale(0.92) !important; min-width: 12rem !important; padding: 0.62rem 0.72rem !important; z-index: 10 !important; }
           .rm-page--op.is-end-reached .rm-end-popup, .rm-page--op .rm-row--final.is-end-reached .rm-end-popup { transform: translate(0, -50%) scale(1) !important; }
         }

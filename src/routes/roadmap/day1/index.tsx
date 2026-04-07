@@ -246,7 +246,12 @@ const EventCard = component$<EventCardProps>(
             {/* <p class="rm-card__overline">Node {String(ev.id).padStart(2, "0")}</p> */}
             <h3 class="rm-card__title">{ev.title}</h3>
           </div>
-          <span class="rm-card__toggle">{isActive ? "Collapse" : "Details \u2192"}</span>
+          <span class="rm-card__toggle">
+            {isActive ? "Collapse" : "Details"}
+            <svg class="rm-card__toggle-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d={isActive ? "M18 15l-6-6-6 6" : "M9 18l6-6-6-6"} />
+            </svg>
+          </span>
         </div>
         <p class="rm-card__desc">{ev.desc}</p>
         <div class="rm-card__quick-meta">
@@ -358,15 +363,15 @@ export default component$(function Day1Roadmap() {
           const r = n.getBoundingClientRect();
           return { x: r.left - cr.left + r.width / 2, y: r.top - cr.top + r.height / 2 };
         });
-        let d = `M \${pts[0].x.toFixed(1)} \${pts[0].y.toFixed(1)}`;
+        let d = `M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`;
         for (let i = 1; i < pts.length; i++) {
           const p = pts[i - 1], c = pts[i];
           const dy = c.y - p.y, bend = Math.max(60, dy * 0.42);
-          d += ` C \${p.x.toFixed(1)} \${(p.y + bend).toFixed(1)},`
-            + ` \${c.x.toFixed(1)} \${(c.y - bend).toFixed(1)},`
-            + ` \${c.x.toFixed(1)} \${c.y.toFixed(1)}`;
+          d += ` C ${p.x.toFixed(1)} ${(p.y + bend).toFixed(1)},`
+            + ` ${c.x.toFixed(1)} ${(c.y - bend).toFixed(1)},`
+            + ` ${c.x.toFixed(1)} ${c.y.toFixed(1)}`;
         }
-        svgEl.setAttribute("viewBox", `0 0 \${W} \${H}`);
+        svgEl.setAttribute("viewBox", `0 0 ${W} ${H}`);
         svgEl.setAttribute("width", String(W)); svgEl.setAttribute("height", String(H));
         for (const p of [pathBase, pathAccent, pathGlow]) {
           p.setAttribute("d", d); p.style.strokeDasharray = String(p.getTotalLength());
@@ -382,7 +387,7 @@ export default component$(function Day1Roadmap() {
         const pt = pathBase.getPointAtLength(off);
         const ptN = pathBase.getPointAtLength(Math.min(totalLen, off + 18));
         const ang = Math.atan2(ptN.y - pt.y, ptN.x - pt.x) * (180 / Math.PI);
-        tracer.setAttribute("transform", `translate(\${pt.x.toFixed(2)},\${pt.y.toFixed(2)}) rotate(\${ang.toFixed(1)})`);
+        tracer.setAttribute("transform", `translate(${pt.x.toFixed(2)},${pt.y.toFixed(2)}) rotate(${ang.toFixed(1)})`);
         tracer.style.opacity = cl >= 0 && cl <= 1 ? "1" : "0";
       };
 
@@ -395,7 +400,7 @@ export default component$(function Day1Roadmap() {
 
         const off = totalLen * (1 - prog);
         const endReached = prog >= 0.995;
-        pathBase.style.strokeDashoffset = String(off);
+        pathBase.style.strokeDashoffset = "0"; // Base line fully drawn
         pathAccent.style.strokeDashoffset = String(Math.max(0, off - 26));
         pathGlow.style.strokeDashoffset = String(off);
         posTracer(prog);
@@ -524,8 +529,7 @@ export default component$(function Day1Roadmap() {
           inset: 0;
           pointer-events: none;
           z-index: 0;
-          background: 
-            linear-gradient(90deg, rgba(6, 14, 6, 0.65) 0%, rgba(6, 14, 6, 0.12) 20%, rgba(6, 14, 6, 0.12) 80%, rgba(6, 14, 6, 0.65) 100%);
+          background: rgba(6, 14, 6, 0.45);
           opacity: 1;
         }
         .rm-page--day1 .rm-event-glass {
@@ -709,34 +713,34 @@ export default component$(function Day1Roadmap() {
         .rm-page--day1 .rm-end-popup p { margin: 0.55rem 0 0; color: rgba(240,255,210,0.92); font-size: 0.76rem; line-height: 1.45; }
         .rm-page--day1.is-end-reached .rm-end-popup, .rm-page--day1 .rm-row--final.is-end-reached .rm-end-popup { opacity: 1; transform: translate(0, -50%) scale(1); }
         .rm-page--day1.is-end-reached .rm-row--final .rm-node--finish { box-shadow: 0 0 0 4px rgba(215,255,74,0.16), 0 0 28px rgba(99,255,44,0.52), 0 0 72px rgba(99,255,44,0.22), 0 24px 50px rgba(0,0,0,0.44); }
+        .rm-page--day1 .rm-timeline { position: relative; }
+        .rm-page--day1 .rm-timeline__svg { overflow: visible; position: absolute; pointer-events: none; top: 0; left: 0; z-index: 2; width: 100%; height: 100%; }
+        .rm-page--day1 .rm-timeline__path--glow {
+          display: none !important;
+        }
+        .rm-page--day1 .rm-timeline__path--base {
+          stroke: rgba(16, 255, 112, 0.15) !important;
+          stroke-width: 4 !important;
+        }
+        .rm-page--day1 .rm-timeline__path--accent {
+          stroke: #ffffff !important;
+          stroke-width: 3 !important;
+          opacity: 1 !important;
+          filter: drop-shadow(0 0 12px rgba(99, 255, 44, 0.8)) !important;
+        }
+        .rm-page--day1 #rm-tracer-shell {
+          display: none !important;
+        }
+        .rm-page--day1 #rm-tracer-arrow {
+          fill: #ffffff !important;
+          filter: drop-shadow(0 0 10px rgba(99, 255, 44, 1)) !important;
+        }
+
+        .rm-timeline__tracer {
+          display: block;
+        }
+
         @media (max-width: 767px) {
-          .rm-page--day1 .rm-timeline { position: relative; }
-          .rm-page--day1 .rm-line-svg { overflow: visible; }
-          .rm-page--day1 .rm-line-glow {
-            stroke: #63ff2c !important;
-            stroke-width: 22 !important;
-            opacity: 0.34 !important;
-            filter: blur(5px);
-          }
-          .rm-page--day1 .rm-line-base {
-            stroke: rgba(215, 255, 74, 0.92) !important;
-            stroke-width: 3.4 !important;
-            opacity: 0.96 !important;
-          }
-          .rm-page--day1 .rm-line-accent {
-            stroke: #f6ffd6 !important;
-            stroke-width: 2.25 !important;
-            opacity: 1 !important;
-            filter: drop-shadow(0 0 12px rgba(153, 255, 79, 0.9)) !important;
-          }
-          .rm-page--day1 #rm-tracer-shell {
-            fill: rgba(215, 255, 74, 0.62) !important;
-            filter: drop-shadow(0 0 16px rgba(99, 255, 44, 0.92)) !important;
-          }
-          .rm-page--day1 #rm-tracer-arrow {
-            fill: #ffffff !important;
-            filter: drop-shadow(0 0 14px rgba(215, 255, 74, 1)) !important;
-          }
           .rm-page--day1 .rm-end-popup { left: calc(100% + 0.95rem) !important; right: auto !important; top: 50% !important; bottom: auto !important; transform: translate(12px, -50%) scale(0.92) !important; min-width: 12rem !important; padding: 0.62rem 0.72rem !important; z-index: 10 !important; }
           .rm-page--day1 .rm-end-popup::after { left: -0.45rem !important; right: auto !important; top: 50% !important; bottom: auto !important; transform: translateY(-50%) rotate(45deg) !important; border-right: none !important; border-bottom: 1px solid rgba(215,255,74,0.24) !important; border-left: 1px solid rgba(215,255,74,0.24) !important; border-top: none !important; }
           .rm-page--day1.is-end-reached .rm-end-popup, .rm-page--day1 .rm-row--final.is-end-reached .rm-end-popup { transform: translate(0, -50%) scale(1) !important; }
@@ -774,12 +778,13 @@ export default component$(function Day1Roadmap() {
 
           <div id="rm-timeline" class="rm-timeline">
             <svg id="rm-line-svg" class="rm-timeline__svg" aria-hidden="true">
-              <path id="rm-line-base" class="rm-timeline__path rm-timeline__path--base" />
-              <path id="rm-line-accent" class="rm-timeline__path rm-timeline__path--accent" />
-              <path id="rm-line-glow" class="rm-timeline__path rm-timeline__path--glow" />
-              <g id="rm-tracer" class="rm-timeline__tracer">
-                <circle id="rm-tracer-shell" r="14" />
-                <path id="rm-tracer-arrow" d="M -5 -4 L 6 0 L -5 4 Z" />
+              <path id="rm-line-base" class="rm-timeline__path rm-timeline__path--base" fill="none" />
+              <path id="rm-line-glow" class="rm-timeline__path rm-timeline__path--glow" fill="none" />
+              <path id="rm-line-accent" class="rm-timeline__path rm-timeline__path--accent" fill="none" />
+              <g id="rm-tracer" class="rm-timeline__tracer" style="opacity:0;">
+                <circle id="rm-tracer-shell" r="18" fill="rgba(99, 255, 44, 0.3)" />
+                <path id="rm-tracer-arrow" d="M -12,-9 L 16,0 L -12,9 C -8,4 -8,-4 -12,-9 Z" />
+                <circle r="6" fill="#fff" opacity="0.8" />
               </g>
             </svg>
 
@@ -789,7 +794,7 @@ export default component$(function Day1Roadmap() {
               const isActive = false;
               const canRegister = event.cat !== "opening" && event.cat !== "cultural";
               return (
-                <div key={event.id} class={["rm-row", `rm-row--\${side}`]}>
+                <div key={event.id} class={["rm-row", `rm-row--${side}`]}>
                   <div class="rm-row__side rm-row__side--left">
                     {side === "left" ? (
                       <>
@@ -800,10 +805,10 @@ export default component$(function Day1Roadmap() {
                       isActive && <PopupPanel ev={event} meta={meta} side="left" canRegister={canRegister} />
                     )}
                   </div>
-                  <div class={["rm-row__center", `rm-row__center--\${side === "left" ? "r" : "l"}`]}>
+                  <div class={["rm-row__center", `rm-row__center--${side === "left" ? "r" : "l"}`]}>
                     <div
                       class="rm-node"
-                      style={`--rm-accent:\${meta.color};--rm-accent-rgb:\${meta.rgb};`}
+                      style={`--rm-accent:${meta.color};--rm-accent-rgb:${meta.rgb};`}
                       data-snake-node=""
                     >
                       <span class="rm-node__pulse" /><span class="rm-node__halo" /><span class="rm-node__impact" />
@@ -843,6 +848,18 @@ export default component$(function Day1Roadmap() {
           </div>
         </div>
       </section>
+
+      <div class="rm-dock">
+        <div class="rm-dock__inner">
+          <Link href="/roadmap/day1" class="rm-dock__item is-active">Day 1</Link>
+          <Link href="/roadmap/day2" class="rm-dock__item">Day 2</Link>
+          <Link href="/roadmap/day3" class="rm-dock__item">Day 3</Link>
+          <span class="rm-dock__status">
+            <span class="rm-dock__status-dot" />
+            OMNITRIX THEME
+          </span>
+        </div>
+      </div>
     </div>
   );
 });

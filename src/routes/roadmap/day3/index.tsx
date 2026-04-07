@@ -310,7 +310,7 @@ export default component$(function Day3Roadmap() {
         const off = totalLen * (1 - prog);
         const endReached = prog >= 0.995;
 
-        pathBase.style.strokeDashoffset = String(off);
+        pathBase.style.strokeDashoffset = "0"; // Base line always fully drawn
         pathAccent.style.strokeDashoffset = String(Math.max(0, off - 26));
         pathGlow.style.strokeDashoffset = String(off);
         posTracer(prog);
@@ -483,7 +483,38 @@ export default component$(function Day3Roadmap() {
           transition: opacity 320ms ease, transform 380ms cubic-bezier(0.22, 1, 0.36, 1); z-index: 4;
         }
         .rm-page--sp.is-end-reached .rm-end-popup { opacity: 1; transform: translate(0, -50%) scale(1); }
-          .rm-page--sp .rm-timeline { position: relative; }
+        .rm-page--sp .rm-timeline { position: relative; }
+        .rm-page--sp .rm-line-svg { overflow: visible; position: absolute; pointer-events: none; top: 0; left: 0; z-index: 10; width: 100%; height: 100%; }
+        .rm-page--sp .rm-line-glow {
+          stroke: #ff3333 !important;
+          stroke-width: 22 !important;
+          opacity: 0.28 !important;
+          filter: blur(8px);
+        }
+        .rm-page--sp .rm-line-base {
+          stroke: rgba(255, 51, 51, 0.45) !important;
+          stroke-width: 4 !important;
+          opacity: 0.8 !important;
+        }
+        .rm-page--sp .rm-line-accent {
+          stroke: #ffffff !important;
+          stroke-width: 2.5 !important;
+          opacity: 1 !important;
+          filter: drop-shadow(0 0 14px rgba(255, 51, 51, 1)) !important;
+        }
+        .rm-page--sp #rm-tracer-shell {
+          fill: rgba(255, 51, 51, 0.6) !important;
+          filter: drop-shadow(0 0 18px rgba(255, 51, 51, 0.95)) !important;
+        }
+        .rm-page--sp #rm-tracer-arrow {
+          fill: #ffffff !important;
+          filter: drop-shadow(0 0 12px rgba(255, 51, 51, 1)) !important;
+        }
+
+        @media (max-width: 767px) {
+          .rm-page--sp .rm-end-popup { left: calc(100% + 0.95rem) !important; right: auto !important; top: 50% !important; bottom: auto !important; transform: translate(12px, -50%) scale(0.92) !important; min-width: 12rem !important; padding: 0.62rem 0.72rem !important; z-index: 10 !important; }
+          .rm-page--sp.is-end-reached .rm-end-popup, .rm-page--sp .rm-row--final.is-end-reached .rm-end-popup { transform: translate(0, -50%) scale(1) !important; }
+        }
         .rm-row--final { margin-bottom: 0 !important; }
         .rm-timeline { padding-bottom: 0 !important; }
       `}</style>
@@ -573,9 +604,9 @@ export default component$(function Day3Roadmap() {
               <path id="rm-line-accent" class="rm-line-accent" fill="none" stroke="rgba(255,255,255,0.7)" filter="url(#rm-glow-f)" />
               <g id="rm-tracer" style="opacity:0;will-change:transform;">
                 {/* Outer Glow Arrow */}
-                <path d="M -14,-10 L 18,0 L -14,10 C -10,4 -10,-4 -14,-10 Z" fill="url(#rm-tracer-fill)" filter="url(#rm-glow-f)" opacity="0.6" />
+                <path id="rm-tracer-shell" d="M -14,-10 L 18,0 L -14,10 C -10,4 -10,-4 -14,-10 Z" fill="url(#rm-tracer-fill)" filter="url(#rm-glow-f)" opacity="0.6" />
                 {/* Sleek Core Arrow */}
-                <path d="M -12,-8 L 14,0 L -12,8 C -9,3 -9,-3 -12,-8 Z" fill="#fff" filter="url(#rm-glow-f)" opacity="0.85" />
+                <path id="rm-tracer-arrow" d="M -12,-8 L 14,0 L -12,8 C -9,3 -9,-3 -12,-8 Z" fill="#fff" filter="url(#rm-glow-f)" opacity="0.85" />
                 
                 {/* Fast Inner Pulse */}
                 <circle cx="0" cy="0" r="18" fill="none" stroke="url(#rm-grad-line)" stroke-width="1.5" opacity="0.6">

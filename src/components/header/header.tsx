@@ -167,9 +167,8 @@ export const Header = component$(() => {
         {/* Right: Developers + Hamburger */}
         <div class="pointer-events-auto flex flex-1 items-center justify-end gap-2 sm:gap-3 md:flex-initial md:w-[290px] lg:w-[420px]">
           <div class="group pointer-events-auto relative hidden md:flex">
-            <Link
-              href="/developers"
-              class="relative z-10 flex items-center justify-center gap-2.5 overflow-hidden rounded-full border bg-[#050505]/40 px-5 py-2.5 text-[0.6rem] font-black tracking-[0.2em] whitespace-nowrap uppercase backdrop-blur-md transition-all duration-300 active:scale-95 lg:px-8 lg:py-3.5 lg:text-[0.7rem]"
+            <div
+              class="relative z-10 flex items-center justify-center gap-2.5 overflow-hidden rounded-full border bg-[#050505]/40 px-5 py-2.5 text-[0.6rem] font-black tracking-[0.2em] whitespace-nowrap uppercase backdrop-blur-md transition-all duration-300 lg:px-8 lg:py-3.5 lg:text-[0.7rem]"
               style={
                 developerButtonActive
                   ? `border-color:${accent};background:${accentBg};color:${accent};box-shadow:0 0 20px ${accentBg},inset 0 0 10px ${accentBg};`
@@ -196,7 +195,7 @@ export const Header = component$(() => {
                 <path d="M5 12h14" />
                 <path d="m12 5 7 7-7 7" />
               </svg>
-            </Link>
+            </div>
           </div>
 
           <button
@@ -252,16 +251,15 @@ export const Header = component$(() => {
           >
             Contacts
           </Link>
-          <Link
-            href="/developers"
-            class="mt-6 block rounded-2xl px-5 py-4 text-center text-sm font-black tracking-widest text-white uppercase transition-all active:scale-95"
-            style={`background:${accent};box-shadow:0 0 20px ${accentGlow};`}
+          <div
+            class="mt-6 block rounded-2xl px-5 py-4 text-center text-sm font-black tracking-widest text-white uppercase transition-all"
+            style={`background:${accent};box-shadow:0 0 20px ${accentGlow}; opacity: 0.8;`}
           >
             <span class="inline-flex items-center justify-center gap-2">
               <span class="inline-flex h-2 w-2 rounded-full bg-white opacity-90 shadow-[0_0_10px_white]" />
               <span>Developers</span>
             </span>
-          </Link>
+          </div>
         </div>
       </div>
     </>
