@@ -73,8 +73,7 @@ const sponsorTierMeta = [
     key: "silver",
     label: "Silver",
     eyebrow: "Sustaining Partners",
-    description:
-      "Targeted visibility and brand recognition among the student community.",
+    description: "",
     accent: "#ffffff",
     glow: "rgba(255, 255, 255, 0.2)",
   },
@@ -515,7 +514,7 @@ export default component$(() => {
               <div
                 data-sponsor-tilt
                 class="group relative mx-auto w-full max-w-[42rem] overflow-hidden rounded-[1.8rem] border border-white/10 bg-[#070707]/80 p-4 shadow-2xl backdrop-blur-3xl transition-all duration-500 hover:border-white/30 sm:p-5 lg:p-6 xl:mx-0 xl:max-w-none"
-                style={`box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 40px ${spotlight.glow};`}
+                style={`border-color:${spotlight.glow};box-shadow:0 16px 42px rgba(0,0,0,0.36),0 0 24px ${spotlight.glow};`}
               >
                 {/* Smooth Glass Highlights for Hover Effect */}
                 <div
@@ -557,7 +556,7 @@ export default component$(() => {
                       <div
                         key={`${spotlight.key}-${sponsor.name}`}
                         class="s-spotlight-item group flex min-h-[9rem] flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] p-4 backdrop-blur-sm transition-all duration-500 hover:bg-white/[0.08]"
-                        style={`border-color: ${spotlight.glow};`}
+                        style={`border-color:${spotlight.glow};box-shadow:0 10px 24px rgba(0,0,0,0.18),0 0 18px ${spotlight.glow};`}
                       >
                         <div class="flex h-16 w-full items-center justify-center overflow-hidden rounded-xl bg-white/95 p-3 shadow-inner group-hover:bg-white transition-colors duration-500">
                           <img
@@ -586,73 +585,6 @@ export default component$(() => {
       </section>
 
 
-      <section class="relative z-10 mx-auto mt-12 max-w-7xl">
-        <div class="s-reveal text-center">
-          <span class="t-badge">{copy.value.selectorBadge}</span>
-          <h2 class="t-heading mt-5 text-[clamp(2rem,4vw,3.3rem)] text-[var(--t-text)]">
-            {copy.value.selectorTitle}
-          </h2>
-        </div>
-
-        <div class="mt-12 relative">
-          {/* Continuous Spectrum Glow */}
-          <div class="absolute inset-x-0 top-1/2 -translate-y-1/2 h-px w-full bg-gradient-to-r from-[#ff4d4f] via-[#70f3ff] via-[#f5c842] via-[#c2cad7] to-[#7c5cff] opacity-40 blur-[2px] hidden lg:block"></div>
-          <div class="grid gap-4 md:grid-cols-3 lg:grid-cols-5 xl:gap-5">
-            {availableTiers.map((tier) => {
-              const active = selectedTier.value === tier.key;
-              const outerTheme = getOuterTierTheme(tier);
-              return (
-                <button
-                  key={tier.key}
-                  type="button"
-                  data-sponsor-tilt
-                  onClick$={() => jumpToTier(tier.key)}
-                  class={[
-                    "s-reveal group relative overflow-hidden rounded-[2rem] border bg-black/10 p-5 text-left backdrop-blur-2xl transition-all duration-500",
-                    active ? "translate-y-[-8px] scale-105 border-white/30" : "hover:-translate-y-2 hover:bg-white/[0.03] border-white/10",
-                  ]}
-                  style={`border-color: ${outerTheme.glow}; box-shadow: ${active
-                    ? `0 16px 40px ${outerTheme.glow}`
-                    : "0 10px 30px rgba(0,0,0,0.15)"
-                    }; will-change: transform, box-shadow;`}
-                >
-                  <div
-                    class="pointer-events-none absolute inset-0"
-                    style={`background: radial-gradient(circle at top right, ${outerTheme.glow}, transparent 40%);`}
-                  ></div>
-                  <div class="relative">
-                    <p class="text-[0.64rem] font-black tracking-[0.26em] text-[var(--t-dim)] uppercase">
-                      {tier.eyebrow}
-                    </p>
-                    <div class="mt-4 flex items-center justify-between gap-4">
-                      <h3 class="t-heading text-2xl text-[var(--t-text)]">
-                        {tier.label}
-                      </h3>
-                      <span
-                        class="inline-flex min-w-[3rem] justify-center rounded-full border px-3 py-1 text-xs font-black tracking-[0.18em] uppercase"
-                        style={`border-color: ${outerTheme.glow}; color: ${outerTheme.accent};`}
-                      >
-                        {tier.sponsors.length}
-                      </span>
-                    </div>
-                    <p class="mt-4 text-sm leading-relaxed text-[var(--t-muted)]">
-                      {tier.description}
-                    </p>
-                    <div class="mt-6 flex items-center gap-2 text-xs font-black tracking-[0.2em] text-[var(--t-text)] uppercase">
-                      <span
-                        class="inline-block h-2.5 w-2.5 rounded-full"
-                        style={`background: ${outerTheme.accent}; box-shadow: 0 0 18px ${outerTheme.glow};`}
-                      ></span>
-                      Focus Tier
-                    </div>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
       <section id="sponsor-hall" class="relative z-10 mx-auto mt-16 max-w-7xl">
         <div class="s-reveal mb-10 flex flex-wrap items-end justify-between gap-4">
           <div>
@@ -679,15 +611,15 @@ export default component$(() => {
                   id={`sponsor-tier-${tier.key}`}
                   key={tier.key}
                   class="s-reveal scroll-mt-28 rounded-[2.25rem] border bg-[rgba(5,5,5,0.72)] p-5 backdrop-blur-2xl sm:p-6 lg:p-7"
-                  style={`border-color: ${outerTheme.glow}; box-shadow: ${active
-                    ? `0 20px 60px ${outerTheme.glow}`
-                    : "0 10px 40px rgba(0,0,0,0.1)"
-                    }; will-change: transform, opacity;`}
+                  style={`border-color:${outerTheme.glow};box-shadow:${active
+                    ? `0 16px 42px rgba(0,0,0,0.24),0 0 24px ${outerTheme.glow}`
+                    : `0 12px 30px rgba(0,0,0,0.18),0 0 16px ${outerTheme.glow}`
+                    };will-change:transform,opacity;`}
                 >
                   <div class="grid gap-6 lg:grid-cols-[320px_1fr]">
                     <div
                       class="rounded-[1.75rem] border px-5 py-6"
-                      style={`border-color: ${outerTheme.glow}; background: radial-gradient(circle at top left, ${outerTheme.glow}, transparent 46%), rgba(255,255,255,0.02);`}
+                      style={`border-color:${outerTheme.glow};background:radial-gradient(circle at top left, ${outerTheme.glow}, transparent 46%), rgba(255,255,255,0.02);box-shadow:0 10px 24px rgba(0,0,0,0.16),0 0 18px ${outerTheme.glow};`}
                     >
                       <p class="text-[0.66rem] font-black tracking-[0.28em] text-[var(--t-dim)] uppercase">
                         Tier {String(index + 1).padStart(2, "0")}
@@ -701,9 +633,11 @@ export default component$(() => {
                       >
                         {tier.eyebrow}
                       </p>
-                      <p class="mt-5 text-sm leading-relaxed text-[var(--t-muted)]">
-                        {tier.description}
-                      </p>
+                      {tier.description && (
+                        <p class="mt-5 text-sm leading-relaxed text-[var(--t-muted)]">
+                          {tier.description}
+                        </p>
+                      )}
 
                       <div class="mt-6 flex flex-wrap gap-2">
                         <span class="t-chip">
@@ -712,22 +646,18 @@ export default component$(() => {
                         <span class="t-chip">Campus Activation</span>
                         <span class="t-chip">Digital Presence</span>
                       </div>
-
-                      <button
-                        type="button"
-                        onClick$={() => (selectedTier.value = tier.key)}
-                        class="t-btn-ghost mt-6 !w-full !justify-center !px-5 !py-3 text-sm"
-                      >
-                        Keep {tier.label} in Focus
-                      </button>
                     </div>
 
-                    <div class="rounded-[1.75rem] border border-white/8 bg-black/20 p-4 sm:p-5">
+                    <div
+                      class="rounded-[1.75rem] border border-white/8 bg-black/20 p-4 sm:p-5"
+                      style={`border-color:${outerTheme.glow};box-shadow:0 10px 24px rgba(0,0,0,0.16),0 0 18px ${outerTheme.glow};`}
+                    >
                       <div class="flex flex-wrap justify-center gap-4">
                         {tier.sponsors.map((sponsor) => (
                           <article
                             key={`${tier.key}-${sponsor.name}`}
                             class="group relative flex w-full max-w-[17rem] flex-col items-center justify-center rounded-[1.5rem] border border-white/10 bg-white/5 p-4 backdrop-blur-md transition-all duration-300 hover:-translate-y-2 hover:bg-white/10 hover:shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
+                            style={`border-color:${outerTheme.glow};box-shadow:0 8px 22px rgba(0,0,0,0.16),0 0 16px ${outerTheme.glow};`}
                           >
                             {sponsor.isActive && (
                               <div class="pointer-events-none absolute -top-2 -right-2 z-20 flex items-center gap-1 rounded-full border border-[#ff4d4f]/40 bg-[#ff4d4f] px-2 py-0.5 text-[0.45rem] font-black tracking-widest text-black uppercase shadow-[0_0_15px_rgba(255,77,79,0.5)]">
@@ -781,10 +711,8 @@ export default component$(() => {
               <article
                 key={benefit.title}
                 class="s-reveal s-benefit-card"
-                style={`--s-benefit-accent:${benefit.accent};--s-benefit-glow:${benefit.glow};transition-delay:${index * 90}ms;`}
+                style={`--s-benefit-accent:${benefit.accent};--s-benefit-glow:${benefit.glow};`}
               >
-                <span class="s-benefit-card__halo"></span>
-                <span class="s-benefit-card__sheen"></span>
                 <div class="s-benefit-card__top">
                   <span class="s-benefit-card__index">0{index + 1}</span>
                   <span class="s-benefit-card__eyebrow">{benefit.eyebrow}</span>
