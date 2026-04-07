@@ -10,6 +10,7 @@ import { Header } from "~/components/header/header";
 import { Chatbot } from "~/components/chatbot/Chatbot";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { applyPerfTier, watchPerfTier } from "~/utils/perf";
 interface LayoutCopy {
   underDevelopment: {
     ariaLabel: string;
@@ -95,8 +96,12 @@ export default component$(() => {
 
   useVisibleTask$(() => {
     underDev.value = import.meta.env.PUBLIC_UNDER_DEV !== "false";
-    
+    // Apply 3-tier perf tier to <html> (data-perf-tier="lo|mid|hi")
+    // and data-mobile-perf for backwards-compat with existing CSS guards
+    applyPerfTier();
+    const stopWatch = watchPerfTier();
     gsap.registerPlugin(ScrollTrigger);
+    return () => stopWatch();
   });
 
   useVisibleTask$(async () => {
@@ -152,9 +157,10 @@ export default component$(() => {
     <div class="relative min-h-screen overflow-x-hidden bg-[#050505] text-[#f0fff0]">
       {/* Ambient background orbs */}
       {!isSponsorsRoute && (
-        <div class="pointer-events-none fixed inset-0 z-0">
-          <div class="absolute top-0 right-0 h-[600px] w-[600px] rounded-full opacity-[0.03] blur-[120px]" style={{ backgroundColor: "var(--t-brand-accent)" }} />
-          <div class="absolute bottom-0 left-0 h-[500px] w-[500px] rounded-full opacity-[0.02] blur-[100px]" style={{ backgroundColor: "var(--t-brand-accent)" }} />
+        <div class="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+          {/* Perf Fix: Replaced blur-[120px] divs with zero-cost radial-gradients */}
+          <div class="absolute top-0 right-0 h-[600px] w-[600px]" style={{ background: "radial-gradient(circle at top right, rgba(var(--t-brand-rgb), 0.05), transparent 70%)" }} />
+          <div class="absolute bottom-0 left-0 h-[500px] w-[500px]" style={{ background: "radial-gradient(circle at bottom left, rgba(var(--t-brand-rgb), 0.03), transparent 70%)" }} />
         </div>
       )}
 

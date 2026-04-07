@@ -3,6 +3,7 @@ import { Link, type DocumentHead } from "@builder.io/qwik-city";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { HeroSlider } from "../components/hero-slider/HeroSlider";
+import { getDevicePerfTier } from "../utils/perf";
 
 /* ─────────────────────────── types ─────────────────────────── */
 interface ConfigData {
@@ -139,17 +140,8 @@ const parseFestStart = (datesText: string, isoDate?: string): Date => {
   return new Date("2026-03-15T09:00:00");
 };
 
-const isMobilePerfMode = (): boolean => {
-  if (typeof window === "undefined") return false;
-  const coarse = window.matchMedia("(pointer: coarse)").matches;
-  const narrow = window.matchMedia("(max-width: 900px)").matches;
-  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const lowCpu = typeof navigator !== "undefined"
-    && typeof navigator.hardwareConcurrency === "number"
-    && navigator.hardwareConcurrency > 0
-    && navigator.hardwareConcurrency <= 4;
-  return reducedMotion || coarse || narrow || lowCpu;
-};
+/* perf helper — lo+mid get lighter animations, hi gets everything */
+const isMobilePerfMode = (): boolean => getDevicePerfTier() !== "hi";
 
 const dayAliases: Record<string, string[]> = {
   "Day One": ["Day 1", "Day One"],

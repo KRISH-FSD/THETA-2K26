@@ -280,8 +280,8 @@ body {
   background: var(--t-grad-card);
   border: 1px solid var(--t-stroke);
   border-radius: 1.5rem;
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   box-shadow: var(--t-shadow-card);
   overflow: hidden;
 }
@@ -360,7 +360,7 @@ body {
   border-radius: 50%;
   background: var(--t-cyan);
   box-shadow: 0 0 8px var(--t-cyan);
-  animation: pulseDot 2s ease-in-out infinite;
+  animation: pulseDot 4s ease-in-out infinite;
 }
 
 @keyframes pulseDot {
@@ -479,8 +479,8 @@ body {
   align-items: center;
   border-bottom: 1px solid rgba(120, 80, 255, 0.1);
   background: rgba(5, 3, 15, 0.75);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   transition:
     background 300ms ease,
     border-color 300ms ease;
@@ -671,8 +671,8 @@ body {
   align-items: center;
   border-bottom: 1px solid rgba(120, 80, 255, 0.1);
   background: rgba(5, 3, 15, 0.75);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   transition:
     background 300ms ease,
     border-color 300ms ease;
@@ -815,8 +815,9 @@ body {
 .t-day-card {
   position: relative;
   background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(32px) saturate(180%);
-  -webkit-backdrop-filter: blur(32px) saturate(180%);
+  /* Perf Fix 1.3: reduced from blur(32px) saturate(180%) */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 2rem;
   overflow: hidden;
@@ -956,7 +957,7 @@ body {
   box-shadow:
     inset 0 0 26px rgba(255, 255, 255, 0.014),
     0 18px 42px rgba(0, 0, 0, 0.12);
-  backdrop-filter: blur(6px);
+  /* backdrop-filter removed — GPU perf fix 1.3 */
   opacity: 0.32;
   will-change: transform;
   transition: transform 260ms ease-out, opacity 260ms ease-out;
@@ -1016,7 +1017,7 @@ body {
   box-shadow:
     inset 0 10px 18px rgba(255, 255, 255, 0.028),
     0 18px 42px rgba(0, 0, 0, 0.18);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(4px);
   animation: festival-bubble-float 11s ease-in-out infinite;
 }
 
@@ -1108,45 +1109,23 @@ body {
 }
 
 @keyframes festival-shape-drift {
-  0% {
-    transform: translate3d(0, 0, 0) scale(0.98);
-  }
-
-  50% {
-    transform: translate3d(2%, -3%, 0) scale(1.04);
-  }
-
-  100% {
-    transform: translate3d(-2%, 2%, 0) scale(1.01);
-  }
+  /* Perf Fix 1.4: removed scale() — translate3d only hits compositor, scale forces repaint */
+  0% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(2%, -3%, 0); }
+  100% { transform: translate3d(-2%, 2%, 0); }
 }
 
 @keyframes festival-bubble-float {
-  0% {
-    transform: translate3d(0, 0, 0) scale(0.98);
-  }
-
-  50% {
-    transform: translate3d(0, -10px, 0) scale(1.03);
-  }
-
-  100% {
-    transform: translate3d(0, 4px, 0) scale(0.995);
-  }
+  /* Perf Fix 1.4: removed scale() — translate3d only */
+  0% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -10px, 0); }
+  100% { transform: translate3d(0, 4px, 0); }
 }
 
 @keyframes festival-bubble-ring {
-
-  0%,
-  100% {
-    transform: scale(0.96);
-    opacity: 0.46;
-  }
-
-  50% {
-    transform: scale(1.08);
-    opacity: 0.8;
-  }
+  /* Perf Fix 1.4: opacity-only animation — no scale = no repaint */
+  0%, 100% { opacity: 0.46; }
+  50% { opacity: 0.8; }
 }
 
 @keyframes festival-logo-float {
@@ -1255,6 +1234,80 @@ html[data-mobile-perf="true"] .home-cta__card,
 html[data-mobile-perf="true"] .theta-stats-node {
   transition-duration: 160ms !important;
   will-change: auto !important;
+}
+
+/* ============================================================
+   PERF TIER: MID — Normal desktop (integrated GPU, 5–7 cores)
+   Kills the secondary aurora layers and heavy stats animations
+   that don't affect core visuals but cost ~6ms GPU/frame each.
+   ============================================================ */
+html[data-perf-tier="mid"] .festival-days-aurora--b,
+html[data-perf-tier="mid"] .festival-days-aurora--c {
+  display: none !important;
+}
+
+html[data-perf-tier="mid"] .theta-stats-core__laser-scan,
+html[data-perf-tier="mid"] .theta-stats-core__ring {
+  animation: none !important;
+  display: none !important;
+}
+
+html[data-perf-tier="mid"] .festival-days-bubble__core {
+  animation-duration: 20s !important;
+}
+
+html[data-perf-tier="mid"] .t-marquee-track {
+  animation-duration: 45s !important;
+}
+
+/* ============================================================
+   PERF TIER: LO — extends existing data-mobile-perf="true" guards
+   Kills ALL aurora, bubble, orbit animations. Max static fallback.
+   ============================================================ */
+html[data-perf-tier="lo"] .festival-days-aurora,
+html[data-perf-tier="lo"] .festival-days-aurora--a,
+html[data-perf-tier="lo"] .festival-days-aurora--b,
+html[data-perf-tier="lo"] .festival-days-aurora--c {
+  animation: none !important;
+  opacity: 0.08 !important;
+  filter: none !important;
+}
+
+html[data-perf-tier="lo"] .festival-days-bubble__core,
+html[data-perf-tier="lo"] .festival-days-bubble__ring {
+  animation: none !important;
+  backdrop-filter: none !important;
+}
+
+html[data-perf-tier="lo"] .theta-stats-core__hexagon {
+  animation: none !important;
+}
+
+html[data-perf-tier="lo"] .theta-stats-core {
+  animation: none !important;
+  transform: none !important;
+}
+
+html[data-perf-tier="lo"] .t-marquee-track {
+  animation-duration: 60s !important;
+}
+
+/* ============================================================
+   PREFERS-REDUCED-MOTION — total kill-switch
+   All infinite loops stopped, transitions cut to near-instant.
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .t-marquee-track {
+    animation-play-state: paused !important;
+  }
 }
 
 @media (max-width: 767px) {
@@ -1374,8 +1427,9 @@ html[data-mobile-perf="true"] .theta-stats-node {
     rgba(10, 5, 20, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 2.2rem;
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  /* Perf Fix 1.3: reduced from blur(40px) saturate(180%) */
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.06),
     0 24px 64px rgba(0, 0, 0, 0.6);
@@ -1545,10 +1599,10 @@ html[data-mobile-perf="true"] .theta-stats-node {
     inset 0 1px 0 rgba(255, 255, 255, 0.04),
     0 8px 30px rgba(0, 0, 0, 0.6),
     0 0 40px rgba(189, 255, 0, 0.08);
-  backdrop-filter: blur(40px);
+  backdrop-filter: blur(12px);
   overflow: visible;
   isolation: isolate;
-  animation: thetaStatsFloat 7s ease-in-out infinite;
+  animation: thetaStatsFloat 12s ease-in-out infinite; /* Perf Fix 1.4: slowed from 7s */
   transform-style: preserve-3d;
   z-index: 0;
   pointer-events: none;
@@ -1946,9 +2000,9 @@ html[data-mobile-perf="true"] .theta-stats-node {
   font-weight: 700;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  backdrop-filter: blur(16px);
+  /* backdrop-filter removed — GPU perf fix 1.3 */
   box-shadow: 0 0 30px rgba(14, 169, 53, 0.15);
-  animation: pulseGlow 2.5s ease-in-out infinite;
+  animation: pulseGlow 5s ease-in-out infinite; /* Perf Fix 1.4: slowed from 2.5s */
 }
 
 @keyframes pulseGlow {
@@ -1993,7 +2047,7 @@ html[data-mobile-perf="true"] .theta-stats-node {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.08),
     0 18px 44px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(22px);
+  backdrop-filter: blur(8px);
   transition:
     transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1),
     border-color 300ms ease,

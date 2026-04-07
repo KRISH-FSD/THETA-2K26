@@ -7,6 +7,7 @@ import {
 } from "@builder.io/qwik";
 import { Link } from "@builder.io/qwik-city";
 import gsap from "gsap";
+import { getDevicePerfTier } from "~/utils/perf";
 
 /* ─── Slide data — replace bgImage paths with your real images ─── */
 export const heroSlides = [
@@ -201,21 +202,14 @@ export const HeroSlider = component$(() => {
     }
 
     const duration = 6000;
-    const rafId = window.requestAnimationFrame(() => {
-    });
-    // Sync signal for thumbnails
+    // Perf Fix 2.2: Throttle progress updates to 200ms instead of every frame (RAF)
     const start = performance.now();
-    const updateSignal = (time: number) => {
-      const elapsed = time - start;
+    const interval = setInterval(() => {
+      const elapsed = Date.now() - start;
       slideProgress.value = Math.min((elapsed / duration) * 100, 100);
-      if (elapsed < duration) requestAnimationFrame(updateSignal);
-    };
-    const signalRaf = requestAnimationFrame(updateSignal);
+    }, 200);
 
-    cleanup(() => {
-      window.cancelAnimationFrame(rafId);
-      window.cancelAnimationFrame(signalRaf);
-    });
+    cleanup(() => clearInterval(interval));
 
     const timeoutId = window.setTimeout(() => {
       const nextIdx = (active.value + 1) % heroSlides.length;
@@ -313,6 +307,14 @@ export const HeroSlider = component$(() => {
       currentVideo.removeEventListener("timeupdate", syncProgress);
       currentVideo.removeEventListener("ended", handleEnded);
     });
+
+    // Perf Fix 2.3: Pause/Play based on visibility
+    const handleVisibility = () => {
+      if (document.hidden) currentVideo.pause();
+      else if (isHeroInView.value && isDesktop.value) currentVideo.play().catch(() => {});
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+    cleanup(() => document.removeEventListener("visibilitychange", handleVisibility));
   });
 
   const slide = heroSlides[active.value];
@@ -334,7 +336,7 @@ export const HeroSlider = component$(() => {
             transform: "none"
           }}
         >
-          {s.bgVideo && isDesktop.value ? (
+          {s.bgVideo && isDesktop.value && getDevicePerfTier() === "hi" ? (
             isHeroInView.value && active.value === i ? (
               <video
                 ref={videoRef}
@@ -421,7 +423,7 @@ export const HeroSlider = component$(() => {
         <div class="hs-video-branding" aria-label="Theta and SASTRA logos">
           <img src="/theta-logo.png" alt="Theta" class="hs-video-branding__logo hs-video-branding__logo--theta" />
           <div class="hs-video-branding__divider" />
-          <img src="/sastra.png" alt="SASTRA" class="hs-video-branding__logo hs-video-branding__logo--sastra" />
+          <img src="/sastra.webp" alt="SASTRA" class="hs-video-branding__logo hs-video-branding__logo--sastra" />
         </div>
       )}
 

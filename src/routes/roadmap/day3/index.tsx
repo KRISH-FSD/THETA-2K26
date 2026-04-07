@@ -1,5 +1,6 @@
 import { component$, useVisibleTask$ } from "@builder.io/qwik";
 import { Link, type DocumentHead } from "@builder.io/qwik-city";
+import { getDevicePerfTier } from "~/utils/perf";
 
 type Cat = "opening" | "tech" | "workshop" | "quiz" | "fun" | "cultural";
 
@@ -224,9 +225,8 @@ export default component$(function Day3Roadmap() {
   useVisibleTask$(() => {
     const page = document.querySelector(".rm-page--sp") as HTMLElement | null;
     if (!page) return;
-    let rafId = 0;
+    let throttleTimer: any = null;
     const updateScroll = () => {
-      rafId = 0;
       const scrollMax = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
       const scrollRatio = window.scrollY / scrollMax;
       page.style.setProperty("--rm-scroll-progress", scrollRatio.toFixed(4));
@@ -243,14 +243,17 @@ export default component$(function Day3Roadmap() {
       page.style.setProperty("--rm-bg3-shift", `${(140 * (1 - img3)).toFixed(1)}px`);
     };
     const onScroll = () => {
-      if (rafId) return;
-      rafId = requestAnimationFrame(updateScroll);
+      if (throttleTimer) return;
+      throttleTimer = setTimeout(() => {
+        updateScroll();
+        throttleTimer = null;
+      }, 100);
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     updateScroll();
     return () => {
       window.removeEventListener("scroll", onScroll);
-      if (rafId) cancelAnimationFrame(rafId);
+      if (throttleTimer) clearTimeout(throttleTimer);
     };
   });
 
@@ -269,8 +272,9 @@ export default component$(function Day3Roadmap() {
       let totalLen = 0, rafId = 0, scheduled = false, needsBuild = true;
       let targetProg = 0, renderProg = 0, tracerRafId = 0;
       let ro: ResizeObserver | undefined;
-      const isMobile = window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 767;
-      const smoothFactor = isMobile ? 0.08 : 0.32;
+      const tier = getDevicePerfTier();
+      const isMobile = tier === "lo" || window.innerWidth <= 767;
+      const smoothFactor = isMobile ? 0.1 : 0.32;
       const revealed = new Set<Element>();
       const liveNodes = () => Array.from(container.querySelectorAll<HTMLElement>(".rm-row:not(.rm-row--final) .rm-node, .rm-node--finish")).filter((n) => n.offsetParent !== null && n.offsetWidth > 0);
       const buildPath = (): boolean => {
@@ -289,8 +293,9 @@ export default component$(function Day3Roadmap() {
           d += ` C ${p.x.toFixed(1)} ${(p.y + bend).toFixed(1)},` + ` ${c.x.toFixed(1)} ${(c.y - bend).toFixed(1)},` + ` ${c.x.toFixed(1)} ${c.y.toFixed(1)}`;
         }
         svgEl.setAttribute("viewBox", `0 0 ${W} ${H}`); svgEl.setAttribute("width", String(W)); svgEl.setAttribute("height", String(H));
-        for (const p of [pathBase, pathAccent, pathGlow]) { p.setAttribute("d", d); p.style.strokeDasharray = String(p.getTotalLength()); }
+        for (const p of [pathBase, pathAccent, pathGlow]) { p.setAttribute("d", d); }
         totalLen = pathBase.getTotalLength();
+        for (const p of [pathBase, pathAccent, pathGlow]) { p.style.strokeDasharray = String(totalLen); }
         return true;
       };
       const posTracer = (prog: number) => {
@@ -339,7 +344,7 @@ export default component$(function Day3Roadmap() {
         renderProg += (targetProg - renderProg) * smoothFactor;
         if (Math.abs(targetProg - renderProg) < 0.0012) renderProg = targetProg;
         applyProgress(renderProg, ns, VH);
-        if (Math.abs(targetProg - renderProg) >= 0.0012) tracerRafId = requestAnimationFrame(animateTracer);
+        if (tier !== "lo" && Math.abs(targetProg - renderProg) >= 0.0012) tracerRafId = requestAnimationFrame(animateTracer);
       };
       const queueTracer = () => {
         if (tracerRafId) return;
@@ -395,7 +400,7 @@ export default component$(function Day3Roadmap() {
         /* Redesigned Popup Block */
         .rm-page--sp .rm-popup {
           background: rgba(4, 0, 8, 0.98);
-          backdrop-filter: blur(28px);
+          backdrop-filter: blur(12px);
           border-color: rgba(255, 51, 51, 0.35);
           box-shadow: 0 32px 84px rgba(0,0,0,0.64), 0 0 24px rgba(255, 51, 51, 0.08);
           animation: rmPopupEnter 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
@@ -453,7 +458,7 @@ export default component$(function Day3Roadmap() {
             linear-gradient(180deg, rgba(8, 0, 12, 0.52) 0%, rgba(12, 0, 18, 0.35) 18%, rgba(12, 0, 18, 0.46) 56%, rgba(4, 0, 6, 0.82) 100%),
             radial-gradient(circle at 50% 20%, rgba(255, 51, 51, 0.08), transparent 25%);
         }
-        .rm-page--sp .rm-card { background: rgba(4, 0, 8, 0.95); backdrop-filter: blur(24px); border-color: rgba(255, 51, 51, 0.22); opacity: 0; will-change: transform, opacity; }
+        .rm-page--sp .rm-card { background: rgba(4, 0, 8, 0.95); backdrop-filter: blur(10px); border-color: rgba(255, 51, 51, 0.22); opacity: 0; will-change: transform, opacity; }
         .rm-row--left .rm-card.is-revealed { animation: rmCardRotateLeft 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
         .rm-row--right .rm-card.is-revealed { animation: rmCardRotateRight 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
         @keyframes rmCardRotateLeft {

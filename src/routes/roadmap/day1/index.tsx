@@ -1,5 +1,6 @@
 import { component$, useVisibleTask$ } from "@builder.io/qwik";
 import { Link, type DocumentHead } from "@builder.io/qwik-city";
+import { getDevicePerfTier } from "~/utils/perf";
 
 type Cat = "opening" | "tech" | "workshop" | "quiz" | "fun" | "cultural";
 
@@ -295,9 +296,8 @@ export default component$(function Day1Roadmap() {
   useVisibleTask$(() => {
     const page = document.querySelector(".rm-page--day1") as HTMLElement | null;
     if (!page) return;
-    let rafId = 0;
+    let throttleTimer: any = null;
     const updateScroll = () => {
-      rafId = 0;
       const scrollMax = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
       const scrollRatio = window.scrollY / scrollMax;
       page.style.setProperty("--rm-scroll-progress", scrollRatio.toFixed(4));
@@ -317,14 +317,18 @@ export default component$(function Day1Roadmap() {
       page.style.setProperty("--rm-bg2-shift", `${(140 * (1 - img2)).toFixed(1)}px`);
     };
     const onScroll = () => {
-      if (rafId) return;
-      rafId = requestAnimationFrame(updateScroll);
+      if (throttleTimer) return;
+      // Perf Fix 2.8: Throttle scroll heavy property updates to 100ms
+      throttleTimer = setTimeout(() => {
+        updateScroll();
+        throttleTimer = null;
+      }, 100);
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     updateScroll();
     return () => {
       window.removeEventListener("scroll", onScroll);
-      if (rafId) cancelAnimationFrame(rafId);
+      if (throttleTimer) clearTimeout(throttleTimer);
     };
   });
 
@@ -345,8 +349,9 @@ export default component$(function Day1Roadmap() {
       let targetProg = 0, renderProg = 0, tracerRafId = 0;
       let ro: ResizeObserver | undefined;
       const lateRebuildTimers: number[] = [];
-      const isMobile = window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 767;
-      const smoothFactor = isMobile ? 0.08 : 0.32;
+      const tier = getDevicePerfTier();
+      const isMobile = tier === "lo" || window.innerWidth <= 767;
+      const smoothFactor = isMobile ? 0.1 : 0.32;
       const revealed = new Set<Element>();
 
       const liveNodes = () =>
@@ -373,10 +378,15 @@ export default component$(function Day1Roadmap() {
         }
         svgEl.setAttribute("viewBox", `0 0 ${W} ${H}`);
         svgEl.setAttribute("width", String(W)); svgEl.setAttribute("height", String(H));
+        
+        // Perf Fix 2.9: Cache totalLen and batch attribute updates
         for (const p of [pathBase, pathAccent, pathGlow]) {
-          p.setAttribute("d", d); p.style.strokeDasharray = String(p.getTotalLength());
+          p.setAttribute("d", d);
         }
         totalLen = pathBase.getTotalLength();
+        for (const p of [pathBase, pathAccent, pathGlow]) {
+           p.style.strokeDasharray = String(totalLen);
+        }
         return true;
       };
 
@@ -431,7 +441,8 @@ export default component$(function Day1Roadmap() {
         renderProg += (targetProg - renderProg) * smoothFactor;
         if (Math.abs(targetProg - renderProg) < 0.0012) renderProg = targetProg;
         applyProgress(renderProg, ns, VH);
-        if (Math.abs(targetProg - renderProg) >= 0.0012) {
+        // Perf Fix: Disable lerping animation on low-spec for instant response
+        if (tier !== "lo" && Math.abs(targetProg - renderProg) >= 0.0012) {
           tracerRafId = requestAnimationFrame(animateTracer);
         }
       };
@@ -536,11 +547,11 @@ export default component$(function Day1Roadmap() {
           background: linear-gradient(145deg, rgba(14, 28, 14, 0.92), rgba(8, 18, 8, 0.86));
           border-color: rgba(99, 255, 44, 0.42);
           box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 0 40px rgba(99,255,44,0.12), 0 22px 56px rgba(0,0,0,0.48);
-          backdrop-filter: blur(24px);
+          backdrop-filter: blur(12px);
         }
         .rm-page--day1 .rm-card {
            background: rgba(8, 16, 8, 0.94);
-           backdrop-filter: blur(20px);
+           backdrop-filter: blur(10px);
            border-color: rgba(99, 255, 44, 0.28);
            opacity: 0;
            will-change: transform, opacity;
@@ -581,7 +592,7 @@ export default component$(function Day1Roadmap() {
         }
         .rm-page--day1 .rm-popup {
            background: rgba(8, 16, 8, 0.98);
-           backdrop-filter: blur(28px);
+           backdrop-filter: blur(12px);
            border-color: rgba(99, 255, 44, 0.35);
            box-shadow: 0 32px 84px rgba(0,0,0,0.64), 0 0 24px rgba(99,255,44,0.08);
            animation: rmPopupEnter 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
