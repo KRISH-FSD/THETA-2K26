@@ -1012,14 +1012,14 @@ export default component$(() => {
       </section>
 
       {/* ═══════════════ SECTOR DIVIDER: ROADMAP TO STATS ═══════════════ */}
-      <div class="relative w-full h-px bg-gradient-to-r from-transparent via-[#70f3ff]/30 to-transparent my-10 sm:my-16">
+      <div class="relative hidden lg:block w-full h-px bg-gradient-to-r from-transparent via-[#70f3ff]/30 to-transparent my-10 sm:my-16">
         <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-6 py-1 rounded-full border border-[#70f3ff]/20 bg-black backdrop-blur-md text-[9px] font-black uppercase tracking-[0.4em] text-[#70f3ff] shadow-[0_0_15px_rgba(112,243,255,0.1)]">
           Quantum Telemetry Active
         </div>
       </div>
 
       {/* ═══════════════ STATS ═══════════════ */}
-      <section id="theta-stats" class="theta-stats-section px-4 py-12 sm:px-6 lg:px-8 lg:py-0 bg-[#0a0514] min-h-screen lg:min-h-0 lg:h-screen w-full flex flex-col lg:flex-row items-center justify-center overflow-hidden">
+      <section id="theta-stats" class="theta-stats-section hidden lg:flex px-4 py-12 sm:px-6 lg:px-8 lg:py-0 bg-[#0a0514] min-h-screen lg:min-h-0 lg:h-screen w-full flex-col lg:flex-row items-center justify-center overflow-hidden">
         <div class="theta-stats-bento grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] gap-6 sm:gap-10 max-w-[125rem] mx-auto h-auto lg:h-full lg:max-h-[85vh] items-center w-full">
 
           {/* --- BENTO CARD: VISUAL & TITLE --- */}

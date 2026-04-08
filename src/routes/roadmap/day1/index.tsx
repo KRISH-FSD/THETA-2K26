@@ -1,6 +1,6 @@
 import { component$, useVisibleTask$ } from "@builder.io/qwik";
 import { Link, type DocumentHead } from "@builder.io/qwik-city";
-import { getDevicePerfTier } from "~/utils/perf";
+import { initRoadmapTimeline } from "~/utils/roadmap";
 
 type Cat = "opening" | "tech" | "workshop" | "quiz" | "fun" | "cultural";
 
@@ -252,179 +252,7 @@ const EventCard = component$<EventCardProps>(
 
 export default component$(function Day1Roadmap() {
   useVisibleTask$(() => {
-    const boot = () => {
-      const pageRoot = document.querySelector(".rm-page--day1") as HTMLElement | null;
-      const container = document.getElementById("rm-timeline") as HTMLElement | null;
-      const svgEl = document.getElementById("rm-line-svg") as unknown as SVGSVGElement | null;
-      const pathBase = document.getElementById("rm-line-base") as unknown as SVGPathElement | null;
-      const pathAccent = document.getElementById("rm-line-accent") as unknown as SVGPathElement | null;
-      const pathGlow = document.getElementById("rm-line-glow") as unknown as SVGPathElement | null;
-      const tracer = document.getElementById("rm-tracer") as unknown as SVGGElement | null;
-      if (!container || !svgEl || !pathBase || !pathAccent || !pathGlow) return;
-      const finalRow = container.querySelector(".rm-row--final") as HTMLElement | null;
-      const finalNode = finalRow?.querySelector(".rm-node--finish") as HTMLElement | null;
-
-      let totalLen = 0, rafId = 0, scheduled = false, needsBuild = true;
-      let targetProg = 0, renderProg = 0, tracerRafId = 0;
-      let ro: ResizeObserver | undefined;
-      const lateRebuildTimers: number[] = [];
-      const tier = getDevicePerfTier();
-      const isMobile = tier === "lo" || window.innerWidth <= 767;
-      const smoothFactor = isMobile ? 0.1 : 0.32;
-      const revealed = new Set<Element>();
-
-      const liveNodes = () =>
-        Array.from(container.querySelectorAll<HTMLElement>(".rm-row:not(.rm-row--final) .rm-node, .rm-node--finish"))
-          .filter((n) => n.offsetParent !== null && n.offsetWidth > 0);
-
-      const buildPath = (): boolean => {
-        const nodes = liveNodes();
-        if (nodes.length < 2) return false;
-        const cr = container.getBoundingClientRect();
-        const W = container.clientWidth;
-        const H = Math.max(container.scrollHeight, container.clientHeight);
-        const pts = nodes.map((n) => {
-          const r = n.getBoundingClientRect();
-          return { x: r.left - cr.left + r.width / 2, y: r.top - cr.top + r.height / 2 };
-        });
-        let d = `M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`;
-        for (let i = 1; i < pts.length; i++) {
-          const p = pts[i - 1], c = pts[i];
-          const dy = c.y - p.y, bend = Math.max(60, dy * 0.42);
-          d += ` C ${p.x.toFixed(1)} ${(p.y + bend).toFixed(1)},`
-            + ` ${c.x.toFixed(1)} ${(c.y - bend).toFixed(1)},`
-            + ` ${c.x.toFixed(1)} ${c.y.toFixed(1)}`;
-        }
-        svgEl.setAttribute("viewBox", `0 0 ${W} ${H}`);
-        svgEl.setAttribute("width", String(W)); svgEl.setAttribute("height", String(H));
-        
-        // Perf Fix 2.9: Cache totalLen and batch attribute updates
-        for (const p of [pathBase, pathAccent, pathGlow]) {
-          p.setAttribute("d", d);
-        }
-        totalLen = pathBase.getTotalLength();
-        for (const p of [pathBase, pathAccent, pathGlow]) {
-           p.style.strokeDasharray = String(totalLen);
-        }
-        return true;
-      };
-
-      const posTracer = (prog: number) => {
-        if (!tracer || totalLen === 0) return;
-        const cl = Math.max(0, Math.min(1, prog));
-        const off = cl * totalLen;
-        const pt = pathBase.getPointAtLength(off);
-        const ptN = pathBase.getPointAtLength(Math.min(totalLen, off + 18));
-        const ang = Math.atan2(ptN.y - pt.y, ptN.x - pt.x) * (180 / Math.PI);
-        tracer.setAttribute("transform", `translate(${pt.x.toFixed(2)},${pt.y.toFixed(2)}) rotate(${ang.toFixed(1)})`);
-        tracer.style.opacity = cl >= 0 && cl <= 1 ? "1" : "0";
-      };
-
-      const applyProgress = (prog: number, ns: HTMLElement[], VH: number) => {
-        const currentIdx = Math.floor(prog * (ns.length - 1) + 0.1);
-        rows.forEach((row, i) => {
-          row.classList.toggle("is-current", i === currentIdx);
-          row.classList.toggle("is-passed", i < currentIdx);
-        });
-
-        const off = totalLen * (1 - prog);
-        const endReached = prog >= 0.995;
-        pathBase.style.strokeDashoffset = "0"; // Base line fully drawn
-        pathAccent.style.strokeDashoffset = String(Math.max(0, off - 26));
-        pathGlow.style.strokeDashoffset = String(off);
-        posTracer(prog);
-        ns.forEach((n, i) => n.classList.toggle("rm-node--lit", prog >= i / Math.max(ns.length - 1, 1) - 0.02));
-
-        pageRoot?.classList.toggle("is-end-reached", endReached);
-        finalRow?.classList.toggle("is-end-reached", endReached);
-        finalNode?.classList.toggle("rm-node--lit", endReached);
-        if (tracer && endReached) tracer.style.opacity = "0";
-
-        rowCards.forEach((card) => {
-          if (card && !revealed.has(card)) {
-            const r = card.getBoundingClientRect();
-            if (r.top < VH * 0.92) {
-              revealed.add(card);
-              card.classList.add("is-revealed");
-            }
-          }
-        });
-      };
-
-      const animateTracer = () => {
-        tracerRafId = 0;
-        if (totalLen === 0) return;
-        const VH = window.innerHeight;
-        const ns = liveNodes();
-        if (ns.length < 2) return;
-        renderProg += (targetProg - renderProg) * smoothFactor;
-        if (Math.abs(targetProg - renderProg) < 0.0012) renderProg = targetProg;
-        applyProgress(renderProg, ns, VH);
-        // Perf Fix: Disable lerping animation on low-spec for instant response
-        if (tier !== "lo" && Math.abs(targetProg - renderProg) >= 0.0012) {
-          tracerRafId = requestAnimationFrame(animateTracer);
-        }
-      };
-
-      const queueTracer = () => {
-        if (tracerRafId) return;
-        tracerRafId = requestAnimationFrame(animateTracer);
-      };
-
-      const rows = Array.from(container.querySelectorAll<HTMLElement>(".rm-row:not(.rm-row--final)"));
-      const rowCards = rows.map((row) => row.querySelector<HTMLElement>(".rm-card"));
-
-      const update = () => {
-        if (totalLen === 0) return;
-        const VH = window.innerHeight;
-        const ns = liveNodes();
-        if (ns.length < 2) return;
-        const firstRect = ns[0].getBoundingClientRect();
-        const lastRect = ns[ns.length - 1].getBoundingClientRect();
-        const startY = firstRect.top + firstRect.height / 2;
-        const endY = lastRect.top + lastRect.height / 2;
-        const targetY = VH * 0.55;
-        const span = Math.max(endY - startY, 1);
-        targetProg = Math.max(0, Math.min(1, (targetY - startY) / span));
-        if (!tracerRafId && Math.abs(renderProg - targetProg) < 0.0012) {
-          renderProg = targetProg;
-        }
-        queueTracer();
-      };
-
-      const flush = () => { scheduled = false; if (needsBuild) needsBuild = !buildPath(); if (!needsBuild) update(); };
-      const go = (rebuild = false) => { needsBuild = needsBuild || rebuild; if (scheduled) return; scheduled = true; rafId = requestAnimationFrame(flush); };
-      Array.from(container.querySelectorAll<HTMLImageElement>("img"))
-        .forEach((img) => { if (!img.complete) img.addEventListener("load", () => go(true)); });
-      const onScroll = () => go(false);
-      const onResize = () => go(true);
-      const onLoad = () => go(true);
-      const onViewportResize = () => go(true);
-      const onViewportScroll = () => go(false);
-      if ("ResizeObserver" in window) { ro = new ResizeObserver(() => go(true)); ro.observe(container); }
-      window.addEventListener("scroll", onScroll, { passive: true });
-      window.addEventListener("resize", onResize, { passive: true });
-      window.addEventListener("load", onLoad, { passive: true });
-      window.visualViewport?.addEventListener("resize", onViewportResize, { passive: true });
-      window.visualViewport?.addEventListener("scroll", onViewportScroll, { passive: true });
-      [120, 320, 720, 1200].forEach((delay) => {
-        lateRebuildTimers.push(window.setTimeout(() => go(true), delay));
-      });
-      setTimeout(() => go(true), 180); go(true);
-      return () => {
-        if (rafId) cancelAnimationFrame(rafId);
-        if (tracerRafId) cancelAnimationFrame(tracerRafId);
-        lateRebuildTimers.forEach((timer) => window.clearTimeout(timer));
-        ro?.disconnect();
-        window.removeEventListener("scroll", onScroll);
-        window.removeEventListener("resize", onResize);
-        window.removeEventListener("load", onLoad);
-        window.visualViewport?.removeEventListener("resize", onViewportResize);
-        window.visualViewport?.removeEventListener("scroll", onViewportScroll);
-      };
-    };
-
-    const cleanup = boot();
+    const cleanup = initRoadmapTimeline({ pageSelector: ".rm-page--day1" });
     return () => cleanup?.();
   });
 
@@ -469,6 +297,9 @@ export default component$(function Day1Roadmap() {
            border-color: rgba(99, 255, 44, 0.28);
            opacity: 0;
            will-change: transform, opacity;
+           contain: layout paint style;
+           content-visibility: auto;
+           contain-intrinsic-size: 560px;
         }
         .rm-row--left .rm-card.is-revealed {
           animation: rmCardRotateLeft 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
@@ -619,6 +450,28 @@ export default component$(function Day1Roadmap() {
         }
         .rm-scene-art img {
           display: block; width: 100%; height: 100vh; object-fit: cover; filter: saturate(0.85) contrast(1.1) brightness(0.42); transform: scale(1.05);
+        }
+        .rm-page--day1[data-roadmap-mode="lite"] .rm-card,
+        .rm-page--day1[data-roadmap-mode="lite"] .rm-popup,
+        .rm-page--day1[data-roadmap-mode="lite"] .rm-event-glass,
+        .rm-page--day1[data-roadmap-mode="lite"] .rm-dock__inner {
+          backdrop-filter: none !important;
+          box-shadow: none !important;
+        }
+        .rm-page--day1[data-roadmap-mode="lite"] .rm-card,
+        .rm-page--day1[data-roadmap-mode="lite"] .rm-popup {
+          animation: none !important;
+        }
+        .rm-page--day1[data-roadmap-mode="lite"] .rm-card__image,
+        .rm-page--day1[data-roadmap-mode="lite"] .rm-scene-art img,
+        .rm-page--day1[data-roadmap-mode="lite"] .rm-page__aurora,
+        .rm-page--day1[data-roadmap-mode="lite"] .rm-card__sheen {
+          filter: none !important;
+        }
+        .rm-page--day1[data-roadmap-mode="lite"] .rm-node__halo,
+        .rm-page--day1[data-roadmap-mode="lite"] .rm-node__impact,
+        .rm-page--day1[data-roadmap-mode="lite"] .rm-node__pulse {
+          opacity: 0.45 !important;
         }
 
         .rm-page--day1 .rm-end-popup {

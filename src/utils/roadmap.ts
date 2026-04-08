@@ -90,6 +90,8 @@ export const initRoadmapTimeline = ({
   let smoothFactor = 0.24;
   let settleEpsilon = 0.0018;
   let tracerLead = 18;
+  let showTracer = true;
+  let useGlow = true;
 
   const updateMode = () => {
     const isLiteMode =
@@ -97,9 +99,13 @@ export const initRoadmapTimeline = ({
       window.matchMedia("(pointer: coarse)").matches ||
       window.innerWidth <= mobileBreakpoint;
     pageRoot.dataset.roadmapMode = isLiteMode ? "lite" : "full";
-    smoothFactor = isLiteMode ? 0.18 : 0.26;
-    settleEpsilon = isLiteMode ? 0.0032 : 0.0018;
-    tracerLead = isLiteMode ? 12 : 18;
+    smoothFactor = isLiteMode ? 1 : 0.26;
+    settleEpsilon = isLiteMode ? 0.01 : 0.0018;
+    tracerLead = isLiteMode ? 0 : 18;
+    showTracer = !isLiteMode;
+    useGlow = !isLiteMode;
+    pathGlow.style.display = useGlow ? "" : "none";
+    tracer?.style.setProperty("display", showTracer ? "" : "none");
   };
 
   const getVisibleNodes = () =>
@@ -149,7 +155,7 @@ export const initRoadmapTimeline = ({
   };
 
   const positionTracer = (progress: number) => {
-    if (!tracer || totalLen === 0) return;
+    if (!tracer || totalLen === 0 || !showTracer) return;
 
     const clamped = clamp(progress);
     const offset = clamped * totalLen;
@@ -192,7 +198,9 @@ export const initRoadmapTimeline = ({
     const offset = totalLen * (1 - clamped);
     pathBase.style.strokeDashoffset = String(offset);
     pathAccent.style.strokeDashoffset = String(Math.max(0, offset - 26));
-    pathGlow.style.strokeDashoffset = String(offset);
+    if (useGlow) {
+      pathGlow.style.strokeDashoffset = String(offset);
+    }
     positionTracer(clamped);
 
     const endReached = clamped >= 0.995;

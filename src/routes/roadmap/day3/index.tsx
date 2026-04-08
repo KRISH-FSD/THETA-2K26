@@ -238,7 +238,7 @@ export default component$(function Day3Roadmap() {
       <style>{`
         .rm-page--day3 { background: #050007; color: #fff1f1; position: relative; }
         .rm-page--day3::before { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0; background: linear-gradient(180deg, rgba(20,0,4,0.58) 0%, rgba(18,0,6,0.42) 26%, rgba(10,0,4,0.84) 100%), radial-gradient(circle at 50% 18%, rgba(255,71,71,0.12), transparent 28%); }
-        .rm-page--day3 .rm-card { background: rgba(10,0,6,0.94); backdrop-filter: blur(10px); border-color: rgba(255,71,71,0.28); opacity: 0; will-change: transform, opacity; }
+        .rm-page--day3 .rm-card { background: rgba(10,0,6,0.94); backdrop-filter: blur(10px); border-color: rgba(255,71,71,0.28); opacity: 0; will-change: transform, opacity; contain: layout paint style; content-visibility: auto; contain-intrinsic-size: 560px; }
         .rm-row--left .rm-card.is-revealed { animation: rmCardRotateLeft 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
         .rm-row--right .rm-card.is-revealed { animation: rmCardRotateRight 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
         @keyframes rmCardRotateLeft { 0% { opacity: 0; transform: translateX(-60px) translateY(20px) scale(0.9) rotateY(-10deg); } 100% { opacity: 1; transform: translateX(0) translateY(0) scale(1) rotateY(0); } }
@@ -260,6 +260,19 @@ export default component$(function Day3Roadmap() {
         .rm-page--day3 .rm-scene-art { position: absolute; inset: 0; overflow: hidden; }
         .rm-page--day3 .rm-scene-art::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,0,6,0.42) 0%, rgba(10,0,6,0.18) 24%, rgba(10,0,6,0.18) 68%, rgba(10,0,6,0.52) 82%, rgba(10,0,6,1) 100%); }
         .rm-page--day3 .rm-scene-art img { display: block; width: 100%; height: 100vh; object-fit: cover; filter: saturate(0.9) contrast(1.08) brightness(0.42); transform: scale(1.05); }
+        .rm-page--day3[data-roadmap-mode="lite"] .rm-card,
+        .rm-page--day3[data-roadmap-mode="lite"] .rm-popup,
+        .rm-page--day3[data-roadmap-mode="lite"] .rm-event-glass,
+        .rm-page--day3[data-roadmap-mode="lite"] .rm-dock__inner { backdrop-filter: none !important; box-shadow: none !important; }
+        .rm-page--day3[data-roadmap-mode="lite"] .rm-card,
+        .rm-page--day3[data-roadmap-mode="lite"] .rm-popup { animation: none !important; }
+        .rm-page--day3[data-roadmap-mode="lite"] .rm-card__image,
+        .rm-page--day3[data-roadmap-mode="lite"] .rm-scene-art img,
+        .rm-page--day3[data-roadmap-mode="lite"] .rm-page__aurora,
+        .rm-page--day3[data-roadmap-mode="lite"] .rm-card__sheen { filter: none !important; }
+        .rm-page--day3[data-roadmap-mode="lite"] .rm-node__halo,
+        .rm-page--day3[data-roadmap-mode="lite"] .rm-node__impact,
+        .rm-page--day3[data-roadmap-mode="lite"] .rm-node__pulse { opacity: 0.45 !important; }
         .rm-page--day3 .rm-end-popup { position: absolute; right: calc(100% + 0.95rem); top: 50%; transform: translate(-12px, -50%) scale(0.92); min-width: 12rem; max-width: 13.5rem; padding: 0.75rem 0.9rem; border-radius: 1rem; border: 1px solid rgba(255,71,71,0.24); background: linear-gradient(135deg, rgba(255,71,71,0.1), rgba(255,71,71,0.05)), rgba(10,0,6,0.94); opacity: 0; pointer-events: none; transition: opacity 320ms ease, transform 380ms cubic-bezier(0.22, 1, 0.36, 1); z-index: 4; }
         .rm-page--day3 .rm-end-popup::after { content: ""; position: absolute; right: -0.45rem; top: 50%; width: 0.9rem; height: 0.9rem; transform: translateY(-50%) rotate(45deg); border-right: 1px solid rgba(255,71,71,0.24); border-bottom: 1px solid rgba(255,71,71,0.24); background: rgba(10,0,6,0.96); }
         .rm-page--day3 .rm-end-popup__label { display: inline-flex; align-items: center; gap: 0.38rem; color: #ffb0b0; font-size: 0.56rem; font-weight: 900; letter-spacing: 0.18em; text-transform: uppercase; }
