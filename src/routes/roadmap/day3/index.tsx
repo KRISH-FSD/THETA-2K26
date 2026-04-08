@@ -1,665 +1,325 @@
 import { component$, useVisibleTask$ } from "@builder.io/qwik";
 import { Link, type DocumentHead } from "@builder.io/qwik-city";
-import { getDevicePerfTier } from "~/utils/perf";
+import { initRoadmapTimeline } from "~/utils/roadmap";
 
 type Cat = "opening" | "tech" | "workshop" | "quiz" | "fun" | "cultural";
 
 interface EventData {
-  id: number; time: string; endTime: string; title: string;
-  subtitle: string; venue: string; cat: Cat; desc: string;
-  fee: string; team: string; prize: string; img: string; tags: string[];
+  id: number;
+  time: string;
+  endTime: string;
+  title: string;
+  subtitle: string;
+  venue: string;
+  cat: Cat;
+  desc: string;
+  img: string;
+  tags: string[];
+  regLink?: string;
 }
-interface CatMeta { label: string; short: string; color: string; rgb: string; }
+
+interface CatMeta {
+  label: string;
+  short: string;
+  color: string;
+  rgb: string;
+}
+
 interface EventCardProps {
-  ev: EventData; meta: CatMeta; canRegister: boolean; isActive: boolean;
+  ev: EventData;
+  meta: CatMeta;
+  canRegister: boolean;
+  isActive: boolean;
 }
-interface PopupPanelProps { ev: EventData; meta: CatMeta; side: "left" | "right"; canRegister: boolean; inlineMobile?: boolean; }
+
+interface PopupPanelProps {
+  ev: EventData;
+  meta: CatMeta;
+  side: "left" | "right";
+  canRegister: boolean;
+  inlineMobile?: boolean;
+}
 
 const EVENTS: EventData[] = [
   {
-    id: 1, time: "09:00 AM", endTime: "03:00 PM", title: "Spider-Game Arena",
-    subtitle: "Rooftop of the multiverse", venue: "Room 202", cat: "fun",
-    fee: "Free", team: "Individual", prize: "Champion Badge",
+    id: 1,
+    time: "09:00 AM",
+    endTime: "03:00 PM",
+    title: "Game Events",
+    subtitle: "Fun arena marathon",
+    venue: "Room 202",
+    cat: "fun",
     img: "https://images.unsplash.com/photo-1635805737707-57588b48f6f7?q=80&w=1200",
-    tags: ["Ladder", "Math Royale", "Battle"],
-    desc: "A multiverse spanning arena featuring Ladder games, Brain Bid Battles, and the high-intensity Math Royale."
+    tags: ["Ladder", "Brain Bid", "Math Royale"],
+    desc: "A full-length game arena featuring Ladder Game, Brain Bid Battle, Math Royale, and Digit Decoder.",
   },
   {
-    id: 2, time: "09:30 AM", endTime: "11:30 AM", title: "Optica Simulation 3",
-    subtitle: "Final light & pulse challenges", venue: "Room 310", cat: "quiz",
-    fee: "Free", team: "Individual", prize: "Goodies",
+    id: 2,
+    time: "09:30 AM",
+    endTime: "11:30 AM",
+    title: "The Final Pyramid",
+    subtitle: "Final light and pulse challenges",
+    venue: "Room 310",
+    cat: "quiz",
     img: "https://images.unsplash.com/photo-1542332213-9b5a5a3fad35?q=80&w=1200",
     tags: ["Sonar", "Pyramid", "Scoops"],
-    desc: "Heroic precision required for Sonar Sprints, Hopscotch Pyramids, and Hoops & Scoops simulations."
+    desc: "Heroic precision is needed for Sonar Sprint, Hopscotch Pyramid, and Hoops and Scoops.",
+    regLink: "https://docs.google.com/forms/d/e/1FAIpQLSeiG0W_7I7wdPsc4S35B9A9fDPtf2ogKsUXxaZxcHTYAnGnyA/viewform?usp=publish-editor",
   },
   {
-    id: 3, time: "10:00 AM", endTime: "01:00 PM", title: "Clash of Codes",
-    subtitle: "Spider-sense bug hunting", venue: "Lab", cat: "tech",
-    fee: "Rs 150", team: "2 Members", prize: "Rs 10,000",
+    id: 3,
+    time: "10:00 AM",
+    endTime: "01:00 PM",
+    title: "Clash of Champions",
+    subtitle: "High-energy skill battles",
+    venue: "IED Hall",
+    cat: "fun",
+    img: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1200",
+    tags: ["Cup Stack", "Ping Pong", "Word Race"],
+    desc: "A multi-game battle featuring cup stacking, ping pong bounce, and fast word or movie rounds.",
+    regLink: "https://forms.gle/4a9Ws7WHz8SEMh1U6",
+  },
+  {
+    id: 4,
+    time: "10:00 AM",
+    endTime: "01:00 PM",
+    title: "Clash of Codes",
+    subtitle: "Spider-sense bug hunting",
+    venue: "Lab",
+    cat: "tech",
     img: "https://images.unsplash.com/photo-1627389955805-720619756184?q=80&w=1200",
     tags: ["Warm Up", "Challenge", "Showdown"],
-    desc: "Your spider-sense tingles on every bug. A three-stage code battle from warm-ups to the final world-saving showdown."
+    desc: "A three-stage code battle from warm-up rounds to the final showdown.",
   },
   {
-    id: 4, time: "10:00 AM", endTime: "01:00 PM", title: "ThinkZone Challenge",
-    subtitle: "Oscorp artistic research", venue: "Room 402", cat: "workshop",
-    fee: "Rs 100", team: "Pairs", prize: "Rs 5,000",
+    id: 5,
+    time: "10:00 AM",
+    endTime: "04:00 PM",
+    title: "Technical Hackathon: RoboAI Challenge",
+    subtitle: "AI integration and path planning",
+    venue: "ECE Lab",
+    cat: "tech",
+    img: "https://images.unsplash.com/photo-1531239669496-e1789bb5ad27?q=80&w=1200",
+    tags: ["AI", "Planning", "Hackathon"],
+    desc: "A long-form robotics hackathon focused on AI integration and path planning.",
+    regLink: "https://forms.gle/5dpnrrhJAhrSU6zd7",
+  },
+  {
+    id: 6,
+    time: "10:00 AM",
+    endTime: "01:00 PM",
+    title: "THINKZONE CHALLENGE",
+    subtitle: "Creative research and hunt",
+    venue: "Room 402",
+    cat: "workshop",
     img: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1200",
-    tags: ["Artistic", "Scavenger", "Hunt"],
-    desc: "Identify the hidden patterns in Oscorp's data through Kandupidi research and scavenger hunts."
+    tags: ["Artistic", "Kandupidi", "Hunt"],
+    desc: "A creative challenge mixing artistic tasks, Kandupidi, and scavenger hunt rounds.",
+    regLink: "https://forms.gle/2GMW1XW9sQ5h8QZ68",
   },
   {
-    id: 5, time: "11:00 AM", endTime: "01:00 PM", title: "Stock Wars",
-    subtitle: "Strategic market web", venue: "Room 303", cat: "tech",
-    fee: "Rs 100", team: "3 Members", prize: "Rs 12,000",
-    img: "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?q=80&w=1200",
-    tags: ["Entry", "News", "Shock"],
-    desc: "Market entry, news impacts, and market shocks — weave through the stock web before the bubble pops."
+    id: 7,
+    time: "11:00 AM",
+    endTime: "01:00 PM",
+    title: "Stock War - The Trading Arena",
+    subtitle: "Strategic market web",
+    venue: "Room 303",
+    cat: "tech",
+    img: "https://images.unsplash.com/photo-1611974714028-ac6096ac72e8?q=80&w=1200",
+    tags: ["Market", "Risk", "Strategy"],
+    desc: "Market simulation, risk analysis, and strategy decisions in the trading arena.",
+    regLink: "https://forms.gle/6jL2YA3VvscgGiUf9",
   },
   {
-    id: 6, time: "11:00 AM", endTime: "01:00 PM", title: "Spider-Funverse",
-    subtitle: "Chaos in the into-the-verse", venue: "Room 410/411", cat: "fun",
-    fee: "Free", team: "4 Members", prize: "Trophies",
+    id: 8,
+    time: "11:00 AM",
+    endTime: "02:00 PM",
+    title: "FUNIVERSE",
+    subtitle: "Chaos in the multiverse",
+    venue: "Room 410 & 411",
+    cat: "fun",
     img: "https://images.unsplash.com/photo-1533447333873-31185b3b77ba?q=80&w=1200",
     tags: ["Imposter", "Chaos", "Battle"],
-    desc: "Enter the multiverse with Imposter Arc, Chaos Carnival, and MegaVerse battle simulations."
+    desc: "Enter the multiverse with Imposter Arc, Chaos Carnival, and MegaVerse battle rounds.",
+    regLink: "https://docs.google.com/forms/d/e/1FAIpQLSe7KnkFXECkXDLroyUXsvMvx7811qLI-XbBugH3hJ8kVBrHtg/viewform?usp=sharing&ouid=104165202810433780029",
   },
   {
-    id: 7, time: "11:00 AM", endTime: "01:00 PM", title: "Daily Bugle Hackathon",
-    subtitle: "Breaking the news with code", venue: "Room 106", cat: "tech",
-    fee: "Rs 200", team: "3 Members", prize: "Rs 15,000",
-    img: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1200",
-    tags: ["Hack", "News", "Sprint"],
-    desc: "S.H.I.E.L.D. level clearance hackathon. Build solutions that make the front page of the Daily Bugle."
-  },
-  {
-    id: 8, time: "11:00 AM", endTime: "02:00 PM", title: "Web-Slinger Sports",
-    subtitle: "City-wide reflex challenge", venue: "Basketball Court", cat: "fun",
-    fee: "Free", team: "Varies", prize: "Medals",
+    id: 9,
+    time: "11:00 AM",
+    endTime: "02:00 PM",
+    title: "Sports Events",
+    subtitle: "City-wide reflex challenge",
+    venue: "Basketball Court",
+    cat: "fun",
     img: "https://images.unsplash.com/photo-1517649763962-0c623066013b?q=80&w=1200",
     tags: ["Basketball", "Pass", "Tug"],
-    desc: "High-agility basketball, pass the ball relay, and a final strength-draining Tug of War."
+    desc: "Basketball, pass the ball relay, and a final Tug of War challenge.",
+  },
+  {
+    id: 10,
+    time: "11:00 AM",
+    endTime: "01:00 PM",
+    title: "Ultimate Entertainment Round",
+    subtitle: "Comedy and entertainment showdown",
+    venue: "Room 110",
+    cat: "fun",
+    img: "https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=1200",
+    tags: ["Entertainment", "Comedy", "Showdown"],
+    desc: "A full fun round packed with entertainment challenges and a comedy showdown.",
+    regLink: "https://forms.gle/Xa8WaGHWfvToyyUQA",
   },
 ];
 
 const CAT: Record<Cat, CatMeta> = {
-  opening: { label: "Opening", short: "OP", color: "#ff3333", rgb: "255,51,51" },
-  tech: { label: "Tech", short: "TK", color: "#4488ff", rgb: "68,136,255" },
-  workshop: { label: "Workshop", short: "WS", color: "#bb77ff", rgb: "187,119,255" },
-  quiz: { label: "Quiz", short: "QZ", color: "#ffaa33", rgb: "255,170,51" },
-  fun: { label: "Fun", short: "FN", color: "#66ddcc", rgb: "102,221,204" },
-  cultural: { label: "Cultural", short: "CL", color: "#ff88aa", rgb: "255,136,170" },
+  opening: { label: "Opening", short: "OP", color: "#ff4747", rgb: "255,71,71" },
+  tech: { label: "Tech", short: "TK", color: "#ff4747", rgb: "255,71,71" },
+  workshop: { label: "Workshop", short: "WS", color: "#ff7676", rgb: "255,118,118" },
+  quiz: { label: "Quiz", short: "QZ", color: "#ff9c9c", rgb: "255,156,156" },
+  fun: { label: "Fun", short: "FN", color: "#ff6666", rgb: "255,102,102" },
+  cultural: { label: "Cultural", short: "CL", color: "#ffc2c2", rgb: "255,194,194" },
 };
 
-/* ─── Popup Panel ─────────────────────────────── */
 const PopupPanel = component$<PopupPanelProps>(({ ev, meta, side, canRegister, inlineMobile }) => (
-  <div
-    class={["rm-popup", `rm-popup--${side}`, inlineMobile ? "rm-popup--inline-mobile" : ""]}
-    style={`--rm-accent:${meta.color};--rm-accent-rgb:${meta.rgb};`}
-  >
+  <div class={["rm-popup", `rm-popup--${side}`, inlineMobile ? "rm-popup--inline-mobile" : ""]} style={`--rm-accent:${meta.color};--rm-accent-rgb:${meta.rgb};`}>
     <span class="rm-popup__ripple rm-popup__ripple--1" />
     <span class="rm-popup__ripple rm-popup__ripple--2" />
     <span class="rm-popup__ripple rm-popup__ripple--3" />
     <div class="rm-popup__inner">
       <div class="rm-popup__head">
-        <span class="rm-popup__chip">
-          <span class="rm-popup__dot" />{meta.label}
-        </span>
-        <span class="rm-popup__node-label">SCENE {String(ev.id).padStart(2, "0")}</span>
+        <span class="rm-popup__chip"><span class="rm-popup__dot" />{meta.label}</span>
+        <span class="rm-popup__node-label">NODE {String(ev.id).padStart(2, "0")}</span>
       </div>
       <h3 class="rm-popup__title">{ev.title}</h3>
       <div class="rm-popup__vitals">
-        <div class="rm-popup__vital">
-          <div class="rm-popup__vital-icon">🕒</div>
-          <div class="rm-popup__vital-content">
-            <span class="rm-popup__vital-label">TIMING</span>
-            <span class="rm-popup__vital-value">{ev.time} – {ev.endTime}</span>
-          </div>
-        </div>
-        <div class="rm-popup__vital">
-          <div class="rm-popup__vital-icon">📍</div>
-          <div class="rm-popup__vital-content">
-            <span class="rm-popup__vital-label">VENUE</span>
-            <span class="rm-popup__vital-value">{ev.venue}</span>
-          </div>
-        </div>
+        <div class="rm-popup__vital"><div class="rm-popup__vital-icon">T</div><div class="rm-popup__vital-content"><span class="rm-popup__vital-label">TIMING</span><span class="rm-popup__vital-value">{ev.time} - {ev.endTime}</span></div></div>
+        <div class="rm-popup__vital"><div class="rm-popup__vital-icon">V</div><div class="rm-popup__vital-content"><span class="rm-popup__vital-label">VENUE</span><span class="rm-popup__vital-value">{ev.venue}</span></div></div>
       </div>
-      <div class="rm-popup__stats">
-        <div class="rm-popup__stat">
-          <span class="rm-popup__stat-l">Entry</span>
-          <strong class="rm-popup__stat-v">{ev.fee}</strong>
-        </div>
-        <div class="rm-popup__stat">
-          <span class="rm-popup__stat-l">Team</span>
-          <strong class="rm-popup__stat-v">{ev.team}</strong>
-        </div>
-        <div class="rm-popup__stat">
-          <span class="rm-popup__stat-l">Prize</span>
-          <strong class="rm-popup__stat-v">{ev.prize}</strong>
-        </div>
-      </div>
-      <div class="rm-popup__tags">
-        {ev.tags.map((t) => <span key={t} class="rm-popup__tag">{t}</span>)}
-      </div>
+      <div class="rm-popup__stats"><div class="rm-popup__stat"><span class="rm-popup__stat-l">Venue</span><strong class="rm-popup__stat-v">{ev.venue}</strong></div><div class="rm-popup__stat"><span class="rm-popup__stat-l">Timing</span><strong class="rm-popup__stat-v">{ev.time} - {ev.endTime}</strong></div></div>
+      <div class="rm-popup__tags">{ev.tags.map((t) => <span key={t} class="rm-popup__tag">{t}</span>)}</div>
       <div class="rm-popup__actions hidden md:flex">
-        <Link href="/events" class="rm-popup__action rm-popup__action--primary"
-          onClick$={(e: Event) => e.stopPropagation()}>View Event Hub</Link>
-        {canRegister
-          ? <Link href="/events" class="rm-popup__action rm-popup__action--ghost"
-            onClick$={(e: Event) => e.stopPropagation()}>Register Now</Link>
-          : <span class="rm-popup__open-badge">Open Access</span>}
+        <Link href="/events" class="rm-popup__action rm-popup__action--primary" onClick$={(e: Event) => e.stopPropagation()}>View Event Hub</Link>
+        {canRegister ? <a href={ev.regLink} target="_blank" rel="noopener noreferrer" class="rm-popup__action rm-popup__action--ghost" onClick$={(e: Event) => e.stopPropagation()}>Register Now</a> : <span class="rm-popup__open-badge">Open Access</span>}
       </div>
     </div>
   </div>
 ));
 
-/* ─── Event Card ───────────────────────────────── */
-const EventCard = component$<EventCardProps>(
-  ({ ev, meta, canRegister, isActive }) => (
-    <article class="rm-card" style={`--rm-accent:${meta.color};--rm-accent-rgb:${meta.rgb};`}>
-      <div class="rm-card__sheen" />
-      <div class="rm-card__media">
-        <img src={ev.img} alt={ev.title} width={1200} height={640} loading="lazy" class="rm-card__image" />
-        <div class="rm-card__media-overlay" />
-        <div class="rm-card__chip-row">
-          <span class="rm-card__chip rm-card__chip--accent">
-            <span class="rm-card__chip-dot" />{meta.label}
-          </span>
-          <span class="rm-card__chip">{ev.time}</span>
-        </div>
-        <div class="rm-card__eyebrow">
-          <span>{ev.subtitle}</span><span>{ev.endTime}</span>
-        </div>
-      </div>
-      <div class="rm-card__body">
-        <div class="rm-card__heading">
-          <div>
-            {/* <p class="rm-card__overline">Scene {String(ev.id).padStart(2, "0")}</p> */}
-            <h3 class="rm-card__title">{ev.title}</h3>
-          </div>
-          <span class="rm-card__toggle">{isActive ? "Collapse" : "Details →"}</span>
-        </div>
-        <p class="rm-card__desc">{ev.desc}</p>
-        <div class="rm-card__quick-meta">
-          <span class="rm-card__meta-pill">{ev.venue}</span>
-          <span class="rm-card__meta-pill">{ev.time} – {ev.endTime}</span>
-        </div>
-        <div class="rm-card__stat-grid">
-          <div class="rm-card__stat">
-            <span class="rm-card__stat-label">Entry</span>
-            <strong class="rm-card__stat-value">{ev.fee}</strong>
-          </div>
-          <div class="rm-card__stat">
-            <span class="rm-card__stat-label">Team</span>
-            <strong class="rm-card__stat-value">{ev.team}</strong>
-          </div>
-          <div class="rm-card__stat">
-            <span class="rm-card__stat-label">Prize</span>
-            <strong class="rm-card__stat-value">{ev.prize}</strong>
-          </div>
-        </div>
-        <div class="rm-card__tags">
-          {ev.tags.map((t) => <span key={t} class="rm-card__tag">{t}</span>)}
-        </div>
-        <div class="rm-card__actions hidden md:flex">
-          <Link href="/events" class="rm-card__action rm-card__action--primary">View Event Hub</Link>
-          {canRegister
-            ? <Link href="/events" class="rm-card__action rm-card__action--ghost">Register Now</Link>
-            : <span class="rm-card__status">Open Access</span>}
-        </div>
-        {isActive && (
-          <p class="rm-card__popup-hint">← See details panel →</p>
-        )}
-      </div>
-    </article>
-  ),
-);
+const EventCard = component$<EventCardProps>(({ ev, meta, canRegister, isActive }) => (
+  <article class="rm-card" style={`--rm-accent:${meta.color};--rm-accent-rgb:${meta.rgb};`}>
+    <div class="rm-card__sheen" />
+    <div class="rm-card__media">
+      <img src={ev.img} alt={ev.title} width={1200} height={640} loading="lazy" class="rm-card__image" />
+      <div class="rm-card__media-overlay" />
+      <div class="rm-card__chip-row"><span class="rm-card__chip rm-card__chip--accent"><span class="rm-card__chip-dot" />{meta.label}</span><span class="rm-card__chip">{ev.time}</span></div>
+      <div class="rm-card__eyebrow"><span>{ev.subtitle}</span><span>{ev.endTime}</span></div>
+    </div>
+    <div class="rm-card__body">
+      <div class="rm-card__heading"><div><h3 class="rm-card__title">{ev.title}</h3></div><span class="rm-card__toggle">{isActive ? "Collapse" : "Details"}</span></div>
+      <p class="rm-card__desc">{ev.desc}</p>
+      <div class="rm-card__stat-grid"><div class="rm-card__stat"><span class="rm-card__stat-label">Venue</span><strong class="rm-card__stat-value">{ev.venue}</strong></div><div class="rm-card__stat"><span class="rm-card__stat-label">Timing</span><strong class="rm-card__stat-value">{ev.time} - {ev.endTime}</strong></div></div>
+      <div class="rm-card__tags">{ev.tags.map((t) => <span key={t} class="rm-card__tag">{t}</span>)}</div>
+      <div class="rm-card__actions hidden md:flex"><Link href="/events" class="rm-card__action rm-card__action--primary">View Event Hub</Link>{canRegister ? <a href={ev.regLink} target="_blank" rel="noopener noreferrer" class="rm-card__action rm-card__action--ghost">Register Now</a> : <span class="rm-card__status">Open Access</span>}</div>
+    </div>
+  </article>
+));
 
 export default component$(function Day3Roadmap() {
-
   useVisibleTask$(() => {
     document.body.setAttribute("data-theme", "spider");
-    return () => { document.body.removeAttribute("data-theme"); };
-  });
-
-  useVisibleTask$(() => {
-    const page = document.querySelector(".rm-page--sp") as HTMLElement | null;
-    if (!page) return;
-    let throttleTimer: any = null;
-    const updateScroll = () => {
-      const scrollMax = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
-      const scrollRatio = window.scrollY / scrollMax;
-      page.style.setProperty("--rm-scroll-progress", scrollRatio.toFixed(4));
-      const mid1 = 0.3, mid2 = 0.7;
-      const span = 0.3;
-      const img1 = Math.max(0, Math.min(1, (mid1 - scrollRatio + span / 2) / span));
-      const img3 = Math.max(0, Math.min(1, (scrollRatio - mid2 + span / 2) / span));
-      const img2 = Math.max(0, 1 - img1 - img3);
-      page.style.setProperty("--rm-bg1-opacity", img1.toFixed(4));
-      page.style.setProperty("--rm-bg2-opacity", img2.toFixed(4));
-      page.style.setProperty("--rm-bg3-opacity", img3.toFixed(4));
-      page.style.setProperty("--rm-bg1-shift", `${(-140 * (1 - img1)).toFixed(1)}px`);
-      page.style.setProperty("--rm-bg2-shift", `${(140 * (img1 - img3)).toFixed(1)}px`);
-      page.style.setProperty("--rm-bg3-shift", `${(140 * (1 - img3)).toFixed(1)}px`);
-    };
-    const onScroll = () => {
-      if (throttleTimer) return;
-      throttleTimer = setTimeout(() => {
-        updateScroll();
-        throttleTimer = null;
-      }, 100);
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    updateScroll();
+    const cleanup = initRoadmapTimeline({ pageSelector: ".rm-page--day3" });
     return () => {
-      window.removeEventListener("scroll", onScroll);
-      if (throttleTimer) clearTimeout(throttleTimer);
+      document.body.removeAttribute("data-theme");
+      cleanup?.();
     };
-  });
-
-  useVisibleTask$(() => {
-    const boot = () => {
-      const pageRoot = document.querySelector(".rm-page--sp") as HTMLElement | null;
-      const container = document.getElementById("rm-timeline") as HTMLElement | null;
-      const svgEl = document.getElementById("rm-line-svg") as unknown as SVGSVGElement | null;
-      const pathBase = document.getElementById("rm-line-base") as unknown as SVGPathElement | null;
-      const pathAccent = document.getElementById("rm-line-accent") as unknown as SVGPathElement | null;
-      const pathGlow = document.getElementById("rm-line-glow") as unknown as SVGPathElement | null;
-      const tracer = document.getElementById("rm-tracer") as unknown as SVGGElement | null;
-      if (!container || !svgEl || !pathBase || !pathAccent || !pathGlow) return;
-      const finalRow = container.querySelector(".rm-row--final") as HTMLElement | null;
-      const finalNode = finalRow?.querySelector(".rm-node--finish") as HTMLElement | null;
-      let totalLen = 0, rafId = 0, scheduled = false, needsBuild = true;
-      let targetProg = 0, renderProg = 0, tracerRafId = 0;
-      let ro: ResizeObserver | undefined;
-      const tier = getDevicePerfTier();
-      const isMobile = tier === "lo" || window.innerWidth <= 767;
-      const smoothFactor = isMobile ? 0.1 : 0.32;
-      const revealed = new Set<Element>();
-      const liveNodes = () => Array.from(container.querySelectorAll<HTMLElement>(".rm-row:not(.rm-row--final) .rm-node, .rm-node--finish")).filter((n) => n.offsetParent !== null && n.offsetWidth > 0);
-      const buildPath = (): boolean => {
-        const nodes = liveNodes();
-        if (nodes.length < 2) return false;
-        const cr = container.getBoundingClientRect();
-        const W = container.clientWidth, H = Math.max(container.scrollHeight, container.clientHeight);
-        const pts = nodes.map((n) => {
-          const r = n.getBoundingClientRect();
-          return { x: r.left - cr.left + r.width / 2, y: r.top - cr.top + r.height / 2 };
-        });
-        let d = `M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`;
-        for (let i = 1; i < pts.length; i++) {
-          const p = pts[i - 1], c = pts[i];
-          const dy = c.y - p.y, bend = Math.max(60, dy * 0.42);
-          d += ` C ${p.x.toFixed(1)} ${(p.y + bend).toFixed(1)},` + ` ${c.x.toFixed(1)} ${(c.y - bend).toFixed(1)},` + ` ${c.x.toFixed(1)} ${c.y.toFixed(1)}`;
-        }
-        svgEl.setAttribute("viewBox", `0 0 ${W} ${H}`); svgEl.setAttribute("width", String(W)); svgEl.setAttribute("height", String(H));
-        for (const p of [pathBase, pathAccent, pathGlow]) { p.setAttribute("d", d); }
-        totalLen = pathBase.getTotalLength();
-        for (const p of [pathBase, pathAccent, pathGlow]) { p.style.strokeDasharray = String(totalLen); }
-        return true;
-      };
-      const posTracer = (prog: number) => {
-        if (!tracer || totalLen === 0) return;
-        const cl = Math.max(0, Math.min(1, prog)), off = cl * totalLen, pt = pathBase.getPointAtLength(off), ptN = pathBase.getPointAtLength(Math.min(totalLen, off + 18));
-        const ang = Math.atan2(ptN.y - pt.y, ptN.x - pt.x) * (180 / Math.PI);
-        tracer.setAttribute("transform", `translate(${pt.x.toFixed(2)},${pt.y.toFixed(2)}) rotate(${ang.toFixed(1)})`);
-        tracer.style.opacity = cl >= 0 && cl <= 1 ? "1" : "0";
-      };
-      const applyProgress = (prog: number, ns: HTMLElement[], VH: number) => {
-        const currentIdx = Math.floor(prog * (ns.length - 1) + 0.1);
-        rows.forEach((row, i) => {
-          row.classList.toggle("is-current", i === currentIdx);
-          row.classList.toggle("is-passed", i < currentIdx);
-        });
-
-        const off = totalLen * (1 - prog);
-        const endReached = prog >= 0.995;
-
-        pathBase.style.strokeDashoffset = "0"; // Base line always fully drawn
-        pathAccent.style.strokeDashoffset = String(Math.max(0, off - 26));
-        pathGlow.style.strokeDashoffset = String(off);
-        posTracer(prog);
-        ns.forEach((n, i) => n.classList.toggle("rm-node--lit", prog >= i / Math.max(ns.length - 1, 1) - 0.02));
-
-        pageRoot?.classList.toggle("is-end-reached", endReached);
-        finalRow?.classList.toggle("is-end-reached", endReached);
-        finalNode?.classList.toggle("rm-node--lit", endReached);
-        if (tracer && endReached) tracer.style.opacity = "0";
-
-        rowCards.forEach((card) => {
-          if (card && !revealed.has(card)) {
-            const top = card.getBoundingClientRect().top;
-            if (top < VH * 0.92) {
-              revealed.add(card);
-              card.classList.add("is-revealed");
-            }
-          }
-        });
-      };
-      const animateTracer = () => {
-        tracerRafId = 0;
-        if (totalLen === 0) return;
-        const VH = window.innerHeight, ns = liveNodes();
-        if (ns.length < 2) return;
-        renderProg += (targetProg - renderProg) * smoothFactor;
-        if (Math.abs(targetProg - renderProg) < 0.0012) renderProg = targetProg;
-        applyProgress(renderProg, ns, VH);
-        if (tier !== "lo" && Math.abs(targetProg - renderProg) >= 0.0012) tracerRafId = requestAnimationFrame(animateTracer);
-      };
-      const queueTracer = () => {
-        if (tracerRafId) return;
-        tracerRafId = requestAnimationFrame(animateTracer);
-      };
-      const rows = Array.from(container.querySelectorAll<HTMLElement>(".rm-row:not(.rm-row--final)"));
-      const rowCards = rows.map((row) => row.querySelector<HTMLElement>(".rm-card"));
-      const update = () => {
-        if (totalLen === 0) return;
-        const ns = liveNodes();
-        if (ns.length < 2) return;
-        const firstRect = ns[0].getBoundingClientRect();
-        const lastRect = ns[ns.length - 1].getBoundingClientRect();
-        const startY = firstRect.top + firstRect.height / 2;
-        const endY = lastRect.top + lastRect.height / 2;
-        const targetY = window.innerHeight * 0.55;
-        const span = Math.max(endY - startY, 1);
-        targetProg = Math.max(0, Math.min(1, (targetY - startY) / span));
-        if (!tracerRafId && Math.abs(renderProg - targetProg) < 0.0012) renderProg = targetProg;
-        queueTracer();
-      };
-      const flush = () => { scheduled = false; if (needsBuild) needsBuild = !buildPath(); if (!needsBuild) update(); };
-      const go = (rebuild = false) => { needsBuild = needsBuild || rebuild; if (scheduled) return; scheduled = true; rafId = requestAnimationFrame(flush); };
-      Array.from(container.querySelectorAll<HTMLImageElement>("img")).forEach((img) => { if (!img.complete) img.addEventListener("load", () => go(true)); });
-      if ("ResizeObserver" in window) { ro = new ResizeObserver(() => go(true)); ro.observe(container); }
-      const onScroll = () => go(false);
-      const onResize = () => go(true);
-      window.addEventListener("scroll", onScroll, { passive: true });
-      window.addEventListener("resize", onResize, { passive: true });
-      setTimeout(() => go(true), 180); go(true);
-      return () => {
-        if (rafId) cancelAnimationFrame(rafId);
-        if (tracerRafId) cancelAnimationFrame(tracerRafId);
-        ro?.disconnect();
-        window.removeEventListener("scroll", onScroll);
-        window.removeEventListener("resize", onResize);
-      };
-    };
-    const cleanup = boot();
-    return () => cleanup?.();
   });
 
   return (
-    <div class="rm-page rm-page--sp">
+    <div class="rm-page rm-page--day3">
       <style>{`
-        .rm-page--sp {
-          --rm-scroll-progress: 0;
-          --rm-bg1-opacity: 1; --rm-bg2-opacity: 0; --rm-bg3-opacity: 0;
-          --rm-bg1-shift: 0px; --rm-bg2-shift: 0px; --rm-bg3-shift: 0px;
-          background: #040006; color: #fff; position: relative;
-        }
-
-        /* Redesigned Popup Block */
-        .rm-page--sp .rm-popup {
-          background: rgba(4, 0, 8, 0.98);
-          backdrop-filter: blur(12px);
-          border-color: rgba(255, 51, 51, 0.35);
-          box-shadow: 0 32px 84px rgba(0,0,0,0.64), 0 0 24px rgba(255, 51, 51, 0.08);
-          animation: rmPopupEnter 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-          max-width: 360px;
-          width: calc(100vw - 4rem);
-          border-radius: 1.5rem;
-          overflow: hidden;
-          transform-origin: center;
-        }
-        @keyframes rmPopupEnter {
-          0% { opacity: 0; transform: scale(0.92) translateY(12px); }
-          100% { opacity: 1; transform: scale(1) translateY(0); }
-        }
-        .rm-popup__inner { padding: 1.15rem !important; }
-
-        .rm-popup__vitals {
-          display: flex; flex-direction: column; gap: 0.6rem; margin: 0.85rem 0; padding: 0.85rem;
-          border-radius: 1rem; background: rgba(255, 255, 255, 0.04);
-          border: 1px solid rgba(255, 255, 255, 0.08); border-left: 3px solid var(--rm-accent);
-          box-shadow: inset 0 2px 8px rgba(0,0,0,0.22);
-        }
-        .rm-popup__vital { display: flex; align-items: center; gap: 0.75rem; }
-        .rm-popup__vital-icon {
-          width: 1.5rem; height: 1.65rem; display: flex; align-items: center; justify-content: center;
-          background: rgba(255,255,255,0.06); border-radius: 0.5rem; font-size: 0.85rem;
-        }
-        .rm-popup__vital-content { display: flex; flex-direction: column; gap: 0.05rem; }
-        .rm-popup__vital-label { font-size: 0.5rem; font-weight: 800; letter-spacing: 0.12em; color: rgba(255,255,255,0.42); text-transform: uppercase; }
-        .rm-popup__vital-value { font-size: 0.78rem; font-weight: 700; color: #fff; line-height: 1.1; }
-        .rm-popup__node-label { font-size: 0.58rem; font-weight: 900; color: var(--rm-accent); letter-spacing: 0.1em; opacity: 0.7; }
-        .rm-popup__title { font-size: 1.15rem !important; margin: 0.4rem 0 !important; line-height: 1.3 !important; }
-        
-        .rm-popup__stats { margin-top: 0.75rem !important; gap: 0.5rem !important; }
-        .rm-popup__stat { padding: 0.45rem 0.6rem !important; border-radius: 0.6rem !important; }
-        .rm-popup__stat-l { font-size: 0.55rem !important; }
-        .rm-popup__stat-v { font-size: 0.75rem !important; }
-        .rm-popup__actions {
-          margin-top: 1rem !important;
-          display: flex !important;
-          flex-direction: row !important;
-          gap: 0.5rem !important;
-        }
-        .rm-popup__action {
-          flex: 1 !important;
-          padding: 0.55rem 0.6rem !important;
-          font-size: 0.72rem !important;
-          border-radius: 0.75rem !important;
-          text-align: center;
-          white-space: nowrap;
-        }
-
-        .rm-page--sp::before {
-          content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0;
-          background: 
-            linear-gradient(180deg, rgba(8, 0, 12, 0.52) 0%, rgba(12, 0, 18, 0.35) 18%, rgba(12, 0, 18, 0.46) 56%, rgba(4, 0, 6, 0.82) 100%),
-            radial-gradient(circle at 50% 20%, rgba(255, 51, 51, 0.08), transparent 25%);
-        }
-        .rm-page--sp .rm-card { background: rgba(4, 0, 8, 0.95); backdrop-filter: blur(10px); border-color: rgba(255, 51, 51, 0.22); opacity: 0; will-change: transform, opacity; }
+        .rm-page--day3 { background: #050007; color: #fff1f1; position: relative; }
+        .rm-page--day3::before { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0; background: linear-gradient(180deg, rgba(20,0,4,0.58) 0%, rgba(18,0,6,0.42) 26%, rgba(10,0,4,0.84) 100%), radial-gradient(circle at 50% 18%, rgba(255,71,71,0.12), transparent 28%); }
+        .rm-page--day3 .rm-card { background: rgba(10,0,6,0.94); backdrop-filter: blur(10px); border-color: rgba(255,71,71,0.28); opacity: 0; will-change: transform, opacity; }
         .rm-row--left .rm-card.is-revealed { animation: rmCardRotateLeft 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
         .rm-row--right .rm-card.is-revealed { animation: rmCardRotateRight 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
-        @keyframes rmCardRotateLeft {
-          0% { opacity: 0; transform: translateX(-60px) translateY(20px) scale(0.9) rotateY(-10deg); }
-          100% { opacity: 1; transform: translateX(0) translateY(0) scale(1) rotateY(0); }
-        }
-        @keyframes rmCardRotateRight {
-          0% { opacity: 0; transform: translateX(60px) translateY(20px) scale(0.9) rotateY(10deg); }
-          100% { opacity: 1; transform: translateX(0) translateY(0) scale(1) rotateY(0); }
-        }
-        .rm-scene-gallery { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
-        .rm-scene-art { position: absolute; inset: 0; overflow: hidden; will-change: transform, opacity; transition: opacity 220ms linear, transform 220ms linear; }
-        .rm-scene-art::after {
-          content: ""; position: absolute; inset: 0;
-          background: linear-gradient(180deg, rgba(4, 0, 6, 0.42) 0%, rgba(4, 0, 6, 0.18) 24%, rgba(4, 0, 6, 0.18) 68%, rgba(4, 0, 6, 0.52) 82%, rgba(4, 0, 6, 1) 100%);
-        }
-        .rm-scene-art img { display: block; width: 100%; height: 100vh; object-fit: cover; filter: saturate(0.85) contrast(1.1) brightness(0.42); transform: scale(1.05); }
-        .rm-scene-art--i1 { opacity: var(--rm-bg1-opacity); transform: translate3d(0, var(--rm-bg1-shift), 0); }
-        .rm-scene-art--i2 { opacity: var(--rm-bg2-opacity); transform: translate3d(0, var(--rm-bg2-shift), 0); }
-        .rm-scene-art--i3 { opacity: var(--rm-bg3-opacity); transform: translate3d(0, var(--rm-bg3-shift), 0); }
-
-        .rm-page--sp .rm-end-popup {
-          position: absolute; right: calc(100% + 0.95rem); top: 50%; transform: translate(-12px, -50%) scale(0.92);
-          min-width: 12rem; padding: 0.75rem 0.9rem; border-radius: 1rem; border: 1px solid rgba(255, 51, 51, 0.24);
-          background: linear-gradient(135deg, rgba(255, 51, 51, 0.1), rgba(184, 0, 0, 0.05)), rgba(4, 0, 8, 0.94);
-          box-shadow: 0 18px 42px rgba(0,0,0,0.42), 0 0 24px rgba(255, 51, 51, 0.12); opacity: 0; pointer-events: none;
-          transition: opacity 320ms ease, transform 380ms cubic-bezier(0.22, 1, 0.36, 1); z-index: 4;
-        }
-        .rm-page--sp.is-end-reached .rm-end-popup { opacity: 1; transform: translate(0, -50%) scale(1); }
-        .rm-page--sp .rm-timeline { position: relative; }
-        .rm-page--sp .rm-line-svg { overflow: visible; position: absolute; pointer-events: none; top: 0; left: 0; z-index: 10; width: 100%; height: 100%; }
-        .rm-page--sp .rm-line-glow {
-          stroke: #ff3333 !important;
-          stroke-width: 22 !important;
-          opacity: 0.28 !important;
-          filter: blur(8px);
-        }
-        .rm-page--sp .rm-line-base {
-          stroke: rgba(255, 51, 51, 0.45) !important;
-          stroke-width: 4 !important;
-          opacity: 0.8 !important;
-        }
-        .rm-page--sp .rm-line-accent {
-          stroke: #ffffff !important;
-          stroke-width: 2.5 !important;
-          opacity: 1 !important;
-          filter: drop-shadow(0 0 14px rgba(255, 51, 51, 1)) !important;
-        }
-        .rm-page--sp #rm-tracer-shell {
-          fill: rgba(255, 51, 51, 0.6) !important;
-          filter: drop-shadow(0 0 18px rgba(255, 51, 51, 0.95)) !important;
-        }
-        .rm-page--sp #rm-tracer-arrow {
-          fill: #ffffff !important;
-          filter: drop-shadow(0 0 12px rgba(255, 51, 51, 1)) !important;
-        }
-
+        @keyframes rmCardRotateLeft { 0% { opacity: 0; transform: translateX(-60px) translateY(20px) scale(0.9) rotateY(-10deg); } 100% { opacity: 1; transform: translateX(0) translateY(0) scale(1) rotateY(0); } }
+        @keyframes rmCardRotateRight { 0% { opacity: 0; transform: translateX(60px) translateY(20px) scale(0.9) rotateY(10deg); } 100% { opacity: 1; transform: translateX(0) translateY(0) scale(1) rotateY(0); } }
+        .rm-page--day3 .rm-popup { background: rgba(10,0,6,0.98); backdrop-filter: blur(12px); border-color: rgba(255,71,71,0.35); box-shadow: 0 32px 84px rgba(0,0,0,0.64), 0 0 24px rgba(255,71,71,0.08); max-width: 360px; width: calc(100vw - 4rem); border-radius: 1.5rem; overflow: hidden; }
+        .rm-page--day3 .rm-popup__inner { padding: 1.15rem !important; }
+        .rm-page--day3 .rm-popup__vitals { display: flex; flex-direction: column; gap: 0.6rem; margin: 0.85rem 0; padding: 0.85rem; border-radius: 1rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-left: 3px solid var(--rm-accent); }
+        .rm-page--day3 .rm-popup__vital { display: flex; align-items: center; gap: 0.75rem; }
+        .rm-page--day3 .rm-popup__vital-icon { width: 1.5rem; height: 1.5rem; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.06); border-radius: 0.5rem; font-size: 0.72rem; font-weight: 800; }
+        .rm-page--day3 .rm-popup__stats { margin-top: 0.75rem !important; gap: 0.5rem !important; }
+        .rm-page--day3 .rm-popup__stat { padding: 0.45rem 0.6rem !important; border-radius: 0.6rem !important; }
+        .rm-page--day3 .rm-popup__actions { margin-top: 1rem !important; display: flex !important; flex-direction: row !important; gap: 0.5rem !important; }
+        .rm-page--day3 .rm-popup__action { flex: 1 !important; padding: 0.55rem 0.6rem !important; font-size: 0.72rem !important; border-radius: 0.75rem !important; text-align: center; white-space: nowrap; }
+        .rm-page--day3 .rm-dock__inner { border-color: rgba(255,71,71,0.24); background: linear-gradient(180deg, rgba(24,6,10,0.96), rgba(12,4,8,0.92)); box-shadow: 0 24px 64px rgba(0,0,0,0.42), 0 0 0 1px rgba(255,71,71,0.08); }
+        .rm-page--day3 .rm-dock__item.is-active { border-color: rgba(255,71,71,0.42); background: linear-gradient(135deg, rgba(255,71,71,0.2), rgba(255,71,71,0.08)); color: #ffc2c2; }
+        .rm-page--day3 .rm-dock__status { border-color: rgba(255,71,71,0.16); background: linear-gradient(180deg, rgba(42,12,12,0.82), rgba(18,8,8,0.74)); color: #ffb0b0; }
+        .rm-page--day3 .rm-dock__status-dot { background: #ff4747; box-shadow: 0 0 10px rgba(255,71,71,0.85); }
+        .rm-page--day3 .rm-scene-gallery { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+        .rm-page--day3 .rm-scene-art { position: absolute; inset: 0; overflow: hidden; }
+        .rm-page--day3 .rm-scene-art::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,0,6,0.42) 0%, rgba(10,0,6,0.18) 24%, rgba(10,0,6,0.18) 68%, rgba(10,0,6,0.52) 82%, rgba(10,0,6,1) 100%); }
+        .rm-page--day3 .rm-scene-art img { display: block; width: 100%; height: 100vh; object-fit: cover; filter: saturate(0.9) contrast(1.08) brightness(0.42); transform: scale(1.05); }
+        .rm-page--day3 .rm-end-popup { position: absolute; right: calc(100% + 0.95rem); top: 50%; transform: translate(-12px, -50%) scale(0.92); min-width: 12rem; max-width: 13.5rem; padding: 0.75rem 0.9rem; border-radius: 1rem; border: 1px solid rgba(255,71,71,0.24); background: linear-gradient(135deg, rgba(255,71,71,0.1), rgba(255,71,71,0.05)), rgba(10,0,6,0.94); opacity: 0; pointer-events: none; transition: opacity 320ms ease, transform 380ms cubic-bezier(0.22, 1, 0.36, 1); z-index: 4; }
+        .rm-page--day3 .rm-end-popup::after { content: ""; position: absolute; right: -0.45rem; top: 50%; width: 0.9rem; height: 0.9rem; transform: translateY(-50%) rotate(45deg); border-right: 1px solid rgba(255,71,71,0.24); border-bottom: 1px solid rgba(255,71,71,0.24); background: rgba(10,0,6,0.96); }
+        .rm-page--day3 .rm-end-popup__label { display: inline-flex; align-items: center; gap: 0.38rem; color: #ffb0b0; font-size: 0.56rem; font-weight: 900; letter-spacing: 0.18em; text-transform: uppercase; }
+        .rm-page--day3 .rm-end-popup__label::before { content: ""; width: 0.42rem; height: 0.42rem; border-radius: 999px; background: #ff4747; box-shadow: 0 0 10px rgba(255,71,71,0.8); }
+        .rm-page--day3 .rm-end-popup p { margin: 0.55rem 0 0; color: rgba(255,241,241,0.92); font-size: 0.76rem; line-height: 1.45; }
+        .rm-page--day3.is-end-reached .rm-end-popup, .rm-page--day3 .rm-row--final.is-end-reached .rm-end-popup { opacity: 1; transform: translate(0, -50%) scale(1); }
+        .rm-page--day3 .rm-timeline { position: relative; }
+        .rm-page--day3 .rm-timeline__svg { overflow: visible; position: absolute; pointer-events: none; top: 0; left: 0; z-index: 2; width: 100%; height: 100%; }
+        .rm-page--day3 .rm-timeline__path--glow { display: none !important; }
+        .rm-page--day3 .rm-timeline__path--base { stroke: rgba(255,71,71,0.18) !important; stroke-width: 4 !important; }
+        .rm-page--day3 .rm-timeline__path--accent { stroke: #ffffff !important; stroke-width: 3 !important; opacity: 1 !important; filter: drop-shadow(0 0 12px rgba(255,71,71,0.8)) !important; }
+        .rm-page--day3 #rm-tracer-shell { display: none !important; }
+        .rm-page--day3 #rm-tracer-arrow { fill: #ffffff !important; filter: drop-shadow(0 0 10px rgba(255,71,71,1)) !important; }
+        .rm-page--day3 .rm-node__center-dot { position: absolute; inset: 50% auto auto 50%; width: 0.55rem; height: 0.55rem; border-radius: 999px; transform: translate(-50%, -50%); pointer-events: none; }
         @media (max-width: 767px) {
-          .rm-page--sp .rm-end-popup { left: calc(100% + 0.95rem) !important; right: auto !important; top: 50% !important; bottom: auto !important; transform: translate(12px, -50%) scale(0.92) !important; min-width: 12rem !important; padding: 0.62rem 0.72rem !important; z-index: 10 !important; }
-          .rm-page--sp.is-end-reached .rm-end-popup, .rm-page--sp .rm-row--final.is-end-reached .rm-end-popup { transform: translate(0, -50%) scale(1) !important; }
+          .rm-page--day3 .rm-end-popup { left: calc(100% + 0.95rem) !important; right: auto !important; top: 50% !important; transform: translate(12px, -50%) scale(0.92) !important; min-width: 12rem !important; padding: 0.62rem 0.72rem !important; z-index: 10 !important; }
+          .rm-page--day3 .rm-end-popup::after { left: -0.45rem !important; right: auto !important; border-right: none !important; border-bottom: 1px solid rgba(255,71,71,0.24) !important; border-left: 1px solid rgba(255,71,71,0.24) !important; }
+          .rm-page--day3.is-end-reached .rm-end-popup, .rm-page--day3 .rm-row--final.is-end-reached .rm-end-popup { transform: translate(0, -50%) scale(1) !important; }
         }
-        .rm-row--final { margin-bottom: 0 !important; }
-        .rm-timeline { padding-bottom: 0 !important; }
       `}</style>
 
-      <div class="rm-scene-gallery">
-        <div class="rm-scene-art rm-scene-art--i1"><img src="/roadmap-day3/i1.webp" alt="Scene 1" /></div>
-        <div class="rm-scene-art rm-scene-art--i2"><img src="/roadmap-day3/i2.webp" alt="Scene 2" /></div>
-        <div class="rm-scene-art rm-scene-art--i3"><img src="/roadmap-day3/i3.webp" alt="Scene 3" /></div>
-      </div>
-
+      <div class="rm-scene-gallery"><div class="rm-scene-art"><img src="/roadmap-day3/i1.webp" alt="Day 3 background" /></div></div>
       <div class="rm-page__aurora rm-page__aurora--left" />
       <div class="rm-page__aurora rm-page__aurora--right" />
 
       <section class="rm-section rm-section--top">
         <div class="rm-shell">
           <div class="rm-section__header">
-            <div class="rm-section__header-text">
-              <span class="rm-pill">Timeline</span>
-              <h1 class="rm-section__title">Day 3: Neural Finale</h1>
-              <p class="rm-section__copy">Tap any card to reveal its event, team & prize details.</p>
-            </div>
-            <div class="rm-event-glass">
-              <span class="rm-event-glass__count">{String(EVENTS.length).padStart(2, "0")}</span>
-              <span class="rm-event-glass__label">Events<br />Today</span>
-              <span class="rm-event-glass__dot" />
-            </div>
+            <div class="rm-section__header-text"><span class="rm-pill">Timeline</span><h1 class="rm-section__title">Day 3 Event Flow</h1><p class="rm-section__copy">Tap any card to reveal its event, venue, timing, and registration details.</p></div>
+            <div class="rm-event-glass"><span class="rm-event-glass__count">{String(EVENTS.length).padStart(2, "0")}</span><span class="rm-event-glass__label">Events<br />Today</span><span class="rm-event-glass__dot" /></div>
           </div>
 
           <div id="rm-timeline" class="rm-timeline">
+            <svg id="rm-line-svg" class="rm-timeline__svg" aria-hidden="true"><path id="rm-line-base" class="rm-timeline__path rm-timeline__path--base" fill="none" /><path id="rm-line-glow" class="rm-timeline__path rm-timeline__path--glow" fill="none" /><path id="rm-line-accent" class="rm-timeline__path rm-timeline__path--accent" fill="none" /><g id="rm-tracer" class="rm-timeline__tracer" style="opacity:0;"><circle id="rm-tracer-shell" r="18" fill="rgba(255, 71, 71, 0.3)" /><path id="rm-tracer-arrow" d="M -12,-9 L 16,0 L -12,9 C -8,4 -8,-4 -12,-9 Z" /><circle r="6" fill="#fff" opacity="0.8" /></g></svg>
+
             {EVENTS.map((event, index) => {
-              const meta = CAT[event.cat], side = index % 2 === 0 ? "left" : "right", isActive = false, canRegister = event.cat !== "opening" && event.cat !== "cultural";
+              const meta = CAT[event.cat];
+              const side: "left" | "right" = index % 2 === 0 ? "left" : "right";
+              const isActive = false;
+              const canRegister = Boolean(event.regLink);
               return (
                 <div key={event.id} class={["rm-row", `rm-row--${side}`]}>
-                  <div class="rm-row__side rm-row__side--left">
-                    {side === "left" ? (
-                      <>
-                        <EventCard ev={event} meta={meta} isActive={isActive} canRegister={canRegister} />
-                        {isActive && <PopupPanel ev={event} meta={meta} side="left" canRegister={canRegister} inlineMobile />}
-                      </>
-                    ) : (
-                      isActive && <PopupPanel ev={event} meta={meta} side="left" canRegister={canRegister} />
-                    )}
-                  </div>
-                  <div class={["rm-row__center", `rm-row__center--${side === "left" ? "r" : "l"}`]}>
-                    <div
-                      class="rm-node"
-                      style={`--rm-accent:${meta.color};--rm-accent-rgb:${meta.rgb};`}
-                      data-snake-node=""
-                    >
-                      <span class="rm-node__pulse" /><span class="rm-node__halo" /><span class="rm-node__impact" />
-                      <span class="rm-node__code">{meta.short}</span><span class="rm-node__time">{event.time}</span>
-                    </div>
-                  </div>
-                  <div class="rm-row__side rm-row__side--right">
-                    {side === "right" ? (
-                      <>
-                        <EventCard ev={event} meta={meta} isActive={isActive} canRegister={canRegister} />
-                        {isActive && <PopupPanel ev={event} meta={meta} side="right" canRegister={canRegister} inlineMobile />}
-                      </>
-                    ) : (
-                      isActive && <PopupPanel ev={event} meta={meta} side="right" canRegister={canRegister} />
-                    )}
-                  </div>
+                  <div class="rm-row__side rm-row__side--left">{side === "left" ? (<><EventCard ev={event} meta={meta} isActive={isActive} canRegister={canRegister} />{isActive && <PopupPanel ev={event} meta={meta} side="left" canRegister={canRegister} inlineMobile />}</>) : (isActive && <PopupPanel ev={event} meta={meta} side="left" canRegister={canRegister} />)}</div>
+                  <div class={["rm-row__center", `rm-row__center--${side === "left" ? "r" : "l"}`]}><div class="rm-node" style={`--rm-accent:${meta.color};--rm-accent-rgb:${meta.rgb};`} data-snake-node=""><span class="rm-node__pulse" /><span class="rm-node__halo" /><span class="rm-node__impact" /><span class="rm-node__center-dot" aria-hidden="true" style={`background:${meta.color}; box-shadow: 0 0 10px rgba(${meta.rgb}, 0.45);`} /><span class="rm-node__time">{event.time}</span></div></div>
+                  <div class="rm-row__side rm-row__side--right">{side === "right" ? (<><EventCard ev={event} meta={meta} isActive={isActive} canRegister={canRegister} />{isActive && <PopupPanel ev={event} meta={meta} side="right" canRegister={canRegister} inlineMobile />}</>) : (isActive && <PopupPanel ev={event} meta={meta} side="right" canRegister={canRegister} />)}</div>
                 </div>
               );
             })}
 
-            <svg id="rm-line-svg" class="rm-line-svg" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <defs>
-                <linearGradient id="rm-grad-line" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stop-color="#ff3333" />
-                  <stop offset="50%" stop-color="#ff6666" />
-                  <stop offset="100%" stop-color="#ff3333" />
-                </linearGradient>
-                <filter id="rm-glow-f" x="-40%" y="-10%" width="180%" height="120%">
-                  <feGaussianBlur stdDeviation="15" result="b" />
-                  <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
-                </filter>
-                <radialGradient id="rm-tracer-fill" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stop-color="#fff" stop-opacity="1" />
-                  <stop offset="45%" stop-color="#ff3333" stop-opacity="0.9" />
-                  <stop offset="100%" stop-color="#ff6666" stop-opacity="0" />
-                </radialGradient>
-              </defs>
-              <path id="rm-line-glow" class="rm-line-glow" fill="none" stroke="url(#rm-grad-line)" />
-              <path id="rm-line-base" class="rm-line-base" fill="none" stroke="url(#rm-grad-line)" />
-              <path id="rm-line-accent" class="rm-line-accent" fill="none" stroke="rgba(255,255,255,0.7)" filter="url(#rm-glow-f)" />
-              <g id="rm-tracer" style="opacity:0;will-change:transform;">
-                {/* Outer Glow Arrow */}
-                <path id="rm-tracer-shell" d="M -14,-10 L 18,0 L -14,10 C -10,4 -10,-4 -14,-10 Z" fill="url(#rm-tracer-fill)" filter="url(#rm-glow-f)" opacity="0.6" />
-                {/* Sleek Core Arrow */}
-                <path id="rm-tracer-arrow" d="M -12,-8 L 14,0 L -12,8 C -9,3 -9,-3 -12,-8 Z" fill="#fff" filter="url(#rm-glow-f)" opacity="0.85" />
-                
-                {/* Fast Inner Pulse */}
-                <circle cx="0" cy="0" r="18" fill="none" stroke="url(#rm-grad-line)" stroke-width="1.5" opacity="0.6">
-                  <animate attributeName="r" from="12" to="35" dur="1s" repeatCount="indefinite" />
-                  <animate attributeName="opacity" from="0.8" to="0" dur="1s" repeatCount="indefinite" />
-                </circle>
-                
-                {/* Slow Outer Pulse */}
-                <circle cx="0" cy="0" r="25" fill="none" stroke="url(#rm-grad-line)" stroke-width="1" opacity="0.3">
-                  <animate attributeName="r" from="15" to="50" dur="2s" repeatCount="indefinite" />
-                  <animate attributeName="opacity" from="0.4" to="0" dur="2s" repeatCount="indefinite" />
-                </circle>
-              </g>
-            </svg>
-
-
-            <div class="rm-row rm-row--final">
-              <div class="rm-row__side rm-row__side--left" />
-              <div class="rm-row__center rm-row__center--c">
-                <div class="rm-node rm-node--finish" data-snake-node="">
-                  <span class="rm-node__pulse" /><span class="rm-node__halo" /><span class="rm-node__code">END</span><span class="rm-node__time">09:00 PM</span>
-                  <div class="rm-end-popup"><span class="rm-end-popup__label">Hero Protocol Set</span><p>Theta 2026 mission complete. The city is safe.</p></div>
-                </div>
-              </div>
-              <div class="rm-row__side rm-row__side--right">
-                <div class="rm-end-card">
-                  <span class="rm-pill">Finish</span><h3>Mission Complete.</h3><p>Thank you for participating!</p>
-                  <div class="rm-end-card__meta"><span>Archive ready</span><Link href="/events">View Results</Link></div>
-                </div>
-              </div>
-            </div>
+            <div class="rm-row rm-row--final"><div class="rm-row__side" /><div class="rm-row__center"><div class="rm-node rm-node--finish"><span class="rm-node__pulse" /><span class="rm-node__halo" /><span class="rm-node__code">END</span></div></div><div class="rm-row__side"><div class="rm-end-popup" aria-live="polite"><div class="rm-end-popup__label">Mission Complete</div><p>Day 3 complete. Theta 2026 roadmap transmission ends here.</p></div></div></div>
           </div>
         </div>
       </section>
 
-      <div class="rm-dock">
-        <div class="rm-dock__inner">
-          <Link href="/roadmap/day1" class="rm-dock__item">Day 1</Link>
-          <Link href="/roadmap/day2" class="rm-dock__item">Day 2</Link>
-          <Link href="/roadmap/day3" class="rm-dock__item is-active">Day 3</Link>
-          <span class="rm-dock__status"><span class="rm-dock__status-dot" />Neural theme</span>
-        </div>
-      </div>
+      <div class="rm-dock"><div class="rm-dock__inner"><Link href="/roadmap/day1" class="rm-dock__item">Day 1</Link><Link href="/roadmap/day2" class="rm-dock__item">Day 2</Link><Link href="/roadmap/day3" class="rm-dock__item is-active">Day 3</Link><span class="rm-dock__status"><span class="rm-dock__status-dot" />SPIDER THEME</span></div></div>
     </div>
   );
 });
 
 export const head: DocumentHead = {
-  title: "Day 3 Roadmap | Theta 2026",
-  meta: [{ name: "description", content: "Day 3 roadmap - Neural finale. Final mission schedule and interactive timeline." }],
+  title: "Roadmap: Day 3 | THETA 2026",
+  meta: [{ name: "description", content: "Explore the live event timeline for Day 3 of THETA 2026." }],
 };

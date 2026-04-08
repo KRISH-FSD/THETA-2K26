@@ -7,7 +7,7 @@ type Cat = "opening" | "tech" | "workshop" | "quiz" | "fun" | "cultural";
 interface EventData {
   id: number; time: string; endTime: string; title: string;
   subtitle: string; venue: string; cat: Cat; desc: string;
-  fee: string; team: string; prize: string; img: string; tags: string[];
+  img: string; tags: string[]; regLink?: string;
 }
 interface CatMeta { label: string; short: string; color: string; rgb: string; }
 interface EventCardProps {
@@ -17,124 +17,95 @@ interface PopupPanelProps { ev: EventData; meta: CatMeta; side: "left" | "right"
 
 const EVENTS: EventData[] = [
   {
-    id: 1, time: "10:00 AM", endTime: "01:00 PM", title: "Bio Architect",
-    subtitle: "Living structures workshop", venue: "IED Hall", cat: "tech",
-    fee: "Free", team: "Individual", prize: "Merit Cert",
-    img: "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?q=80&w=1200",
-    tags: ["Biology", "Design", "Organic"],
-    desc: "A cluster-led session on biological architecture and organic design principles."
+    id: 1, time: "10:00 AM", endTime: "12:00 PM", title: "IRON FIST AI",
+    subtitle: "Vision and memory relay", venue: "Room 410", cat: "tech",
+    img: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1200",
+    tags: ["AI", "Vision", "Memory"],
+    desc: "A tri-phase team challenge featuring Mini Militia battles, memory relays, and AI-powered vision tasks.",
+    regLink: "https://docs.google.com/forms/d/e/1FAIpQLSdbmoFbrB1bmYrfSQTIVNCjRTSDziAhSheJio7vq4YnrXUA5A/viewform?usp=sharing&ouid=104165202810433780029",
   },
   {
-    id: 2, time: "11:00 AM", endTime: "01:00 PM", title: "Maze Bot",
-    subtitle: "Pathfinding robotics challenge", venue: "ECE Lab", cat: "tech",
-    fee: "Rs 100", team: "2 Members", prize: "Rs 5,000",
-    img: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=1200",
-    tags: ["Robotics", "Logic", "Hardware"],
-    desc: "Build and program a bot to navigate complex mazes in the shortest time possible."
-  },
-  {
-    id: 3, time: "11:00 AM", endTime: "01:00 PM", title: "Optica Simulation",
-    subtitle: "Physics and light experiments", venue: "Room 310", cat: "quiz",
-    fee: "Free", team: "Individual", prize: "Goodies",
-    img: "https://images.unsplash.com/photo-1509228468518-180dd4864904?q=80&w=1200",
-    tags: ["Physics", "Optics", "Binary"],
-    desc: "Interactive games involving Bernoulli blasts, binary codes, and physics freeze challenges."
-  },
-  {
-    id: 4, time: "11:00 AM", endTime: "01:00 PM", title: "Venture Forge Hackathon",
+    id: 2, time: "11:00 AM", endTime: "01:00 PM", title: "Venture Forge Hackathon - Marketing Edition",
     subtitle: "Strategic marketing sprint", venue: "Room 303", cat: "tech",
-    fee: "Rs 150", team: "3 Members", prize: "Rs 10,000",
     img: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?q=80&w=1200",
     tags: ["Marketing", "Pitch", "Hackathon"],
-    desc: "Identify problems, design marketing solutions, and pitch your startup strategy to the panel."
+    desc: "Identify problems, design marketing solutions, and pitch your startup strategy to the panel.",
+    regLink: "https://forms.gle/pBETMEayh8sBm1Q69",
   },
   {
-    id: 5, time: "11:00 AM", endTime: "01:00 PM", title: "IRON FIST AI",
-    subtitle: "Vision and memory relay", venue: "Room 410", cat: "tech",
-    fee: "Rs 50", team: "2 Members", prize: "Rs 3,000",
-    img: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1200",
-    tags: ["AI", "Vision", "Gaming"],
-    desc: "A multi-round challenge featuring Mini Militia battles, memory relays, and AI vision tests."
-  },
-  {
-    id: 6, time: "11:00 AM", endTime: "02:00 PM", title: "Tech Startup Challenge",
-    subtitle: "The innovator's showcase", venue: "Room 402", cat: "tech",
-    fee: "Rs 200", team: "2 to 4 Members", prize: "Rs 15,000",
-    img: "https://images.unsplash.com/photo-1556761175-4b46a572b786?q=80&w=1200",
-    tags: ["Design", "Develop", "Startup"],
-    desc: "From Tech Spark to Start-up Showcase, pitch your development vision and business model."
-  },
-  {
-    id: 7, time: "11:00 AM", endTime: "02:00 PM", title: "Roadmap Sports Arena",
-    subtitle: "Physical and reflex challenges", venue: "Basketball Court", cat: "fun",
-    fee: "Free", team: "Varies", prize: "Medals",
-    img: "https://images.unsplash.com/photo-1517649763962-0c623066013b?q=80&w=1200",
-    tags: ["Football", "Bowling", "Match"],
-    desc: "A set of high-energy sports activities including Football matches and reflex games like Spin & Bowl."
-  },
-  {
-    id: 8, time: "11:00 AM", endTime: "04:00 PM", title: "FInfinity Challenge",
-    subtitle: "Mathematical guess & win", venue: "Room 203", cat: "tech",
-    fee: "Rs 50", team: "Individual", prize: "Rs 2,000",
+    id: 3, time: "11:00 AM", endTime: "01:00 PM", title: "Physics Freeze Game",
+    subtitle: "Physics and light experiments", venue: "Room 310", cat: "quiz",
     img: "https://images.unsplash.com/photo-1509228468518-180dd4864904?q=80&w=1200",
-    tags: ["Math", "Guess", "Logic"],
-    desc: "Think fast and move smart in this mathematical clue connection and guessing game."
+    tags: ["Physics", "Optics", "Binary"],
+    desc: "Interactive rounds featuring Physics Freeze, Binary Code Game, and Bernoulli Binary Blast.",
+    regLink: "https://docs.google.com/forms/d/e/1FAIpQLSeABawd4zOkl772rRy8v4HWKkHKmVOtEtJS5ma5WeettAcnww/viewform?usp=dialog",
+  },
+  {
+    id: 4, time: "11:00 AM", endTime: "01:00 PM", title: "Technical Event - Gesture Controlled Bot: Obstacle Maze",
+    subtitle: "Obstacle maze robotics challenge", venue: "ECE Lab", cat: "tech",
+    img: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=1200",
+    tags: ["Robotics", "Maze", "Gesture"],
+    desc: "Guide a gesture-controlled bot through an obstacle maze with precision, control, and smart calibration.",
+    regLink: "https://forms.gle/CDKpnNqdNx85rvPi9",
+  },
+  {
+    id: 5, time: "11:00 AM", endTime: "02:00 PM", title: "Bio Architect",
+    subtitle: "Living structures workshop", venue: "IED Hall", cat: "tech",
+    img: "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?q=80&w=1200",
+    tags: ["Biology", "Design", "Organic"],
+    desc: "A cluster-led session on biological architecture and organic design principles.",
+    regLink: "https://forms.gle/6WUW1J79fncoE8Zt7",
+  },
+  {
+    id: 6, time: "11:00 AM", endTime: "02:00 PM", title: "TECH - STARTUP CHALLENGE",
+    subtitle: "The innovator's showcase", venue: "Room 402", cat: "tech",
+    img: "https://images.unsplash.com/photo-1556761175-4b46a572b786?q=80&w=1200",
+    tags: ["Tech Spark", "Design", "Startup"],
+    desc: "A startup-themed challenge covering Tech Spark, Design and Develop, and a final showcase round.",
+    regLink: "https://forms.gle/vdZds3WZAW5Q7jJ96",
+  },
+  {
+    id: 7, time: "11:00 AM", endTime: "02:00 PM", title: "Sports Events",
+    subtitle: "Physical and reflex challenges", venue: "Basketball Court", cat: "fun",
+    img: "https://images.unsplash.com/photo-1517649763962-0c623066013b?q=80&w=1200",
+    tags: ["Football", "Spin and Bowl", "Match the Bottle"],
+    desc: "A high-energy sports block with football, Spin and Bowl, and Match the Bottle challenges."
+  },
+  {
+    id: 8, time: "11:00 AM", endTime: "04:00 PM", title: "FInfinity",
+    subtitle: "Mathematical guess and win", venue: "Room 203", cat: "quiz",
+    img: "https://images.unsplash.com/photo-1509228468518-180dd4864904?q=80&w=1200",
+    tags: ["Math", "Logic", "Clues"],
+    desc: "A long-form mathematical challenge built around clue connections, quick thinking, and guess-to-win rounds."
   },
   {
     id: 9, time: "11:00 AM", endTime: "04:00 PM", title: "Infinity Beats",
     subtitle: "Rhythm and logic balance", venue: "Room 211", cat: "fun",
-    fee: "Free", team: "Individual", prize: "Goodies",
     img: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=1200",
     tags: ["Balance", "Rhythm", "Tap"],
-    desc: "A multi-stage game featuring Balance Blitz, Tap & Drop, and Spin & Solve rhythm challenges."
+    desc: "A multi-stage fun event featuring Balance Blitz, Tap and Drop, and Spin and Solve challenges."
   },
   {
     id: 10, time: "11:15 AM", endTime: "01:45 PM", title: "Edit Blitz",
     subtitle: "Rapid media editing sprint", venue: "Lab", cat: "workshop",
-    fee: "Rs 100", team: "Individual", prize: "Rs 4,000",
     img: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?q=80&w=1200",
     tags: ["Editing", "Video", "Speed"],
     desc: "A fast-paced media editing contest where efficiency and creativity meet the clock."
   },
   {
-    id: 11, time: "11:30 AM", endTime: "01:00 PM", title: "AI Prompt App Creation",
+    id: 11, time: "11:30 AM", endTime: "01:00 PM", title: "AI prompt App Creation",
     subtitle: "Generative AI coding lab", venue: "Room 110", cat: "workshop",
-    fee: "Rs 150", team: "Individual", prize: "Cert + Mentoring",
     img: "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=1200",
     tags: ["AI", "Prompts", "Apps"],
-    desc: "Learn to build functional applications using state-of-the-art AI prompting techniques."
+    desc: "Learn to build functional applications using state-of-the-art AI prompting techniques.",
+    regLink: "https://forms.gle/TEuppmExeMsJTLGSA",
   },
   {
-    id: 12, time: "02:00 PM", endTime: "05:00 PM", title: "FunKart Relay",
-    subtitle: "Biology themed obstacle run", venue: "IED Hall", cat: "fun",
-    fee: "Free", team: "3 Members", prize: "Rs 2,500",
-    img: "https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?q=80&w=1200",
-    tags: ["Focus", "Vision", "Relay"],
-    desc: "Tackle the 'Zero Vision Zone' and 'Error Hunt' in this high-energy biology relay."
-  },
-  {
-    id: 13, time: "02:00 PM", endTime: "03:30 PM", title: "Tech Fun Fusion",
-    subtitle: "Connecting tech and memes", venue: "Room 110", cat: "fun",
-    fee: "Free", team: "2 Members", prize: "Goodies",
-    img: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1200",
-    tags: ["Memes", "Connect", "Fun"],
-    desc: "A creative session featuring 'Connect the Tech' and meme creation challenges."
-  },
-  {
-    id: 14, time: "02:00 PM", endTime: "04:00 PM", title: "Null Void Treasure Hunt",
+    id: 12, time: "02:00 PM", endTime: "04:00 PM", title: "Treasure Hunt",
     subtitle: "Campus-wide mystery solved", venue: "Room 406", cat: "fun",
-    fee: "Rs 50", team: "4 Members", prize: "Rs 5,000",
     img: "https://images.unsplash.com/photo-1513151233558-d860c5398176?q=80&w=1200",
     tags: ["Treasure", "Hunt", "Clues"],
     desc: "Search the campus for hidden clues to unlock the secrets of the Null Void."
-  },
-  {
-    id: 15, time: "02:00 PM", endTime: "04:00 PM", title: "Sumo Bot Battle",
-    subtitle: "High-impact robotics arena", venue: "ECE Lab", cat: "tech",
-    fee: "Rs 150", team: "2 Members", prize: "Rs 7,500",
-    img: "https://images.unsplash.com/photo-1535378917042-10a22c95931a?q=80&w=1200",
-    tags: ["Sumo", "Bot", "Impact"],
-    desc: "Pitting robotics designs against each other in a battle of strength and algorithm."
   },
 ];
 
@@ -190,16 +161,12 @@ const PopupPanel = component$<PopupPanelProps>(({ ev, meta, side, canRegister, i
       {/* Stats grid */}
       <div class="rm-popup__stats">
         <div class="rm-popup__stat">
-          <span class="rm-popup__stat-l">Entry</span>
-          <strong class="rm-popup__stat-v">{ev.fee}</strong>
+          <span class="rm-popup__stat-l">Venue</span>
+          <strong class="rm-popup__stat-v">{ev.venue}</strong>
         </div>
         <div class="rm-popup__stat">
-          <span class="rm-popup__stat-l">Team</span>
-          <strong class="rm-popup__stat-v">{ev.team}</strong>
-        </div>
-        <div class="rm-popup__stat">
-          <span class="rm-popup__stat-l">Prize</span>
-          <strong class="rm-popup__stat-v">{ev.prize}</strong>
+          <span class="rm-popup__stat-l">Timing</span>
+          <strong class="rm-popup__stat-v">{ev.time} - {ev.endTime}</strong>
         </div>
       </div>
 
@@ -215,8 +182,8 @@ const PopupPanel = component$<PopupPanelProps>(({ ev, meta, side, canRegister, i
           View Event Hub
         </Link>
         {canRegister
-          ? <Link href="/events" class="rm-popup__action rm-popup__action--ghost"
-            onClick$={(e: Event) => e.stopPropagation()}>Register Now</Link>
+          ? <a href={ev.regLink} target="_blank" rel="noopener noreferrer" class="rm-popup__action rm-popup__action--ghost"
+            onClick$={(e: Event) => e.stopPropagation()}>Register Now</a>
           : <span class="rm-popup__open-badge">Open Access</span>}
       </div>
     </div>
@@ -255,22 +222,14 @@ const EventCard = component$<EventCardProps>(
           </span>
         </div>
         <p class="rm-card__desc">{ev.desc}</p>
-        <div class="rm-card__quick-meta">
-          <span class="rm-card__meta-pill">{ev.venue}</span>
-          <span class="rm-card__meta-pill">{ev.time} \u2013 {ev.endTime}</span>
-        </div>
         <div class="rm-card__stat-grid">
           <div class="rm-card__stat">
-            <span class="rm-card__stat-label">Entry</span>
-            <strong class="rm-card__stat-value">{ev.fee}</strong>
+            <span class="rm-card__stat-label">Venue</span>
+            <strong class="rm-card__stat-value">{ev.venue}</strong>
           </div>
           <div class="rm-card__stat">
-            <span class="rm-card__stat-label">Team</span>
-            <strong class="rm-card__stat-value">{ev.team}</strong>
-          </div>
-          <div class="rm-card__stat">
-            <span class="rm-card__stat-label">Prize</span>
-            <strong class="rm-card__stat-value">{ev.prize}</strong>
+            <span class="rm-card__stat-label">Timing</span>
+            <strong class="rm-card__stat-value">{ev.time} - {ev.endTime}</strong>
           </div>
         </div>
         <div class="rm-card__tags">
@@ -280,7 +239,7 @@ const EventCard = component$<EventCardProps>(
         <div class="rm-card__actions hidden md:flex">
           <Link href="/events" class="rm-card__action rm-card__action--primary">View Event Hub</Link>
           {canRegister
-            ? <Link href="/events" class="rm-card__action rm-card__action--ghost">Register Now</Link>
+            ? <a href={ev.regLink} target="_blank" rel="noopener noreferrer" class="rm-card__action rm-card__action--ghost">Register Now</a>
             : <span class="rm-card__status">Open Access</span>}
         </div>
         {isActive && (
@@ -292,46 +251,6 @@ const EventCard = component$<EventCardProps>(
 );
 
 export default component$(function Day1Roadmap() {
-
-  useVisibleTask$(() => {
-    const page = document.querySelector(".rm-page--day1") as HTMLElement | null;
-    if (!page) return;
-    let throttleTimer: any = null;
-    const updateScroll = () => {
-      const scrollMax = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
-      const scrollRatio = window.scrollY / scrollMax;
-      page.style.setProperty("--rm-scroll-progress", scrollRatio.toFixed(4));
-      const mid = 0.5, span = 0.3;
-      const img1 = Math.max(0, Math.min(1, (mid - scrollRatio + span / 2) / span));
-      const img2 = 1 - img1;
-      page.style.setProperty("--rm-bg1-opacity", img1.toFixed(4));
-      page.style.setProperty("--rm-bg2-opacity", img2.toFixed(4));
-
-      const isMobile = window.innerWidth <= 767;
-      if (isMobile) {
-        page.style.setProperty("--rm-bg1-opacity", "0.5");
-        page.style.setProperty("--rm-bg2-opacity", "0.5");
-        return;
-      }
-      page.style.setProperty("--rm-bg1-shift", `${(-140 * (1 - img1)).toFixed(1)}px`);
-      page.style.setProperty("--rm-bg2-shift", `${(140 * (1 - img2)).toFixed(1)}px`);
-    };
-    const onScroll = () => {
-      if (throttleTimer) return;
-      // Perf Fix 2.8: Throttle scroll heavy property updates to 100ms
-      throttleTimer = setTimeout(() => {
-        updateScroll();
-        throttleTimer = null;
-      }, 100);
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    updateScroll();
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      if (throttleTimer) clearTimeout(throttleTimer);
-    };
-  });
-
   useVisibleTask$(() => {
     const boot = () => {
       const pageRoot = document.querySelector(".rm-page--day1") as HTMLElement | null;
@@ -513,11 +432,6 @@ export default component$(function Day1Roadmap() {
     <div class="rm-page rm-page--day1" key="roadmap-day-1">
       <style>{`
         .rm-page--day1 {
-          --rm-scroll-progress: 0;
-          --rm-bg1-opacity: 1;
-          --rm-bg2-opacity: 0;
-          --rm-bg1-shift: 0px;
-          --rm-bg2-shift: 0px;
           background: #020617;
           color: #f0fff2;
           position: relative;
@@ -706,8 +620,6 @@ export default component$(function Day1Roadmap() {
         .rm-scene-art img {
           display: block; width: 100%; height: 100vh; object-fit: cover; filter: saturate(0.85) contrast(1.1) brightness(0.42); transform: scale(1.05);
         }
-        .rm-scene-art--i1 { opacity: var(--rm-bg1-opacity); transform: translate3d(0, var(--rm-bg1-shift), 0); }
-        .rm-scene-art--i2 { opacity: var(--rm-bg2-opacity); transform: translate3d(0, var(--rm-bg2-shift), 0); }
 
         .rm-page--day1 .rm-end-popup {
           position: absolute; right: calc(100% + 0.95rem); top: 50%; transform: translate(-12px, -50%) scale(0.92); min-width: 12rem; max-width: 13.5rem; padding: 0.75rem 0.9rem; border-radius: 1rem; border: 1px solid rgba(215,255,74,0.24); background: linear-gradient(135deg, rgba(215,255,74,0.1), rgba(99,255,44,0.06)), rgba(8,16,10,0.94); box-shadow: 0 18px 42px rgba(0,0,0,0.42), 0 0 24px rgba(99,255,44,0.12); opacity: 0; pointer-events: none; transition: opacity 320ms ease, transform 380ms cubic-bezier(0.22, 1, 0.36, 1); z-index: 4;
@@ -739,6 +651,15 @@ export default component$(function Day1Roadmap() {
           opacity: 1 !important;
           filter: drop-shadow(0 0 12px rgba(99, 255, 44, 0.8)) !important;
         }
+        .rm-page--day1 .rm-node__center-dot {
+          position: absolute;
+          inset: 50% auto auto 50%;
+          width: 0.55rem;
+          height: 0.55rem;
+          border-radius: 999px;
+          transform: translate(-50%, -50%);
+          pointer-events: none;
+        }
         .rm-page--day1 #rm-tracer-shell {
           display: none !important;
         }
@@ -764,9 +685,6 @@ export default component$(function Day1Roadmap() {
         <div class="rm-scene-art rm-scene-art--i1">
           <img src="/roadmap-day1/i1.webp" alt="Scene 1" />
         </div>
-        <div class="rm-scene-art rm-scene-art--i2">
-          <img src="/roadmap-day1/i2.webp" alt="Scene 2" />
-        </div>
       </div>
 
       <div class="rm-page__aurora rm-page__aurora--left" />
@@ -778,7 +696,7 @@ export default component$(function Day1Roadmap() {
             <div class="rm-section__header-text">
               <span class="rm-pill">Timeline</span>
               <h1 class="rm-section__title">Day 1 Event Flow</h1>
-              <p class="rm-section__copy">Tap any card to reveal its event, team &amp; entry details.</p>
+              <p class="rm-section__copy">Tap any card to reveal its event, venue, timing, and registration details.</p>
             </div>
             <div class="rm-event-glass">
               <span class="rm-event-glass__count">{String(EVENTS.length).padStart(2, "0")}</span>
@@ -803,7 +721,7 @@ export default component$(function Day1Roadmap() {
               const meta = CAT[event.cat];
               const side: "left" | "right" = index % 2 === 0 ? "left" : "right";
               const isActive = false;
-              const canRegister = event.cat !== "opening" && event.cat !== "cultural";
+              const canRegister = Boolean(event.regLink);
               return (
                 <div key={event.id} class={["rm-row", `rm-row--${side}`]}>
                   <div class="rm-row__side rm-row__side--left">
@@ -823,7 +741,11 @@ export default component$(function Day1Roadmap() {
                       data-snake-node=""
                     >
                       <span class="rm-node__pulse" /><span class="rm-node__halo" /><span class="rm-node__impact" />
-                      <span class="rm-node__code">{meta.short}</span>
+                      <span
+                        class="rm-node__center-dot"
+                        aria-hidden="true"
+                        style={`background:${meta.color}; box-shadow: 0 0 10px rgba(${meta.rgb}, 0.45);`}
+                      />
                       <span class="rm-node__time">{event.time}</span>
                     </div>
                   </div>
