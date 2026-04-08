@@ -205,14 +205,22 @@ export default component$(() => {
               <div class="grid gap-12 md:gap-8 grid-cols-1 md:grid-cols-4 lg:grid-cols-5">
                 {/* Brand Block */}
                 <div class="col-span-1 md:col-span-2 lg:col-span-2 flex flex-col items-center md:items-start text-center md:text-left">
-                  <img
-                    src={footerLogo}
-                    alt="Theta"
-                    width={isDay2 ? 180 : 140}
-                    height={isDay2 ? 80 : 70}
-                    class={["h-12 w-auto opacity-90 transition-all duration-300 hover:opacity-100", !isDay2 ? "[filter:brightness(0)_invert(1)]" : ""]}
-                  />
-                  <p class="mt-6 text-sm leading-relaxed text-[#8ca38c] max-w-sm">
+                  <div class="flex items-center gap-6 mb-6">
+                    <img
+                      src={footerLogo}
+                      alt="Theta"
+                      width={isDay2 ? 180 : 140}
+                      height={isDay2 ? 80 : 70}
+                      class={["h-12 w-auto opacity-90 transition-all duration-300 hover:opacity-100", !isDay2 ? "[filter:brightness(0)_invert(1)]" : ""]}
+                    />
+                    <div class="h-8 w-px bg-white/10"></div>
+                    <img
+                      src="/sponsors/media/rdg-logo.jpg"
+                      alt="RDG Logo"
+                      class="h-10 w-auto opacity-80 hover:opacity-100 transition-opacity rounded-md"
+                    />
+                  </div>
+                  <p class="mt-2 text-sm leading-relaxed text-[#8ca38c] max-w-sm">
                     {copy.value.footer.description}
                   </p>
                 </div>

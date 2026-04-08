@@ -26,11 +26,12 @@
       }
     ],
     "gold": [
-      { "name": "Fuel", "logo": "/sponsors/gold/fuel-logo.jpg", "order": 1 },
+      { "name": "Fuel", "logo": "/sponsors/gold/fuel-logo.jpg", "order": 1, "isActive": true },
       {
         "name": "Dude's Mens Wear",
         "logo": "/sponsors/gold/dudes-mens-wear-logo.jpg",
-        "order": 2
+        "order": 2,
+        "isActive": true
       }
     ],
     "silver": [
@@ -67,7 +68,7 @@
       }
     ],
     "media": [
-      { "name": "RDG", "logo": "/sponsors/media/rdg-logo.jpg", "order": 1 }
+      { "name": "RDG", "logo": "/sponsors/media/rdg-logo.jpg", "order": 1, "isActive": true }
     ]
   }
 }

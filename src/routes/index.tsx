@@ -1359,7 +1359,7 @@ export default component$(() => {
                     />
 
                     <div class="relative z-10">
-                      <span class="block text-[11px] uppercase font-black tracking-[0.25em] text-white/40 mb-3 group-hover:text-white/60 transition-colors">
+                      <span class="block text-[11px] uppercase font-black tracking-[0.25em] text-white mb-3 group-hover:text-white/80 transition-colors">
                         {meta.eyebrow}
                       </span>
                       <h3 class="text-4xl font-black uppercase tracking-tighter mb-2" style={{ color: meta.accent, textShadow: `0 0 20px ${meta.glow}` }}>
@@ -1444,7 +1444,7 @@ export default component$(() => {
                       </div>
 
                       <div class="mt-6 text-center">
-                        <p class="text-[0.65rem] font-black tracking-[0.3em] text-white/30 uppercase transition-all duration-500 group-hover:text-white/80 group-hover:tracking-[0.4em]">
+                        <p class="text-[0.65rem] font-black tracking-[0.3em] text-white uppercase transition-all duration-500 group-hover:tracking-[0.4em]">
                           {sponsor.name}
                         </p>
                         <div class="mx-auto mt-2 h-0.5 w-0 bg-[#0ea935] transition-all duration-500 group-hover:w-12 group-hover:shadow-[0_0_10px_#0ea935]" />
@@ -1462,7 +1462,6 @@ export default component$(() => {
           </div>
         </section>
       </div>
-
 
       {/* ═══════════════ SECTOR DIVIDER: SPONSORS TO CTA ═══════════════ */}
       <div class="relative w-full h-px bg-gradient-to-r from-transparent via-[#0ea935]/30 to-transparent mt-12 sm:mt-20">

@@ -621,7 +621,7 @@ export default component$(() => {
                       class="rounded-[1.75rem] border px-5 py-6"
                       style={`border-color:${outerTheme.glow};background:radial-gradient(circle at top left, ${outerTheme.glow}, transparent 46%), rgba(255,255,255,0.02);box-shadow:0 10px 24px rgba(0,0,0,0.16),0 0 18px ${outerTheme.glow};`}
                     >
-                      <p class="text-[0.66rem] font-black tracking-[0.28em] text-[var(--t-dim)] uppercase">
+                      <p class="text-[0.66rem] font-black tracking-[0.28em] text-white uppercase">
                         Tier {String(index + 1).padStart(2, "0")}
                       </p>
                       <h3 class="t-heading mt-4 text-4xl text-[var(--t-text)]">
@@ -673,7 +673,7 @@ export default component$(() => {
                                 class="h-full w-full object-contain filter transition-transform duration-500 group-hover:scale-110"
                               />
                             </div>
-                            <p class="mt-4 text-[0.65rem] font-bold tracking-[0.2em] text-[var(--t-dim)] uppercase transition-colors group-hover:text-[var(--t-text)]">
+                            <p class="mt-4 text-[0.65rem] font-bold tracking-[0.2em] text-white uppercase transition-colors group-hover:text-white">
                               {sponsor.name}
                             </p>
                           </article>
