@@ -1012,18 +1012,18 @@ export default component$(() => {
       </section>
 
       {/* ═══════════════ SECTOR DIVIDER: ROADMAP TO STATS ═══════════════ */}
-      <div class="relative hidden lg:block w-full h-px bg-gradient-to-r from-transparent via-[#70f3ff]/30 to-transparent my-10 sm:my-16">
+      <div class="relative w-full h-px bg-gradient-to-r from-transparent via-[#70f3ff]/30 to-transparent my-10 sm:my-16">
         <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-6 py-1 rounded-full border border-[#70f3ff]/20 bg-black backdrop-blur-md text-[9px] font-black uppercase tracking-[0.4em] text-[#70f3ff] shadow-[0_0_15px_rgba(112,243,255,0.1)]">
           Quantum Telemetry Active
         </div>
       </div>
 
       {/* ═══════════════ STATS ═══════════════ */}
-      <section id="theta-stats" class="theta-stats-section hidden lg:flex px-4 py-12 sm:px-6 lg:px-8 lg:py-0 bg-[#0a0514] min-h-screen lg:min-h-0 lg:h-screen w-full flex-col lg:flex-row items-center justify-center overflow-hidden">
+      <section id="theta-stats" class="theta-stats-section px-4 py-12 sm:px-6 lg:px-8 lg:py-0 bg-[#0a0514] min-h-screen lg:min-h-0 lg:h-screen w-full flex flex-col lg:flex-row items-center justify-center overflow-hidden">
         <div class="theta-stats-bento grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] gap-6 sm:gap-10 max-w-[125rem] mx-auto h-auto lg:h-full lg:max-h-[85vh] items-center w-full">
 
           {/* --- BENTO CARD: VISUAL & TITLE --- */}
-          <div class="theta-bento-card theta-bento-card--visual reveal-left flex flex-col justify-between p-8 sm:p-10 h-full min-h-[450px] relative overflow-hidden bg-[#050a05]/40 border border-white/5 backdrop-blur-3xl rounded-[3rem]">
+          <div class="theta-bento-card theta-bento-card--visual reveal-left flex flex-col justify-between p-8 sm:p-10 h-full lg:min-h-[450px] relative overflow-hidden bg-[#050a05]/40 border border-white/5 backdrop-blur-3xl rounded-[3rem]">
             <img src="/theta-logo.webp" alt="" class="theta-bento-card__watermark opacity-[0.03]" aria-hidden="true" loading="lazy" />
 
             <div class="theta-stats-copy relative z-10">
@@ -1036,7 +1036,7 @@ export default component$(() => {
               </h2>
             </div>
 
-            <div class="theta-stats-visual-wrap relative flex flex-1 items-center justify-center py-8">
+            <div class="theta-stats-visual-wrap relative hidden lg:flex flex-1 items-center justify-center py-8">
               <div class="theta-stats-visual-container relative flex flex-col items-center justify-center scale-90 sm:scale-110">
                 {/* --- QUANTUM ENERGY CORE (BACKGROUND) --- */}
                 <div

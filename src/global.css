@@ -1420,7 +1420,6 @@ html[data-perf-tier="lo"] .t-marquee-track {
    STATS COMMAND DECK
    ============================================================ */
 .theta-stats-section {
-  display: flex;
   justify-content: center;
 }
 
