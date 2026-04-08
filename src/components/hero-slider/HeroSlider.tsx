@@ -19,9 +19,9 @@ export const heroSlides = [
     description: "Musical Fusion · Opening Ceremony · Cultural Night",
     accentColor: "#38bdf8",
     accentRgb: "56, 189, 248",
-    bgImage: "/homepage/i1.png",
+    bgImage: "/homepage/i1.webp",
     bgVideo: "/homepage/v1.mp4",
-    thumb: "/homepage/i1.png",
+    thumb: "/homepage/i1.webp",
   },
   /* 
   {
@@ -32,8 +32,8 @@ export const heroSlides = [
     description: "Hackathon · Robotics · AI/ML Showdown",
     accentColor: "#f5c842",
     accentRgb: "245,200,66",
-    bgImage: "/day/day-2.png",
-    thumb: "/day/day-2.png",
+    bgImage: "/day/day-2.webp",
+    thumb: "/day/day-2.webp",
   }, 
   */
   {
@@ -44,9 +44,9 @@ export const heroSlides = [
     description: "Prize Distribution · Valedictory · Networking Night",
     accentColor: "#ff3333",
     accentRgb: "255,51,51",
-    bgImage: "/homepage/i3.png",
-    mobileBgImage: "/homepage/i3-mobile.png",
-    thumb: "/homepage/i3.png",
+    bgImage: "/homepage/i3.webp",
+    mobileBgImage: "/homepage/i3-mobile.webp",
+    thumb: "/homepage/i3.webp",
   },
 ];
 
@@ -91,9 +91,10 @@ const HeroCountdown = component$((props: { targetDate: string }) => {
           <div class="hs-omnitrix-shell">
             <div class="hs-omnitrix-glow"></div>
             <img
-              src="/ben10/ben10-logo.png"
+              src="/ben10/ben10-logo.webp"
               alt="Ben 10"
               class="hs-omnitrix-icon"
+              loading="lazy"
             />
           </div>
 
@@ -129,13 +130,12 @@ export const HeroSlider = component$(() => {
   const isHeroInView = useSignal(true);
   const isVideoLoading = useSignal(false);
   const slideProgress = useSignal(0);
-  const state = useStore({ startTime: 0 });
+  const perfTier = useSignal<ReturnType<typeof getDevicePerfTier>>("hi");
 
   const goTo = $((idx: number) => {
     if (isAnimating.value || idx === active.value) return;
     isAnimating.value = true;
     active.value = idx;
-    state.startTime = performance.now();
 
     /* Content Entrance Animations */
     const tl = gsap.timeline();
@@ -145,21 +145,31 @@ export const HeroSlider = component$(() => {
     tl.fromTo(".hs-desc", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power4.out" }, "-=0.5");
     tl.fromTo(".hs-cta", { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.7)" }, "-=0.4");
 
-    setTimeout(() => { isAnimating.value = false; }, 900);
+    window.setTimeout(() => {
+      isAnimating.value = false;
+    }, 900);
   });
 
-  useVisibleTask$(() => {
+  useVisibleTask$(({ cleanup }) => {
+    perfTier.value = getDevicePerfTier();
+    if (perfTier.value === "lo") {
+      return;
+    }
+
     const tl = gsap.timeline({ delay: 0.5 });
     tl.fromTo(".hs-badge", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power4.out" });
     tl.fromTo(".hs-title", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power4.out" }, "-=0.4");
     tl.fromTo(".hs-desc", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power4.out" }, "-=0.5");
     tl.fromTo(".hs-cta", { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.7)" }, "-=0.4");
+
+    cleanup(() => tl.kill());
   });
 
   useVisibleTask$(({ cleanup }) => {
     const mediaQuery = window.matchMedia("(min-width: 1024px)");
     const syncViewport = () => {
       isDesktop.value = mediaQuery.matches;
+      perfTier.value = getDevicePerfTier();
     };
 
     syncViewport();
@@ -262,23 +272,19 @@ export const HeroSlider = component$(() => {
     track(() => isDesktop.value);
     track(() => isHeroInView.value);
 
-    const videos = document.querySelectorAll<HTMLVideoElement>("[data-hero-video]");
-
-    videos.forEach((video, index) => {
-      if (index === active.value && isHeroInView.value && isDesktop.value) {
-        void video.play().catch(() => {
-          // Ignore autoplay interruptions from the browser.
-        });
-        return;
-      }
-
-      video.pause();
-    });
-
     const currentVideo = videoRef.value;
     const activeSlide = heroSlides[active.value];
 
     if (!currentVideo || !activeSlide.bgVideo || !isDesktop.value) {
+      return;
+    }
+
+    if (isHeroInView.value) {
+      void currentVideo.play().catch(() => {
+        // Ignore autoplay interruptions from the browser.
+      });
+    } else {
+      currentVideo.pause();
       return;
     }
 
@@ -318,8 +324,6 @@ export const HeroSlider = component$(() => {
   });
 
   const slide = heroSlides[active.value];
-  const isDay1DesktopVideo = slide.id === 0 && !!slide.bgVideo && isDesktop.value;
-
   return (
     <section id="hero-slider" ref={heroRef} class="hs-root relative overflow-hidden"
       style={`--hs-accent:${slide.accentColor};--hs-accent-rgb:${slide.accentRgb};`}>
@@ -336,7 +340,7 @@ export const HeroSlider = component$(() => {
             transform: "none"
           }}
         >
-          {s.bgVideo && isDesktop.value && getDevicePerfTier() === "hi" ? (
+          {s.bgVideo && isDesktop.value && perfTier.value === "hi" ? (
             isHeroInView.value && active.value === i ? (
               <video
                 ref={videoRef}
@@ -421,9 +425,9 @@ export const HeroSlider = component$(() => {
 
       {isDesktop.value && (
         <div class="hs-video-branding" aria-label="Theta and SASTRA logos">
-          <img src="/theta-logo.png" alt="Theta" class="hs-video-branding__logo hs-video-branding__logo--theta" />
+          <img src="/theta-logo.webp" alt="Theta" class="hs-video-branding__logo hs-video-branding__logo--theta" loading="lazy" />
           <div class="hs-video-branding__divider" />
-          <img src="/sastra.webp" alt="SASTRA" class="hs-video-branding__logo hs-video-branding__logo--sastra" />
+          <img src="/sastra.webp" alt="SASTRA" class="hs-video-branding__logo hs-video-branding__logo--sastra" loading="lazy" />
         </div>
       )}
 

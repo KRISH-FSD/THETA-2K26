@@ -1,0 +1,52 @@
+Starting image conversion...
+✅ Sharp loaded.
+🔍 Found 38 PNG images.
+✅ backgrounds\sastra-1.png optimized: 723KB → 71KB
+✅ backgrounds\sastra-3.png optimized: 14KB → 2KB
+✅ ben10\ben10-logo.png optimized: 59KB → 5KB
+✅ ben10.png optimized: 760KB → 46KB
+✅ day\day-1.png optimized: 918KB → 81KB
+✅ day\day-2.png optimized: 594KB → 27KB
+📏 Resizing day\day-3.png (3480px → 1920px)
+✅ day\day-3.png optimized: 5728KB → 137KB
+✅ day1-Ben10\Forearms.png optimized: 150KB → 23KB
+✅ dev\krishh.png optimized: 1223KB → 37KB
+📏 Resizing Event-Images\Day-1\pic1.png (3464px → 1920px)
+✅ Event-Images\Day-1\pic1.png optimized: 2931KB → 110KB
+📏 Resizing Event-Images\Day-1\pic2.png (3464px → 1920px)
+✅ Event-Images\Day-1\pic2.png optimized: 4408KB → 123KB
+✅ homepage\i1.png optimized: 1933KB → 153KB
+✅ homepage\i3-mobile.png optimized: 2086KB → 180KB
+📏 Resizing homepage\i3.png (3480px → 1920px)
+✅ homepage\i3.png optimized: 396KB → 90KB
+✅ homepage\i333.png optimized: 758KB → 42KB
+✅ onepeice\one-peice-logo....png optimized: 520KB → 50KB
+✅ onepeice\one-peice-logo.png optimized: 224KB → 29KB
+✅ red-ben10\red-ben10.png optimized: 260KB → 18KB
+✅ roadmap-day1\i1.png optimized: 1485KB → 172KB
+✅ roadmap-day2\i1.png optimized: 4441KB → 617KB
+✅ roadmap-day2\i2.png optimized: 1196KB → 161KB
+📏 Resizing roadmap-day2\i3.png (3264px → 1920px)
+✅ roadmap-day2\i3.png optimized: 5614KB → 219KB
+✅ roadmap-day3\i1.png optimized: 2875KB → 278KB
+✅ roadmap-day3\i2.png optimized: 454KB → 50KB
+✅ roadmap-day3\i3.png optimized: 440KB → 60KB
+📏 Resizing sastra.png (11168px → 1920px)
+✅ sastra.png optimized: 6286KB → 71KB
+✅ spidy\image.png optimized: 238KB → 22KB
+✅ spidy\spider-logo.png optimized: 257KB → 50KB
+✅ spidy\spider-logo2.png optimized: 78KB → 16KB
+✅ spidy\spidy-web.png optimized: 169KB → 70KB
+✅ sponsors\new\diamond\palanivel.png optimized: 218KB → 15KB
+✅ sponsors\new\diamond\veranda.png optimized: 223KB → 14KB
+✅ sponsors\new\platinum\2IIM.png optimized: 66KB → 5KB
+✅ sponsors\platinum\lee-benz-logo.png optimized: 177KB → 41KB
+📏 Resizing sponsors\silver\dasarathy-tvs-logo.png (5760px → 1920px)
+✅ sponsors\silver\dasarathy-tvs-logo.png optimized: 1707KB → 17KB
+📏 Resizing sponsors\silver\eye-roast-photography-logo.png (5760px → 1920px)
+✅ sponsors\silver\eye-roast-photography-logo.png optimized: 930KB → 24KB
+📏 Resizing sponsors\silver\jawa-yezdi-logo.png (5760px → 1920px)
+✅ sponsors\silver\jawa-yezdi-logo.png optimized: 1491KB → 35KB
+✅ theta-logo.png optimized: 55KB → 27KB
+
+🎉 Finished! Coverted 38 images, saved 47.75 MB.

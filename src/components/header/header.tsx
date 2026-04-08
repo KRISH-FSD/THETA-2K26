@@ -3,6 +3,13 @@ import { Link, useLocation } from "@builder.io/qwik-city";
 
 type Theme = "default" | "spider" | "onepiece" | "red-ben10";
 
+const readTheme = (): Theme => {
+  const value = document.body.getAttribute("data-theme") as Theme | null;
+  return value === "spider" || value === "onepiece" || value === "red-ben10"
+    ? value
+    : "default";
+};
+
 export const Header = component$(() => {
   const location = useLocation();
   const open = useSignal(false);
@@ -19,15 +26,12 @@ export const Header = component$(() => {
   useVisibleTask$(({ track }) => {
     track(() => location.url.pathname);
     open.value = false;
+  });
 
-    /* Read theme set by the page component */
-    const t = document.body.getAttribute("data-theme") as Theme | null;
-    theme.value = t === "spider" ? "spider" : t === "onepiece" ? "onepiece" : t === "red-ben10" ? "red-ben10" : "default";
-
-    /* Observe future body attribute changes (set by page useVisibleTask$) */
+  useVisibleTask$(() => {
+    theme.value = readTheme();
     const obs = new MutationObserver(() => {
-      const val = document.body.getAttribute("data-theme") as Theme | null;
-      theme.value = val === "spider" ? "spider" : val === "onepiece" ? "onepiece" : val === "red-ben10" ? "red-ben10" : "default";
+      theme.value = readTheme();
     });
     obs.observe(document.body, { attributes: true, attributeFilter: ["data-theme"] });
     return () => obs.disconnect();
@@ -54,10 +58,10 @@ export const Header = component$(() => {
     : theme.value === "onepiece" ? "rgba(200,160,0,0.5)"
       : theme.value === "red-ben10" ? "rgba(255,40,40,0.5)"
         : "rgba(14,169,53,0.5)";
-  const logoSrc = theme.value === "spider" ? "/spidy/image.png"
-    : theme.value === "onepiece" ? "/onepeice/one-peice-logo.png"
-      : theme.value === "red-ben10" ? "/red-ben10/red-ben10.png"
-        : "/ben10/ben10-logo.png";
+  const logoSrc = theme.value === "spider" ? "/spidy/image.webp"
+    : theme.value === "onepiece" ? "/onepeice/one-peice-logo.webp"
+      : theme.value === "red-ben10" ? "/red-ben10/red-ben10.webp"
+        : "/ben10/ben10-logo.webp";
   const logoAlt = theme.value === "spider" ? "Spider-Man"
     : theme.value === "onepiece" ? "One Piece"
       : theme.value === "red-ben10" ? "Red Ben 10"
@@ -93,7 +97,7 @@ export const Header = component$(() => {
             class="origin-left drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)] transition-transform hover:scale-[1.03]"
           >
             <img
-              src="/theta-logo.png"
+              src="/theta-logo.webp"
               alt="Theta"
               class="h-18 w-auto object-contain opacity-95 [filter:brightness(0)_invert(1)] transition-opacity hover:opacity-100 sm:h-20 md:h-20"
             />
@@ -166,7 +170,7 @@ export const Header = component$(() => {
 
         {/* Right: Developers + Hamburger */}
         <div class="pointer-events-auto flex flex-1 items-center justify-end gap-2 sm:gap-3 md:flex-initial md:w-[290px] lg:w-[420px]">
-          <div class="group pointer-events-auto relative hidden md:flex">
+          <Link href="/developers" class="group pointer-events-auto relative hidden md:flex">
             <div
               class="relative z-10 flex items-center justify-center gap-2.5 overflow-hidden rounded-full border bg-[#050505]/40 px-5 py-2.5 text-[0.6rem] font-black tracking-[0.2em] whitespace-nowrap uppercase backdrop-blur-md transition-all duration-300 lg:px-8 lg:py-3.5 lg:text-[0.7rem]"
               style={
@@ -196,7 +200,7 @@ export const Header = component$(() => {
                 <path d="m12 5 7 7-7 7" />
               </svg>
             </div>
-          </div>
+          </Link>
 
           <button
             type="button"
@@ -251,7 +255,8 @@ export const Header = component$(() => {
           >
             Contacts
           </Link>
-          <div
+          <Link
+            href="/developers"
             class="mt-6 block rounded-2xl px-5 py-4 text-center text-sm font-black tracking-widest text-white uppercase transition-all"
             style={`background:${accent};box-shadow:0 0 20px ${accentGlow}; opacity: 0.8;`}
           >
@@ -259,7 +264,7 @@ export const Header = component$(() => {
               <span class="inline-flex h-2 w-2 rounded-full bg-white opacity-90 shadow-[0_0_10px_white]" />
               <span>Developers</span>
             </span>
-          </div>
+          </Link>
         </div>
       </div>
     </>

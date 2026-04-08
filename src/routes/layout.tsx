@@ -85,7 +85,7 @@ export default component$(() => {
   const isDevelopersRoute = loc.url.pathname.startsWith("/developers");
   const isEventsRoute = loc.url.pathname.startsWith("/events");
   const isDay2 = loc.url.pathname.includes("/roadmap/day2");
-  const footerLogo = isDay2 ? "/onepeice/one-peice-logo.png" : "/theta-logo.png";
+  const footerLogo = isDay2 ? "/onepeice/one-peice-logo.webp" : "/theta-logo.webp";
 
   const showDev = $(() => {
     toastOpen.value = !toastOpen.value;
@@ -137,7 +137,7 @@ export default component$(() => {
     if (dock) {
       gsap.killTweensOf(dock);
       if (footer) {
-        gsap.to(dock, {
+        const tween = gsap.to(dock, {
           scrollTrigger: {
             trigger: footer,
             start: "top 95%",
@@ -149,6 +149,11 @@ export default component$(() => {
           duration: 0.7,
           ease: "power3.inOut",
         });
+
+        return () => {
+          tween.scrollTrigger?.kill();
+          tween.kill();
+        };
       }
     }
   });
@@ -215,7 +220,7 @@ export default component$(() => {
                     />
                     <div class="h-8 w-px bg-white/10"></div>
                     <img
-                      src="/sponsors/media/rdg-logo.jpg"
+                      src="/sponsors/media/rdg-logo.webp"
                       alt="RDG Logo"
                       class="h-10 w-auto opacity-80 hover:opacity-100 transition-opacity rounded-md"
                     />

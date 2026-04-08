@@ -12,6 +12,7 @@
     "moduleResolution": "Bundler",
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "types": ["node"],
     "incremental": true,
     "isolatedModules": true,
     "outDir": "tmp",

@@ -120,6 +120,16 @@ const defaultConfig: ConfigData = {
 
 const defaultSponsors: SponsorsConfig = { diamond: [], platinum: [], gold: [], silver: [], media: [] };
 
+interface HomeDataPayload {
+  config: ConfigData;
+  sponsors: SponsorsConfig;
+  events: EventItem[];
+  homeCopy: HomeCopy;
+}
+
+let homeDataCache: HomeDataPayload | null = null;
+let homeDataPromise: Promise<HomeDataPayload> | null = null;
+
 /* ──────────────────────── helpers ───────────────────────────── */
 const parseStatNumber = (value: string): number => {
   const parsed = Number(value.replace(/[^\d]/g, ""));
@@ -138,6 +148,46 @@ const parseFestStart = (datesText: string, isoDate?: string): Date => {
     if (!Number.isNaN(parsed.getTime())) return parsed;
   }
   return new Date("2026-03-15T09:00:00");
+};
+
+const loadHomeData = async (): Promise<HomeDataPayload> => {
+  if (homeDataCache) {
+    return homeDataCache;
+  }
+
+  if (!homeDataPromise) {
+    homeDataPromise = (async () => {
+      const [cfgRes, sponsorRes, eventRes, contentRes] = await Promise.all([
+        fetch("/data/config.json"),
+        fetch("/data/sponsors.json"),
+        fetch("/data/events.json"),
+        fetch("/data/content.json"),
+      ]);
+
+      if (!cfgRes.ok || !sponsorRes.ok || !eventRes.ok || !contentRes.ok) {
+        throw new Error("Failed to load homepage data.");
+      }
+
+      const cfg = await cfgRes.json();
+      const sponsorPayload = await sponsorRes.json();
+      const eventPayload = await eventRes.json();
+      const content = await contentRes.json();
+
+      const payload: HomeDataPayload = {
+        config: { ...defaultConfig, ...cfg },
+        sponsors: { ...defaultSponsors, ...(sponsorPayload.sponsors || {}) },
+        events: eventPayload.events || [],
+        homeCopy: content.home ? { ...defaultHomeCopy, ...content.home } : defaultHomeCopy,
+      };
+
+      homeDataCache = payload;
+      return payload;
+    })().finally(() => {
+      homeDataPromise = null;
+    });
+  }
+
+  return homeDataPromise;
 };
 
 /* perf helper — lo+mid get lighter animations, hi gets everything */
@@ -468,17 +518,24 @@ export default component$(() => {
       return;
     }
 
-    const raf = 0;
+    const setScrollUp = gsap.quickSetter(section, "--festival-scroll-up", "px");
+    const setScrollDown = gsap.quickSetter(section, "--festival-scroll-down", "px");
+    const setScrollLeft = gsap.quickSetter(section, "--festival-scroll-left", "px");
+    const setScrollRight = gsap.quickSetter(section, "--festival-scroll-right", "px");
+    const setScrollSoft = gsap.quickSetter(section, "--festival-scroll-soft", "px");
+
+    const setPointerLeft = gsap.quickSetter(section, "--festival-pointer-left", "px");
+    const setPointerRight = gsap.quickSetter(section, "--festival-pointer-right", "px");
+    const setPointerUp = gsap.quickSetter(section, "--festival-pointer-up", "px");
+    const setPointerDown = gsap.quickSetter(section, "--festival-pointer-down", "px");
+
     const resetPointer = () => {
-      section.style.setProperty("--festival-pointer-left", "0px");
-      section.style.setProperty("--festival-pointer-right", "0px");
-      section.style.setProperty("--festival-pointer-up", "0px");
-      section.style.setProperty("--festival-pointer-down", "0px");
+      setPointerLeft(0); setPointerRight(0); setPointerUp(0); setPointerDown(0);
     };
 
     gsap.registerPlugin(ScrollTrigger);
 
-    ScrollTrigger.create({
+    const scrollTrigger = ScrollTrigger.create({
       trigger: section,
       start: "top bottom",
       end: "bottom top",
@@ -488,30 +545,36 @@ export default component$(() => {
         const horizontalShift = Math.round((progress - 0.5) * 34);
         const softShift = Math.round((progress - 0.5) * 18);
 
-        section.style.setProperty("--festival-scroll-up", `${verticalShift}px`);
-        section.style.setProperty("--festival-scroll-down", `${-verticalShift}px`);
-        section.style.setProperty("--festival-scroll-left", `${horizontalShift}px`);
-        section.style.setProperty("--festival-scroll-right", `${-horizontalShift}px`);
-        section.style.setProperty("--festival-scroll-soft", `${softShift}px`);
+        setScrollUp(verticalShift);
+        setScrollDown(-verticalShift);
+        setScrollLeft(horizontalShift);
+        setScrollRight(-horizontalShift);
+        setScrollSoft(softShift);
       }
     });
 
+    let frameId: number;
     const onPointerMove = (event: PointerEvent) => {
-      const rect = section.getBoundingClientRect();
-      const pointerX = (event.clientX - rect.left) / rect.width - 0.5;
-      const pointerY = (event.clientY - rect.top) / rect.height - 0.5;
+      if (frameId) cancelAnimationFrame(frameId);
+      frameId = requestAnimationFrame(() => {
+        const rect = section.getBoundingClientRect();
+        const pointerX = (event.clientX - rect.left) / rect.width - 0.5;
+        const pointerY = (event.clientY - rect.top) / rect.height - 0.5;
 
-      section.style.setProperty("--festival-pointer-left", `${Math.floor(pointerX * -18)}px`);
-      section.style.setProperty("--festival-pointer-right", `${Math.floor(pointerX * 18)}px`);
-      section.style.setProperty("--festival-pointer-up", `${Math.floor(pointerY * -14)}px`);
-      section.style.setProperty("--festival-pointer-down", `${Math.floor(pointerY * 14)}px`);
+        setPointerLeft(Math.floor(pointerX * -18));
+        setPointerRight(Math.floor(pointerX * 18));
+        setPointerUp(Math.floor(pointerY * -14));
+        setPointerDown(Math.floor(pointerY * 14));
+      });
     };
 
     resetPointer();
-    section.addEventListener("mousemove", onPointerMove as any);
-    section.addEventListener("mouseleave", resetPointer);
+    section.addEventListener("mousemove", onPointerMove as any, { passive: true });
+    section.addEventListener("mouseleave", resetPointer, { passive: true });
 
     return () => {
+      if (frameId) cancelAnimationFrame(frameId);
+      scrollTrigger.kill();
       resetPointer();
       section.removeEventListener("mousemove", onPointerMove as any);
       section.removeEventListener("mouseleave", resetPointer);
@@ -521,16 +584,11 @@ export default component$(() => {
   /* ── Fetch Data ── */
   useVisibleTask$(async () => {
     try {
-      const [cfgRes, sponsorRes, eventRes, contentRes] = await Promise.all([
-        fetch("/data/config.json"), fetch("/data/sponsors.json"), fetch("/data/events.json"), fetch("/data/content.json"),
-      ]);
-      if (!cfgRes.ok || !sponsorRes.ok || !eventRes.ok || !contentRes.ok) return;
-      const cfg = await cfgRes.json(); const sponsorPayload = await sponsorRes.json();
-      const eventPayload = await eventRes.json(); const content = await contentRes.json();
-      configData.value = { ...defaultConfig, ...cfg };
-      sponsors.value = { ...defaultSponsors, ...sponsorPayload.sponsors };
-      events.value = eventPayload.events || [];
-      if (content.home) homeCopy.value = { ...defaultHomeCopy, ...content.home };
+      const payload = await loadHomeData();
+      configData.value = payload.config;
+      sponsors.value = payload.sponsors;
+      events.value = payload.events;
+      homeCopy.value = payload.homeCopy;
     } catch (e) { console.error(e); }
   });
 
@@ -565,22 +623,10 @@ export default component$(() => {
     const section = document.getElementById("theta-stats");
     if (!section) return;
 
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: section,
-        start: "top 80%",
-        end: "bottom 20%",
-        toggleActions: "play none none none"
-      }
-    });
+    // Removed heavy GSAP timeline for theta-stats to eliminate lag spikes on scroll.
+    // The section will render statically for smoother performance.
 
-    tl.fromTo(".theta-stats-copy", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" })
-      .fromTo(".theta-stats-visual-wrap", { opacity: 0, scale: 0.8, y: 20 }, { opacity: 1, scale: 1, y: 0, duration: 1, ease: "back.out(1.2)" }, "-=0.6")
-      .fromTo(".theta-stats-node", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.6, stagger: 0.15, ease: "power2.out" }, "-=0.8")
-      .add(() => {
-        // Set final numbers immediately without counting animation for a smoother experience
-        counterDisplay.value = targets;
-      }, "-=0.5");
+    counterDisplay.value = targets;
   });
 
   useVisibleTask$(() => {
@@ -590,58 +636,8 @@ export default component$(() => {
     const section = document.getElementById("home-cta");
     if (!section) return;
 
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: section,
-        start: "top 82%",
-        toggleActions: "play none none none",
-      },
-      defaults: {
-        ease: "power3.out",
-      },
-    });
-
-    tl.fromTo(
-      ".home-cta__glow",
-      { opacity: 0, scale: 0.88 },
-      { opacity: 1, scale: 1, duration: 1.1 },
-    )
-      .fromTo(
-        ".home-cta__badge, .home-cta__eyebrow",
-        { opacity: 0, y: 22 },
-        { opacity: 1, y: 0, duration: 0.55, stagger: 0.08 },
-        "-=0.75",
-      )
-      .fromTo(
-        ".home-cta__title-line",
-        { opacity: 0, y: 44 },
-        { opacity: 1, y: 0, duration: 0.8, stagger: 0.12 },
-        "-=0.35",
-      )
-      .fromTo(
-        ".home-cta__description",
-        { opacity: 0, y: 26 },
-        { opacity: 1, y: 0, duration: 0.65 },
-        "-=0.4",
-      )
-      .fromTo(
-        ".home-cta__actions > *",
-        { opacity: 0, y: 24, scale: 0.94 },
-        { opacity: 1, y: 0, scale: 1, duration: 0.55, stagger: 0.12 },
-        "-=0.35",
-      )
-      .fromTo(
-        ".home-cta__card",
-        { opacity: 0, x: 44, scale: 0.96 },
-        { opacity: 1, x: 0, scale: 1, duration: 0.7, stagger: 0.12 },
-        "-=0.65",
-      )
-      .fromTo(
-        ".home-cta__gridline",
-        { scaleX: 0, opacity: 0 },
-        { scaleX: 1, opacity: 1, duration: 1.1, ease: "power2.inOut" },
-        "-=0.8",
-      );
+    // Removed heavy GSAP timeline for `home-cta` to eliminate lag spikes on scroll.
+    // The section will render statically for smoother performance.
   });
 
   useVisibleTask$(() => {
@@ -684,49 +680,8 @@ export default component$(() => {
     const glowTargets = document.querySelectorAll<HTMLElement>(".t-glow-text");
     if (marks.length === 0) return;
 
-    const colors = [
-      "rgba(189, 255, 0, 0.85)",
-      "rgba(255, 219, 0, 0.85)",
-      "rgba(255, 49, 49, 0.85)"
-    ];
-
-    const tl = gsap.timeline({ repeat: -1 });
-
-    marks.forEach((mark, i) => {
-      const overlay = overlays[i];
-      tl.to([mark, overlay], {
-        opacity: i === 2 ? 0.38 : 0.32,
-        scale: 1.025,
-        y: 8,
-        duration: 2.2,
-        ease: "sine.inOut"
-      }, "+=0.2")
-        .to(glowTargets, {
-          color: dayAccents[i],
-          scale: 1.02,
-          opacity: 1,
-          duration: 1.5,
-          ease: "sine.out"
-        }, "<")
-        .to([mark, overlay], {
-          opacity: 0.15,
-          scale: 1,
-          y: 0,
-          duration: 2.2,
-          ease: "sine.inOut"
-        })
-        .to(glowTargets, {
-          color: "rgba(255,255,255,0.4)",
-          scale: 1,
-          opacity: 0.72,
-          duration: 1.5,
-          ease: "sine.inOut"
-        }, "<");
-    });
-
-    return () => {
-      tl.kill();
-    };
+    // Aurora/Mark glow timeline removed. CSS animations handle base movement.
+    // Heavy DOM manipulation in a looping timeline causes layout thrashing.
   });
 
   useVisibleTask$(() => {
@@ -734,18 +689,25 @@ export default component$(() => {
     const sphere = document.querySelector<HTMLElement>(".theta-stats-core");
     if (!sphere) return;
 
+    const setSphereRx = gsap.quickSetter(sphere, "--sphere-rx", "deg");
+    const setSphereRy = gsap.quickSetter(sphere, "--sphere-ry", "deg");
+
+    let frameId: number;
     const onMove = (e: MouseEvent) => {
-      const rect = sphere.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width - 0.5;
-      const y = (e.clientY - rect.top) / rect.height - 0.5;
-      // Direct style update for high-frequency parallax to prevent signal-induced re-renders
-      sphere.style.setProperty("--sphere-rx", `${Math.floor(y * 32)}deg`);
-      sphere.style.setProperty("--sphere-ry", `${Math.floor(-x * 38)}deg`);
+      if (frameId) cancelAnimationFrame(frameId);
+      frameId = requestAnimationFrame(() => {
+        const rect = sphere.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        setSphereRx(Math.floor(y * 32));
+        setSphereRy(Math.floor(-x * 38));
+      });
     };
 
     const onLeave = () => {
-      sphere.style.setProperty("--sphere-rx", "0deg");
-      sphere.style.setProperty("--sphere-ry", "0deg");
+      if (frameId) cancelAnimationFrame(frameId);
+      setSphereRx(0);
+      setSphereRy(0);
     };
 
     sphere.addEventListener("mousemove", onMove);
@@ -782,103 +744,6 @@ export default component$(() => {
       tierKey: tier.key,
     })),
   );
-
-  useVisibleTask$(() => {
-    if (isMobilePerfMode()) {
-      counterDisplay.value = {
-        events: parseStatNumber(configData.value.stats.events),
-        participants: parseStatNumber(configData.value.stats.participants),
-        colleges: parseStatNumber(configData.value.stats.colleges),
-      };
-      return;
-    }
-    // GSAP ScrollTrigger already registered in layout.tsx
-
-    const section = document.getElementById("browse-events-section");
-    if (!section) return;
-
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: section,
-        start: "top 75%",
-        toggleActions: "play none none none"
-      }
-    });
-
-    tl.fromTo(".browse-events-bg",
-      { scale: 1.1, opacity: 0 },
-      { scale: 1, opacity: 0.8, duration: 1.5, ease: "power3.out" }
-    )
-      .fromTo(".browse-events-eyebrow",
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" },
-        "-=1.0"
-      )
-      .fromTo(".browse-events-title-1",
-        { opacity: 0, x: -80, rotateX: 45, transformOrigin: "left center" },
-        { opacity: 1, x: 0, rotateX: 0, duration: 1.2, ease: "back.out(1.1)" },
-        "-=0.7"
-      )
-      .fromTo(".browse-events-title-2",
-        { opacity: 0, x: 80, rotateX: -45, transformOrigin: "right center" },
-        { opacity: 1, x: 0, rotateX: 0, duration: 1.2, ease: "back.out(1.1)" },
-        "-=0.9"
-      )
-      .fromTo(".browse-events-btn",
-        { opacity: 0, scale: 0.8, y: 20 },
-        { opacity: 1, scale: 1, y: 0, duration: 0.8, ease: "back.out(1.5)" },
-        "-=0.8"
-      )
-      .fromTo(".browse-events-desc",
-        { opacity: 0, y: 40 },
-        { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" },
-        "-=0.6"
-      );
-
-    // Festival Days Header Reveal - FAST & SHARP
-    gsap.fromTo(".reveal-slide-up",
-      { y: "115%", opacity: 0 },
-      {
-        y: "0%",
-        opacity: 1,
-        duration: 0.4,
-        stagger: 0.05,
-        ease: "power2.inOut",
-        scrollTrigger: {
-          trigger: ".festival-header-wrap",
-          start: "top 92%",
-          toggleActions: "play none none none"
-        }
-      }
-    );
-
-    // Global Home Neural Grid Activation
-    gsap.to(".home-neural-grid", {
-      opacity: 1,
-      scrollTrigger: {
-        trigger: ".festival-days-shell",
-        start: "top 80%",
-        end: "top 20%",
-        scrub: true
-      }
-    });
-
-    // Home Tracer Lines
-    gsap.to(".home-tracer-path", {
-      strokeDashoffset: 0,
-      scrollTrigger: {
-        trigger: ".festival-days-shell",
-        start: "top 50%",
-        end: "bottom 50%",
-        scrub: 1
-      }
-    });
-
-
-    return () => {
-      ScrollTrigger.getAll().forEach(st => st.kill());
-    };
-  });
 
   return (
     <div class="relative overflow-x-hidden" style="font-family: var(--font-body);">
@@ -1011,42 +876,11 @@ export default component$(() => {
           @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         `}</style>
 
-        {/* Animated Tracer Paths */}
-        <svg class="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-visible" preserveAspectRatio="none">
-          <path class="home-tracer-path" d="M 0,200 Q 500,300 1440,100" fill="none" stroke="#00ff55" stroke-width="1" stroke-dasharray="1000" stroke-dashoffset="1000" opacity="0.1" />
-          <path class="home-tracer-path" d="M 1440,800 Q 720,600 0,900" fill="none" stroke="#00ff55" stroke-width="1" stroke-dasharray="1000" stroke-dashoffset="1000" opacity="0.1" />
-        </svg>
-
         {/* Global Mesh Background for this section */}
         <div class="festival-days-mesh absolute inset-0 z-0">
           {!mobilePerfMode.value && <canvas class="festival-days-mesh-web pointer-events-none" />}
           <div class="festival-days-logo-glow" aria-hidden="true">
-            <img src="/backgrounds/sastra-3.png" alt="" class="festival-days-logo-mark" />
-          </div>
-          <div class="festival-days-structure scale-150 sm:scale-100 opacity-55" aria-hidden="true" style="filter: drop-shadow(0 0 8px rgba(0,255,85,0.14))">
-            <div class="festival-days-orbit festival-days-orbit--left opacity-60" />
-            <div class="festival-days-orbit festival-days-orbit--right opacity-60" />
-            <div class="festival-days-orbit festival-days-orbit--bottom opacity-60" />
-            <div class="festival-days-bubble festival-days-bubble--left !opacity-100">
-              <div class="festival-days-bubble__core !bg-[#00ff55] !shadow-[0_0_8px_#00ff55]" />
-              <div class="festival-days-bubble__ring !border-[#00ff55]/25" />
-            </div>
-            <div class="festival-days-bubble festival-days-bubble--right !opacity-100">
-              <div class="festival-days-bubble__core !bg-[#00ff55] !shadow-[0_0_8px_#00ff55]" />
-              <div class="festival-days-bubble__ring !border-[#00ff55]/25" />
-            </div>
-            <div class="festival-days-bubble festival-days-bubble--top !opacity-100">
-              <div class="festival-days-bubble__core !bg-[#00ff55] !shadow-[0_0_8px_#00ff55]" />
-              <div class="festival-days-bubble__ring !border-[#00ff55]/25" />
-            </div>
-            <div class="festival-days-bubble festival-days-bubble--bottom !opacity-100">
-              <div class="festival-days-bubble__core !bg-[#00ff55] !shadow-[0_0_8px_#00ff55]" />
-              <div class="festival-days-bubble__ring !border-[#00ff55]/25" />
-            </div>
-            <div class="festival-days-bubble festival-days-bubble--edge !opacity-100">
-              <div class="festival-days-bubble__core !bg-[#00ff55] !shadow-[0_0_8px_#00ff55]" />
-              <div class="festival-days-bubble__ring !border-[#00ff55]/25" />
-            </div>
+            <img src="/backgrounds/sastra-3.webp" alt="" class="festival-days-logo-mark" loading="lazy" />
           </div>
         </div>
 
@@ -1080,6 +914,7 @@ export default component$(() => {
             <div class="grid gap-5 sm:gap-6 lg:grid-cols-3">
               {configData.value.days.map((day, index) => (
                 <Link key={day.day} href={`/roadmap/day${index + 1}`} data-tilt onMouseMove$={(e, el) => {
+                  if (mobilePerfMode.value) return;
                   const r = el.getBoundingClientRect();
                   el.style.setProperty("--mouse-x", `${e.clientX - r.left}px`);
                   el.style.setProperty("--mouse-y", `${e.clientY - r.top}px`);
@@ -1097,10 +932,11 @@ export default component$(() => {
                   }}>
                   <div class="absolute inset-0 bg-gradient-to-br from-white/[0.03] via-transparent to-black/10 pointer-events-none z-0" />
                   <img
-                    src={index === 2 ? "/spidy/spider-logo.png" : (index === 1 ? "/onepeice/one-peice-logo.png" : "/ben10/ben10-logo.png")}
+                    src={index === 2 ? "/spidy/spider-logo.webp" : (index === 1 ? "/onepeice/one-peice-logo.webp" : "/ben10/ben10-logo.webp")}
                     alt=""
                     aria-hidden="true"
                     class="t-day-card__mark absolute top-1/2"
+                    loading="lazy"
                     style={{
                       width: index === 0 ? "10.4rem" : (index === 1 ? "9.8rem" : "10rem"),
                       right: index === 0 ? "-0.35rem" : (index === 1 ? "0.15rem" : "0.2rem"),
@@ -1152,11 +988,11 @@ export default component$(() => {
                   <div
                     class="t-knockout-overlay absolute inset-x-8 inset-y-8 flex h-full flex-col items-center text-center pointer-events-none z-20"
                     style={{
-                      WebkitMaskImage: `url(${index === 2 ? "/spidy/spider-logo.png" : (index === 1 ? "/onepeice/one-peice-logo.png" : "/ben10/ben10-logo.png")})`,
+                      WebkitMaskImage: `url(${index === 2 ? "/spidy/spider-logo.webp" : (index === 1 ? "/onepeice/one-peice-logo.webp" : "/ben10/ben10-logo.webp")})`,
                       WebkitMaskSize: index === 0 ? "11rem" : (index === 1 ? "11rem" : "10.5rem"),
                       WebkitMaskPosition: `right ${index === 2 ? "-1.5rem" : (index === 1 ? "-2rem" : "-1rem")} center`,
                       WebkitMaskRepeat: "no-repeat",
-                      maskImage: `url(${index === 2 ? "/spidy/spider-logo.png" : (index === 1 ? "/onepeice/one-peice-logo.png" : "/ben10/ben10-logo.png")})`,
+                      maskImage: `url(${index === 2 ? "/spidy/spider-logo.webp" : (index === 1 ? "/onepeice/one-peice-logo.webp" : "/ben10/ben10-logo.webp")})`,
                       maskSize: index === 0 ? "11rem" : (index === 1 ? "11rem" : "10.5rem"),
                       maskPosition: `right ${index === 2 ? "-1.5rem" : (index === 1 ? "-2rem" : "-1rem")} center`,
                       maskRepeat: "no-repeat"
@@ -1188,7 +1024,7 @@ export default component$(() => {
 
           {/* --- BENTO CARD: VISUAL & TITLE --- */}
           <div class="theta-bento-card theta-bento-card--visual reveal-left flex flex-col justify-between p-8 sm:p-10 h-full min-h-[450px] relative overflow-hidden bg-[#050a05]/40 border border-white/5 backdrop-blur-3xl rounded-[3rem]">
-            <img src="/theta-logo.png" alt="" class="theta-bento-card__watermark opacity-[0.03]" aria-hidden="true" />
+            <img src="/theta-logo.webp" alt="" class="theta-bento-card__watermark opacity-[0.03]" aria-hidden="true" loading="lazy" />
 
             <div class="theta-stats-copy relative z-10">
               <span class="t-badge flex items-center gap-2 w-fit bg-white/5 border border-white/10 px-3 py-1 rounded-full text-[10px] uppercase font-black tracking-widest text-[#00ff55]">
@@ -1242,14 +1078,16 @@ export default component$(() => {
             {/* --- BRAND INTEGRATION --- */}
             <div class="theta-stats-brand-row flex flex-row items-center justify-center gap-6 sm:gap-12 mt-auto pt-6 z-20 w-full relative">
               <img
-                src="/theta-logo.png"
+                src="/theta-logo.webp"
                 alt="Theta Logo"
+                loading="lazy"
                 class="h-20 sm:h-28 w-auto object-contain brightness-0 invert opacity-60"
               />
               <div class="h-8 sm:h-12 w-[1px] bg-white/10" aria-hidden="true" />
               <img
                 src="/sponsors/general/sastra-university-logo.jpg"
                 alt="SASTRA University"
+                loading="lazy"
                 class="h-8 sm:h-12 w-auto object-contain rounded-md opacity-60"
               />
             </div>
@@ -1302,8 +1140,9 @@ export default component$(() => {
           <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[800px] h-[300px] md:h-[800px] opacity-[0.04] grayscale invert brightness-[2] flex items-center justify-center">
             <div class="absolute inset-0 bg-[#0ea935] blur-[100px] opacity-[0.1]" />
             <img
-              src="/ben10/ben10-logo.png"
+              src="/ben10/ben10-logo.webp"
               alt=""
+              loading="lazy"
               class={`w-full h-full object-contain ${mobilePerfMode.value ? '' : 'filter drop-shadow-[0_0_80px_rgba(14,169,53,0.3)] animate-pulse'}`}
               style="animation-duration: 6s;"
             />
@@ -1372,7 +1211,7 @@ export default component$(() => {
                       <div class="flex -space-x-3">
                         {activeSponsors.slice(0, 3).map((s: any, i: number) => (
                           <div key={i} class="w-10 h-10 rounded-full border-2 border-[#0a0f0a] bg-white flex items-center justify-center p-1.5 overflow-hidden shadow-xl transform transition-transform group-hover:scale-110" style={{ transitionDelay: `${i * 100}ms` }}>
-                            <img src={s.logo} alt="" class="w-full h-full object-contain" />
+                            <img src={s.logo} alt="" class="w-full h-full object-contain" loading="lazy" />
                           </div>
                         ))}
                         {activeSponsors.length > 3 && (
@@ -1470,21 +1309,20 @@ export default component$(() => {
         </div>
       </div>
 
-      {/* ═══════════════ NEW BROWSE EVENTS CTA ═══════════════ */}
-      <section id="browse-events-section" class="relative w-full min-h-[60vh] flex flex-col justify-between overflow-hidden bg-[#050508] px-6 py-12 sm:px-12 sm:py-16 lg:px-24 border-t border-[#0ea935]/10 mt-6 overflow-hidden">
-        {/* Background Image */}
-        <img src="/backgrounds/sastra-2.jpeg" alt="Sastra Background" class="browse-events-bg absolute inset-0 w-full h-full object-cover object-center z-0 opacity-80" />
+      {/* ═══════════════ BROWSE EVENTS ═══════════════ */}
+      <section id="browse-events-section" class="browse-events-section relative min-h-screen py-24 sm:py-32 overflow-hidden bg-black flex flex-col items-center">
+        {/* Background Decorative Rings */}
+        {!mobilePerfMode.value && (
+          <div class="absolute inset-0 z-0 pointer-events-none">
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] border border-white/5 rounded-full animate-spin" style="animation-duration: 40s;" />
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-white/5 rounded-full animate-spin-reverse" style="animation-duration: 30s;" />
+          </div>
+        )}
 
-        {/* Slightly Dark Overlay */}
-        <div class="absolute inset-0 z-0 bg-gradient-to-br from-[#050508]/90 via-[#050508]/60 to-[#050508]/90"></div>
-
-        {/* Radial glow to make it look premium before the image is added */}
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-[#0ea935] blur-[150px] rounded-full opacity-[0.03] pointer-events-none z-0"></div>
-
-        {/* Content Container */}
         <div class="relative z-10 w-full max-w-[100rem] mx-auto h-full flex flex-col justify-between flex-1">
-
           {/* Eyebrow */}
+
+
           <div class="browse-events-eyebrow mb-16 sm:mb-24">
             <span class="text-[10px] sm:text-xs font-bold tracking-[0.25em] uppercase text-white/50">
               POWERED BY THETA 2026

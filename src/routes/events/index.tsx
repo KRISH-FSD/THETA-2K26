@@ -740,7 +740,7 @@ export default component$(() => {
   const isDay2 = selectedDay.value === "Day 1" ? false : selectedDay.value === "Day 2";
   const isDay3 = selectedDay.value === "Day 3";
 
-  const bgLogo = isDay3 ? "/spidy/spidy-event-bg" : isDay2 ? "/onepeice/one-peice-logo.png" : "/ben10/ben10-logo.png";
+  const bgLogo = isDay3 ? "/spidy/spidy-web.webp" : isDay2 ? "/onepeice/one-peice-logo.webp" : "/ben10/ben10-logo.webp";
   const bgGlowColor = isDay3 ? "#ff3333" : isDay2 ? "#eab308" : "#0ea935";
   const tc = isDay3 ? "255, 51, 51" : isDay2 ? "234, 179, 8" : "14, 169, 53";
   const tcLight = isDay3 ? "255, 100, 100" : isDay2 ? "253, 224, 71" : "110, 255, 158";
@@ -1334,7 +1334,7 @@ export default component$(() => {
                 {/* ── THEME LOGO WATERMARK — right panel only ── */}
                 <div class="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden z-0">
                   <img
-                    src={isDay3 ? "/spider_logo_icon_1775372083762.png" : isDay2 ? "/onepeice/one-peice-logo.png" : "/ben10/ben10-logo.png"}
+                    src={isDay3 ? "/spidy/spider-logo.webp" : isDay2 ? "/onepeice/one-peice-logo.webp" : "/ben10/ben10-logo.webp"}
                     alt=""
                     aria-hidden="true"
                     class="w-[160%] max-w-none object-contain select-none"

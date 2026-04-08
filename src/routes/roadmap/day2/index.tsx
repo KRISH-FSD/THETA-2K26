@@ -551,9 +551,9 @@ export default component$(function Day2Roadmap() {
       `}</style>
 
       <div class="rm-scene-gallery">
-        <div class="rm-scene-art rm-scene-art--i1"><img src="/roadmap-day2/i1.png" alt="Scene 1" /></div>
-        <div class="rm-scene-art rm-scene-art--i2"><img src="/roadmap-day2/i2.png" alt="Scene 2" /></div>
-        <div class="rm-scene-art rm-scene-art--i3"><img src="/roadmap-day2/i3.png" alt="Scene 3" /></div>
+        <div class="rm-scene-art rm-scene-art--i1"><img src="/roadmap-day2/i1.webp" alt="Scene 1" /></div>
+        <div class="rm-scene-art rm-scene-art--i2"><img src="/roadmap-day2/i2.webp" alt="Scene 2" /></div>
+        <div class="rm-scene-art rm-scene-art--i3"><img src="/roadmap-day2/i3.webp" alt="Scene 3" /></div>
       </div>
 
       <div class="rm-page__aurora rm-page__aurora--left" />

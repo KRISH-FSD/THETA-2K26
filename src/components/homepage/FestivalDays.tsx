@@ -1,4 +1,4 @@
-import { component$, useSignal, useVisibleTask$, $ } from "@builder.io/qwik";
+import { component$, useSignal, useVisibleTask$ } from "@builder.io/qwik";
 import { Link } from "@builder.io/qwik-city";
 import { usePerfTier } from "~/utils/perf";
 
@@ -28,8 +28,8 @@ export const FestivalDays = component$((props: FestivalDaysProps) => {
     if (!canvas || !section) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-    let w = canvas.width = section.offsetWidth;
-    let h = canvas.height = section.offsetHeight;
+    const w = canvas.width = section.offsetWidth;
+    const h = canvas.height = section.offsetHeight;
     const particles: any[] = [];
     const count = perf.value === "hi" ? 30 : 15;
     for (let i = 0; i < count; i++) particles.push({ x: Math.random() * w, y: Math.random() * h, vx: (Math.random() - 0.5) * 0.4, vy: (Math.random() - 0.5) * 0.4 });
@@ -53,7 +53,7 @@ export const FestivalDays = component$((props: FestivalDaysProps) => {
     <section id="festival-days" class="relative py-20 sm:py-32 overflow-hidden bg-black">
       <div class="festival-days-mesh absolute inset-0 z-0">
         {perf.value !== "lo" && <canvas class="festival-days-mesh-web pointer-events-none" />}
-        <img src="/backgrounds/sastra-3.png" alt="" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-10 w-[600px] pointer-events-none" loading="lazy" />
+        <img src="/backgrounds/sastra-3.webp" alt="" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-10 w-[600px] pointer-events-none" loading="lazy" />
       </div>
 
       <div class="mx-auto max-w-7xl px-4 relative z-10">
@@ -65,7 +65,7 @@ export const FestivalDays = component$((props: FestivalDaysProps) => {
         <div class="grid gap-6 lg:grid-cols-3">
           {props.days.map((day, index) => (
             <div key={day.day} onClick$={() => { selectedDay.value = day; }} class="group relative block overflow-hidden rounded-[2.5rem] border p-8 backdrop-blur-3xl transition-all cursor-pointer hover:scale-[1.02]" style={{ borderColor: `${dayBorderColors[index]}44`, background: dayCardSurfaces[index] }}>
-              <img src={index === 2 ? "/spidy/spider-logo.png" : (index === 1 ? "/onepeice/one-peice-logo.png" : "/ben10/ben10-logo.png")} alt="" class="absolute top-1/2 right-0 w-32 opacity-10" loading="lazy" />
+              <img src={index === 2 ? "/spidy/spider-logo.webp" : (index === 1 ? "/onepeice/one-peice-logo.webp" : "/ben10/ben10-logo.webp")} alt="" class="absolute top-1/2 right-0 w-32 opacity-10" loading="lazy" />
               <div class="relative z-10 flex flex-col items-center text-center">
                 <span class="text-[10px] font-bold tracking-widest opacity-40">{day.date}</span>
                 <h3 class="mt-4 text-4xl font-black" style={{ color: dayAccents[index] }}>{day.day}</h3>

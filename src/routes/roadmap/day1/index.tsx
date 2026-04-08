@@ -762,10 +762,10 @@ export default component$(function Day1Roadmap() {
 
       <div class="rm-scene-gallery">
         <div class="rm-scene-art rm-scene-art--i1">
-          <img src="/roadmap-day1/i1.png" alt="Scene 1" />
+          <img src="/roadmap-day1/i1.webp" alt="Scene 1" />
         </div>
         <div class="rm-scene-art rm-scene-art--i2">
-          <img src="/roadmap-day1/i2.png" alt="Scene 2" />
+          <img src="/roadmap-day1/i2.webp" alt="Scene 2" />
         </div>
       </div>
 

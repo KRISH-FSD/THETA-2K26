@@ -10,6 +10,8 @@
  * Also sets:   data-mobile-perf="true|false" for backwards compat.
  */
 
+import { useSignal, useVisibleTask$ } from "@builder.io/qwik";
+
 export type PerfTier = "lo" | "mid" | "hi";
 
 export const getDevicePerfTier = (): PerfTier => {
@@ -69,4 +71,21 @@ export const watchPerfTier = (onChange?: (tier: PerfTier) => void): (() => void)
 
   queries.forEach((q) => q.addEventListener("change", recheck));
   return () => queries.forEach((q) => q.removeEventListener("change", recheck));
+};
+
+export const usePerfTier = () => {
+  const perfTier = useSignal<PerfTier>("hi");
+
+  useVisibleTask$(({ cleanup }) => {
+    perfTier.value = applyPerfTier();
+    const stopWatching = watchPerfTier((tier) => {
+      perfTier.value = tier;
+    });
+
+    cleanup(() => {
+      stopWatching();
+    });
+  });
+
+  return perfTier;
 };

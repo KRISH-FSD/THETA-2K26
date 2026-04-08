@@ -46,7 +46,7 @@ const developers: QuantumDeveloper[] = [
     id: "02",
     skills: ["GSAP", "Logic", "Grid"],
     status: "active",
-    photo: "/dev/krish.png",
+    photo: "/dev/krishh.webp",
     links: {
       github: "https://github.com/krish-grid",
       linkedin: "https://linkedin.com/in/krish-flow"

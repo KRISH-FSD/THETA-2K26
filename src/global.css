@@ -215,7 +215,7 @@ body {
   );
   z-index: -2;
   will-change: transform;
-  transform: translateZ(0) rotate(0deg);
+  transform: translate3d(0, 0, 0) rotate(0deg);
   /* Optimization: Disable infinite animation on all by default to save GPU */
   animation: none;
 }
@@ -830,7 +830,7 @@ body {
 .t-day-card:hover {
   background: rgba(255, 255, 255, 0.06);
   border-color: rgba(255, 255, 255, 0.2);
-  transform: translateY(-8px) scale(1.01);
+  transform: translate3d(0, -8px, 0) scale(1.01);
 }
 
 .festival-days-shell {
@@ -1258,6 +1258,15 @@ html[data-perf-tier="mid"] .festival-days-bubble__core {
 
 html[data-perf-tier="mid"] .t-marquee-track {
   animation-duration: 45s !important;
+  will-change: transform;
+}
+
+.t-marquee-track {
+  will-change: transform;
+  backface-visibility: hidden;
+  perspective: 1000;
+  -webkit-perspective: 1000;
+  transform: translate3d(0, 0, 0);
 }
 
 /* ============================================================
@@ -1440,7 +1449,7 @@ html[data-perf-tier="lo"] .t-marquee-track {
 }
 
 .theta-bento-card:hover {
-  transform: translateY(-4px);
+  transform: translate3d(0, -4px, 0);
   border-color: rgba(255, 255, 255, 0.15);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.1),

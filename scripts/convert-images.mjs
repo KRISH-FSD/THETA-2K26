@@ -1,53 +1,77 @@
 /**
  * convert-images.mjs
- * Converts heavy PNGs to WebP using sharp.
- * Run: node scripts/convert-images.mjs
+ * Converts heavy PNG, JPG, JPEG to WebP using sharp.
  */
 import { createRequire } from "module";
-import { existsSync } from "fs";
+import { existsSync, readdirSync, statSync, appendFileSync, writeFileSync } from "fs";
 import { fileURLToPath } from "url";
-import { dirname, join } from "path";
+import { dirname, join, relative, extname } from "path";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const publicDir = join(__dirname, "../public");
+const logFile = join(__dirname, "../conversion-log-v2.txt");
 
-// Images to convert: [source, dest, quality, resize?]
-const targets = [
-  // sastra.png is 6.4MB — huge. Target: < 200KB WebP
-  { src: "sastra.png",    dest: "sastra.webp",    quality: 82, width: 1200 },
-  // ben10.png is 777KB — Target: < 100KB WebP
-  { src: "ben10.png",     dest: "ben10.webp",     quality: 85, width: null  },
-];
+writeFileSync(logFile, "Starting image conversion V2...\n");
 
 let sharp;
 try {
   const require = createRequire(import.meta.url);
   sharp = require("sharp");
-} catch {
-  console.error("❌ sharp not installed. Run: npm install --save-dev sharp");
+  appendFileSync(logFile, "✅ Sharp loaded.\n");
+} catch (err) {
+  appendFileSync(logFile, "❌ Sharp failed: " + err.message + "\n");
   process.exit(1);
 }
 
-let converted = 0;
-for (const { src, dest, quality, width } of targets) {
-  const srcPath  = join(publicDir, src);
-  const destPath = join(publicDir, dest);
-
-  if (!existsSync(srcPath)) {
-    console.warn(`⚠️  Skipped (not found): ${src}`);
-    continue;
-  }
-
-  let pipeline = sharp(srcPath);
-  if (width) pipeline = pipeline.resize(width, null, { withoutEnlargement: true });
-  await pipeline.webp({ quality }).toFile(destPath);
-
-  const { size: srcSize }  = (await import("fs")).statSync(srcPath);
-  const { size: destSize } = (await import("fs")).statSync(destPath);
-  const saved = (((srcSize - destSize) / srcSize) * 100).toFixed(1);
-  console.log(`✅ ${src} → ${dest}  (${(srcSize/1024).toFixed(0)}KB → ${(destSize/1024).toFixed(0)}KB, -${saved}%)`);
-  converted++;
+function getAllImageFiles(dirPath, arrayOfFiles) {
+  const files = readdirSync(dirPath);
+  arrayOfFiles = arrayOfFiles || [];
+  files.forEach(function(file) {
+    const fullPath = join(dirPath, file);
+    if (statSync(fullPath).isDirectory()) {
+      arrayOfFiles = getAllImageFiles(fullPath, arrayOfFiles);
+    } else {
+      const ext = extname(file).toLowerCase();
+      if ([".png", ".jpg", ".jpeg"].includes(ext)) {
+        arrayOfFiles.push(fullPath);
+      }
+    }
+  });
+  return arrayOfFiles;
 }
 
-console.log(`\n🎉 Done: ${converted} images converted.`);
-console.log("🔧 Next: update src references in code to use .webp extensions.");
+const allImages = getAllImageFiles(publicDir);
+appendFileSync(logFile, `🔍 Found ${allImages.length} image files (.png, .jpg, .jpeg).\n`);
+
+let totalSaved = 0;
+let converted = 0;
+
+for (const srcPath of allImages) {
+  const relPath = relative(publicDir, srcPath);
+  const ext = extname(srcPath);
+  const webpPath = srcPath.slice(0, -ext.length) + ".webp";
+  
+  try {
+    const srcSize = statSync(srcPath).size;
+    if (srcSize < 2048) continue; // Skip < 2KB (smaller threshold)
+
+    let pipeline = sharp(srcPath);
+    const metadata = await pipeline.metadata();
+    if (metadata.width > 2000) {
+      appendFileSync(logFile, `📏 Resizing ${relPath} (${metadata.width}px → 1920px)\n`);
+      pipeline = pipeline.resize(1920, null, { withoutEnlargement: true });
+    }
+
+    await pipeline.webp({ quality: 80 }).toFile(webpPath);
+
+    const destSize = statSync(webpPath).size;
+    const saved = srcSize - destSize;
+    totalSaved += saved;
+    appendFileSync(logFile, `✅ ${relPath} optimized: ${(srcSize/1024).toFixed(0)}KB → ${(destSize/1024).toFixed(0)}KB\n`);
+    converted++;
+  } catch (err) {
+    appendFileSync(logFile, `❌ Failed ${relPath}: ${err.message}\n`);
+  }
+}
+
+appendFileSync(logFile, `\n🎉 Finished! Converted ${converted} images, saved ${(totalSaved/(1024*1024)).toFixed(2)} MB.\n`);

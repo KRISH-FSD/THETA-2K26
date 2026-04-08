@@ -309,7 +309,7 @@ export const Chatbot = component$(() => {
           
           <div class="flex items-center gap-4 relative z-10">
             <div class="relative flex items-center justify-center w-11 h-11 rounded-xl shadow-lg border border-white/20 bg-black/40 overflow-hidden shrink-0">
-               <img src="/theta-logo.png" alt="Theta Logo" class="w-8 h-8 object-contain" />
+               <img src="/theta-logo.webp" alt="Theta Logo" class="w-8 h-8 object-contain" />
                <span 
                   class="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full border-2 border-black transition-colors duration-500 shadow-[0_0_8px_currentColor]"
                   style={{ backgroundColor: activeTheme.value === "red" ? "#ff4d4f" : "#0ea935", color: activeTheme.value === "red" ? "#ff4d4f" : "#0ea935" }}

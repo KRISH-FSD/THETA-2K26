@@ -16,21 +16,8 @@ export const StatsSection = component$((props: StatsSectionProps) => {
   ];
 
   useVisibleTask$(() => {
-    const section = document.getElementById("theta-stats");
-    if (!section) return;
-
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: section,
-        start: "top 80%",
-        end: "bottom 20%",
-        toggleActions: "play none none none"
-      }
-    });
-
-    tl.fromTo(".theta-stats-copy", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" })
-      .fromTo(".theta-stats-visual-wrap", { opacity: 0, scale: 0.8, y: 20 }, { opacity: 1, scale: 1, y: 0, duration: 1, ease: "back.out(1.2)" }, "-=0.6")
-      .fromTo(".theta-stats-node", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.6, stagger: 0.15, ease: "power2.out" }, "-=0.8");
+    // GSAP animations removed for `theta-stats` to guarantee 60FPS scrolling performance.
+    // Animations are natively handled by CSS where necessary.
   });
 
   return (

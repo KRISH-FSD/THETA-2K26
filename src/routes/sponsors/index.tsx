@@ -428,7 +428,7 @@ export default component$(() => {
         <div class="s-ben10-mark s-ben10-mark--primary hidden sm:block">
           <span class="s-ben10-mark__glow"></span>
           <img
-            src="/red-ben10/red-ben10.png"
+            src="/red-ben10/red-ben10.webp"
             alt=""
             class="s-ben10-mark__img"
             style={{ animation: "float 15s ease-in-out infinite" }}
@@ -437,7 +437,7 @@ export default component$(() => {
         <div class="s-ben10-mark s-ben10-mark--secondary hidden sm:block">
           <span class="s-ben10-mark__glow"></span>
           <img
-            src="/red-ben10/red-ben10.png"
+            src="/red-ben10/red-ben10.webp"
             alt=""
             class="s-ben10-mark__img"
             style={{ animation: "float-reverse 20s ease-in-out infinite" }}
