@@ -42,29 +42,35 @@
         "isActive": true
       },
       {
+        "name": "MIMI BOUTIQUE",
+        "logo": "/sponsors/new/silver/MIMI BOUTIQUE.jpeg",
+        "order": 2,
+        "isActive": true
+      },
+      {
         "name": "Triple C",
         "logo": "/sponsors/silver/triple-c-logo.jpg",
-        "order": 2
+        "order": 3
       },
       {
         "name": "Dasarathy TVS",
         "logo": "/sponsors/silver/dasarathy-tvs-logo.webp",
-        "order": 3
+        "order": 4
       },
       {
         "name": "Eye Roast Photography",
         "logo": "/sponsors/silver/eye-roast-photography-logo.webp",
-        "order": 4
+        "order": 5
       },
       {
         "name": "Frozen Bottle",
         "logo": "/sponsors/silver/frozen-bottle-logo.jpeg",
-        "order": 5
+        "order": 6
       },
       {
         "name": "Jawa Yezdi",
         "logo": "/sponsors/silver/jawa-yezdi-logo.webp",
-        "order": 6
+        "order": 7
       }
     ],
     "media": [

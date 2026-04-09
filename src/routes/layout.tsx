@@ -220,8 +220,8 @@ export default component$(() => {
                     />
                     <div class="h-8 w-px bg-white/10"></div>
                     <img
-                      src="/sponsors/media/rdg-logo.webp"
-                      alt="RDG Logo"
+                      src="/sastra.webp"
+                      alt="SASTRA Logo"
                       class="h-10 w-auto opacity-80 hover:opacity-100 transition-opacity rounded-md"
                     />
                   </div>
@@ -289,9 +289,11 @@ export default component$(() => {
                   {copy.value.footer.copyright}
                 </p>
                 <div class="flex items-center gap-2 text-xs font-medium text-[#6e806e]">
-                  <span>{copy.value.footer.madeWithPrefix}</span>
-                  <span class="text-red-500 animate-pulse">❤️</span>
-                  <span>{copy.value.footer.madeBy}</span>
+                  <span>Crafted with</span>
+                  <span class="text-red-500">♥</span>
+                  <Link href="/developers" class="text-[#8ca38c] transition-colors duration-200 hover:text-white">
+                    WebTek Team
+                  </Link>
                 </div>
               </div>
             </div>

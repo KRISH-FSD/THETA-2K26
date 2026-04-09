@@ -418,7 +418,15 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
           time: "11 AM - 2 PM",
           venue: "Basketball Court",
           focus: "Sports",
-          activities: ["One Over Cricket", "Mind on Leg", "Lucky Box"],
+          activities: ["Mind on Leg", "Lucky Box"],
+        },
+        {
+          name: "One Over Cricket",
+          time: "11 AM - 2 PM",
+          venue: "Basketball Court",
+          focus: "Sports",
+          activities: ["Powerplay", "Quick Overs", "Final Chase"],
+          regLink: "https://docs.google.com/forms/d/e/1FAIpQLScHjmT69qXlX1d6MtqmhY4qV3cZAhpMcIai5tBD8zrWgnYDzw/viewform",
         },
       ],
     },
@@ -556,7 +564,15 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
           time: "11 AM - 2 PM",
           venue: "Basketball Court",
           focus: "Sports",
-          activities: ["Basketball", "Pass the Ball", "Tug of War"],
+          activities: ["Basketball", "Pass the Ball"],
+        },
+        {
+          name: "Tug of War",
+          time: "11 AM - 2 PM",
+          venue: "Basketball Court",
+          focus: "Sports",
+          activities: ["Team Strength", "Knockout Matches", "Final Pull"],
+          regLink: "https://docs.google.com/forms/d/e/1FAIpQLScbZVPEsAmHeVCVjNO90mHPX3VLWgzQgRdbo-lqL_mMvsNebA/viewform",
         },
       ],
     },
@@ -987,9 +1003,6 @@ export default component$(() => {
                       ]}
                       loading="lazy"
                     />
-
-                    {/* Scanline sweep */}
-                    <div class="card-scanline"></div>
 
                     {/* Bottom gradient fade into card */}
                     <div class="absolute inset-0 bg-gradient-to-t from-[#06090a] via-[#06090a]/40 to-transparent z-10"></div>
