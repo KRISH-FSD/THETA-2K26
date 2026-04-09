@@ -124,7 +124,7 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
             "AI-Based Food Quality Detection",
             "IoT-Based Smart Agriculture System"
           ],
-          image: "https://images.unsplash.com/photo-1541888946425-d81bb19480c5?q=80&w=1000",
+          image: "/new-event-img/day1/BIO ARCHITECT.png",
           regLink: "https://forms.gle/6WUW1J79fncoE8Zt7",
           description: "Step into a world where science meets innovation! Topics include Molecular cloning, AI-Based Food Quality Detection, and IoT Smart Agriculture. Team Size: 2-3 members. Max 5 mins for judging."
         },
@@ -219,7 +219,7 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
             "Binary Code Game",
             "Bernoulli Binary Blast",
           ],
-          image: "https://images.unsplash.com/photo-1581093191605-a1d35581177b?q=80&w=1000",
+          image: "/new-event-img/day1/Physics Freeze.png",
           regLink: "https://docs.google.com/forms/d/e/1FAIpQLSeABawd4zOkl772rRy8v4HWKkHKmVOtEtJS5ma5WeettAcnww/viewform?usp=dialog",
         },
       ],

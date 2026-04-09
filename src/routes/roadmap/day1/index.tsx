@@ -35,7 +35,7 @@ const EVENTS: EventData[] = [
   {
     id: 3, time: "11:00 AM", endTime: "01:00 PM", title: "Physics Freeze Game",
     subtitle: "Physics and light experiments", venue: "Room 310", cat: "quiz",
-    img: "https://images.unsplash.com/photo-1509228468518-180dd4864904?q=80&w=1200",
+    img: "/new-event-img/day1/Physics Freeze.png",
     tags: ["Physics", "Optics", "Binary"],
     desc: "Interactive rounds featuring Physics Freeze, Binary Code Game, and Bernoulli Binary Blast.",
     regLink: "https://docs.google.com/forms/d/e/1FAIpQLSeABawd4zOkl772rRy8v4HWKkHKmVOtEtJS5ma5WeettAcnww/viewform?usp=dialog",
@@ -51,7 +51,7 @@ const EVENTS: EventData[] = [
   {
     id: 5, time: "11:00 AM", endTime: "02:00 PM", title: "BIOGENESIS - Model Exhibition - BIO ARCHITECT",
     subtitle: "Science and Innovation Showcase", venue: "IED Hall", cat: "tech",
-    img: "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?q=80&w=1200",
+    img: "/new-event-img/day1/BIO ARCHITECT.png",
     tags: ["Biology", "Architecture", "Science"],
     desc: "A showcase of Molecular cloning, Reaction chemistry, Human science, and AI-based food quality detection.",
     regLink: "https://forms.gle/6WUW1J79fncoE8Zt7",
