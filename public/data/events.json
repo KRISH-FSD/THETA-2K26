@@ -89,6 +89,18 @@
       "name": "E-Cell",
       "color": "#14b8a6",
       "description": "Entrepreneurship Cell"
+    },
+    {
+      "id": "strategia",
+      "name": "Strategia",
+      "color": "#f59e0b",
+      "description": "Strategic Thinking and Management Cluster"
+    },
+    {
+      "id": "biogenesis",
+      "name": "Biogenesis",
+      "color": "#10b981",
+      "description": "Biological and Environmental Science Cluster"
     }
   ],
   "events": [
@@ -301,6 +313,48 @@
       "description": "Grand prize distribution ceremony. Winners will be announced and awarded.",
       "image": "https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?auto=format&fit=crop&w=800&q=60",
       "registrationUrl": ""
+    },
+    {
+      "id": 16,
+      "name": "FunFusion Arena",
+      "category": "fun",
+      "cluster": "strategia",
+      "day": "Day 2",
+      "timing": "11:00 AM - 1:00 PM",
+      "location": "303",
+      "fee": "₹50 (Per Team)",
+      "status": "active",
+      "description": "An exciting non-technical event filled with fun, teamwork, and interactive challenges. Participants will test their coordination, observation, and decision-making skills through a series of engaging games designed for all. Team Size: 2 members per team (fixed).",
+      "image": "https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=800&q=60",
+      "registrationUrl": "https://forms.google.com/example"
+    },
+    {
+      "id": 17,
+      "name": "BIOGENESIS - Model Exhibition - BIO ARCHITECT",
+      "category": "tech",
+      "cluster": "biogenesis",
+      "day": "Day 1",
+      "timing": "11:00 AM - 2:00 PM",
+      "location": "IED Hall",
+      "fee": "₹25 (Individual)",
+      "status": "active",
+      "description": "Step into a world where science meets innovation! Topics: Molecular cloning, Reaction chemistry, Human body science, Pollution reduction, AI Food Detection, IoT Smart Agriculture. Team Size: 2-3 members. Max 5 mins for judging. Participants bear model & boarding expenses.",
+      "image": "https://images.unsplash.com/photo-1532187863486-abf9d39d661e?auto=format&fit=crop&w=800&q=60",
+      "registrationUrl": "https://forms.google.com/example"
+    },
+    {
+      "id": 18,
+      "name": "BIOGENESIS - Fun Game - CLASH OF CHAMPIONS",
+      "category": "fun",
+      "cluster": "biogenesis",
+      "day": "Day 2",
+      "timing": "10:00 AM - 1:00 PM",
+      "location": "IED Hall",
+      "fee": "₹50 (Per Team)",
+      "status": "active",
+      "description": "The much-awaited fun event is aimed at testing the participant’s thinking skills with fun activities, participants need to think and act quickly. Let the speedster in you get the rewards!",
+      "image": "https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=800&q=60",
+      "registrationUrl": "https://docs.google.com/forms/d/e/1FAIpQLSedXMiuvvk9rzOH9KBycJZ6HR56BkPP1lrNmgoQfV9eZUfIrw/viewform"
     }
   ]
 }

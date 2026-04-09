@@ -112,13 +112,21 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
       cluster: "BIOGENISIS",
       events: [
         {
-          name: "Bio Architect",
+          name: "BIOGENESIS - Model Exhibition - BIO ARCHITECT",
           time: "11 AM - 2 PM",
           venue: "IED Hall",
           focus: "Learning",
-          activities: [],
+          activities: [
+            "Molecular cloning",
+            "Reaction chemistry",
+            "Human body science",
+            "Pollution reduction",
+            "AI-Based Food Quality Detection",
+            "IoT-Based Smart Agriculture System"
+          ],
           image: "https://images.unsplash.com/photo-1541888946425-d81bb19480c5?q=80&w=1000",
           regLink: "https://forms.gle/6WUW1J79fncoE8Zt7",
+          description: "Step into a world where science meets innovation! Topics include Molecular cloning, AI-Based Food Quality Detection, and IoT Smart Agriculture. Team Size: 2-3 members. Max 5 mins for judging."
         },
       ],
     },
@@ -303,6 +311,16 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
           image: "https://images.unsplash.com/photo-1596720426673-e47744bd2185?q=80&w=1000",
           regLink: "https://forms.gle/8k7SXNPL32wLh88C7",
         },
+        {
+          name: "BIOGENESIS - Fun Game - CLASH OF CHAMPIONS",
+          time: "10 AM - 1 PM",
+          venue: "IED Hall",
+          focus: "Fun",
+          activities: [],
+          description: "Think and act quickly in this high-speed fun event! Let the speedster in you get the rewards.",
+          image: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=1000",
+          regLink: "https://docs.google.com/forms/d/e/1FAIpQLSedXMiuvvk9rzOH9KBycJZ6HR56BkPP1lrNmgoQfV9eZUfIrw/viewform",
+        },
       ],
     },
     {
@@ -310,7 +328,7 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
       events: [
         {
           name: "FunFusion Arena",
-          time: "2 PM - 4 PM",
+          time: "11 AM - 1 PM",
           venue: "Room 303",
           focus: "Fun",
           activities: ["Gaming Challenges", "Strategy Puzzles"],
@@ -387,7 +405,6 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
             "Real or Fake Tech",
             "Resistor Rush",
             "Memory Match",
-            "Prize Pool: 1st - ₹500, 2nd - ₹300, 3rd - ₹200",
           ],
           regLink: "https://forms.gle/u1TAKaa7LF1Ge4UR9",
         },
@@ -421,23 +438,6 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
     },
   ],
   "Day 3": [
-    {
-      cluster: "BIOGENISIS",
-      events: [
-        {
-          name: "Clash of Champions",
-          time: "10 AM - 1 PM",
-          venue: "IED Hall",
-          focus: "Fun",
-          activities: [
-            "Cup Stack Game",
-            "Ping Pong Bounce",
-            "Fast Word / Movie / Song",
-          ],
-          regLink: "https://forms.gle/4a9Ws7WHz8SEMh1U6",
-        },
-      ],
-    },
     {
       cluster: "MATHEMATICA",
       events: [

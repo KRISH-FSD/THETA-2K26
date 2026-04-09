@@ -1,7 +1,7 @@
 {
   "sponsors": {
     "diamond": [
-      { "name": "CUB", "logo": "/sponsors/platinum/cub-logo.webp", "order": 1, "isActive": true },
+      { "name": "CUB", "logo": "/sponsors/platinum/cub-logo.jpg", "order": 1, "isActive": true },
       { "name": "Palanivel", "logo": "/sponsors/new/diamond/palanivel.webp", "order": 2, "isActive": true },
       { "name": "Veranda", "logo": "/sponsors/new/diamond/veranda.webp", "order": 3, "isActive": true }
     ],
@@ -9,16 +9,16 @@
       { "name": "2IIM", "logo": "/sponsors/new/platinum/2IIM.webp", "order": 1, "isActive": true },
       { 
         "name": "IAS Academy", 
-        "logo": "/sponsors/new/platinum/ias-academy.webp", 
+        "logo": "/sponsors/new/platinum/ias-academy.jpeg", 
         "order": 2, 
         "isActive": true 
       },
       {
         "name": "Temple City Sports Club",
-        "logo": "/sponsors/platinum/temple-city-sports-club.webp",
+        "logo": "/sponsors/platinum/temple-city-sports-club.jpg",
         "order": 3
       },
-      { "name": "MRS", "logo": "/sponsors/platinum/mrs-logo.webp", "order": 4 },
+      { "name": "MRS", "logo": "/sponsors/platinum/mrs-logo.jpg", "order": 4 },
       {
         "name": "Lee Benz",
         "logo": "/sponsors/platinum/lee-benz-logo.webp",
@@ -26,10 +26,10 @@
       }
     ],
     "gold": [
-      { "name": "Fuel", "logo": "/sponsors/gold/fuel-logo.webp", "order": 1, "isActive": true },
+      { "name": "Fuel", "logo": "/sponsors/gold/fuel-logo.jpg", "order": 1, "isActive": true },
       {
         "name": "Dude's Mens Wear",
-        "logo": "/sponsors/gold/dudes-mens-wear-logo.webp",
+        "logo": "/sponsors/gold/dudes-mens-wear-logo.jpg",
         "order": 2,
         "isActive": true
       }
@@ -37,13 +37,13 @@
     "silver": [
       {
         "name": "VSN Jewels",
-        "logo": "/sponsors/new/silver/vsn jewels.webp",
+        "logo": "/sponsors/new/silver/vsn jewels.jpeg",
         "order": 1,
         "isActive": true
       },
       {
         "name": "Triple C",
-        "logo": "/sponsors/silver/triple-c-logo.webp",
+        "logo": "/sponsors/silver/triple-c-logo.jpg",
         "order": 2
       },
       {
@@ -58,7 +58,7 @@
       },
       {
         "name": "Frozen Bottle",
-        "logo": "/sponsors/silver/frozen-bottle-logo.webp",
+        "logo": "/sponsors/silver/frozen-bottle-logo.jpeg",
         "order": 5
       },
       {
@@ -68,7 +68,7 @@
       }
     ],
     "media": [
-      { "name": "RDG", "logo": "/sponsors/media/rdg-logo.webp", "order": 1, "isActive": true }
+      { "name": "RDG", "logo": "/sponsors/media/rdg-logo.jpg", "order": 1, "isActive": true }
     ]
   }
 }

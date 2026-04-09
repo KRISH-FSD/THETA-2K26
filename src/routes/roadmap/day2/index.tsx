@@ -106,8 +106,8 @@ const EVENTS: EventData[] = [
   },
   {
     id: 6,
-    time: "02:00 PM",
-    endTime: "04:00 PM",
+    time: "11:00 AM",
+    endTime: "01:00 PM",
     title: "FunFusion Arena",
     subtitle: "Gaming and strategy puzzles",
     venue: "Room 303",
@@ -155,6 +155,19 @@ const EVENTS: EventData[] = [
     tags: ["Bot Wrestling", "Arena", "Combat"],
     desc: "A robotics combat event where bots battle it out in the sumo arena.",
     regLink: "https://forms.gle/Z9saAA2xU2YKoqj8A",
+  },
+  {
+    id: 10,
+    time: "10:00 AM",
+    endTime: "01:00 PM",
+    title: "BIOGENESIS - Fun Game - CLASH OF CHAMPIONS",
+    subtitle: "Team-based speed challenge",
+    venue: "IED Hall",
+    cat: "fun",
+    img: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=1200",
+    tags: ["Speed", "Strategy", "Biogenesis"],
+    desc: "Testing thinking skills with activities that require quick action. Let the speedster in you get the rewards.",
+    regLink: "https://docs.google.com/forms/d/e/1FAIpQLSedXMiuvvk9rzOH9KBycJZ6HR56BkPP1lrNmgoQfV9eZUfIrw/viewform",
   },
 ];
 

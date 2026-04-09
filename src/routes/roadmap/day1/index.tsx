@@ -49,11 +49,11 @@ const EVENTS: EventData[] = [
     regLink: "https://forms.gle/CDKpnNqdNx85rvPi9",
   },
   {
-    id: 5, time: "11:00 AM", endTime: "02:00 PM", title: "Bio Architect",
-    subtitle: "Living structures workshop", venue: "IED Hall", cat: "tech",
+    id: 5, time: "11:00 AM", endTime: "02:00 PM", title: "BIOGENESIS - Model Exhibition - BIO ARCHITECT",
+    subtitle: "Science and Innovation Showcase", venue: "IED Hall", cat: "tech",
     img: "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?q=80&w=1200",
-    tags: ["Biology", "Design", "Organic"],
-    desc: "A cluster-led session on biological architecture and organic design principles.",
+    tags: ["Biology", "Architecture", "Science"],
+    desc: "A showcase of Molecular cloning, Reaction chemistry, Human science, and AI-based food quality detection.",
     regLink: "https://forms.gle/6WUW1J79fncoE8Zt7",
   },
   {
