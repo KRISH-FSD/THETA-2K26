@@ -5073,6 +5073,60 @@ header.scrolled {
   transition: background 300ms ease;
 }
 
+.hs-thumb-logo-wrap {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  transform: translate(-50%, -50%);
+  background:
+    radial-gradient(circle at center, rgba(255, 70, 170, 0.16) 0%, rgba(18, 6, 24, 0.72) 72%),
+    rgba(8, 4, 16, 0.78);
+  border: 1px solid rgba(255, 115, 210, 0.38);
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.34),
+    0 0 22px rgba(255, 62, 181, 0.16);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition:
+    transform 300ms ease,
+    box-shadow 300ms ease,
+    border-color 300ms ease;
+}
+
+.hs-thumb-logo-glow {
+  position: absolute;
+  inset: 6px;
+  border-radius: inherit;
+  background: radial-gradient(circle, rgba(255, 40, 170, 0.72) 0%, rgba(255, 40, 170, 0.18) 45%, transparent 80%);
+  filter: blur(10px);
+  opacity: 0.75;
+}
+
+.hs-thumb-logo {
+  position: relative;
+  z-index: 1;
+  width: 27px;
+  height: 27px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 12px rgba(255, 50, 180, 0.55));
+}
+
+.hs-thumb:hover .hs-thumb-logo-wrap,
+.hs-thumb--active .hs-thumb-logo-wrap {
+  transform: translate(-50%, -50%) scale(1.06);
+  border-color: rgba(255, 125, 220, 0.62);
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.4),
+    0 0 28px rgba(255, 62, 181, 0.24);
+}
+
 /* Day label inside thumb */
 .hs-thumb-label {
   position: absolute;
@@ -5296,6 +5350,16 @@ header.scrolled {
     border-color: rgba(255, 255, 255, 0.24);
     background: rgba(10, 10, 18, 0.28);
     backdrop-filter: blur(10px);
+  }
+
+  .hs-thumb-logo-wrap {
+    width: 32px;
+    height: 32px;
+  }
+
+  .hs-thumb-logo {
+    width: 20px;
+    height: 20px;
   }
 
   .hs-thumb-label {

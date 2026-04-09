@@ -197,6 +197,23 @@ export const HeroSlider = component$(() => {
 
   useVisibleTask$(({ cleanup, track }) => {
     track(() => active.value);
+
+    const activeSlide = heroSlides[active.value];
+    const nextNavLogo = activeSlide.id === 2 ? "red-ben10" : null;
+
+    if (nextNavLogo) {
+      document.body.setAttribute("data-nav-logo", nextNavLogo);
+    } else {
+      document.body.removeAttribute("data-nav-logo");
+    }
+
+    cleanup(() => {
+      document.body.removeAttribute("data-nav-logo");
+    });
+  });
+
+  useVisibleTask$(({ cleanup, track }) => {
+    track(() => active.value);
     track(() => isDesktop.value);
     track(() => isHeroInView.value);
 

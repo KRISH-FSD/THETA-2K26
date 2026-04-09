@@ -94,15 +94,16 @@ export const initRoadmapTimeline = ({
   let useGlow = true;
 
   const updateMode = () => {
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const isLiteMode =
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      prefersReducedMotion ||
       window.matchMedia("(pointer: coarse)").matches ||
       window.innerWidth <= mobileBreakpoint;
     pageRoot.dataset.roadmapMode = isLiteMode ? "lite" : "full";
     smoothFactor = isLiteMode ? 1 : 0.26;
     settleEpsilon = isLiteMode ? 0.01 : 0.0018;
-    tracerLead = isLiteMode ? 0 : 18;
-    showTracer = !isLiteMode;
+    tracerLead = prefersReducedMotion ? 0 : isLiteMode ? 10 : 18;
+    showTracer = !prefersReducedMotion;
     useGlow = !isLiteMode;
     pathGlow.style.display = useGlow ? "" : "none";
     tracer?.style.setProperty("display", showTracer ? "" : "none");
