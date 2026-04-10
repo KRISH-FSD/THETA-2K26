@@ -49,7 +49,7 @@ const themeStyles: Record<
   innovation: { border: "border-[#00d4ff]/40", glow: "rgba(0,212,255,0.25)", badge: "bg-[#00d4ff] text-black", ring: "#00d4ff" },
   logic: { border: "border-[#bf5af2]/40", glow: "rgba(191,90,242,0.25)", badge: "bg-[#bf5af2] text-white", ring: "#bf5af2" },
   creative: { border: "border-[#ff9500]/40", glow: "rgba(255,149,0,0.25)", badge: "bg-[#ff9500] text-black", ring: "#ff9500" },
-  fun: { border: "border-[#0ea935]/40", glow: "rgba(14,169,53,0.25)", badge: "bg-[#0ea935] text-black", ring: "#0ea935" },
+  fun: { border: "border-[#bef300]/40", glow: "rgba(191, 243, 0, 0.25)", badge: "bg-[#bef300] text-black", ring: "#bef300" },
   sports: { border: "border-[#ff375f]/40", glow: "rgba(255,55,95,0.25)", badge: "bg-[#ff375f] text-white", ring: "#ff375f" },
 };
 
@@ -134,100 +134,100 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
       ],
     },
     {
-        cluster: "INFORMATICA",
-        events: [
-          {
-            name: "Edit Blitz",
-            time: "11:15 AM - 1:45 PM",
-            venue: "Lab",
-            focus: "Tech",
-            activities: [],
-            image: "/EVENTSPOSTERS/EDITBLITZ.jpg",
-          },
-        ],
-      },
-      {
-        cluster: "OPTICA",
-        events: [
-          {
-            name: "Physics Freeze Game",
-            time: "11 AM - 1 PM",
-            venue: "Room 310",
-            focus: "Non-Tech",
-            activities: ["Physics Freeze Game", "Binary Code Game"],
-            image: "/EVENTSPOSTERS/PHYSICSFREEZE.jpg",
-            regLink: "https://docs.google.com/forms/d/e/1FAIpQLSeABawd4zOkl772rRy8v4HWKkHKmVOtEtJS5ma5WeettAcnww/viewform?usp=dialog",
-          },
-        ],
-      },
-      {
-        cluster: "EQUILIBRIA",
-        events: [
-          {
-            name: "AI prompt App Creation",
-            time: "11:30 AM - 1 PM",
-            venue: "Room 110",
-            focus: "Tech",
-            activities: [],
-            image: "/EVENTSPOSTERS/AIPROMPT.jpg",
-            regLink: "https://forms.gle/TEuppmExeMsJTLGSA",
-          },
-        ],
-      },
-      {
-        cluster: "VINODHA VAHINI",
-        events: [
-          {
-            name: "Treasure Hunt",
-            time: "2 PM - 4 PM",
-            venue: "Room 406",
-            focus: "Fun",
-            activities: [],
-            image: "/EVENTSPOSTERS/TRESUREHUNT.jpg",
-          },
-        ],
-      },
-      {
-        cluster: "ELECTRONICA",
-        events: [
-          {
-            name: "Tech Startup Challenge",
-            time: "11 AM - 2 PM",
-            venue: "Room 402",
-            focus: "Tech",
-            activities: ["Tech Spark", "Design & Develop", "Start-up Showcase"],
-            image: "/EVENTSPOSTERS/TECHSTARTUP.jpg",
-            regLink: "https://forms.gle/vdZds3WZAW5Q7jJ96",
-          },
-        ],
-      },
-      {
-        cluster: "ROBOTICS CLUSTER",
-        events: [
-          {
-            name: "Gesture Controlled Bot",
-            time: "11 AM - 1 PM",
-            venue: "ECE Lab",
-            focus: "Tech",
-            activities: ["Bot Maze Run", "Gesture Calibration"],
-            image: "/EVENTSPOSTERS/NAVIGATEOBSTRACLE.jpg",
-            regLink: "https://forms.gle/CDKpnNqdNx85rvPi9",
-          },
-        ],
-      },
-      {
-        cluster: "SPORTIVA",
-        events: [
-          {
-            name: "Sportiva Mix",
-            time: "11 AM - 4 PM",
-            venue: "Ground",
-            focus: "Sports",
-            activities: ["Football", "Match the Bottle"],
-            image: "/EVENTSPOSTERS/SPORTS.jpg",
-          },
-        ],
-      },
+      cluster: "INFORMATICA",
+      events: [
+        {
+          name: "Edit Blitz",
+          time: "11:15 AM - 1:45 PM",
+          venue: "Lab",
+          focus: "Tech",
+          activities: [],
+          image: "/EVENTSPOSTERS/EDITBLITZ.jpg",
+        },
+      ],
+    },
+    {
+      cluster: "OPTICA",
+      events: [
+        {
+          name: "Physics Freeze Game",
+          time: "11 AM - 1 PM",
+          venue: "Room 310",
+          focus: "Non-Tech",
+          activities: ["Physics Freeze Game", "Binary Code Game"],
+          image: "/EVENTSPOSTERS/PHYSICSFREEZE.jpg",
+          regLink: "https://docs.google.com/forms/d/e/1FAIpQLSeABawd4zOkl772rRy8v4HWKkHKmVOtEtJS5ma5WeettAcnww/viewform?usp=dialog",
+        },
+      ],
+    },
+    {
+      cluster: "EQUILIBRIA",
+      events: [
+        {
+          name: "AI prompt App Creation",
+          time: "11:30 AM - 1 PM",
+          venue: "Room 110",
+          focus: "Tech",
+          activities: [],
+          image: "/EVENTSPOSTERS/AIPROMPT.jpg",
+          regLink: "https://forms.gle/TEuppmExeMsJTLGSA",
+        },
+      ],
+    },
+    {
+      cluster: "VINODHA VAHINI",
+      events: [
+        {
+          name: "Treasure Hunt",
+          time: "2 PM - 4 PM",
+          venue: "Room 406",
+          focus: "Fun",
+          activities: [],
+          image: "/EVENTSPOSTERS/TRESUREHUNT.jpg",
+        },
+      ],
+    },
+    {
+      cluster: "ELECTRONICA",
+      events: [
+        {
+          name: "Tech Startup Challenge",
+          time: "11 AM - 2 PM",
+          venue: "Room 402",
+          focus: "Tech",
+          activities: ["Tech Spark", "Design & Develop", "Start-up Showcase"],
+          image: "/EVENTSPOSTERS/TECHSTARTUP.jpg",
+          regLink: "https://forms.gle/vdZds3WZAW5Q7jJ96",
+        },
+      ],
+    },
+    {
+      cluster: "ROBOTICS CLUSTER",
+      events: [
+        {
+          name: "Gesture Controlled Bot",
+          time: "11 AM - 1 PM",
+          venue: "ECE Lab",
+          focus: "Tech",
+          activities: ["Bot Maze Run", "Gesture Calibration"],
+          image: "/EVENTSPOSTERS/NAVIGATEOBSTRACLE.jpg",
+          regLink: "https://forms.gle/CDKpnNqdNx85rvPi9",
+        },
+      ],
+    },
+    {
+      cluster: "SPORTIVA",
+      events: [
+        {
+          name: "Sportiva Mix",
+          time: "11 AM - 4 PM",
+          venue: "Ground",
+          focus: "Sports",
+          activities: ["Football", "Match the Bottle"],
+          image: "/EVENTSPOSTERS/SPORTS.jpg",
+        },
+      ],
+    },
   ],
   "Day 2": [
     {
@@ -254,116 +254,116 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
       ],
     },
     {
-        cluster: "STRATEGIA",
-        events: [
-          {
-            name: "FunFusion Arena",
-            time: "11 AM - 1 PM",
-            venue: "Room 303",
-            focus: "Fun",
-            activities: ["Gaming Challenges", "Strategy Puzzles"],
-            image: "/EVENTSPOSTERS/FUNSUSIONARENA.jpg",
-            regLink: "https://forms.gle/WQ9LPHHknA5keGKJ8",
-          },
-        ],
-      },
-      {
-        cluster: "ACCESS INDIA",
-        events: [
-          {
-            name: "VIBE IN PROMPT",
-            time: "2:00 PM - 4:00 PM",
-            venue: "ROOM NO.410",
-            focus: "Tech",
-            activities: ["Prompt Engineering", "AI Trailer", "QR Rhapsody"],
-            regLink: "https://docs.google.com/forms/d/e/1FAIpQLSdM2ZwG7i8FtWrBiwbFg4GrMScIgcbJTBHWSLdvlj2R4QIg1w/viewform",
-            image: "/EVENTSPOSTERS/VIBE IN PROMPT.jpg",
-          },
-        ],
-      },
-      {
-        cluster: "INFORMATICA",
-        events: [
-          {
-            name: "Ctrl + Build + Win",
-            time: "10 AM - 1 PM",
-            venue: "Lab",
-            focus: "Tech",
-            activities: [],
-            image: "/EVENTSPOSTERS/CTRL+BUILD+WIN.jpg",
-          },
-        ],
-      },
-      {
-        cluster: "OPTICA",
-        events: [
-          {
-            name: "The Gravity Defier",
-            time: "9:30 AM - 11:30 AM",
-            venue: "Room 310",
-            focus: "Learning",
-            activities: ["Number Grid Race", "Memory Snap", "Gravity Defier"],
-            image: "/EVENTSPOSTERS/GRAVITYDEFIER'.jpg",
-            regLink: "https://docs.google.com/forms/d/e/1FAIpQLSd1EzJorBtCHd79RyI4M14qd6MjS6az9tfgHONC7spq6CggNw/viewform",
-          },
-        ],
-      },
-      {
-        cluster: "EQUILIBRIA",
-        events: [
-          {
-            name: "Tech Fun Fusion",
-            time: "2 PM - 3:30 PM",
-            venue: "Room 110",
-            focus: "Non-Tech",
-            activities: ["Connect the Tech", "Meme Creation"],
-            image: "/EVENTSPOSTERS/TECHFUNFUSION.jpg",
-            regLink: "https://forms.gle/nSdmEU97op36WiDn7",
-          },
-        ],
-      },
-      {
-        cluster: "ELECTRONICA",
-        events: [
-          {
-            name: "Tech mayhem",
-            time: "10 AM - 1 PM",
-            venue: "Room 402",
-            focus: "Tech",
-            activities: ["Real or Fake Tech", "Resistor Rush", "Memory Match"],
-            image: "/EVENTSPOSTERS/TECHMAYHEM.jpg",
-            regLink: "https://forms.gle/u1TAKaa7LF1Ge4UR9",
-          },
-        ],
-      },
-      {
-        cluster: "SPORTIVA",
-        events: [
-          {
-            name: "One Over Cricket",
-            time: "11 AM - 2 PM",
-            venue: "Basketball Court",
-            focus: "Sports",
-            activities: ["Powerplay", "Quick Overs", "Final Chase"],
-            image: "/EVENTSPOSTERS/ONEOVERCRICKET.jpg",
-            regLink: "https://docs.google.com/forms/d/e/1FAIpQLScHjmT69qXlX1d6MtqmhY4qV3cZAhpMcIai5tBD8zrWgnYDzw/viewform",
-          },
-        ],
-      },
-      {
-        cluster: "ROBOTICS CLUSTER",
-        events: [
-          {
-            name: "Sumo Challenge",
-            time: "2 PM - 4 PM",
-            venue: "ECE Lab",
-            focus: "Tech",
-            activities: ["Bot Wrestling", "Arena Combat"],
-            image: "/EVENTSPOSTERS/ROBOSUMO.jpg",
-            regLink: "https://forms.gle/Z9saAA2xU2YKoqj8A",
-          },
-        ],
-      },
+      cluster: "STRATEGIA",
+      events: [
+        {
+          name: "FunFusion Arena",
+          time: "11 AM - 1 PM",
+          venue: "Room 303",
+          focus: "Fun",
+          activities: ["Gaming Challenges", "Strategy Puzzles"],
+          image: "/EVENTSPOSTERS/FUNSUSIONARENA.jpg",
+          regLink: "https://forms.gle/WQ9LPHHknA5keGKJ8",
+        },
+      ],
+    },
+    {
+      cluster: "ACCESS INDIA",
+      events: [
+        {
+          name: "VIBE IN PROMPT",
+          time: "2:00 PM - 4:00 PM",
+          venue: "ROOM NO.410",
+          focus: "Tech",
+          activities: ["Prompt Engineering", "AI Trailer", "QR Rhapsody"],
+          regLink: "https://docs.google.com/forms/d/e/1FAIpQLSdM2ZwG7i8FtWrBiwbFg4GrMScIgcbJTBHWSLdvlj2R4QIg1w/viewform",
+          image: "/EVENTSPOSTERS/VIBE IN PROMPT.jpg",
+        },
+      ],
+    },
+    {
+      cluster: "INFORMATICA",
+      events: [
+        {
+          name: "Ctrl + Build + Win",
+          time: "10 AM - 1 PM",
+          venue: "Lab",
+          focus: "Tech",
+          activities: [],
+          image: "/EVENTSPOSTERS/CTRL+BUILD+WIN.jpg",
+        },
+      ],
+    },
+    {
+      cluster: "OPTICA",
+      events: [
+        {
+          name: "The Gravity Defier",
+          time: "9:30 AM - 11:30 AM",
+          venue: "Room 310",
+          focus: "Learning",
+          activities: ["Number Grid Race", "Memory Snap", "Gravity Defier"],
+          image: "/EVENTSPOSTERS/GRAVITYDEFIER'.jpg",
+          regLink: "https://docs.google.com/forms/d/e/1FAIpQLSd1EzJorBtCHd79RyI4M14qd6MjS6az9tfgHONC7spq6CggNw/viewform",
+        },
+      ],
+    },
+    {
+      cluster: "EQUILIBRIA",
+      events: [
+        {
+          name: "Tech Fun Fusion",
+          time: "2 PM - 3:30 PM",
+          venue: "Room 110",
+          focus: "Non-Tech",
+          activities: ["Connect the Tech", "Meme Creation"],
+          image: "/EVENTSPOSTERS/TECHFUNFUSION.jpg",
+          regLink: "https://forms.gle/nSdmEU97op36WiDn7",
+        },
+      ],
+    },
+    {
+      cluster: "ELECTRONICA",
+      events: [
+        {
+          name: "Tech mayhem",
+          time: "10 AM - 1 PM",
+          venue: "Room 402",
+          focus: "Tech",
+          activities: ["Real or Fake Tech", "Resistor Rush", "Memory Match"],
+          image: "/EVENTSPOSTERS/TECHMAYHEM.jpg",
+          regLink: "https://forms.gle/u1TAKaa7LF1Ge4UR9",
+        },
+      ],
+    },
+    {
+      cluster: "SPORTIVA",
+      events: [
+        {
+          name: "One Over Cricket",
+          time: "11 AM - 2 PM",
+          venue: "Basketball Court",
+          focus: "Sports",
+          activities: ["Powerplay", "Quick Overs", "Final Chase"],
+          image: "/EVENTSPOSTERS/ONEOVERCRICKET.jpg",
+          regLink: "https://docs.google.com/forms/d/e/1FAIpQLScHjmT69qXlX1d6MtqmhY4qV3cZAhpMcIai5tBD8zrWgnYDzw/viewform",
+        },
+      ],
+    },
+    {
+      cluster: "ROBOTICS CLUSTER",
+      events: [
+        {
+          name: "Sumo Challenge",
+          time: "2 PM - 4 PM",
+          venue: "ECE Lab",
+          focus: "Tech",
+          activities: ["Bot Wrestling", "Arena Combat"],
+          image: "/EVENTSPOSTERS/ROBOSUMO.jpg",
+          regLink: "https://forms.gle/Z9saAA2xU2YKoqj8A",
+        },
+      ],
+    },
   ],
   "Day 3": [
     {
@@ -380,102 +380,102 @@ const scheduleByDay: Record<DayLabel, DayCluster[]> = {
       ],
     },
     {
-        cluster: "STRATEGIA",
-        events: [
-          {
-            name: "Stock War",
-            time: "11 AM - 1 PM",
-            venue: "Room 303",
-            focus: "Tech",
-            activities: ["Market Simulation", "Risk Analysis"],
-            image: "/EVENTSPOSTERS/STOCKWARS-MARKETSIMULATION.jpg",
-            regLink: "https://forms.gle/6jL2YA3VvscgGiUf9",
-          },
-        ],
-      },
-      {
-        cluster: "ACCESS INDIA",
-        events: [
-          {
-            name: "FUNIVERSE",
-            time: "11.00 AM - 2.00 PM",
-            venue: "ROOM NO.410 & 411",
-            focus: "Fun",
-            activities: ["Imposter Arc", "Chaos Carnival"],
-            regLink: "https://docs.google.com/forms/d/e/1FAIpQLSe7KnkFXECkXDLroyUXsvMvx7811qLI-XbBugH3hJ8kVBrHtg/viewform",
-            image: "/EVENTSPOSTERS/FUNIVERSE.jpg",
-          },
-        ],
-      },
-      {
-        cluster: "INFORMATICA",
-        events: [
-          {
-            name: "Clash of Codes",
-            time: "10 AM - 1 PM",
-            venue: "Lab",
-            focus: "Tech",
-            activities: ["Warm Up", "Challenge", "Final Showdown"],
-            image: "/EVENTSPOSTERS/CLASHOFCODES.jpg",
-          },
-        ],
-      },
-      {
-        cluster: "OPTICA",
-        events: [
-          {
-            name: "The Final Pyramid",
-            time: "9:30 AM - 11:30 AM",
-            venue: "Room 310",
-            focus: "Learning",
-            activities: ["Sonar Sprint", "Hopscotch Pyramid"],
-            image: "/EVENTSPOSTERS/FINALPYRAMID.jpg",
-            regLink: "https://docs.google.com/forms/d/e/1FAIpQLSeiG0W_7I7wdPsc4S35B9A9fDPtf2ogKsUXxaZxcHTYAnGnyA/viewform",
-          },
-        ],
-      },
-      {
-        cluster: "ROBOTICS CLUSTER",
-        events: [
-          {
-            name: "RoboAI Challenge",
-            time: "10 AM - 4 PM",
-            venue: "ECE Lab",
-            focus: "Tech",
-            activities: ["AI Integration", "Path Planning"],
-            image: "/EVENTSPOSTERS/ROBOAI-HACKATHON.jpg",
-            regLink: "https://forms.gle/5dpnrrhJAhrSU6zd7",
-          },
-        ],
-      },
-      {
-        cluster: "ELECTRONICA",
-        events: [
-          {
-            name: "THINKZONE CHALLENGE",
-            time: "10 AM - 1 PM",
-            venue: "Room 402",
-            focus: "Creative",
-            activities: ["Artistic", "Kandupidi"],
-            image: "/EVENTSPOSTERS/THINKZONE.jpg",
-            regLink: "https://forms.gle/2GMW1XW9sQ5h8QZ68",
-          },
-        ],
-      },
-      {
-        cluster: "SPORTIVA",
-        events: [
-          {
-            name: "Tug of War",
-            time: "11 AM - 2 PM",
-            venue: "Basketball Court",
-            focus: "Sports",
-            activities: ["Team Strength", "Quick Pull"],
-            image: "/EVENTSPOSTERS/TUGOFWAR.jpg",
-            regLink: "https://docs.google.com/forms/d/e/1FAIpQLScbZVPEsAmHeVCVjNO90mHPX3VLWgzQgRdbo-lqL_mMvsNebA/viewform",
-          },
-        ],
-      },
+      cluster: "STRATEGIA",
+      events: [
+        {
+          name: "Stock War",
+          time: "11 AM - 1 PM",
+          venue: "Room 303",
+          focus: "Tech",
+          activities: ["Market Simulation", "Risk Analysis"],
+          image: "/EVENTSPOSTERS/STOCKWARS-MARKETSIMULATION.jpg",
+          regLink: "https://forms.gle/6jL2YA3VvscgGiUf9",
+        },
+      ],
+    },
+    {
+      cluster: "ACCESS INDIA",
+      events: [
+        {
+          name: "FUNIVERSE",
+          time: "11.00 AM - 2.00 PM",
+          venue: "ROOM NO.410 & 411",
+          focus: "Fun",
+          activities: ["Imposter Arc", "Chaos Carnival"],
+          regLink: "https://docs.google.com/forms/d/e/1FAIpQLSe7KnkFXECkXDLroyUXsvMvx7811qLI-XbBugH3hJ8kVBrHtg/viewform",
+          image: "/EVENTSPOSTERS/FUNIVERSE.jpg",
+        },
+      ],
+    },
+    {
+      cluster: "INFORMATICA",
+      events: [
+        {
+          name: "Clash of Codes",
+          time: "10 AM - 1 PM",
+          venue: "Lab",
+          focus: "Tech",
+          activities: ["Warm Up", "Challenge", "Final Showdown"],
+          image: "/EVENTSPOSTERS/CLASHOFCODES.jpg",
+        },
+      ],
+    },
+    {
+      cluster: "OPTICA",
+      events: [
+        {
+          name: "The Final Pyramid",
+          time: "9:30 AM - 11:30 AM",
+          venue: "Room 310",
+          focus: "Learning",
+          activities: ["Sonar Sprint", "Hopscotch Pyramid"],
+          image: "/EVENTSPOSTERS/FINALPYRAMID.jpg",
+          regLink: "https://docs.google.com/forms/d/e/1FAIpQLSeiG0W_7I7wdPsc4S35B9A9fDPtf2ogKsUXxaZxcHTYAnGnyA/viewform",
+        },
+      ],
+    },
+    {
+      cluster: "ROBOTICS CLUSTER",
+      events: [
+        {
+          name: "RoboAI Challenge",
+          time: "10 AM - 4 PM",
+          venue: "ECE Lab",
+          focus: "Tech",
+          activities: ["AI Integration", "Path Planning"],
+          image: "/EVENTSPOSTERS/ROBOAI-HACKATHON.jpg",
+          regLink: "https://forms.gle/5dpnrrhJAhrSU6zd7",
+        },
+      ],
+    },
+    {
+      cluster: "ELECTRONICA",
+      events: [
+        {
+          name: "THINKZONE CHALLENGE",
+          time: "10 AM - 1 PM",
+          venue: "Room 402",
+          focus: "Creative",
+          activities: ["Artistic", "Kandupidi"],
+          image: "/EVENTSPOSTERS/THINKZONE.jpg",
+          regLink: "https://forms.gle/2GMW1XW9sQ5h8QZ68",
+        },
+      ],
+    },
+    {
+      cluster: "SPORTIVA",
+      events: [
+        {
+          name: "Tug of War",
+          time: "11 AM - 2 PM",
+          venue: "Basketball Court",
+          focus: "Sports",
+          activities: ["Team Strength", "Quick Pull"],
+          image: "/EVENTSPOSTERS/TUGOFWAR.jpg",
+          regLink: "https://docs.google.com/forms/d/e/1FAIpQLScbZVPEsAmHeVCVjNO90mHPX3VLWgzQgRdbo-lqL_mMvsNebA/viewform",
+        },
+      ],
+    },
   ],
 };
 
@@ -553,7 +553,7 @@ export default component$(() => {
   const isDay2 = selectedDay.value === "Day 2";
   const isDay3 = selectedDay.value === "Day 3";
   const bgLogo = isDay3 ? "/spidy/spidy-web.webp" : isDay2 ? "/onepeice/one-peice-logo.webp" : "/ben10/ben10-logo.webp";
-  const bgGlowColor = isDay3 ? "#ff3333" : isDay2 ? "#eab308" : "#0ea935";
+  const bgGlowColor = isDay3 ? "#ff3333" : isDay2 ? "#eab308" : "#bef300";
 
   const eventsForSelectedDay = allEvents.filter((e) => e.day === selectedDay.value);
   const availableClusters = [ALL_CLUSTERS, ...new Set(eventsForSelectedDay.map((e) => e.cluster))];
@@ -564,7 +564,7 @@ export default component$(() => {
   });
 
   return (
-    <div class="relative mx-auto min-h-screen w-full px-4 pt-64 pb-20 bg-[#050505] font-sans overflow-hidden">
+    <div class="relative mx-auto min-h-screen w-full px-4 pt-40 pb-32 bg-[#050505] font-sans overflow-hidden">
       <style>{`
         .omnitrix-bg-image { opacity: 0.12; will-change: transform, opacity; transform: translateZ(0); }
         .omnitrix-bg-core { position: absolute; inset: 0; opacity: 0.18; mix-blend-mode: screen; transform: translateZ(0); animation: clockBlink 5s infinite; }
@@ -573,7 +573,14 @@ export default component$(() => {
         @keyframes floatIn { 0% { transform: translateY(20px) scale(0.96); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
         .dock-item-active { box-shadow: 0 0 20px ${bgGlowColor}60; }
         
-        .event-card { transform: translateZ(0); will-change: transform, box-shadow; }
+        .event-card { transform: translateZ(0); will-change: transform, box-shadow; transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1); }
+        .event-card:hover { box-shadow: 0 0 30px var(--glow-color); }
+        .card-tech-bracket { position: absolute; width: 8px; height: 8px; opacity: 0; transition: opacity 0.4s ease; border-color: var(--bracket-color); }
+        .event-card:hover .card-tech-bracket { opacity: 0.4; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); margin: 4px; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.25); border-radius: 20px; border: 1.5px solid rgba(255,255,255,0.05); }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: ${bgGlowColor}; box-shadow: 0 0 20px ${bgGlowColor}; }
         .modal-scan-line { animation: scanSweep 4s ease-in-out infinite; will-change: top; }
         @keyframes scanSweep { 0% { top: 0% } 100% { top: 100% } }
       `}</style>
@@ -588,16 +595,46 @@ export default component$(() => {
       </div>
 
       {/* PREMIUM CARD GRID */}
+      {/* DAY TOGGLE - Top (Scrolls Away) */}
+      <div class="relative z-20 mb-12 flex justify-center">
+        <div class="flex gap-1 md:gap-2 p-1.5 bg-black/80 rounded-full border border-white/10 backdrop-blur-3xl shadow-2xl">
+          {DAY_ORDER.map((day) => (
+            <button
+              key={day}
+              onClick$={() => (selectedDay.value = day)}
+              class={["relative px-5 md:px-8 py-2 md:py-3 rounded-full text-[0.65rem] md:text-[0.75rem] font-black uppercase transition-all duration-300 min-w-[4.5rem] md:min-w-[6rem]",
+                selectedDay.value === day ? "text-black scale-105 shadow-lg" : "text-white/30 hover:text-white/60 hover:bg-white/5"]}
+            >
+              {selectedDay.value === day && <div class={["absolute inset-0 rounded-full z-0 bg-gradient-to-tr", day === "Day 3" ? "from-[#ff3333] to-[#cc1111]" : day === "Day 2" ? "from-[#eab308] to-[#ca8a04]" : "from-[#bef300] to-[#d4ff00]"]}></div>}
+              <span class="relative z-10">{day}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div class="relative z-10 mx-auto max-w-7xl px-2">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredEvents.map((event) => {
-            const c = isDay3 ? { border: "border-[#ff3333]/40", badge: "bg-[#ff3333] text-white", ring: "#ff3333" } : isDay2 ? { border: "border-[#eab308]/40", badge: "bg-[#eab308] text-black", ring: "#eab308" } : { border: "border-[#0ea935]/40", badge: "bg-[#0ea935] text-white", ring: "#0ea935" };
+            const c = isDay3 ? { border: "border-[#ff3333]/40", badge: "bg-[#ff3333] text-white", ring: "#ff3333" } : isDay2 ? { border: "border-[#eab308]/40", badge: "bg-[#eab308] text-black", ring: "#eab308" } : { border: "border-[#bef300]/40", badge: "bg-[#bef300] text-black", ring: "#bef300" };
 
             return (
-              <div key={event.id} onClick$={() => (selectedEvent.value = event)} class={`event-card group relative flex flex-col rounded-[1.75rem] overflow-hidden cursor-pointer border ${c.border} bg-[#06090a] transition-all duration-500 hover:-translate-y-3 shadow-2xl`}>
+              <div
+                key={event.id}
+                onClick$={() => (selectedEvent.value = event)}
+                class={`event-card group relative flex flex-col rounded-[1.75rem] overflow-hidden cursor-pointer border ${c.border} bg-[#06090a] shadow-2xl`}
+                style={`--glow-color: ${c.ring}25; --bracket-color: ${c.ring};`}
+              >
                 <div class="relative h-52 w-full overflow-hidden flex-shrink-0">
-                  <img src={event.image} class="absolute inset-0 h-full w-full object-cover brightness-[0.55] group-hover:brightness-[0.8] group-hover:scale-110 transition-transform duration-700" loading="lazy" />
-                  <div class="absolute inset-0 opacity-0 group-hover:opacity-30 transition-opacity duration-700 z-10" style={`background: radial-gradient(circle at 50% 80%, ${c.ring}55, transparent 70%);`}></div>
+                  <img src={event.image} class="absolute inset-0 h-full w-full object-cover brightness-[0.8] group-hover:brightness-[1.0] group-hover:scale-110 transition-transform duration-700" loading="lazy" />
+                  <div class="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-700 z-10" style={`background: radial-gradient(circle at 50% 80%, ${c.ring}44, transparent 70%);`}></div>
+
+                  {/* Floating Action Button - Pops on hover */}
+                  <div class="absolute bottom-4 right-4 z-40 translate-y-12 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 scale-75 group-hover:scale-100">
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center shadow-lg transform active:scale-90 transition-transform" style={`background: ${c.ring}; color: #000;`}>
+                      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                    </div>
+                  </div>
+
                   <div class="absolute top-4 left-4 right-4 z-30 flex justify-between items-start gap-2">
                     <div class="flex flex-col gap-1.5">
                       <span class={`rounded-full px-2.5 py-1 text-[0.55rem] font-bold uppercase tracking-widest shadow-lg ${c.badge}`}>{event.cluster}</span>
@@ -606,11 +643,26 @@ export default component$(() => {
                   </div>
                   <span class="absolute bottom-3 left-4 z-30 text-[0.6rem] font-bold uppercase tracking-[0.2em] text-white/50">{event.day}</span>
                 </div>
+
                 <div class="relative flex flex-col flex-1 p-5">
-                  <h3 class="text-lg font-black text-white mb-2 leading-tight">{event.name}</h3>
-                  <p class="text-white/50 text-xs line-clamp-2 mb-4 font-medium">{event.description}</p>
-                  <div class="mt-auto flex flex-wrap gap-2 pt-2">
-                    <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[0.55rem] font-bold text-white/80 uppercase">{event.timing}</span>
+                  {/* Decorative Brackets */}
+                  <div class="card-tech-bracket top-4 left-4 border-t-2 border-l-2"></div>
+                  <div class="card-tech-bracket top-4 right-4 border-t-2 border-r-2"></div>
+                  <div class="card-tech-bracket bottom-4 left-4 border-b-2 border-l-2"></div>
+                  <div class="card-tech-bracket bottom-4 right-4 border-b-2 border-r-2"></div>
+
+                  <h3 class="text-lg font-black text-white mb-2 leading-tight group-hover:text-white transition-colors">{event.name}</h3>
+                  <p class="text-white/40 text-[0.7rem] line-clamp-2 mb-4 font-medium leading-relaxed group-hover:text-white/60 transition-colors uppercase tracking-tight">{event.description}</p>
+
+                  <div class="mt-auto flex flex-wrap gap-2 pt-2 items-center">
+                    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/10">
+                      <svg class="w-3 h-3 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-width="2" /></svg>
+                      <span class="text-[0.5rem] font-black text-white/70 uppercase tracking-tighter">{event.timing}</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/10 group-hover:border-white/20 transition-colors">
+                      <svg class="w-3 h-3 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" stroke-width="2" /><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" stroke-width="2" /></svg>
+                      <span class="text-[0.5rem] font-black text-white/70 uppercase tracking-tighter">{event.location}</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -619,19 +671,33 @@ export default component$(() => {
         </div>
       </div>
 
-      {/* Command Dock */}
-      <div class="event-command-dock absolute top-24 left-1/2 -translate-x-1/2 z-[100] flex justify-center w-full px-4">
-        <div class="flex items-center gap-2 rounded-full border border-white/10 bg-black/60 p-1.5 backdrop-blur-2xl shadow-xl">
-          <div class="flex gap-1">
-            {DAY_ORDER.map((day) => (
-              <button key={day} onClick$={() => (selectedDay.value = day)} class={["relative px-6 py-2 rounded-full text-[0.65rem] font-black uppercase transition-all", selectedDay.value === day ? "text-black" : "text-white/40 hover:text-white/80"]}>
-                {selectedDay.value === day && <div class={["absolute inset-0 rounded-full z-0 bg-gradient-to-tr", day === "Day 3" ? "from-[#ff3333] to-[#cc1111]" : day === "Day 2" ? "from-[#eab308] to-[#ca8a04]" : "from-[#0ea935] to-[#12cb42]"]}></div>}
-                <span class="relative z-10">{day}</span>
-              </button>
-            ))}
-          </div>
-          <div class="w-px h-6 bg-white/15 mx-1"></div>
-          <button onClick$={() => (activeFilterPanel.value = "cluster")} class="px-4 text-[0.65rem] font-bold text-white uppercase">{selectedCluster.value === ALL_CLUSTERS ? "Clusters" : selectedCluster.value}</button>
+      {/* FIXED BOTTOM FILTER DOCK - Mobile Friendly & Fixed */}
+      <div class="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] w-full max-w-sm px-4 transform-gpu">
+        <div class="flex items-center gap-2 p-2 rounded-[2.5rem] border border-white/20 bg-[#0c0f10] backdrop-blur-3xl shadow-[0_30px_70px_rgba(0,0,0,0.95)]">
+          
+          {/* Category Filter */}
+          <button
+            onClick$={() => (activeFilterPanel.value = "focus")}
+            class={["flex-1 flex items-center justify-center gap-2 py-4 rounded-full transition-all border text-[0.7rem] font-black uppercase tracking-widest",
+              selectedFocus.value === ALL_CATEGORIES
+                ? "bg-white/5 border-white/5 text-white/50 hover:bg-white/10"
+                : "bg-[#bef300]/10 border-[#bef300]/40 text-[#bef300] shadow-[0_0_20px_rgba(190,243,0,0.15)]"]}
+          >
+            <div class={["w-2 h-2 rounded-full", selectedFocus.value === ALL_CATEGORIES ? "bg-white/20" : "bg-[#bef300] shadow-[0_0_10px_#bef300]"]} />
+            {selectedFocus.value === ALL_CATEGORIES ? "Type" : selectedFocus.value}
+          </button>
+
+          {/* Cluster Filter */}
+          <button
+            onClick$={() => (activeFilterPanel.value = "cluster")}
+            class={["flex-[1.2] flex items-center justify-center gap-2 py-4 rounded-full transition-all border text-[0.7rem] font-black uppercase tracking-widest",
+              selectedCluster.value === ALL_CLUSTERS
+                ? "bg-white/5 border-white/5 text-white/50 hover:bg-white/10"
+                : "bg-white/10 border-[#bef300]/50 text-white shadow-[0_0_25px_rgba(190,243,0,0.2)]"]}
+          >
+            <svg class={["w-4 h-4", selectedCluster.value === ALL_CLUSTERS ? "text-white/30" : "text-[#bef300]"]} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M4 6h16M4 12h16M4 18h7" stroke-width="3" /></svg>
+            {selectedCluster.value === ALL_CLUSTERS ? "Clusters" : selectedCluster.value}
+          </button>
         </div>
       </div>
 
@@ -640,11 +706,11 @@ export default component$(() => {
         <div class="fixed inset-0 z-[150] flex items-center justify-center p-4">
           <div class="absolute inset-0 bg-black/60 backdrop-blur-md" onClick$={() => (activeFilterPanel.value = null)}></div>
           <div class="relative bg-[#080a0b] border border-white/10 p-8 rounded-[2rem] max-w-lg w-full">
-             <div class="flex flex-wrap gap-2 justify-center">
-                {(activeFilterPanel.value === "cluster" ? availableClusters : availableFocusForDay).map(item => (
-                    <button key={item} onClick$={() => { if(activeFilterPanel.value === "cluster") selectedCluster.value = item; else selectedFocus.value = item; activeFilterPanel.value = null; }} class="px-4 py-2 rounded-full bg-white/5 text-white/60 text-[0.65rem] font-black uppercase border border-white/10 hover:bg-white/10 transition-colors">{item}</button>
-                ))}
-             </div>
+            <div class="flex flex-wrap gap-2 justify-center">
+              {(activeFilterPanel.value === "cluster" ? availableClusters : availableFocusForDay).map(item => (
+                <button key={item} onClick$={() => { if (activeFilterPanel.value === "cluster") selectedCluster.value = item; else selectedFocus.value = item; activeFilterPanel.value = null; }} class="px-4 py-2 rounded-full bg-white/5 text-white/60 text-[0.65rem] font-black uppercase border border-white/10 hover:bg-white/10 transition-colors">{item}</button>
+              ))}
+            </div>
           </div>
         </div>
       )}
@@ -654,49 +720,50 @@ export default component$(() => {
           ═══════════════════════════════════════════════════ */}
       {selectedEvent.value && (() => {
         const ev = selectedEvent.value!;
-        const c = isDay3 ? { ring: "#ff3333", border: "border-[#ff3333]/30", badge: "bg-[#ff3333] text-white" } 
-                : isDay2 ? { ring: "#eab308", border: "border-[#eab308]/30", badge: "bg-[#eab308] text-black" } 
-                : { ring: "#4ade80", border: "border-[#4ade80]/30", badge: "bg-[#4ade80] text-black" };
-        
+        const c = isDay3 ? { ring: "#ff3333", border: "border-[#ff3333]/30", badge: "bg-[#ff3333] text-white" }
+          : isDay2 ? { ring: "#eab308", border: "border-[#eab308]/30", badge: "bg-[#eab308] text-black" }
+            : { ring: "#bef300", border: "border-[#bef300]/30", badge: "bg-[#bef300] text-black" };
+
         return (
           <div class="fixed inset-0 z-[200] flex items-center justify-center p-3 sm:p-6">
             <div class="absolute inset-0 bg-black/85 backdrop-blur-2xl" onClick$={closeEvent}></div>
-            
-            <div 
-              class={`relative w-full max-w-5xl rounded-[2.5rem] border ${c.border} bg-[#06090a] flex flex-col md:flex-row overflow-hidden modal-animate-in shadow-2xl`}
+
+            <div
+              class={`relative w-full max-w-5xl max-h-[90vh] md:max-h-[85vh] rounded-[2.5rem] border ${c.border} bg-[#06090a] flex flex-col md:flex-row overflow-hidden modal-animate-in shadow-2xl`}
               style={`box-shadow: 0 0 60px ${c.ring}15;`}
             >
-               {/* ── LEFT IMAGE PANEL ── */}
-               <div class="relative w-full md:w-[45%] h-64 md:h-auto overflow-hidden">
-                  <img src={ev.image} class="w-full h-full object-cover brightness-[0.5]" />
-                  
-                  {/* Themed Glowwash */}
-                  <div class="absolute inset-0 bg-gradient-to-tr opacity-40 mix-blend-color" style={`background-color: ${c.ring}`}></div>
-                  
-                  {/* Technical Brackets (L-shapes) */}
-                  <div class="absolute top-6 left-6 w-8 h-8 opacity-60" style={`border-top: 2px solid ${c.ring}; border-left: 2px solid ${c.ring}`}></div>
-                  <div class="absolute top-6 right-6 w-8 h-8 opacity-60" style={`border-top: 2px solid ${c.ring}; border-right: 2px solid ${c.ring}`}></div>
-                  <div class="absolute bottom-16 left-6 w-8 h-8 opacity-60" style={`border-bottom: 2px solid ${c.ring}; border-left: 2px solid ${c.ring}`}></div>
-                  <div class="absolute bottom-16 right-6 w-8 h-8 opacity-60" style={`border-bottom: 2px solid ${c.ring}; border-right: 2px solid ${c.ring}`}></div>
+              {/* ── LEFT IMAGE PANEL (SCROLLABLE POSTER) ── */}
+              <div class="relative w-full md:w-[45%] h-80 md:h-[600px] overflow-y-auto md:overflow-hidden flex-shrink-0 custom-scrollbar bg-black/20">
+                <img src={ev.image} class="w-full h-auto md:h-full object-contain brightness-[0.85]" />
 
-                  {/* Badges in Top Left */}
-                  <div class="absolute top-7 left-7 z-30 flex gap-2">
-                    <span class={`rounded-full px-4 py-1.5 text-[0.65rem] font-black uppercase tracking-widest ${c.badge}`}>{ev.cluster}</span>
-                    <span class="rounded-full bg-[#111] border border-white/10 px-4 py-1.5 text-[0.65rem] font-bold text-white uppercase tracking-widest">{getActivityLabel(ev.activities)}</span>
-                  </div>
+                {/* Themed Glowwash - Minimized for 'original' look */}
+                <div class="absolute inset-0 bg-gradient-to-tr opacity-10 mix-blend-overlay" style={`background-color: ${c.ring}`}></div>
 
-                  {/* DAY Label at Bottom Left */}
-                  <div class="absolute bottom-7 left-7 z-30">
-                    <span class="text-white/40 text-[0.7rem] font-black uppercase tracking-[0.4em]">{ev.day}</span>
-                  </div>
+                {/* Technical Brackets (L-shapes) - Reduced opacity */}
+                <div class="absolute top-6 left-6 w-8 h-8 opacity-30" style={`border-top: 2px solid ${c.ring}; border-left: 2px solid ${c.ring}`}></div>
+                <div class="absolute top-6 right-6 w-8 h-8 opacity-30" style={`border-top: 2px solid ${c.ring}; border-right: 2px solid ${c.ring}`}></div>
+                <div class="absolute bottom-16 left-6 w-8 h-8 opacity-30" style={`border-bottom: 2px solid ${c.ring}; border-left: 2px solid ${c.ring}`}></div>
+                <div class="absolute bottom-16 right-6 w-8 h-8 opacity-30" style={`border-bottom: 2px solid ${c.ring}; border-right: 2px solid ${c.ring}`}></div>
 
-                  {/* Moving Scanline */}
-                  <div class="absolute left-0 right-0 h-[1.5px] opacity-40 modal-scan-line" style={`box-shadow: 0 0 10px ${c.ring}; background: ${c.ring}`}></div>
-               </div>
+                {/* Sticky Badges in Top Left */}
+                <div class="sticky top-7 left-7 z-30 flex gap-2 ml-7">
+                  <span class={`rounded-full px-4 py-1.5 text-[0.65rem] font-black uppercase tracking-widest ${c.badge}`}>{ev.cluster}</span>
+                  <span class="rounded-full bg-[#111] border border-white/10 px-4 py-1.5 text-[0.65rem] font-bold text-white uppercase tracking-widest">{getActivityLabel(ev.activities)}</span>
+                </div>
 
-               {/* ── RIGHT DETAILS PANEL ── */}
-               <div class="p-6 md:p-10 flex-1 flex flex-col relative bg-[#06090a]">
-                  
+                {/* DAY Label at Bottom Left */}
+                <div class="absolute bottom-7 left-7 z-30">
+                  <span class="text-white/40 text-[0.7rem] font-black uppercase tracking-[0.4em]">{ev.day}</span>
+                </div>
+
+                {/* Moving Scanline - Kept minimal as requested */}
+                <div class="absolute left-0 right-0 h-[1px] opacity-15 modal-scan-line" style={`box-shadow: 0 0 8px ${c.ring}; background: ${c.ring}`}></div>
+              </div>
+
+              {/* ── RIGHT DETAILS PANEL (SCROLLABLE INFO) ── */}
+              <div class="flex-1 flex flex-col relative bg-[#06090a] md:h-[600px] overflow-hidden">
+                {/* Scrollable Content Area */}
+                <div class="p-6 md:p-10 flex-1 overflow-y-auto md:overflow-hidden custom-scrollbar pb-6">
                   {/* Background Watermark Logo (Rotated) */}
                   <div class="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none z-0">
                     <img src={bgLogo} class="w-[140%] max-w-none opacity-[0.03] grayscale contrast-150 rotate-[15deg] select-none" />
@@ -711,73 +778,76 @@ export default component$(() => {
                     <p class="text-[0.65rem] font-black uppercase tracking-[0.4em] mb-1" style={`color: ${c.ring}`}>Theta Schedule / {ev.day}</p>
                     <h2 class="text-4xl md:text-5xl font-black text-white mb-3 tracking-tight">{ev.name}</h2>
                     <p class="text-white/40 text-[0.75rem] leading-relaxed mb-8 max-w-md">{ev.description}</p>
-                    
+
                     {/* Meta Info Grid */}
                     <div class="grid grid-cols-2 gap-3 mb-8">
-                       <div class="flex flex-col p-4 rounded-2xl bg-white/[0.03] border border-white/10">
-                          <div class="flex items-center gap-2 mb-1.5">
-                             <svg class="w-3.5 h-3.5" style={`color: ${c.ring}`} viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
-                             <span class="text-[0.55rem] font-black text-white/30 uppercase tracking-widest">Venue</span>
-                          </div>
-                          <span class="text-white font-bold text-sm tracking-tight">{ev.location}</span>
-                       </div>
-                       <div class="flex flex-col p-4 rounded-2xl bg-white/[0.03] border border-white/10">
-                          <div class="flex items-center gap-2 mb-1.5">
-                             <svg class="w-3.5 h-3.5" style={`color: ${c.ring}`} viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg>
-                             <span class="text-[0.55rem] font-black text-white/30 uppercase tracking-widest">Timing</span>
-                          </div>
-                          <span class="text-white font-bold text-sm tracking-tight">{ev.timing}</span>
-                       </div>
-                       <div class="flex flex-col p-4 rounded-2xl bg-white/[0.03] border border-white/10">
-                          <div class="flex items-center gap-2 mb-1.5">
-                             <svg class="w-3.5 h-3.5" style={`color: ${c.ring}`} viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
-                             <span class="text-[0.55rem] font-black text-white/30 uppercase tracking-widest">Cluster</span>
-                          </div>
-                          <span class="text-white font-bold text-sm tracking-tight">{ev.cluster}</span>
-                       </div>
-                       <div class="flex flex-col p-4 rounded-2xl bg-white/[0.03] border border-white/10">
-                          <div class="flex items-center gap-2 mb-1.5">
-                             <svg class="w-3.5 h-3.5" style={`color: ${c.ring}`} viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
-                             <span class="text-[0.55rem] font-black text-white/30 uppercase tracking-widest">Activities</span>
-                          </div>
-                          <span class="font-black text-xl leading-none" style={`color: ${c.ring}`}>{ev.activities.length}</span>
-                       </div>
+                      <div class="flex flex-col p-4 rounded-2xl bg-white/[0.03] border border-white/10">
+                        <div class="flex items-center gap-2 mb-1.5">
+                          <svg class="w-3.5 h-3.5" style={`color: ${c.ring}`} viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" /></svg>
+                          <span class="text-[0.55rem] font-black text-white/30 uppercase tracking-widest">Venue</span>
+                        </div>
+                        <span class="text-white font-bold text-sm tracking-tight">{ev.location}</span>
+                      </div>
+                      <div class="flex flex-col p-4 rounded-2xl bg-white/[0.03] border border-white/10">
+                        <div class="flex items-center gap-2 mb-1.5">
+                          <svg class="w-3.5 h-3.5" style={`color: ${c.ring}`} viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" /></svg>
+                          <span class="text-[0.55rem] font-black text-white/30 uppercase tracking-widest">Timing</span>
+                        </div>
+                        <span class="text-white font-bold text-sm tracking-tight">{ev.timing}</span>
+                      </div>
+                      <div class="flex flex-col p-4 rounded-2xl bg-white/[0.03] border border-white/10">
+                        <div class="flex items-center gap-2 mb-1.5">
+                          <svg class="w-3.5 h-3.5" style={`color: ${c.ring}`} viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg>
+                          <span class="text-[0.55rem] font-black text-white/30 uppercase tracking-widest">Cluster</span>
+                        </div>
+                        <span class="text-white font-bold text-sm tracking-tight">{ev.cluster}</span>
+                      </div>
+                      <div class="flex flex-col p-4 rounded-2xl bg-white/[0.03] border border-white/10">
+                        <div class="flex items-center gap-2 mb-1.5">
+                          <svg class="w-3.5 h-3.5" style={`color: ${c.ring}`} viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" /></svg>
+                          <span class="text-[0.55rem] font-black text-white/30 uppercase tracking-widest">Activities</span>
+                        </div>
+                        <span class="font-black text-xl leading-none" style={`color: ${c.ring}`}>{ev.activities.length}</span>
+                      </div>
                     </div>
 
                     {/* Activity Lineup Section */}
                     <div class="p-5 rounded-3xl bg-white/[0.02] border border-white/10 mb-8">
-                       <div class="flex items-center justify-between mb-4">
-                          <span class="text-[0.65rem] font-black uppercase tracking-widest" style={`color: ${c.ring}`}>Activity Lineup</span>
-                          <span class="px-2.5 py-1 rounded-full border border-white/10 bg-white/5 text-[0.5rem] font-bold text-white/40 uppercase tracking-widest">{getActivityLabel(ev.activities)}</span>
-                       </div>
-                       {ev.activities.length > 0 ? (
-                          <div class="flex flex-wrap gap-2">
-                             {ev.activities.map(a => (
-                                <span key={a} class="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[0.6rem] font-bold text-white/70 uppercase">{a}</span>
-                             ))}
-                          </div>
-                       ) : (
-                          <p class="text-white/30 text-[0.65rem] font-medium leading-relaxed italic">This event is listed as a standalone format without separate track activities.</p>
-                       )}
-                    </div>
-
-                    {/* Bottom CTA Buttons */}
-                    <div class="flex gap-4">
-                       <a 
-                         href={ev.regLink || "/register"} 
-                         target="_blank" 
-                         class="flex-1 py-4 flex items-center justify-center gap-3 rounded-2xl font-black text-xs md:text-sm uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-95"
-                         style={`background: ${c.ring}; box-shadow: 0 0 30px ${c.ring}40; color: #000;`}
-                       >
-                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                         Register Now
-                       </a>
-                       <button onClick$={closeEvent} class="flex-1 py-4 rounded-2xl border border-white/15 bg-white/5 font-black text-xs md:text-sm uppercase tracking-widest text-white/40 hover:text-white transition-all uppercase">
-                          Close Panel
-                       </button>
+                      <div class="flex items-center justify-between mb-4">
+                        <span class="text-[0.65rem] font-black uppercase tracking-widest" style={`color: ${c.ring}`}>Activity Lineup</span>
+                        <span class="px-2.5 py-1 rounded-full border border-white/10 bg-white/5 text-[0.5rem] font-bold text-white/40 uppercase tracking-widest">{getActivityLabel(ev.activities)}</span>
+                      </div>
+                      {ev.activities.length > 0 ? (
+                        <div class="flex flex-wrap gap-2">
+                          {ev.activities.map(a => (
+                            <span key={a} class="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[0.6rem] font-bold text-white/70 uppercase">{a}</span>
+                          ))}
+                        </div>
+                      ) : (
+                        <p class="text-white/30 text-[0.65rem] font-medium leading-relaxed italic">This event is listed as a standalone format without separate track activities.</p>
+                      )}
                     </div>
                   </div>
-               </div>
+                </div>
+
+                {/* Sticky Footer CTA */}
+                <div class="p-6 md:px-10 md:pb-10 md:pt-4 bg-[#06090a] border-t border-white/5 z-30">
+                  <div class="flex gap-3 sm:gap-4">
+                    <a
+                      href={ev.regLink || "/register"}
+                      target="_blank"
+                      class="flex-1 py-4 flex items-center justify-center gap-3 rounded-2xl font-black text-xs md:text-sm uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-95"
+                      style={`background: ${c.ring}; box-shadow: 0 0 30px ${c.ring}40; color: #000;`}
+                    >
+                      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                      Register Now
+                    </a>
+                    <button onClick$={closeEvent} class="flex-1 py-4 rounded-2xl border border-white/15 bg-white/5 font-black text-xs md:text-sm uppercase tracking-widest text-white/40 hover:text-white transition-all uppercase">
+                      Close Panel
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         );
