@@ -2,7 +2,7 @@ import { $, component$, useSignal, useVisibleTask$ } from "@builder.io/qwik";
 import { Link, useLocation } from "@builder.io/qwik-city";
 
 type Theme = "default" | "spider" | "onepiece" | "red-ben10";
-type NavLogo = "default" | "red-ben10";
+type NavLogo = "default";
 
 const readTheme = (): Theme => {
   const value = document.body.getAttribute("data-theme") as Theme | null;
@@ -12,8 +12,7 @@ const readTheme = (): Theme => {
 };
 
 const readNavLogo = (): NavLogo => {
-  const value = document.body.getAttribute("data-nav-logo") as NavLogo | null;
-  return value === "red-ben10" ? value : "default";
+  return "default";
 };
 
 export const Header = component$(() => {
@@ -67,12 +66,11 @@ export const Header = component$(() => {
     : theme.value === "onepiece" ? "rgba(200,160,0,0.5)"
       : theme.value === "red-ben10" ? "rgba(255,40,40,0.5)"
         : "rgba(14,169,53,0.5)";
-  const isRedBen10 = navLogo.value === "red-ben10";
-  const navLogoAccent = isRedBen10 ? "#00ff55" : accent;
-  const navLogoAccentLight = isRedBen10 ? "rgba(0,255,85,0.34)" : accentLight;
-  const navLogoAccentBg = isRedBen10 ? "rgba(0,255,85,0.14)" : accentBg;
-  const navLogoAccentGlow = isRedBen10 ? "rgba(0,255,85,0.5)" : accentGlow;
-  const usesBen10Pair = (theme.value === "default" || theme.value === "red-ben10") || isRedBen10;
+  const navLogoAccent = accent;
+  const navLogoAccentLight = accentLight;
+  const navLogoAccentBg = accentBg;
+  const navLogoAccentGlow = accentGlow;
+  const usesBen10Pair = (theme.value === "default" || theme.value === "red-ben10");
   const specialLogoSrc = theme.value === "spider" ? "/spidy/image.webp"
     : theme.value === "onepiece" ? "/onepeice/one-peice-logo.webp"
       : "";
@@ -102,16 +100,7 @@ export const Header = component$(() => {
 
   return (
     <>
-      <img
-        src="/card2-pink.webp"
-        alt=""
-        aria-hidden="true"
-        class="pointer-events-none absolute h-0 w-0 opacity-0"
-        width="1"
-        height="1"
-        loading="eager"
-        decoding="async"
-      />
+
       <header class="pointer-events-none fixed top-3 right-0 left-0 z-[110] flex w-full items-center justify-between px-3 sm:px-4 md:top-5 md:px-6">
         {/* Left: Theta Logo */}
         <div class="pointer-events-auto flex min-w-0 flex-1 items-center md:flex-initial md:w-[220px] lg:w-[280px]">
@@ -146,17 +135,9 @@ export const Header = component$(() => {
                 <>
                   <img
                     src="/ben10/ben10-logo.webp"
-                    alt={isRedBen10 ? "" : "Ben 10 Logo"}
-                    aria-hidden={isRedBen10 ? "true" : undefined}
-                    class={`t-ben10-icon absolute top-1/2 left-1/2 w-auto -translate-x-1/2 -translate-y-1/2 object-contain transition-all duration-500 ${isRedBen10 ? 'h-7 lg:h-10 scale-95 opacity-0' : 'h-7 lg:h-10 scale-100 opacity-100'}`}
+                    alt="Ben 10 Logo"
+                    class="t-ben10-icon h-7 lg:h-10 scale-100 opacity-100 absolute top-1/2 left-1/2 w-auto -translate-x-1/2 -translate-y-1/2 object-contain transition-all duration-500"
                     style="transition:opacity 0.32s ease,transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);"
-                  />
-                  <img
-                    src="/card2-pink.webp"
-                    alt={isRedBen10 ? "Red Ben 10" : ""}
-                    aria-hidden={isRedBen10 ? undefined : "true"}
-                    class={`t-ben10-icon absolute top-1/2 left-1/2 w-auto -translate-x-1/2 -translate-y-1/2 object-contain transition-all duration-500 ${isRedBen10 ? 'h-[1.8rem] lg:h-[2.75rem] scale-100 opacity-100' : 'h-[1.75rem] lg:h-[2.6rem] scale-95 opacity-0'}`}
-                    style={`transition:opacity 0.32s ease,transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);filter:drop-shadow(0 0 10px rgba(255,62,147,0.72)) drop-shadow(0 0 18px ${navLogoAccentBg});`}
                   />
                 </>
               ) : (
@@ -197,17 +178,9 @@ export const Header = component$(() => {
                 <>
                   <img
                     src="/ben10/ben10-logo.webp"
-                    alt={isRedBen10 ? "" : "Ben 10 Logo"}
-                    aria-hidden={isRedBen10 ? "true" : undefined}
-                    class={`t-ben10-icon absolute top-1/2 left-1/2 w-auto -translate-x-1/2 -translate-y-1/2 object-contain transition-all duration-500 ${isRedBen10 ? 'h-7 scale-95 opacity-0' : 'h-7 scale-100 opacity-100'}`}
+                    alt="Ben 10 Logo"
+                    class="t-ben10-icon h-7 scale-100 opacity-100 absolute top-1/2 left-1/2 w-auto -translate-x-1/2 -translate-y-1/2 object-contain transition-all duration-500"
                     style="transition:opacity 0.32s ease,transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);"
-                  />
-                  <img
-                    src="/card2-pink.webp"
-                    alt={isRedBen10 ? "Red Ben 10" : ""}
-                    aria-hidden={isRedBen10 ? undefined : "true"}
-                    class={`t-ben10-icon absolute top-1/2 left-1/2 w-auto -translate-x-1/2 -translate-y-1/2 object-contain transition-all duration-500 ${isRedBen10 ? 'h-[1.8rem] scale-100 opacity-100' : 'h-[1.75rem] scale-95 opacity-0'}`}
-                    style={`transition:opacity 0.32s ease,transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);filter:drop-shadow(0 0 10px rgba(255,62,147,0.72)) drop-shadow(0 0 18px ${navLogoAccentBg});`}
                   />
                 </>
               ) : (

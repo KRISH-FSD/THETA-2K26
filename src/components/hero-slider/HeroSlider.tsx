@@ -19,9 +19,9 @@ export const heroSlides = [
     description: "Musical Fusion · Opening Ceremony · Cultural Night",
     accentColor: "#38bdf8",
     accentRgb: "56, 189, 248",
-    bgImage: "/homepage/i1.webp",
+    bgImage: "/day1-bg.webp",
     bgVideo: "/homepage/v1.mp4",
-    thumb: "/homepage/i1.webp",
+    thumb: "/day1-bg.webp",
   },
   /* 
   {
@@ -198,14 +198,8 @@ export const HeroSlider = component$(() => {
   useVisibleTask$(({ cleanup, track }) => {
     track(() => active.value);
 
-    const activeSlide = heroSlides[active.value];
-    const nextNavLogo = activeSlide.id === 2 ? "red-ben10" : null;
-
-    if (nextNavLogo) {
-      document.body.setAttribute("data-nav-logo", nextNavLogo);
-    } else {
-      document.body.removeAttribute("data-nav-logo");
-    }
+    // No longer changing nav logo based on slide
+    document.body.removeAttribute("data-nav-logo");
 
     cleanup(() => {
       document.body.removeAttribute("data-nav-logo");
@@ -334,7 +328,7 @@ export const HeroSlider = component$(() => {
     // Perf Fix 2.3: Pause/Play based on visibility
     const handleVisibility = () => {
       if (document.hidden) currentVideo.pause();
-      else if (isHeroInView.value && isDesktop.value) currentVideo.play().catch(() => {});
+      else if (isHeroInView.value && isDesktop.value) currentVideo.play().catch(() => { });
     };
     document.addEventListener("visibilitychange", handleVisibility);
     cleanup(() => document.removeEventListener("visibilitychange", handleVisibility));
@@ -413,28 +407,43 @@ export const HeroSlider = component$(() => {
       <div class="hs-grain" />
 
       {/* Content: Hidden for Day 1 on desktop and Day 3 alone to favor visuals */}
-      {!(slide.id === 0 && isDesktop.value) && slide.id !== 2 && <div class="hs-content">
-        <div class="hs-badge">
-          <span class="hs-badge-text">{slide.subtitle}</span>
-        </div>
-        <h1 class="hs-title font-black uppercase text-center t-gradient-blue">{slide.title}</h1>
-        <p class="hs-desc text-center">{slide.description}</p>
-        <div class="hs-actions">
-          <div class="hs-actions__row">
-            <a href={`/roadmap/day${slide.id + 1}`} class="t-button-neon hs-cta--primary">
-              View Roadmap
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-            </a>
+      {!(slide.id === 0 && isDesktop.value) && slide.id !== 2 && (
+        <div class="hs-content px-4">
+          <div class="hs-badge mb-6">
+            <span class="hs-badge-text text-[0.65rem] md:text-[0.75rem] font-black tracking-widest uppercase py-2 px-6 rounded-full border border-white/20 bg-white/5 backdrop-blur-md">
+              {slide.subtitle}
+            </span>
           </div>
-          <div class="hs-actions__row">
-            <a href="/events" class="t-button-neon hs-cta--secondary">
-              Explore All
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-            </a>
-            <Link href="/contact" class="t-button-neon hs-cta--ghost">Contact Team</Link>
+          <h1 class="hs-title font-black uppercase text-center t-gradient-blue text-4xl sm:text-6xl md:text-7xl lg:text-8xl leading-none"
+            style="text-shadow: 0 0 50px rgba(0,0,0,0.9), 0 15px 30px rgba(0,0,0,0.6);">
+            {slide.title}
+          </h1>
+          <p class="hs-desc text-center mt-6 text-sm sm:text-base md:text-lg text-white/90 max-w-2xl mx-auto font-medium"
+            style="text-shadow: 0 0 25px rgba(0,0,0,1);">
+            {slide.description}
+          </p>
+          <div class="hs-actions mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div class="hs-actions__row">
+              <a href={`/roadmap/day${slide.id + 1}`}
+                class="t-button-neon hs-cta--primary group flex items-center gap-3 px-8 py-4 rounded-full border border-white/30 bg-black text-white hover:scale-105 transition-all shadow-[0_0_30px_rgba(0,0,0,0.5)]">
+                VIEW ROADMAP
+                <svg class="w-5 h-5 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+              </a>
+            </div>
+            <div class="hs-actions__row flex items-center gap-4">
+              <a href="/events"
+                class="t-button-neon hs-cta--secondary group flex items-center gap-3 px-8 py-4 rounded-full border border-white/20 bg-black/40 backdrop-blur-md text-white hover:bg-white hover:text-black transition-all">
+                EXPLORE ALL
+                <svg class="w-5 h-5 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+              </a>
+              <Link href="/contact"
+                class="hidden sm:inline-flex px-8 py-4 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-[0.65rem] font-black uppercase tracking-widest text-white/70 hover:text-white hover:border-white/30 transition-all">
+                CONTACT TEAM
+              </Link>
+            </div>
           </div>
         </div>
-      </div>}
+      )}
 
       <div class="hs-hero-countdown">
         <HeroCountdown targetDate="2026-04-11T09:00:00" />
