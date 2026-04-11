@@ -1,7 +1,13 @@
-import { component$, isDev, useSignal, useVisibleTask$ } from "@builder.io/qwik";
+import {
+  component$,
+  isDev,
+  useSignal,
+  useVisibleTask$,
+} from "@builder.io/qwik";
 import { QwikCityProvider, RouterOutlet } from "@builder.io/qwik-city";
 import { RouterHead } from "./components/router-head/router-head";
 import Lenis from "lenis";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { getDevicePerfTier } from "./utils/perf";
 
 import "./global.css";
@@ -18,7 +24,9 @@ export default component$(() => {
   });
 
   useVisibleTask$(() => {
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
     const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
     const perfTier = getDevicePerfTier();
 
@@ -31,6 +39,25 @@ export default component$(() => {
       smoothWheel: true,
       syncTouch: false,
     });
+
+    lenis.on("scroll", ScrollTrigger.update);
+
+    ScrollTrigger.scrollerProxy(document.documentElement, {
+      scrollTop(value) {
+        return arguments.length
+          ? lenis.scrollTo(value as number, { immediate: true })
+          : window.scrollY;
+      },
+      getBoundingClientRect() {
+        return {
+          top: 0,
+          left: 0,
+          width: window.innerWidth,
+          height: window.innerHeight,
+        };
+      },
+    });
+
     let frameId = 0;
 
     function raf(time: number) {
@@ -78,13 +105,22 @@ export default component$(() => {
                 />
               </div>
               <div class="space-y-2">
-                <p class="text-xs font-black uppercase tracking-[0.35em] text-white/70">
+                <p class="text-xs font-black tracking-[0.35em] text-white/70 uppercase">
                   Theta 2026
                 </p>
                 <div class="flex items-center justify-center gap-2">
-                  <span class="h-2.5 w-2.5 animate-pulse rounded-full bg-[#0ea935]" style="animation-delay:0ms" />
-                  <span class="h-2.5 w-2.5 animate-pulse rounded-full bg-[#0ea935]" style="animation-delay:180ms" />
-                  <span class="h-2.5 w-2.5 animate-pulse rounded-full bg-[#0ea935]" style="animation-delay:360ms" />
+                  <span
+                    class="h-2.5 w-2.5 animate-pulse rounded-full bg-[#0ea935]"
+                    style="animation-delay:0ms"
+                  />
+                  <span
+                    class="h-2.5 w-2.5 animate-pulse rounded-full bg-[#0ea935]"
+                    style="animation-delay:180ms"
+                  />
+                  <span
+                    class="h-2.5 w-2.5 animate-pulse rounded-full bg-[#0ea935]"
+                    style="animation-delay:360ms"
+                  />
                 </div>
               </div>
             </div>
