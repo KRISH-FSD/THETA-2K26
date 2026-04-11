@@ -537,10 +537,26 @@ export default component$(() => {
     });
   });
 
-  useVisibleTask$(({ track }) => {
+  useVisibleTask$(({ track, cleanup }) => {
     track(() => selectedDay.value);
-    const themeStr = selectedDay.value === "Day 3" ? "spider" : selectedDay.value === "Day 2" ? "onepiece" : "default";
-    document.body.setAttribute("data-theme", themeStr);
+    const previousTheme = document.body.getAttribute("data-theme");
+    const uiTheme: "default" | "spider" | "onepiece" =
+      selectedDay.value === "Day 3"
+        ? "spider"
+        : selectedDay.value === "Day 2"
+          ? "onepiece"
+          : "default";
+
+    document.body.setAttribute("data-theme", "default");
+    window.dispatchEvent(new CustomEvent("theta-ui-theme-change", { detail: { theme: uiTheme } }));
+    cleanup(() => {
+      if (previousTheme) {
+        document.body.setAttribute("data-theme", previousTheme);
+      } else {
+        document.body.removeAttribute("data-theme");
+      }
+      window.dispatchEvent(new CustomEvent("theta-ui-theme-change", { detail: { theme: null } }));
+    });
   });
 
   const closeEvent = $(() => (selectedEvent.value = null));
@@ -561,9 +577,7 @@ export default component$(() => {
   return (
     <div class="relative mx-auto min-h-screen w-full px-4 pt-40 pb-32 bg-[#050505] font-sans overflow-hidden">
       <style>{`
-        .omnitrix-bg-image { opacity: 0.12; will-change: transform, opacity; transform: translateZ(0); }
-        .omnitrix-bg-core { position: absolute; inset: 0; opacity: 0.18; mix-blend-mode: screen; transform: translateZ(0); animation: clockBlink 5s infinite; }
-        @keyframes clockBlink { 0%, 80%, 100% { opacity: 0.15; } 90% { opacity: 0.40; } }
+        .omnitrix-bg-image { opacity: 0.1; transform: translateZ(0); }
         .modal-animate-in { animation: floatIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; will-change: transform, opacity; }
         @keyframes floatIn { 0% { transform: translateY(20px) scale(0.96); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
         .dock-item-active { box-shadow: 0 0 20px ${bgGlowColor}60; }
@@ -592,10 +606,9 @@ export default component$(() => {
 
       {/* Parallax Background */}
       <div class="fixed inset-0 z-0 flex items-center justify-center pointer-events-none">
-        <div class="absolute w-[80vw] h-[80vw] opacity-[0.08] blur-[150px] rounded-full" style={`background-color: ${bgGlowColor};`}></div>
+        <div class="absolute w-[72vw] h-[72vw] opacity-[0.06] blur-[90px] rounded-full" style={`background-color: ${bgGlowColor};`}></div>
         <div class="relative flex items-center justify-center">
-          <img src={bgLogo} class="omnitrix-bg-image w-[90vw] sm:w-[50vw] object-contain" />
-          {!isDay3 && <img src={bgLogo} class="omnitrix-bg-core w-[90vw] sm:w-[50vw] object-contain" />}
+          <img src={bgLogo} class="omnitrix-bg-image w-[90vw] sm:w-[50vw] object-contain" decoding="async" />
         </div>
       </div>
 
