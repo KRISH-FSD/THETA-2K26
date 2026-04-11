@@ -112,3 +112,14 @@ Notice that you might need a [Vercel account](https://docs.Vercel.com/get-starte
 The project is ready to be deployed to Vercel. However, you will need to create a git repository and push the code to it.
 
 You can [deploy your site to Vercel](https://vercel.com/docs/concepts/deployments/overview) either via a Git provider integration or through the Vercel CLI.
+
+## TODO
+
+- [ ] Unify event data sources. The homepage, events page, and chatbot currently use different datasets and can disagree on schedules and details.
+- [ ] Replace the `/register` fallback on the events modal with a safe state. Right now events without `regLink` can send users to a non-existent route.
+- [ ] Fix broken event poster references, including `/EVENTSPOSTERS/SPORTS.jpg`.
+- [ ] Fix missing contact/team image assets referenced from `public/data/team.json`, or update the JSON to valid image paths.
+- [x] Remove or re-enable the dead GSAP animation block in `src/routes/contact/index.tsx` instead of leaving unreachable code behind an early `return`.
+- [ ] Chatbot scroll issue: When chatbot is open on mobile, scrolling inside the chat scrolls the page instead of the chat content.
+- [ ] Fix `fixMojibake` function in Chatbot - current implementation doesn't properly handle encoding issues.
+- [ ] Add error handling/feedback when JSON data files fail to load (e.g., config.json, events.json).
