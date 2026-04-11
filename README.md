@@ -123,6 +123,6 @@ You can [deploy your site to Vercel](https://vercel.com/docs/concepts/deployment
 - [ ] Chatbot scroll issue: When chatbot is open on mobile, scrolling inside the chat scrolls the page instead of the chat content.
 - [ ] Fix `fixMojibake` function in Chatbot - current implementation doesn't properly handle encoding issues.
 - [ ] Add error handling/feedback when JSON data files fail to load (e.g., config.json, events.json).
-- [ ] Remove unused theme-context.tsx - the theme system uses `data-theme` attribute on body instead.
+- [x] Remove unused theme-context.tsx - the theme system uses `data-theme` attribute on body instead.
 - [ ] Fix hardcoded external URLs (Unsplash images in events page) - consider local copies to prevent broken images.
 - [ ] Add validation for team image paths - several referenced images don't exist in `/public/team/`.
