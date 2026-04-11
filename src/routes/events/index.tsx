@@ -1,6 +1,5 @@
 import { $, component$, useSignal, useVisibleTask$ } from "@builder.io/qwik";
 import { type DocumentHead } from "@builder.io/qwik-city";
-import { gsap } from "gsap";
 
 type DayLabel = "Day 1" | "Day 2" | "Day 3";
 type EventTheme = "innovation" | "logic" | "creative" | "fun" | "sports";
@@ -512,6 +511,14 @@ const allEvents: Event[] = DAY_ORDER.flatMap((day) =>
   ),
 ).map((event, index) => ({ ...event, id: index + 1 }));
 
+const eventsByDay = DAY_ORDER.reduce(
+  (acc, day) => {
+    acc[day] = allEvents.filter((event) => event.day === day);
+    return acc;
+  },
+  {} as Record<DayLabel, Event[]>,
+);
+
 export default component$(() => {
   const selectedEvent = useSignal<Event | null>(null);
   const selectedDay = useSignal<DayLabel>("Day 1");
@@ -530,22 +537,26 @@ export default component$(() => {
     });
   });
 
-  useVisibleTask$(({ track }) => {
+  useVisibleTask$(({ track, cleanup }) => {
     track(() => selectedDay.value);
-    const themeStr = selectedDay.value === "Day 3" ? "spider" : selectedDay.value === "Day 2" ? "onepiece" : "default";
-    document.body.setAttribute("data-theme", themeStr);
-    gsap.set(".event-card", { clearProps: "all" });
-  });
+    const previousTheme = document.body.getAttribute("data-theme");
+    const uiTheme: "default" | "spider" | "onepiece" =
+      selectedDay.value === "Day 3"
+        ? "spider"
+        : selectedDay.value === "Day 2"
+          ? "onepiece"
+          : "default";
 
-  useVisibleTask$(({ track }) => {
-    track(() => activeFilterPanel.value);
-    if (activeFilterPanel.value) {
-      gsap.fromTo(".filter-pill", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, stagger: 0.03, ease: "power2.out" });
-    }
-  });
-
-  useVisibleTask$(() => {
-    gsap.fromTo(".event-command-dock", { y: "-200%", opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, delay: 0.6, ease: "power2.out" });
+    document.body.setAttribute("data-theme", "default");
+    window.dispatchEvent(new CustomEvent("theta-ui-theme-change", { detail: { theme: uiTheme } }));
+    cleanup(() => {
+      if (previousTheme) {
+        document.body.setAttribute("data-theme", previousTheme);
+      } else {
+        document.body.removeAttribute("data-theme");
+      }
+      window.dispatchEvent(new CustomEvent("theta-ui-theme-change", { detail: { theme: null } }));
+    });
   });
 
   const closeEvent = $(() => (selectedEvent.value = null));
@@ -555,25 +566,33 @@ export default component$(() => {
   const bgLogo = isDay3 ? "/spidy/spidy-web.webp" : isDay2 ? "/onepeice/one-peice-logo.webp" : "/ben10/ben10-logo.webp";
   const bgGlowColor = isDay3 ? "#ff3333" : isDay2 ? "#eab308" : "#bef300";
 
-  const eventsForSelectedDay = allEvents.filter((e) => e.day === selectedDay.value);
+  const eventsForSelectedDay = eventsByDay[selectedDay.value];
   const availableClusters = [ALL_CLUSTERS, ...new Set(eventsForSelectedDay.map((e) => e.cluster))];
   const availableFocusForDay = [ALL_CATEGORIES, ...new Set(eventsForSelectedDay.map((e) => e.focus))];
 
-  const filteredEvents = allEvents.filter((e) => {
-    return e.day === selectedDay.value && (selectedCluster.value === ALL_CLUSTERS || e.cluster === selectedCluster.value) && (selectedFocus.value === ALL_CATEGORIES || e.focus === selectedFocus.value);
+  const filteredEvents = eventsForSelectedDay.filter((e) => {
+    return (selectedCluster.value === ALL_CLUSTERS || e.cluster === selectedCluster.value) && (selectedFocus.value === ALL_CATEGORIES || e.focus === selectedFocus.value);
   });
 
   return (
     <div class="relative mx-auto min-h-screen w-full px-4 pt-40 pb-32 bg-[#050505] font-sans overflow-hidden">
       <style>{`
-        .omnitrix-bg-image { opacity: 0.12; will-change: transform, opacity; transform: translateZ(0); }
-        .omnitrix-bg-core { position: absolute; inset: 0; opacity: 0.18; mix-blend-mode: screen; transform: translateZ(0); animation: clockBlink 5s infinite; }
-        @keyframes clockBlink { 0%, 80%, 100% { opacity: 0.15; } 90% { opacity: 0.40; } }
+        .omnitrix-bg-image { opacity: 0.1; transform: translateZ(0); }
         .modal-animate-in { animation: floatIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; will-change: transform, opacity; }
         @keyframes floatIn { 0% { transform: translateY(20px) scale(0.96); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
         .dock-item-active { box-shadow: 0 0 20px ${bgGlowColor}60; }
         
-        .event-card { transform: translateZ(0); will-change: transform, box-shadow; transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1); }
+        .event-card {
+          transform: translateZ(0);
+          will-change: transform;
+          transition:
+            transform 0.35s cubic-bezier(0.23, 1, 0.32, 1),
+            box-shadow 0.35s cubic-bezier(0.23, 1, 0.32, 1),
+            border-color 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+          contain: layout paint style;
+          content-visibility: auto;
+          contain-intrinsic-size: 420px;
+        }
         .event-card:hover { box-shadow: 0 0 30px var(--glow-color); }
         .card-tech-bracket { position: absolute; width: 8px; height: 8px; opacity: 0; transition: opacity 0.4s ease; border-color: var(--bracket-color); }
         .event-card:hover .card-tech-bracket { opacity: 0.4; }
@@ -587,10 +606,9 @@ export default component$(() => {
 
       {/* Parallax Background */}
       <div class="fixed inset-0 z-0 flex items-center justify-center pointer-events-none">
-        <div class="absolute w-[80vw] h-[80vw] opacity-[0.08] blur-[150px] rounded-full" style={`background-color: ${bgGlowColor};`}></div>
+        <div class="absolute w-[72vw] h-[72vw] opacity-[0.06] blur-[90px] rounded-full" style={`background-color: ${bgGlowColor};`}></div>
         <div class="relative flex items-center justify-center">
-          <img src={bgLogo} class="omnitrix-bg-image w-[90vw] sm:w-[50vw] object-contain" />
-          {!isDay3 && <img src={bgLogo} class="omnitrix-bg-core w-[90vw] sm:w-[50vw] object-contain" />}
+          <img src={bgLogo} class="omnitrix-bg-image w-[90vw] sm:w-[50vw] object-contain" decoding="async" />
         </div>
       </div>
 
@@ -612,7 +630,7 @@ export default component$(() => {
         </div>
       </div>
 
-      <div class="relative z-10 mx-auto max-w-7xl px-2">
+      <div class="relative z-10 mx-auto max-w-7xl px-2 [content-visibility:auto] [contain-intrinsic-size:1400px]">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredEvents.map((event) => {
             const c = isDay3 ? { border: "border-[#ff3333]/40", badge: "bg-[#ff3333] text-white", ring: "#ff3333" } : isDay2 ? { border: "border-[#eab308]/40", badge: "bg-[#eab308] text-black", ring: "#eab308" } : { border: "border-[#bef300]/40", badge: "bg-[#bef300] text-black", ring: "#bef300" };
@@ -625,7 +643,7 @@ export default component$(() => {
                 style={`--glow-color: ${c.ring}25; --bracket-color: ${c.ring};`}
               >
                 <div class="relative h-52 w-full overflow-hidden flex-shrink-0">
-                  <img src={event.image} class="absolute inset-0 h-full w-full object-cover brightness-[0.8] group-hover:brightness-[1.0] group-hover:scale-110 transition-transform duration-700" loading="lazy" />
+                  <img src={event.image} class="absolute inset-0 h-full w-full object-cover brightness-[0.8] group-hover:brightness-[1.0] group-hover:scale-110 transition-transform duration-700" loading="lazy" decoding="async" />
                   <div class="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-700 z-10" style={`background: radial-gradient(circle at 50% 80%, ${c.ring}44, transparent 70%);`}></div>
 
                   {/* Floating Action Button - Pops on hover */}

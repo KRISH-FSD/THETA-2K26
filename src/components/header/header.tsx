@@ -19,6 +19,7 @@ export const Header = component$(() => {
   const location = useLocation();
   const open = useSignal(false);
   const theme = useSignal<Theme>("default");
+  const uiThemeOverride = useSignal<Theme | null>(null);
   const navLogo = useSignal<NavLogo>("default");
 
   const isActive = (href: string) => {
@@ -41,47 +42,58 @@ export const Header = component$(() => {
       theme.value = readTheme();
       navLogo.value = readNavLogo();
     });
+    const onUiThemeChange = (event: Event) => {
+      const detail = (event as CustomEvent<{ theme?: Theme | null }>).detail;
+      uiThemeOverride.value = detail?.theme || null;
+    };
+
+    window.addEventListener("theta-ui-theme-change", onUiThemeChange as EventListener);
     obs.observe(document.body, { attributes: true, attributeFilter: ["data-theme", "data-nav-logo"] });
-    return () => obs.disconnect();
+    return () => {
+      window.removeEventListener("theta-ui-theme-change", onUiThemeChange as EventListener);
+      obs.disconnect();
+    };
   });
+
+  const resolvedTheme = uiThemeOverride.value || theme.value;
 
   const toggleMenu = $(() => {
     open.value = !open.value;
   });
 
   /* Derived accent color for current theme */
-  const accent = theme.value === "spider" ? "#ff4040"
-    : theme.value === "onepiece" ? "#ffd700"
-      : theme.value === "red-ben10" ? "#ff4d4f"
+  const accent = resolvedTheme === "spider" ? "#ff4040"
+    : resolvedTheme === "onepiece" ? "#ffd700"
+      : resolvedTheme === "red-ben10" ? "#ff4d4f"
         : "#0ea935";
-  const accentLight = theme.value === "spider" ? "rgba(220,16,16,0.35)"
-    : theme.value === "onepiece" ? "rgba(255,215,0,0.35)"
-      : theme.value === "red-ben10" ? "rgba(255,16,16,0.35)"
+  const accentLight = resolvedTheme === "spider" ? "rgba(220,16,16,0.35)"
+    : resolvedTheme === "onepiece" ? "rgba(255,215,0,0.35)"
+      : resolvedTheme === "red-ben10" ? "rgba(255,16,16,0.35)"
         : "rgba(14,169,53,0.35)";
-  const accentBg = theme.value === "spider" ? "rgba(220,16,16,0.1)"
-    : theme.value === "onepiece" ? "rgba(255,215,0,0.1)"
-      : theme.value === "red-ben10" ? "rgba(255,16,16,0.1)"
+  const accentBg = resolvedTheme === "spider" ? "rgba(220,16,16,0.1)"
+    : resolvedTheme === "onepiece" ? "rgba(255,215,0,0.1)"
+      : resolvedTheme === "red-ben10" ? "rgba(255,16,16,0.1)"
         : "rgba(14,169,53,0.1)";
-  const accentGlow = theme.value === "spider" ? "rgba(220,16,16,0.5)"
-    : theme.value === "onepiece" ? "rgba(200,160,0,0.5)"
-      : theme.value === "red-ben10" ? "rgba(255,40,40,0.5)"
+  const accentGlow = resolvedTheme === "spider" ? "rgba(220,16,16,0.5)"
+    : resolvedTheme === "onepiece" ? "rgba(200,160,0,0.5)"
+      : resolvedTheme === "red-ben10" ? "rgba(255,40,40,0.5)"
         : "rgba(14,169,53,0.5)";
   const navLogoAccent = accent;
   const navLogoAccentLight = accentLight;
   const navLogoAccentBg = accentBg;
   const navLogoAccentGlow = accentGlow;
-  const usesBen10Pair = (theme.value === "default" || theme.value === "red-ben10");
-  const specialLogoSrc = theme.value === "spider" ? "/spidy/image.webp"
-    : theme.value === "onepiece" ? "/onepeice/one-peice-logo.webp"
+  const usesBen10Pair = (resolvedTheme === "default" || resolvedTheme === "red-ben10");
+  const specialLogoSrc = resolvedTheme === "spider" ? "/spidy/image.webp"
+    : resolvedTheme === "onepiece" ? "/onepeice/one-peice-logo.webp"
       : "";
-  const specialLogoAlt = theme.value === "spider" ? "Spider-Man"
-    : theme.value === "onepiece" ? "One Piece"
+  const specialLogoAlt = resolvedTheme === "spider" ? "Spider-Man"
+    : resolvedTheme === "onepiece" ? "One Piece"
       : "Theme Logo";
 
   const navLinkActive = (href: string) =>
     isActive(href)
       ? `px-2 text-[0.65rem] font-bold tracking-widest uppercase transition-colors lg:text-xs t-spider-nav-active t-spider-nav-hover`
-      : `px-2 text-[0.65rem] font-bold tracking-widest uppercase transition-colors lg:text-xs ${theme.value === 'red-ben10' ? 'text-[#a38c8c]' : 'text-[#8ca38c]'} t-spider-nav-hover`;
+      : `px-2 text-[0.65rem] font-bold tracking-widest uppercase transition-colors lg:text-xs ${resolvedTheme === 'red-ben10' ? 'text-[#a38c8c]' : 'text-[#8ca38c]'} t-spider-nav-hover`;
 
   const mobilePrimaryLinkClass = (href: string) =>
     [

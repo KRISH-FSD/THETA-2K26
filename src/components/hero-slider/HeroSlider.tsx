@@ -137,6 +137,13 @@ export const HeroSlider = component$(() => {
     isAnimating.value = true;
     active.value = idx;
 
+    if (perfTier.value !== "hi") {
+      window.setTimeout(() => {
+        isAnimating.value = false;
+      }, 250);
+      return;
+    }
+
     /* Content Entrance Animations */
     const tl = gsap.timeline();
 
@@ -224,7 +231,7 @@ export const HeroSlider = component$(() => {
 
     const duration = 6000;
     // Perf Fix 2.2: Throttle progress updates to 200ms instead of every frame (RAF)
-    const start = performance.now();
+    const start = Date.now();
     const interval = setInterval(() => {
       const elapsed = Date.now() - start;
       slideProgress.value = Math.min((elapsed / duration) * 100, 100);

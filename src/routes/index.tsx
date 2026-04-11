@@ -37,32 +37,76 @@ interface HomeCopy {
     exploreEvents: string;
     contactUs: string;
   };
-  countdownLabels: { days: string; hours: string; minutes: string; seconds: string };
-  about: { badge: string; titlePrefix: string; titleAccent: string; titleSuffix: string };
+  countdownLabels: {
+    days: string;
+    hours: string;
+    minutes: string;
+    seconds: string;
+  };
+  about: {
+    badge: string;
+    titlePrefix: string;
+    titleAccent: string;
+    titleSuffix: string;
+  };
   statsLabels: { events: string; participants: string; colleges: string };
   sponsors: {
-    badge: string; titlePrefix: string; titleAccent: string;
-    hallBadge: string; hallTitlePrefix: string; hallTitleAccent: string;
-    hallDescription: string; hallSticker: string;
-    platinum: string; gold: string; silver: string; general: string;
-    sponsorPrompt: string; sponsorButton: string;
+    badge: string;
+    titlePrefix: string;
+    titleAccent: string;
+    hallBadge: string;
+    hallTitlePrefix: string;
+    hallTitleAccent: string;
+    hallDescription: string;
+    hallSticker: string;
+    platinum: string;
+    gold: string;
+    silver: string;
+    general: string;
+    sponsorPrompt: string;
+    sponsorButton: string;
   };
-  cta: { titlePrefix: string; titleAccent: string; description: string; browseEvents: string };
-  dayModal: { scheduleTitle: string; emptyState: string; viewAllEvents: string };
+  cta: {
+    titlePrefix: string;
+    titleAccent: string;
+    description: string;
+    browseEvents: string;
+  };
+  dayModal: {
+    scheduleTitle: string;
+    emptyState: string;
+    viewAllEvents: string;
+  };
 }
 
 interface EventItem {
-  id: number; name: string; category: string; cluster?: string; day?: string;
-  timing: string; location: string; fee: string; status: string;
-  description: string; image: string; registrationUrl?: string;
+  id: number;
+  name: string;
+  category: string;
+  cluster?: string;
+  day?: string;
+  timing: string;
+  location: string;
+  fee: string;
+  status: string;
+  description: string;
+  image: string;
+  registrationUrl?: string;
 }
 
 interface DayEvent {
-  day: string; date: string; events: string[]; highlight: string; bgImage: string;
+  day: string;
+  date: string;
+  events: string[];
+  highlight: string;
+  bgImage: string;
 }
 
 interface Sponsor {
-  name: string; logo: string; order?: number; isActive?: boolean;
+  name: string;
+  logo: string;
+  order?: number;
+  isActive?: boolean;
 }
 
 interface SponsorsConfig {
@@ -79,31 +123,70 @@ const defaultHomeCopy: HomeCopy = {
     bannerDate: "March 15-17, 2026",
     titleMain: "THETA",
     titleAccent: "2026",
-    description: "National Level Techno-Management Fest hosted by SASTRA Deemed University.",
+    description:
+      "National Level Techno-Management Fest hosted by SASTRA Deemed University.",
     exploreEvents: "Explore Events",
     contactUs: "Contact Us",
   },
-  countdownLabels: { days: "Days", hours: "Hours", minutes: "Mins", seconds: "Secs" },
-  about: { badge: "About Theta", titlePrefix: "India's Premier", titleAccent: "Techno-Management", titleSuffix: "Fest" },
-  statsLabels: { events: "Registrations", participants: "Participants", colleges: "Visitors" },
-  sponsors: {
-    badge: "Our Sponsors", titlePrefix: "Powered by", titleAccent: "Partners",
-    hallBadge: "Previous Sponsors", hallTitlePrefix: "Past Edition", hallTitleAccent: "Partners",
-    hallDescription: "These brands supported previous editions of Theta and helped build the fest legacy.",
-    hallSticker: "Legacy Wall",
-    platinum: "Platinum", gold: "Gold", silver: "Silver", general: "Media",
-    sponsorPrompt: "Want to sponsor Theta 2026?", sponsorButton: "Become a Sponsor",
+  countdownLabels: {
+    days: "Days",
+    hours: "Hours",
+    minutes: "Mins",
+    seconds: "Secs",
   },
-  cta: { titlePrefix: "Ready to", titleAccent: "Compete?", description: "Build, ship, and showcase with the brightest teams in India.", browseEvents: "Browse Events" },
-  dayModal: { scheduleTitle: "Day Schedule", emptyState: "Events will be announced soon.", viewAllEvents: "View All Events" },
+  about: {
+    badge: "About Theta",
+    titlePrefix: "India's Premier",
+    titleAccent: "Techno-Management",
+    titleSuffix: "Fest",
+  },
+  statsLabels: {
+    events: "Registrations",
+    participants: "Participants",
+    colleges: "Institutes",
+  },
+  sponsors: {
+    badge: "Our Sponsors",
+    titlePrefix: "Powered by",
+    titleAccent: "Partners",
+    hallBadge: "Previous Sponsors",
+    hallTitlePrefix: "Past Edition",
+    hallTitleAccent: "Partners",
+    hallDescription:
+      "These brands supported previous editions of Theta and helped build the fest legacy.",
+    hallSticker: "Legacy Wall",
+    platinum: "Platinum",
+    gold: "Gold",
+    silver: "Silver",
+    general: "Media",
+    sponsorPrompt: "Want to sponsor Theta 2026?",
+    sponsorButton: "Become a Sponsor",
+  },
+  cta: {
+    titlePrefix: "Ready to",
+    titleAccent: "Compete?",
+    description: "Build, ship, and showcase with the brightest teams in India.",
+    browseEvents: "Browse Events",
+  },
+  dayModal: {
+    scheduleTitle: "Day Schedule",
+    emptyState: "Events will be announced soon.",
+    viewAllEvents: "View All Events",
+  },
 };
 
 const defaultConfig: ConfigData = {
-  meta: { eventName: "Theta 2026", tagline: "National Level Techno-Management Fest", dates: "March 15-17, 2026", venue: "SASTRA Deemed University" },
+  meta: {
+    eventName: "Theta 2026",
+    tagline: "National Level Techno-Management Fest",
+    dates: "March 15-17, 2026",
+    venue: "SASTRA Deemed University",
+  },
   stats: { events: "1500+", participants: "3000+", colleges: "300+" },
   about: {
     title: "About Theta",
-    description: "Theta is a national-level techno-management fest organized by SASTRA Deemed University.",
+    description:
+      "Theta is a national-level techno-management fest organized by SASTRA Deemed University.",
     features: [
       { title: "30+ Events", description: "Competitions and workshops." },
       { title: "1000+ Participants", description: "From across India." },
@@ -111,14 +194,38 @@ const defaultConfig: ConfigData = {
     ],
   },
   days: [
-    { day: "Day One", date: "March 15, 2026", events: ["Inauguration"], highlight: "Opening Ceremony", bgImage: "" },
-    { day: "Day Two", date: "March 16, 2026", events: ["Hackathon"], highlight: "Flagship Competitions", bgImage: "" },
-    { day: "Day Three", date: "March 17, 2026", events: ["Finale"], highlight: "Prize Distribution", bgImage: "" },
+    {
+      day: "Day One",
+      date: "March 15, 2026",
+      events: ["Inauguration"],
+      highlight: "Opening Ceremony",
+      bgImage: "",
+    },
+    {
+      day: "Day Two",
+      date: "March 16, 2026",
+      events: ["Hackathon"],
+      highlight: "Flagship Competitions",
+      bgImage: "",
+    },
+    {
+      day: "Day Three",
+      date: "March 17, 2026",
+      events: ["Finale"],
+      highlight: "Prize Distribution",
+      bgImage: "",
+    },
   ],
   clusters: [],
 };
 
-const defaultSponsors: SponsorsConfig = { diamond: [], platinum: [], gold: [], silver: [], media: [] };
+const defaultSponsors: SponsorsConfig = {
+  diamond: [],
+  platinum: [],
+  gold: [],
+  silver: [],
+  media: [],
+};
 
 interface HomeDataPayload {
   config: ConfigData;
@@ -141,7 +248,9 @@ const parseFestStart = (datesText: string, isoDate?: string): Date => {
     const parsed = new Date(isoDate);
     if (!Number.isNaN(parsed.getTime())) return parsed;
   }
-  const match = datesText.match(/\b([A-Za-z]+)\s+(\d{1,2})(?:\s*[-–]\s*\d{1,2})?,\s*(\d{4})\b/);
+  const match = datesText.match(
+    /\b([A-Za-z]+)\s+(\d{1,2})(?:\s*[-–]\s*\d{1,2})?,\s*(\d{4})\b/,
+  );
   if (match) {
     const [, month, day, year] = match;
     const parsed = new Date(`${month} ${day}, ${year} 09:00:00`);
@@ -177,7 +286,9 @@ const loadHomeData = async (): Promise<HomeDataPayload> => {
         config: { ...defaultConfig, ...cfg },
         sponsors: { ...defaultSponsors, ...(sponsorPayload.sponsors || {}) },
         events: eventPayload.events || [],
-        homeCopy: content.home ? { ...defaultHomeCopy, ...content.home } : defaultHomeCopy,
+        homeCopy: content.home
+          ? { ...defaultHomeCopy, ...content.home }
+          : defaultHomeCopy,
       };
 
       homeDataCache = payload;
@@ -207,40 +318,48 @@ const sponsorTiers = [
   { key: "media", label: "Media" },
 ] as const;
 
-const sponsorTierMeta: Record<(typeof sponsorTiers)[number]["key"], {
-  accent: string;
-  glow: string;
-  surface: string;
-  eyebrow: string;
-}> = {
+const sponsorTierMeta: Record<
+  (typeof sponsorTiers)[number]["key"],
+  {
+    accent: string;
+    glow: string;
+    surface: string;
+    eyebrow: string;
+  }
+> = {
   diamond: {
     accent: "#ff4d4f",
     glow: "rgba(255, 77, 79, 0.4)",
-    surface: "linear-gradient(160deg, rgba(255, 77, 79, 0.2), rgba(8, 10, 12, 1))",
+    surface:
+      "linear-gradient(160deg, rgba(255, 77, 79, 0.2), rgba(8, 10, 12, 1))",
     eyebrow: "Elite Partners",
   },
   platinum: {
     accent: "#70f3ff",
     glow: "rgba(112, 243, 255, 0.4)",
-    surface: "linear-gradient(160deg, rgba(112, 243, 255, 0.18), rgba(8, 12, 14, 1))",
+    surface:
+      "linear-gradient(160deg, rgba(112, 243, 255, 0.18), rgba(8, 12, 14, 1))",
     eyebrow: "Flagship Partners",
   },
   gold: {
     accent: "#ffd54a",
     glow: "rgba(255, 213, 74, 0.4)",
-    surface: "linear-gradient(160deg, rgba(255, 213, 74, 0.16), rgba(12, 12, 8, 1))",
+    surface:
+      "linear-gradient(160deg, rgba(255, 213, 74, 0.16), rgba(12, 12, 8, 1))",
     eyebrow: "Premium Backers",
   },
   silver: {
     accent: "#ffffff",
     glow: "rgba(255, 255, 255, 0.2)",
-    surface: "linear-gradient(160deg, rgba(255, 255, 255, 0.1), rgba(10, 10, 10, 1))",
+    surface:
+      "linear-gradient(160deg, rgba(255, 255, 255, 0.1), rgba(10, 10, 10, 1))",
     eyebrow: "Sustaining Partners",
   },
   media: {
     accent: "#7c5cff",
     glow: "rgba(124, 92, 255, 0.22)",
-    surface: "linear-gradient(160deg, rgba(124, 92, 255, 0.14), rgba(10, 8, 14, 1))",
+    surface:
+      "linear-gradient(160deg, rgba(124, 92, 255, 0.14), rgba(10, 8, 14, 1))",
     eyebrow: "Broadcast Reach",
   },
 };
@@ -279,37 +398,40 @@ const statSpotlight: Array<{
   progress: string;
   surface: string;
 }> = [
-    {
-      key: "events",
-      eyebrow: "Mission Entries",
-      note: "Total individual and team registrations across the fest.",
-      signal: "Entry feed online",
-      accent: "#00ff55",
-      glow: "rgba(0, 255, 85, 0.28)",
-      progress: "74%",
-      surface: "linear-gradient(145deg, rgba(0,255,85,0.18), rgba(7,12,8,0.96) 62%)",
-    },
-    {
-      key: "participants",
-      eyebrow: "Digital Footprint",
-      note: "Builders, designers, and thinkers charging the experience.",
-      signal: "Audience pulse active",
-      accent: "#ffce00",
-      glow: "rgba(255,206,0,0.24)",
-      progress: "92%",
-      surface: "linear-gradient(145deg, rgba(255,206,0,0.15), rgba(12,11,8,0.96) 62%)",
-    },
-    {
-      key: "colleges",
-      eyebrow: "15+ Institutes",
-      note: "Institutions across the circuit widening the reach.",
-      signal: "Visitor map expanding",
-      accent: "#ff3333",
-      glow: "rgba(255,51,51,0.24)",
-      progress: "68%",
-      surface: "linear-gradient(145deg, rgba(255,51,51,0.18), rgba(12,8,10,0.96) 62%)",
-    },
-  ];
+  {
+    key: "events",
+    eyebrow: "Mission Entries",
+    note: "Total individual and team registrations across the fest.",
+    signal: "Entry feed online",
+    accent: "#00ff55",
+    glow: "rgba(0, 255, 85, 0.28)",
+    progress: "74%",
+    surface:
+      "linear-gradient(145deg, rgba(0,255,85,0.18), rgba(7,12,8,0.96) 62%)",
+  },
+  {
+    key: "participants",
+    eyebrow: "Digital Footprint",
+    note: "Builders, designers, and thinkers charging the experience.",
+    signal: "Audience pulse active",
+    accent: "#ffce00",
+    glow: "rgba(255,206,0,0.24)",
+    progress: "92%",
+    surface:
+      "linear-gradient(145deg, rgba(255,206,0,0.15), rgba(12,11,8,0.96) 62%)",
+  },
+  {
+    key: "colleges",
+    eyebrow: "15+ Institutes",
+    note: "Institutions across the circuit widening the reach.",
+    signal: "Visitor map expanding",
+    accent: "#ff3333",
+    glow: "rgba(255,51,51,0.24)",
+    progress: "68%",
+    surface:
+      "linear-gradient(145deg, rgba(255,51,51,0.18), rgba(12,8,10,0.96) 62%)",
+  },
+];
 
 /* ════════════════════════════════════════════════════════════
    MAIN COMPONENT
@@ -322,7 +444,9 @@ export default component$(() => {
   const countdown = useSignal({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const counterDisplay = useSignal({ events: 0, participants: 0, colleges: 0 });
   const selectedDay = useSignal<DayEvent | null>(null);
-  const selectedTier = useSignal<(typeof sponsorTiers)[number]["key"] | null>(null);
+  const selectedTier = useSignal<(typeof sponsorTiers)[number]["key"] | null>(
+    null,
+  );
   const sphereRotation = useSignal({ x: 0, y: 0 });
   const mobilePerfMode = useSignal(false);
 
@@ -335,7 +459,9 @@ export default component$(() => {
 
     syncPerfMode();
     window.addEventListener("resize", syncPerfMode, { passive: true });
-    window.addEventListener("orientationchange", syncPerfMode, { passive: true });
+    window.addEventListener("orientationchange", syncPerfMode, {
+      passive: true,
+    });
 
     return () => {
       window.removeEventListener("resize", syncPerfMode);
@@ -503,6 +629,13 @@ export default component$(() => {
   });
 
   useVisibleTask$(() => {
+    if (
+      mobilePerfMode.value ||
+      !window.matchMedia("(pointer: fine)").matches ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      return;
+    }
     const section = document.querySelector<HTMLElement>(".festival-days-shell");
     if (!section) return;
     if (isMobilePerfMode()) {
@@ -519,18 +652,53 @@ export default component$(() => {
     }
 
     const setScrollUp = gsap.quickSetter(section, "--festival-scroll-up", "px");
-    const setScrollDown = gsap.quickSetter(section, "--festival-scroll-down", "px");
-    const setScrollLeft = gsap.quickSetter(section, "--festival-scroll-left", "px");
-    const setScrollRight = gsap.quickSetter(section, "--festival-scroll-right", "px");
-    const setScrollSoft = gsap.quickSetter(section, "--festival-scroll-soft", "px");
+    const setScrollDown = gsap.quickSetter(
+      section,
+      "--festival-scroll-down",
+      "px",
+    );
+    const setScrollLeft = gsap.quickSetter(
+      section,
+      "--festival-scroll-left",
+      "px",
+    );
+    const setScrollRight = gsap.quickSetter(
+      section,
+      "--festival-scroll-right",
+      "px",
+    );
+    const setScrollSoft = gsap.quickSetter(
+      section,
+      "--festival-scroll-soft",
+      "px",
+    );
 
-    const setPointerLeft = gsap.quickSetter(section, "--festival-pointer-left", "px");
-    const setPointerRight = gsap.quickSetter(section, "--festival-pointer-right", "px");
-    const setPointerUp = gsap.quickSetter(section, "--festival-pointer-up", "px");
-    const setPointerDown = gsap.quickSetter(section, "--festival-pointer-down", "px");
+    const setPointerLeft = gsap.quickSetter(
+      section,
+      "--festival-pointer-left",
+      "px",
+    );
+    const setPointerRight = gsap.quickSetter(
+      section,
+      "--festival-pointer-right",
+      "px",
+    );
+    const setPointerUp = gsap.quickSetter(
+      section,
+      "--festival-pointer-up",
+      "px",
+    );
+    const setPointerDown = gsap.quickSetter(
+      section,
+      "--festival-pointer-down",
+      "px",
+    );
 
     const resetPointer = () => {
-      setPointerLeft(0); setPointerRight(0); setPointerUp(0); setPointerDown(0);
+      setPointerLeft(0);
+      setPointerRight(0);
+      setPointerUp(0);
+      setPointerDown(0);
     };
 
     gsap.registerPlugin(ScrollTrigger);
@@ -550,34 +718,14 @@ export default component$(() => {
         setScrollLeft(horizontalShift);
         setScrollRight(-horizontalShift);
         setScrollSoft(softShift);
-      }
+      },
     });
 
-    let frameId: number;
-    const onPointerMove = (event: PointerEvent) => {
-      if (frameId) cancelAnimationFrame(frameId);
-      frameId = requestAnimationFrame(() => {
-        const rect = section.getBoundingClientRect();
-        const pointerX = (event.clientX - rect.left) / rect.width - 0.5;
-        const pointerY = (event.clientY - rect.top) / rect.height - 0.5;
-
-        setPointerLeft(Math.floor(pointerX * -18));
-        setPointerRight(Math.floor(pointerX * 18));
-        setPointerUp(Math.floor(pointerY * -14));
-        setPointerDown(Math.floor(pointerY * 14));
-      });
-    };
-
     resetPointer();
-    section.addEventListener("mousemove", onPointerMove as any, { passive: true });
-    section.addEventListener("mouseleave", resetPointer, { passive: true });
 
     return () => {
-      if (frameId) cancelAnimationFrame(frameId);
       scrollTrigger.kill();
       resetPointer();
-      section.removeEventListener("mousemove", onPointerMove as any);
-      section.removeEventListener("mouseleave", resetPointer);
     };
   });
 
@@ -589,21 +737,30 @@ export default component$(() => {
       sponsors.value = payload.sponsors;
       events.value = payload.events;
       homeCopy.value = payload.homeCopy;
-    } catch (e) { console.error(e); }
+    } catch (e) {
+      console.error(e);
+    }
   });
 
   /* ── Animations & Tasks ── */
   useVisibleTask$(({ track }) => {
     track(() => configData.value.meta.dates);
-    const fest = parseFestStart(configData.value.meta.dates, configData.value.meta.startDate).getTime();
+    const fest = parseFestStart(
+      configData.value.meta.dates,
+      configData.value.meta.startDate,
+    ).getTime();
     const sync = () => {
       const diff = Math.max(0, fest - Date.now());
       countdown.value = {
-        days: Math.floor(diff / 86400000), hours: Math.floor((diff / 3600000) % 24),
-        minutes: Math.floor((diff / 60000) % 60), seconds: Math.floor((diff / 1000) % 60),
+        days: Math.floor(diff / 86400000),
+        hours: Math.floor((diff / 3600000) % 24),
+        minutes: Math.floor((diff / 60000) % 60),
+        seconds: Math.floor((diff / 1000) % 60),
       };
     };
-    sync(); const id = setInterval(sync, 1000); return () => clearInterval(id);
+    sync();
+    const id = setInterval(sync, 1000);
+    return () => clearInterval(id);
   });
 
   useVisibleTask$(({ track }) => {
@@ -611,7 +768,7 @@ export default component$(() => {
     const targets = {
       events: parseStatNumber(configData.value.stats.events),
       participants: parseStatNumber(configData.value.stats.participants),
-      colleges: parseStatNumber(configData.value.stats.colleges)
+      colleges: parseStatNumber(configData.value.stats.colleges),
     };
     if (isMobilePerfMode()) {
       counterDisplay.value = targets;
@@ -642,41 +799,11 @@ export default component$(() => {
 
   useVisibleTask$(() => {
     if (isMobilePerfMode()) return;
-    const cards = document.querySelectorAll<HTMLElement>("[data-tilt]");
-    const cleanups: any[] = [];
-    cards.forEach(card => {
-      let raf = 0;
-      const move = (e: MouseEvent) => {
-        const r = card.getBoundingClientRect();
-        const x = (e.clientX - r.left) / r.width - 0.5;
-        const y = (e.clientY - r.top) / r.height - 0.5;
-        if (raf) cancelAnimationFrame(raf);
-        raf = requestAnimationFrame(() => {
-          card.style.transform = `perspective(1000px) rotateY(${x * 6}deg) rotateX(${-y * 5}deg) translateY(-3px)`;
-        });
-      };
-      const leave = () => {
-        if (raf) cancelAnimationFrame(raf);
-        card.style.transition = "transform 0.7s cubic-bezier(0.22, 1, 0.36, 1)";
-        card.style.transform = "perspective(1000px) rotateY(0deg) rotateX(0deg) translateY(0)";
-      };
-      const enter = () => { card.style.transition = "transform 0.18s linear"; };
-      card.addEventListener("mousemove", move); card.addEventListener("mouseleave", leave); card.addEventListener("mouseenter", enter);
-      cleanups.push(() => {
-        if (raf) cancelAnimationFrame(raf);
-        card.removeEventListener("mousemove", move);
-        card.removeEventListener("mouseleave", leave);
-        card.removeEventListener("mouseenter", enter);
-      });
-    });
-    return () => cleanups.forEach(c => c());
-  });
-
-  useVisibleTask$(() => {
-    if (isMobilePerfMode()) return;
     // GSAP ScrollTrigger already registered in layout.tsx
     const marks = document.querySelectorAll<HTMLElement>(".t-day-card__mark");
-    const overlays = document.querySelectorAll<HTMLElement>(".t-knockout-overlay");
+    const overlays = document.querySelectorAll<HTMLElement>(
+      ".t-knockout-overlay",
+    );
     const glowTargets = document.querySelectorAll<HTMLElement>(".t-glow-text");
     if (marks.length === 0) return;
 
@@ -684,59 +811,38 @@ export default component$(() => {
     // Heavy DOM manipulation in a looping timeline causes layout thrashing.
   });
 
-  useVisibleTask$(() => {
-    if (isMobilePerfMode()) return;
-    const sphere = document.querySelector<HTMLElement>(".theta-stats-core");
-    if (!sphere) return;
-
-    const setSphereRx = gsap.quickSetter(sphere, "--sphere-rx", "deg");
-    const setSphereRy = gsap.quickSetter(sphere, "--sphere-ry", "deg");
-
-    let frameId: number;
-    const onMove = (e: MouseEvent) => {
-      if (frameId) cancelAnimationFrame(frameId);
-      frameId = requestAnimationFrame(() => {
-        const rect = sphere.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / rect.width - 0.5;
-        const y = (e.clientY - rect.top) / rect.height - 0.5;
-        setSphereRx(Math.floor(y * 32));
-        setSphereRy(Math.floor(-x * 38));
-      });
-    };
-
-    const onLeave = () => {
-      if (frameId) cancelAnimationFrame(frameId);
-      setSphereRx(0);
-      setSphereRy(0);
-    };
-
-    sphere.addEventListener("mousemove", onMove);
-    sphere.addEventListener("mouseleave", onLeave);
-
-    return () => {
-      sphere.removeEventListener("mousemove", onMove);
-      sphere.removeEventListener("mouseleave", onLeave);
-    };
-  });
-
   useVisibleTask$(({ track }) => {
     track(() => selectedDay.value);
     if (!selectedDay.value) return;
-    const key = (e: any) => { if (e.key === "Escape") selectedDay.value = null; };
-    document.body.style.overflow = "hidden"; document.addEventListener("keydown", key);
-    return () => { document.body.style.overflow = ""; document.removeEventListener("keydown", key); };
+    const key = (e: any) => {
+      if (e.key === "Escape") selectedDay.value = null;
+    };
+    document.body.style.overflow = "hidden";
+    document.addEventListener("keydown", key);
+    return () => {
+      document.body.style.overflow = "";
+      document.removeEventListener("keydown", key);
+    };
   });
 
   useVisibleTask$(({ track }) => {
     track(() => selectedTier.value);
     if (!selectedTier.value) return;
-    const key = (e: any) => { if (e.key === "Escape") selectedTier.value = null; };
-    document.addEventListener("keydown", key); return () => document.removeEventListener("keydown", key);
+    const key = (e: any) => {
+      if (e.key === "Escape") selectedTier.value = null;
+    };
+    document.addEventListener("keydown", key);
+    return () => document.removeEventListener("keydown", key);
   });
 
-  const closeDay = $(() => { selectedDay.value = null; });
-  const closeTier = $(() => { selectedTier.value = null; });
-  const getDayEvents = (name: string) => events.value.filter(e => e.day === (dayAliases[name]?.[0] || name));
+  const closeDay = $(() => {
+    selectedDay.value = null;
+  });
+  const closeTier = $(() => {
+    selectedTier.value = null;
+  });
+  const getDayEvents = (name: string) =>
+    events.value.filter((e) => e.day === (dayAliases[name]?.[0] || name));
 
   const marqueeSponsors = sponsorTiers.flatMap((tier) =>
     (sponsors.value[tier.key] || []).map((sponsor) => ({
@@ -746,25 +852,28 @@ export default component$(() => {
   );
 
   return (
-    <div class="relative overflow-x-hidden" style="font-family: var(--font-body);">
+    <div
+      class="relative overflow-x-hidden"
+      style="font-family: var(--font-body);"
+    >
       <HeroSlider />
 
       {/* ── Global Interactive Background (Entire Page) ── */}
       {!mobilePerfMode.value && (
-        <div class="home-neural-grid pointer-events-none fixed inset-0 z-0 opacity-0 bg-[radial-gradient(circle_at_center,rgba(0,255,85,0.03)_0%,transparent_70%)]">
-          <div class="absolute inset-0 bg-[url('/grid.svg')] bg-[size:100px_100px] [mask-image:radial-gradient(ellipse_at_center,black,transparent)] opacity-[0.07]" />
+        <div class="home-neural-grid pointer-events-none fixed inset-0 z-0 bg-[radial-gradient(circle_at_center,rgba(0,255,85,0.03)_0%,transparent_70%)] opacity-0">
+          <div class="absolute inset-0 bg-[url('/grid.svg')] [mask-image:radial-gradient(ellipse_at_center,black,transparent)] bg-[size:100px_100px] opacity-[0.07]" />
         </div>
       )}
 
       {/* ═══════════════ SECTOR DIVIDER: HERO TO ROADMAP ═══════════════ */}
-      <div class="relative w-full h-px bg-gradient-to-r from-transparent via-[#00ff55]/20 to-transparent my-10 sm:my-16">
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-5 py-1 rounded-full border border-[#00ff55]/10 bg-black/80 backdrop-blur-xl text-[8px] font-black uppercase tracking-[0.4em] text-[#00ff55] shadow-[0_0_15px_rgba(0,255,85,0.1)]">
+      <div class="relative my-10 h-px w-full bg-gradient-to-r from-transparent via-[#00ff55]/20 to-transparent sm:my-16">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#00ff55]/10 bg-black/80 px-5 py-1 text-[8px] font-black tracking-[0.4em] text-[#00ff55] uppercase shadow-[0_0_15px_rgba(0,255,85,0.1)] backdrop-blur-xl">
           Mission Sequence Initialized
         </div>
       </div>
 
       {/* ═══════════════ DAY CARDS ═══════════════ */}
-      <section class="festival-days-shell py-20 relative overflow-hidden">
+      <section class="festival-days-shell relative overflow-hidden px-6 py-16 [contain-intrinsic-size:1200px] [content-visibility:auto] sm:px-12 lg:px-20">
         <style>{`
           .festival-title {
             font-family: var(--font-hero-ui), var(--font-body), sans-serif;
@@ -878,9 +987,16 @@ export default component$(() => {
 
         {/* Global Mesh Background for this section */}
         <div class="festival-days-mesh absolute inset-0 z-0">
-          {!mobilePerfMode.value && <canvas class="festival-days-mesh-web pointer-events-none" />}
+          {!mobilePerfMode.value && (
+            <canvas class="festival-days-mesh-web pointer-events-none" />
+          )}
           <div class="festival-days-logo-glow" aria-hidden="true">
-            <img src="/backgrounds/sastra-3.webp" alt="" class="festival-days-logo-mark" loading="lazy" />
+            <img
+              src="/backgrounds/sastra-3.webp"
+              alt=""
+              class="festival-days-logo-mark"
+              loading="lazy"
+            />
           </div>
         </div>
 
@@ -891,34 +1007,55 @@ export default component$(() => {
           <div class="festival-days-vignette" />
         </div>
 
-        <div class="festival-days-shell__inner mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
-
-          <div class="festival-header-wrap mb-14 text-center relative z-20 sm:mb-16">
-            <div class="overflow-hidden mb-4">
-              <span class="t-badge mx-auto reveal-slide-up block w-fit">Mission Day Selection</span>
+        <div class="festival-days-shell__inner relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div class="festival-header-wrap relative z-20 mb-14 text-center sm:mb-16">
+            <div class="mb-4 overflow-hidden">
+              <span class="t-badge reveal-slide-up mx-auto block w-fit">
+                Mission Day Selection
+              </span>
             </div>
-            <h2 class="festival-title mt-2 text-[clamp(1.5rem,3.2vw,2.2rem)] leading-[1.1] relative">
+            <h2 class="festival-title relative mt-2 text-[clamp(1.5rem,3.2vw,2.2rem)] leading-[1.1]">
               <span class="festival-title__line">
                 <span class="festival-title__base">Shine in the </span>
-                <span class="festival-title__accent festival-title__accent--light">light</span>
+                <span class="festival-title__accent festival-title__accent--light">
+                  light
+                </span>
                 <span class="festival-title__base"> &amp; rule the </span>
-                <span class="festival-title__accent festival-title__accent--night">night</span>
+                <span class="festival-title__accent festival-title__accent--night">
+                  night
+                </span>
               </span>
             </h2>
-            <div class="overflow-hidden mt-6">
-              <p class="block text-sm font-bold tracking-[0.38em] uppercase text-[var(--t-muted)] italic sm:text-[0.95rem]">Track live transmission frequencies</p>
+            <div class="mt-6 overflow-hidden">
+              <p class="block text-sm font-bold tracking-[0.38em] text-[var(--t-muted)] uppercase italic sm:text-[0.95rem]">
+                Track live transmission frequencies
+              </p>
             </div>
           </div>
 
           <div class="festival-days-mesh relative z-10">
             <div class="grid gap-5 sm:gap-6 lg:grid-cols-3">
               {configData.value.days.map((day, index) => (
-                <Link key={day.day} href={`/roadmap/day${index + 1}`} data-tilt onMouseMove$={(e, el) => {
-                  if (mobilePerfMode.value) return;
-                  const r = el.getBoundingClientRect();
-                  el.style.setProperty("--mouse-x", `${e.clientX - r.left}px`);
-                  el.style.setProperty("--mouse-y", `${e.clientY - r.top}px`);
-                }} class="t-day-card group block overflow-hidden rounded-[2rem] border p-6 backdrop-blur-3xl transition-all reveal-up sm:p-7"
+                <Link
+                  key={day.day}
+                  href={`/roadmap/day${index + 1}`}
+                  onMouseMove$={(e, el) => {
+                    if (
+                      mobilePerfMode.value ||
+                      !window.matchMedia("(pointer: fine)").matches ||
+                      window.matchMedia("(prefers-reduced-motion: reduce)")
+                        .matches
+                    ) {
+                      return;
+                    }
+                    const r = el.getBoundingClientRect();
+                    el.style.setProperty(
+                      "--mouse-x",
+                      `${e.clientX - r.left}px`,
+                    );
+                    el.style.setProperty("--mouse-y", `${e.clientY - r.top}px`);
+                  }}
+                  class="t-day-card group reveal-up block overflow-hidden rounded-[2rem] border p-6 backdrop-blur-3xl transition-all sm:p-7"
                   style={{
                     borderColor: `${dayBorderColors[index]}44`,
                     transitionDelay: `${index * 80}ms`,
@@ -928,27 +1065,50 @@ export default component$(() => {
                     "--day-gradient": dayGradients[index],
                     "--day-surface": dayCardSurfaces[index],
                     "--day-glow": dayCardGlow[index],
-                    boxShadow: `inset 0 1px 0 rgba(255,255,255,0.04), 0 24px 60px rgba(0,0,0,0.34), 0 0 0 1px ${dayBorderColors[index].replace("0.25", "0.14")}`
-                  }}>
-                  <div class="absolute inset-0 bg-gradient-to-br from-white/[0.03] via-transparent to-black/10 pointer-events-none z-0" />
+                    boxShadow: `inset 0 1px 0 rgba(255,255,255,0.04), 0 24px 60px rgba(0,0,0,0.34), 0 0 0 1px ${dayBorderColors[index].replace("0.25", "0.14")}`,
+                  }}
+                >
+                  <div class="pointer-events-none absolute inset-0 z-0 bg-gradient-to-br from-white/[0.03] via-transparent to-black/10" />
                   <img
-                    src={index === 2 ? "/spidy/spider-logo.webp" : (index === 1 ? "/onepeice/one-peice-logo.webp" : "/ben10/ben10-logo.webp")}
+                    src={
+                      index === 2
+                        ? "/spidy/spider-logo.webp"
+                        : index === 1
+                          ? "/onepeice/one-peice-logo.webp"
+                          : "/ben10/ben10-logo.webp"
+                    }
                     alt=""
                     aria-hidden="true"
                     class="t-day-card__mark absolute top-1/2"
                     loading="lazy"
                     style={{
-                      width: index === 0 ? "10.4rem" : (index === 1 ? "9.8rem" : "10rem"),
-                      right: index === 0 ? "-0.35rem" : (index === 1 ? "0.15rem" : "0.2rem"),
+                      width:
+                        index === 0
+                          ? "10.4rem"
+                          : index === 1
+                            ? "9.8rem"
+                            : "10rem",
+                      right:
+                        index === 0
+                          ? "-0.35rem"
+                          : index === 1
+                            ? "0.15rem"
+                            : "0.2rem",
                       opacity: index === 1 ? 0.28 : 0.22,
-                      filter: index === 1
-                        ? "brightness(1.12) grayscale(0.02) contrast(1.02)"
-                        : "brightness(1.08) grayscale(0.08) contrast(1.02)",
-                      top: index === 0 ? "53%" : (index === 1 ? "58%" : "52%")
+                      filter:
+                        index === 1
+                          ? "brightness(1.12) grayscale(0.02) contrast(1.02)"
+                          : "brightness(1.08) grayscale(0.08) contrast(1.02)",
+                      top: index === 0 ? "53%" : index === 1 ? "58%" : "52%",
                     }}
                   />
-                  <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 bg-gradient-to-br from-white/[0.02] via-transparent to-transparent z-0" />
-                  <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000" style={{ background: `radial-gradient(420px circle at var(--mouse-x) var(--mouse-y), ${dayAccents[index]}12, transparent 42%)` }} />
+                  <div class="absolute inset-0 z-0 bg-gradient-to-br from-white/[0.02] via-transparent to-transparent opacity-0 transition-opacity duration-1000 group-hover:opacity-100" />
+                  <div
+                    class="absolute inset-0 opacity-0 transition-opacity duration-1000 group-hover:opacity-100"
+                    style={{
+                      background: `radial-gradient(420px circle at var(--mouse-x) var(--mouse-y), ${dayAccents[index]}12, transparent 42%)`,
+                    }}
+                  />
 
                   {/* Layer 1: Base Visibility */}
                   <div class="relative z-10 flex h-full flex-col items-center text-center">
@@ -956,54 +1116,89 @@ export default component$(() => {
                       <span class="t-label t-day-card__date">{day.date}</span>
                     </div>
                     <div class="mb-8 text-center">
-                      <h3 class="t-heading text-4xl sm:text-5xl font-black"
+                      <h3
+                        class="t-heading text-4xl font-black sm:text-5xl"
                         style={{
                           background: dayGradients[index],
                           WebkitBackgroundClip: "text",
                           WebkitTextFillColor: "transparent",
-                          backgroundClip: "text"
-                        }}>{day.day}</h3>
-                      <p class="t-day-card__meta mt-2 text-[10px] uppercase tracking-widest">{day.highlight}</p>
+                          backgroundClip: "text",
+                        }}
+                      >
+                        {day.day}
+                      </h3>
+                      <p class="t-day-card__meta mt-2 text-[10px] tracking-widest uppercase">
+                        {day.highlight}
+                      </p>
                     </div>
                     <div class="mb-10 flex flex-wrap justify-center gap-2">
-                      {day.events.slice(0, 3).map(e => <span key={e} class="t-day-card__tag rounded-lg px-3 py-1.5 text-[9px] uppercase font-black">{e}</span>)}
+                      {day.events.slice(0, 3).map((e) => (
+                        <span
+                          key={e}
+                          class="t-day-card__tag rounded-lg px-3 py-1.5 text-[9px] font-black uppercase"
+                        >
+                          {e}
+                        </span>
+                      ))}
                     </div>
                     <div class="flex-grow" />
                     <div class="t-day-card__line flex w-full flex-col items-center gap-3 border-t pt-6 text-center">
                       <div class="flex items-center justify-center gap-2">
-                        <div class="h-1 w-1 rounded-full animate-pulse" style={{ background: dayAccents[index], boxShadow: `0 0 5px ${dayAccents[index]}` }} />
-                        <span class="t-day-card__meta text-[9px] uppercase">Mission Files: {day.events.length}</span>
+                        <div
+                          class="h-1 w-1 animate-pulse rounded-full"
+                          style={{
+                            background: dayAccents[index],
+                            boxShadow: `0 0 5px ${dayAccents[index]}`,
+                          }}
+                        />
+                        <span class="t-day-card__meta text-[9px] uppercase">
+                          Mission Files: {day.events.length}
+                        </span>
                       </div>
-                      <span class="flex items-center justify-center gap-1.5 text-[10px] font-black transition-transform group-hover:translate-x-2"
+                      <span
+                        class="flex items-center justify-center gap-1.5 text-[10px] font-black transition-transform group-hover:translate-x-2"
                         style={{
                           background: dayGradients[index],
                           WebkitBackgroundClip: "text",
                           WebkitTextFillColor: "transparent",
-                          backgroundClip: "text"
-                        }}>TRANSMISSION <span class="text-lg">→</span></span>
+                          backgroundClip: "text",
+                        }}
+                      >
+                        TRANSMISSION <span class="text-lg">→</span>
+                      </span>
                     </div>
                   </div>
 
                   {/* Layer 2: Knockout Overlay (Black text on white logo) */}
                   <div
-                    class="t-knockout-overlay absolute inset-x-8 inset-y-8 flex h-full flex-col items-center text-center pointer-events-none z-20"
+                    class="t-knockout-overlay pointer-events-none absolute inset-x-8 inset-y-8 z-20 flex h-full flex-col items-center text-center"
                     style={{
-                      WebkitMaskImage: `url(${index === 2 ? "/spidy/spider-logo.webp" : (index === 1 ? "/onepeice/one-peice-logo.webp" : "/ben10/ben10-logo.webp")})`,
-                      WebkitMaskSize: index === 0 ? "11rem" : (index === 1 ? "11rem" : "10.5rem"),
-                      WebkitMaskPosition: `right ${index === 2 ? "-1.5rem" : (index === 1 ? "-2rem" : "-1rem")} center`,
+                      WebkitMaskImage: `url(${index === 2 ? "/spidy/spider-logo.webp" : index === 1 ? "/onepeice/one-peice-logo.webp" : "/ben10/ben10-logo.webp"})`,
+                      WebkitMaskSize:
+                        index === 0
+                          ? "11rem"
+                          : index === 1
+                            ? "11rem"
+                            : "10.5rem",
+                      WebkitMaskPosition: `right ${index === 2 ? "-1.5rem" : index === 1 ? "-2rem" : "-1rem"} center`,
                       WebkitMaskRepeat: "no-repeat",
-                      maskImage: `url(${index === 2 ? "/spidy/spider-logo.webp" : (index === 1 ? "/onepeice/one-peice-logo.webp" : "/ben10/ben10-logo.webp")})`,
-                      maskSize: index === 0 ? "11rem" : (index === 1 ? "11rem" : "10.5rem"),
-                      maskPosition: `right ${index === 2 ? "-1.5rem" : (index === 1 ? "-2rem" : "-1rem")} center`,
-                      maskRepeat: "no-repeat"
+                      maskImage: `url(${index === 2 ? "/spidy/spider-logo.webp" : index === 1 ? "/onepeice/one-peice-logo.webp" : "/ben10/ben10-logo.webp"})`,
+                      maskSize:
+                        index === 0
+                          ? "11rem"
+                          : index === 1
+                            ? "11rem"
+                            : "10.5rem",
+                      maskPosition: `right ${index === 2 ? "-1.5rem" : index === 1 ? "-2rem" : "-1rem"} center`,
+                      maskRepeat: "no-repeat",
                     }}
                   >
-                    <div class="flex justify-between mb-10 opacity-0"> {/* Hide icons in knockout */}
+                    <div class="mb-10 flex justify-between opacity-0">
+                      {" "}
+                      {/* Hide icons in knockout */}
                     </div>
-                    <div class="mb-8 text-center">
-                    </div>
+                    <div class="mb-8 text-center"></div>
                   </div>
-
                 </Link>
               ))}
             </div>
@@ -1012,63 +1207,85 @@ export default component$(() => {
       </section>
 
       {/* ═══════════════ SECTOR DIVIDER: ROADMAP TO STATS ═══════════════ */}
-      <div class="relative w-full h-px bg-gradient-to-r from-transparent via-[#70f3ff]/30 to-transparent my-10 sm:my-16">
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-6 py-1 rounded-full border border-[#70f3ff]/20 bg-black backdrop-blur-md text-[9px] font-black uppercase tracking-[0.4em] text-[#70f3ff] shadow-[0_0_15px_rgba(112,243,255,0.1)]">
+      <div class="relative my-10 h-px w-full bg-gradient-to-r from-transparent via-[#70f3ff]/30 to-transparent sm:my-16">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#70f3ff]/20 bg-black px-6 py-1 text-[9px] font-black tracking-[0.4em] text-[#70f3ff] uppercase shadow-[0_0_15px_rgba(112,243,255,0.1)] backdrop-blur-md">
           Quantum Telemetry Active
         </div>
       </div>
 
       {/* ═══════════════ STATS ═══════════════ */}
-      <section id="theta-stats" class="theta-stats-section px-4 py-12 sm:px-6 lg:px-8 lg:py-0 bg-[#0a0514] min-h-screen lg:min-h-0 lg:h-screen w-full flex flex-col lg:flex-row items-center justify-center overflow-hidden">
-        <div class="theta-stats-bento grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] gap-6 sm:gap-10 max-w-[125rem] mx-auto h-auto lg:h-full lg:max-h-[85vh] items-center w-full">
-
+      <section
+        id="theta-stats"
+        class="theta-stats-section flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-[#0a0514] px-6 py-16 [contain-intrinsic-size:1000px] [content-visibility:auto] sm:px-12 lg:h-screen lg:min-h-0 lg:flex-row lg:px-20 lg:py-0"
+      >
+        <div class="theta-stats-bento mx-auto grid h-auto w-full max-w-[125rem] grid-cols-1 items-center gap-6 sm:gap-10 lg:h-full lg:max-h-[85vh] lg:grid-cols-[0.85fr_1.15fr]">
           {/* --- BENTO CARD: VISUAL & TITLE --- */}
-          <div class="theta-bento-card theta-bento-card--visual reveal-left flex flex-col justify-between p-8 sm:p-10 h-full lg:min-h-[450px] relative overflow-hidden bg-[#050a05]/40 border border-white/5 backdrop-blur-3xl rounded-[3rem]">
-            <img src="/theta-logo.webp" alt="" class="theta-bento-card__watermark opacity-[0.03]" aria-hidden="true" loading="lazy" />
+          <div class="theta-bento-card theta-bento-card--visual reveal-left relative flex h-full flex-col justify-between overflow-hidden rounded-[3rem] border border-white/5 bg-[#050a05]/40 p-8 backdrop-blur-3xl sm:p-10 lg:min-h-[450px]">
+            <img
+              src="/theta-logo.webp"
+              alt=""
+              class="theta-bento-card__watermark opacity-[0.03]"
+              aria-hidden="true"
+              loading="lazy"
+            />
 
             <div class="theta-stats-copy relative z-10">
-              <span class="t-badge flex items-center gap-2 w-fit bg-white/5 border border-white/10 px-3 py-1 rounded-full text-[10px] uppercase font-black tracking-widest text-[#00ff55]">
-                <span class="h-1.5 w-1.5 rounded-full bg-[#00ff55] animate-pulse shadow-[0_0_8px_#00ff55]" />
+              <span class="t-badge flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-black tracking-widest text-[#00ff55] uppercase">
+                <span class="h-1.5 w-1.5 animate-pulse rounded-full bg-[#00ff55] shadow-[0_0_8px_#00ff55]" />
                 Theta Snapshot
               </span>
-              <h2 class="theta-stats-copy__title t-heading mt-4 text-5xl sm:text-7xl font-black uppercase tracking-tighter text-white">
-                Fest <span class="bg-gradient-to-r from-[#00ff55] to-[#70f3ff] bg-clip-text text-transparent">Vitals</span>
+              <h2 class="theta-stats-copy__title t-heading mt-4 text-5xl font-black tracking-tighter text-white uppercase sm:text-7xl">
+                Fest{" "}
+                <span class="bg-gradient-to-r from-[#00ff55] to-[#70f3ff] bg-clip-text text-transparent">
+                  Vitals
+                </span>
               </h2>
             </div>
 
-            <div class="theta-stats-visual-wrap relative hidden lg:flex flex-1 items-center justify-center py-8">
-              <div class="theta-stats-visual-container relative flex flex-col items-center justify-center scale-90 sm:scale-110">
+            <div class="theta-stats-visual-wrap relative hidden flex-1 items-center justify-center py-8 lg:flex">
+              <div class="theta-stats-visual-container relative flex scale-90 flex-col items-center justify-center sm:scale-110">
                 {/* --- QUANTUM ENERGY CORE (BACKGROUND) --- */}
                 <div
                   class="theta-stats-core theta-stats-core--quantum group absolute inset-0 m-auto"
                   style={{
                     transform: `perspective(1200px) rotateX(var(--sphere-rx, 0deg)) rotateY(var(--sphere-ry, 0deg))`,
-                    transition: "transform 0.1s ease-out"
+                    transition: "transform 0.1s ease-out",
                   }}
                 >
-                  <div class="theta-stats-core__hexagon border-[#00ff55]/20" aria-hidden="true" />
+                  <div
+                    class="theta-stats-core__hexagon border-[#00ff55]/20"
+                    aria-hidden="true"
+                  />
                   <div class="theta-stats-core__rings" aria-hidden="true">
                     <div class="theta-stats-core__ring border-[#00ff55]/30" />
                     <div class="theta-stats-core__ring border-[#70f3ff]/20" />
                   </div>
-                  <div class="theta-stats-core__laser-scan bg-gradient-to-b from-transparent via-[#00ff55]/40 to-transparent" aria-hidden="true" />
+                  <div
+                    class="theta-stats-core__laser-scan bg-gradient-to-b from-transparent via-[#00ff55]/40 to-transparent"
+                    aria-hidden="true"
+                  />
                   {/* Removed theta-stats-core__grid squares to prevent lag */}
-                  <div class="theta-stats-core__shimmer-rim" aria-hidden="true" />
+                  <div
+                    class="theta-stats-core__shimmer-rim"
+                    aria-hidden="true"
+                  />
                 </div>
 
                 {/* --- DATA HERO (FOREGROUND) --- */}
-                <div class="theta-stats-data-stack relative z-10 flex flex-col items-center justify-center text-center min-h-[220px]">
+                <div class="theta-stats-data-stack relative z-10 flex min-h-[220px] flex-col items-center justify-center text-center">
                   <div class="theta-stats-core__copy">
-                    <span class="theta-stats-core__label text-white/40 text-[10px] uppercase font-black tracking-[0.3em]">Festival Reach</span>
-                    <strong class="theta-stats-core__value text-6xl sm:text-8xl font-black text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.2)] mt-2 block">
-                      {counterDisplay.value.participants}+
+                    <span class="theta-stats-core__label text-[10px] font-black tracking-[0.3em] text-white/40 uppercase">
+                      Institute Network
+                    </span>
+                    <strong class="theta-stats-core__value mt-2 block text-6xl font-black text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.2)] sm:text-8xl">
+                      {counterDisplay.value.colleges}+
                     </strong>
                   </div>
 
                   <div class="theta-stats-pulse-wrap mt-6">
-                    <div class="theta-stats-core__status bg-white/5 border border-white/10 px-4 py-2 rounded-full text-[10px] uppercase font-black tracking-widest text-[#00ff55] flex items-center gap-2">
-                      <span class="theta-stats-core__status-dot h-2 w-2 bg-[#00ff55] shadow-[0_0_12px_#00ff55] rounded-full animate-ping" />
-                      Live registration pulse
+                    <div class="theta-stats-core__status flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-[10px] font-black tracking-widest text-[#00ff55] uppercase">
+                      <span class="theta-stats-core__status-dot h-2 w-2 animate-ping rounded-full bg-[#00ff55] shadow-[0_0_12px_#00ff55]" />
+                      Campus network live
                     </div>
                   </div>
                 </div>
@@ -1076,58 +1293,70 @@ export default component$(() => {
             </div>
 
             {/* --- BRAND INTEGRATION --- */}
-            <div class="theta-stats-brand-row flex flex-row items-center justify-center gap-6 sm:gap-12 mt-auto pt-6 z-20 w-full relative">
+            <div class="theta-stats-brand-row relative z-20 mt-auto flex w-full flex-row items-center justify-center gap-6 pt-6 sm:gap-12">
               <img
                 src="/theta-logo.webp"
                 alt="Theta Logo"
                 loading="lazy"
-                class="h-20 sm:h-28 w-auto object-contain brightness-0 invert opacity-60"
+                class="h-20 w-auto object-contain opacity-60 brightness-0 invert sm:h-28"
               />
-              <div class="h-8 sm:h-12 w-[1px] bg-white/10" aria-hidden="true" />
+              <div class="h-8 w-[1px] bg-white/10 sm:h-12" aria-hidden="true" />
               <img
                 src="/sponsors/general/sastra-university-logo.jpg"
                 alt="SASTRA University"
                 loading="lazy"
-                class="h-8 sm:h-12 w-auto object-contain rounded-md opacity-60"
+                class="h-8 w-auto rounded-md object-contain opacity-60 sm:h-12"
               />
             </div>
           </div>
 
           {/* --- BENTO GRID: STATS RAIL --- */}
-          <div class="theta-stats-side-right h-full flex flex-col justify-center gap-6">
+          <div class="theta-stats-side-right flex h-full flex-col justify-center gap-6">
             {statSpotlight.map((item, index) => (
               <article
                 key={item.key}
-                class="theta-bento-card theta-bento-card--stat theta-stats-node reveal-right p-6 sm:p-8 relative overflow-hidden bg-[#0a0a0a]/60 border border-white/5 backdrop-blur-2xl rounded-[2.5rem] transition-all hover:bg-[#0f0f0f]/80"
-                style={`--theta-stat-accent:${item.accent}; --theta-stat-glow:${item.glow}; transition-delay:${index * 120}ms`}
+                class="theta-bento-card theta-bento-card--stat theta-stats-node reveal-right relative overflow-hidden rounded-[2.5rem] border border-white/5 bg-[#0a0a0a]/60 p-6 backdrop-blur-2xl transition-all hover:bg-[#0f0f0f]/80 sm:p-8"
+                style={`--theta-stat-accent:${item.accent}; --theta-stat-glow:${item.glow}; --theta-stat-surface:${item.surface}; transition-delay:${index * 120}ms`}
               >
                 <div class="theta-stats-node__meta mb-3 flex items-center justify-between">
-                  <span class="theta-stats-node__index text-white/10 text-[2rem] font-black italic absolute right-8 top-4 select-none">0{index + 1}</span>
-                  <span class="theta-stats-node__eyebrow uppercase tracking-[0.25em] text-[9px] text-white/40 font-black">{item.eyebrow}</span>
+                  <span class="theta-stats-node__index">0{index + 1}</span>
+                  <span class="theta-stats-node__eyebrow text-[9px] font-black tracking-[0.25em] text-white/40 uppercase">
+                    {item.eyebrow}
+                  </span>
                 </div>
                 <div class="relative z-10">
-                  <h4 class="theta-stats-node__label uppercase tracking-widest text-[10px] font-black text-white/40 mb-1">{homeCopy.value.statsLabels[item.key]}</h4>
-                  <div class="theta-stats-node__value t-heading text-4xl sm:text-5xl font-black text-white">{counterDisplay.value[item.key]}+</div>
+                  <h4 class="theta-stats-node__label mb-1 text-[10px] font-black tracking-widest text-white/40 uppercase">
+                    {homeCopy.value.statsLabels[item.key]}
+                  </h4>
+                  <div class="theta-stats-node__value t-heading text-4xl font-black text-white sm:text-5xl">
+                    {counterDisplay.value[item.key]}+
+                  </div>
 
-                  <div class="flex items-center gap-3 mt-4">
-                    <div class="theta-stats-node__signal text-[9px] py-1 px-3 border border-white/10 rounded-full font-black text-[#70f3ff]/60 uppercase tracking-widest">{item.signal}</div>
-                    <span class="text-[9px] font-bold text-white/20 uppercase tracking-widest leading-none translate-y-[1px]">{item.note}</span>
+                  <div class="mt-4 flex items-center gap-3">
+                    <div class="theta-stats-node__signal rounded-full border border-white/10 px-3 py-1 text-[9px] font-black tracking-widest text-[#70f3ff]/60 uppercase">
+                      {item.signal}
+                    </div>
+                    <span class="translate-y-[1px] text-[9px] leading-none font-bold tracking-widest text-white/20 uppercase">
+                      {item.note}
+                    </span>
                   </div>
                 </div>
 
-                <div class="theta-stats-node__meter mt-8 h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                  <span class="theta-stats-node__meter-fill h-full block" style={`width:${item.progress}; background:${item.accent}; box-shadow: 0 0 15px ${item.accent}`} />
+                <div class="theta-stats-node__meter mt-8 h-1 w-full overflow-hidden rounded-full bg-white/5">
+                  <span
+                    class="theta-stats-node__meter-fill block h-full"
+                    style={`width:${item.progress}; background:${item.accent}; box-shadow: 0 0 15px ${item.accent}`}
+                  />
                 </div>
               </article>
             ))}
           </div>
-
         </div>
       </section>
 
       {/* ═══════════════ SECTOR DIVIDER: STATS TO SPONSORS ═══════════════ */}
-      <div class="relative w-full h-px bg-gradient-to-r from-transparent via-[#0ea935]/30 to-transparent my-10 sm:my-16">
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-6 py-1 rounded-full border border-[#0ea935]/20 bg-black backdrop-blur-md text-[9px] font-black uppercase tracking-[0.4em] text-[#0ea935] shadow-[0_0_15px_rgba(14,169,53,0.1)]">
+      <div class="relative my-10 h-px w-full bg-gradient-to-r from-transparent via-[#0ea935]/30 to-transparent sm:my-16">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#0ea935]/20 bg-black px-6 py-1 text-[9px] font-black tracking-[0.4em] text-[#0ea935] uppercase shadow-[0_0_15px_rgba(14,169,53,0.1)] backdrop-blur-md">
           Partner Ecosystem Signal
         </div>
       </div>
@@ -1135,15 +1364,15 @@ export default component$(() => {
       {/* ═══════════════ SPONSORS ═══════════════ */}
       <div class="relative w-full overflow-hidden bg-transparent">
         {/* Focused Background Elements */}
-        <div class="absolute inset-0 z-0 pointer-events-none select-none">
+        <div class="pointer-events-none absolute inset-0 z-0 select-none">
           {/* Glowing Ben 10 Watch Watermark */}
-          <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[800px] h-[300px] md:h-[800px] opacity-[0.04] grayscale invert brightness-[2] flex items-center justify-center">
-            <div class="absolute inset-0 bg-[#0ea935] blur-[100px] opacity-[0.1]" />
+          <div class="absolute top-1/2 left-1/2 flex h-[300px] w-[300px] -translate-x-1/2 -translate-y-1/2 items-center justify-center opacity-[0.04] brightness-[2] grayscale invert md:h-[800px] md:w-[800px]">
+            <div class="absolute inset-0 bg-[#0ea935] opacity-[0.1] blur-[100px]" />
             <img
               src="/ben10/ben10-logo.webp"
               alt=""
               loading="lazy"
-              class={`w-full h-full object-contain ${mobilePerfMode.value ? '' : 'filter drop-shadow-[0_0_80px_rgba(14,169,53,0.3)] animate-pulse'}`}
+              class={`h-full w-full object-contain ${mobilePerfMode.value ? "" : "animate-pulse drop-shadow-[0_0_80px_rgba(14,169,53,0.3)] filter"}`}
               style="animation-duration: 6s;"
             />
           </div>
@@ -1151,84 +1380,134 @@ export default component$(() => {
           {!mobilePerfMode.value && (
             <>
               {/* Vivid Red Bubble - Top Left (Diamond Focus) */}
-              <div class="absolute top-[-5%] left-[-10%] w-[550px] h-[550px] rounded-full border border-[#ff4d4f]/30 bg-gradient-to-br from-[#ff4d4f]/25 to-transparent backdrop-blur-[50px] opacity-70" />
+              <div class="absolute top-[-5%] left-[-10%] h-[550px] w-[550px] rounded-full border border-[#ff4d4f]/30 bg-gradient-to-br from-[#ff4d4f]/25 to-transparent opacity-70 backdrop-blur-[50px]" />
 
               {/* Glowing Tech Accent - Center Left */}
-              <div class="absolute top-[45%] left-[5%] w-10 h-10 border-2 border-[#0ea935]/60 rounded-lg opacity-60 blur-[1px]" />
-              <div class="absolute top-[47%] left-[6.5%] w-4 h-4 bg-[#0ea935] opacity-80 rounded-full shadow-[0_0_20px_#0ea935]" />
+              <div class="absolute top-[45%] left-[5%] h-10 w-10 rounded-lg border-2 border-[#0ea935]/60 opacity-60 blur-[1px]" />
+              <div class="absolute top-[47%] left-[6.5%] h-4 w-4 rounded-full bg-[#0ea935] opacity-80 shadow-[0_0_20px_#0ea935]" />
             </>
           )}
         </div>
 
-        <section id="sponsors-grid" class="relative z-10 mx-auto max-w-7xl px-4 py-8 bg-transparent sm:px-6 sm:py-16 lg:px-8">
-          <div class="mb-12 text-center relative z-10">
-            <div class="inline-flex items-center gap-3 px-4 py-1.5 rounded-full border border-white/5 bg-white/5 backdrop-blur-md mb-6 hover:border-white/20 transition-all duration-500 group cursor-default">
-              <span class="w-2 h-2 rounded-full bg-[#0ea935] animate-pulse shadow-[0_0_8px_#0ea935]" />
-              <span class="text-[10px] font-black uppercase tracking-[0.3em] text-white/40 group-hover:text-white/70 transition-colors">Partner Ecosystem</span>
+        <section
+          id="sponsors-grid"
+          class="relative z-10 mx-auto max-w-7xl bg-transparent px-6 py-16 sm:px-12 lg:px-20"
+        >
+          <div class="relative z-10 mb-12 text-center">
+            <div class="group mb-6 inline-flex cursor-default items-center gap-3 rounded-full border border-white/5 bg-white/5 px-4 py-1.5 backdrop-blur-md transition-all duration-500 hover:border-white/20">
+              <span class="h-2 w-2 animate-pulse rounded-full bg-[#0ea935] shadow-[0_0_8px_#0ea935]" />
+              <span class="text-[10px] font-black tracking-[0.3em] text-white/40 uppercase transition-colors group-hover:text-white/70">
+                Partner Ecosystem
+              </span>
             </div>
-            <h2 class="text-5xl sm:text-7xl font-black uppercase tracking-tighter text-white mb-6">
-              The <span class="text-[#70f3ff] drop-shadow-[0_0_25px_rgba(112,243,255,0.4)]">Diamond</span> Standard
+            <h2 class="mb-6 text-5xl font-black tracking-tighter text-white uppercase sm:text-7xl">
+              The{" "}
+              <span class="text-[#70f3ff] drop-shadow-[0_0_25px_rgba(112,243,255,0.4)]">
+                Diamond
+              </span>{" "}
+              Standard
             </h2>
-            <p class="text-[var(--t-muted)] max-w-2xl mx-auto text-sm sm:text-lg leading-relaxed font-medium">
-              Explore the elite network of brands supporting Theta 2026. <br class="hidden sm:block" /> Click any tier to view full partner details.
+            <p class="mx-auto max-w-2xl text-sm leading-relaxed font-medium text-[var(--t-muted)] sm:text-lg">
+              Explore the elite network of brands supporting Theta 2026.{" "}
+              <br class="hidden sm:block" /> Click any tier to view full partner
+              details.
             </p>
           </div>
 
-          <div class="flex flex-wrap justify-center gap-6 sm:gap-8 relative z-10">
+          <div class="relative z-10 flex flex-wrap justify-center gap-6 sm:gap-8">
             {sponsorTiers
-              .filter((tier) => (sponsors.value[tier.key as keyof SponsorsConfig] || []).some(s => s.isActive))
+              .filter((tier) =>
+                (sponsors.value[tier.key as keyof SponsorsConfig] || []).some(
+                  (s) => s.isActive,
+                ),
+              )
               .map((tier) => {
                 const tierKey = tier.key as keyof SponsorsConfig;
-                const activeSponsors = (sponsors.value[tierKey] || []).filter(s => s.isActive);
+                const activeSponsors = (sponsors.value[tierKey] || []).filter(
+                  (s) => s.isActive,
+                );
                 const meta = sponsorTierMeta[tierKey];
                 return (
                   <div
                     key={tier.key}
-                    onClick$={() => { selectedTier.value = tierKey; }}
-                    class="group relative cursor-pointer w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.33%-1.5rem)] xl:w-[calc(20%-1.6rem)] min-w-[280px] max-w-[340px] p-8 rounded-[2.5rem] border border-white/10 transition-all duration-500 hover:-translate-y-2 overflow-hidden flex flex-col justify-between min-h-[260px]"
+                    onClick$={() => {
+                      selectedTier.value = tierKey;
+                    }}
+                    class="group relative flex min-h-[260px] w-full max-w-[340px] min-w-[280px] cursor-pointer flex-col justify-between overflow-hidden rounded-[2.5rem] border border-white/10 p-8 transition-all duration-500 hover:-translate-y-2 sm:w-[calc(50%-1rem)] lg:w-[calc(33.33%-1.5rem)] xl:w-[calc(20%-1.6rem)]"
                     style={{
                       background: meta.surface,
-                      boxShadow: `0 20px 40px rgba(0,0,0,0.4), inset 0 0 20px ${meta.glow}`
+                      boxShadow: `0 20px 40px rgba(0,0,0,0.4), inset 0 0 20px ${meta.glow}`,
                     }}
                   >
                     {/* Dynamic Hover Glow */}
                     <div
-                      class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"
-                      style={{ background: `radial-gradient(circle at top right, ${meta.accent}15, transparent 60%)` }}
+                      class="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
+                      style={{
+                        background: `radial-gradient(circle at top right, ${meta.accent}15, transparent 60%)`,
+                      }}
                     />
 
                     <div class="relative z-10">
-                      <span class="block text-[11px] uppercase font-black tracking-[0.25em] text-white mb-3 group-hover:text-white/80 transition-colors">
+                      <span class="mb-3 block text-[11px] font-black tracking-[0.25em] text-white uppercase transition-colors group-hover:text-white/80">
                         {meta.eyebrow}
                       </span>
-                      <h3 class="text-4xl font-black uppercase tracking-tighter mb-2" style={{ color: meta.accent, textShadow: `0 0 20px ${meta.glow}` }}>
+                      <h3
+                        class="mb-2 text-4xl font-black tracking-tighter uppercase"
+                        style={{
+                          color: meta.accent,
+                          textShadow: `0 0 20px ${meta.glow}`,
+                        }}
+                      >
                         {tier.label}
                       </h3>
-                      <div class="w-12 h-1 rounded-full transition-all duration-500 group-hover:w-20" style={{ background: meta.accent, boxShadow: `0 0 10px ${meta.accent}` }} />
+                      <div
+                        class="h-1 w-12 rounded-full transition-all duration-500 group-hover:w-20"
+                        style={{
+                          background: meta.accent,
+                          boxShadow: `0 0 10px ${meta.accent}`,
+                        }}
+                      />
                     </div>
 
-                    <div class="relative z-10 flex items-center justify-between mt-10">
+                    <div class="relative z-10 mt-10 flex items-center justify-between">
                       <div class="flex -space-x-3">
                         {activeSponsors.slice(0, 3).map((s: any, i: number) => (
-                          <div key={i} class="w-10 h-10 rounded-full border-2 border-[#0a0f0a] bg-white flex items-center justify-center p-1.5 overflow-hidden shadow-xl transform transition-transform group-hover:scale-110" style={{ transitionDelay: `${i * 100}ms` }}>
-                            <img src={s.logo} alt="" class="w-full h-full object-contain" loading="lazy" />
+                          <div
+                            key={i}
+                            class="flex h-10 w-10 transform items-center justify-center overflow-hidden rounded-full border-2 border-[#0a0f0a] bg-white p-1.5 shadow-xl transition-transform group-hover:scale-110"
+                            style={{ transitionDelay: `${i * 100}ms` }}
+                          >
+                            <img
+                              src={s.logo}
+                              alt=""
+                              class="h-full w-full object-contain"
+                              loading="lazy"
+                            />
                           </div>
                         ))}
                         {activeSponsors.length > 3 && (
-                          <div class="w-10 h-10 rounded-full border-2 border-[#0a0f0a] bg-[#1a251a] backdrop-blur-md flex items-center justify-center text-[11px] font-black text-white/80 shadow-xl group-hover:bg-[#2a3a2a] transition-colors">
+                          <div class="flex h-10 w-10 items-center justify-center rounded-full border-2 border-[#0a0f0a] bg-[#1a251a] text-[11px] font-black text-white/80 shadow-xl backdrop-blur-md transition-colors group-hover:bg-[#2a3a2a]">
                             +{activeSponsors.length - 3}
                           </div>
                         )}
                       </div>
-                      <div class="flex items-center gap-2 group/btn">
-                        <span class="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 group-hover:text-white transition-colors duration-300">Explore</span>
-                        <span class="w-6 h-6 rounded-full border border-white/10 flex items-center justify-center text-xs group-hover:bg-white group-hover:text-black transition-all">→</span>
+                      <div class="group/btn flex items-center gap-2">
+                        <span class="text-[10px] font-black tracking-[0.2em] text-white/40 uppercase transition-colors duration-300 group-hover:text-white">
+                          Explore
+                        </span>
+                        <span class="flex h-6 w-6 items-center justify-center rounded-full border border-white/10 text-xs transition-all group-hover:bg-white group-hover:text-black">
+                          →
+                        </span>
                       </div>
                     </div>
 
                     {/* Corner Circuit Decorative */}
-                    <div class="absolute -bottom-2 -right-2 w-16 h-16 opacity-[0.05] group-hover:opacity-[0.15] transition-opacity duration-700 pointer-events-none">
-                      <svg viewBox="0 0 100 100" class="w-full h-full" style={{ fill: meta.accent }}>
+                    <div class="pointer-events-none absolute -right-2 -bottom-2 h-16 w-16 opacity-[0.05] transition-opacity duration-700 group-hover:opacity-[0.15]">
+                      <svg
+                        viewBox="0 0 100 100"
+                        class="h-full w-full"
+                        style={{ fill: meta.accent }}
+                      >
                         <path d="M100,0 L100,100 L0,100 L0,95 L95,95 L95,0 Z" />
                       </svg>
                     </div>
@@ -1238,64 +1517,79 @@ export default component$(() => {
           </div>
 
           {/* Modern Running Alliance Hall */}
-          <div class="mt-12 relative z-10 w-full text-center">
+          <div class="relative z-10 mt-12 w-full text-center">
             <div class="mb-8 px-4">
-              <div class="inline-flex items-center gap-3 px-4 py-1.5 rounded-full border border-[#0ea935]/20 bg-[#0ea935]/5 backdrop-blur-md mb-6 hover:border-[#0ea935]/40 transition-all cursor-default">
-                <span class="w-2 h-2 rounded-full bg-[#0ea935] shadow-[0_0_10px_#0ea935]" />
-                <span class="text-[10px] font-black uppercase tracking-[0.4em] text-[#0ea935]">Alliance Network</span>
+              <div class="mb-6 inline-flex cursor-default items-center gap-3 rounded-full border border-[#0ea935]/20 bg-[#0ea935]/5 px-4 py-1.5 backdrop-blur-md transition-all hover:border-[#0ea935]/40">
+                <span class="h-2 w-2 rounded-full bg-[#0ea935] shadow-[0_0_10px_#0ea935]" />
+                <span class="text-[10px] font-black tracking-[0.4em] text-[#0ea935] uppercase">
+                  Alliance Network
+                </span>
               </div>
-              <h3 class="text-4xl sm:text-6xl font-black uppercase tracking-tighter text-white">
-                Partner <span class="bg-gradient-to-r from-[#70f3ff] to-[#0ea935] bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(112,243,255,0.2)]">Spectrum</span> 2026
+              <h3 class="text-4xl font-black tracking-tighter text-white uppercase sm:text-6xl">
+                Partner{" "}
+                <span class="bg-gradient-to-r from-[#70f3ff] to-[#0ea935] bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(112,243,255,0.2)]">
+                  Spectrum
+                </span>{" "}
+                2026
               </h3>
             </div>
 
-            <div class="t-marquee-wrap-full relative select-none overflow-hidden">
+            <div class="t-marquee-wrap-full relative overflow-hidden select-none">
               {/* Cinema Gradient Masks - Subtle Fades */}
-              <div class="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-black via-black/40 to-transparent z-20 pointer-events-none" />
-              <div class="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-black via-black/40 to-transparent z-20 pointer-events-none" />
+              <div class="pointer-events-none absolute inset-y-0 left-0 z-20 w-24 bg-gradient-to-r from-black via-black/40 to-transparent" />
+              <div class="pointer-events-none absolute inset-y-0 right-0 z-20 w-24 bg-gradient-to-l from-black via-black/40 to-transparent" />
 
-              <div data-marquee-track class="t-marquee-track flex animate-left py-8" style="will-change: transform;">
-                {[...marqueeSponsors, ...marqueeSponsors].map((sponsor, index) => (
-                  <article
-                    key={`${sponsor.tierKey}-${sponsor.name}-${index}`}
-                    class="group relative mx-6 flex-shrink-0 flex w-[260px] flex-col items-center justify-center transition-all duration-700"
-                  >
-                    {/* Floating Background Glow */}
-                    <div class="absolute -inset-4 bg-[#70f3ff]/5 rounded-[2.5rem] blur-2xl opacity-0 group-hover/item:opacity-100 transition-opacity duration-700" />
+              <div
+                data-marquee-track
+                class="t-marquee-track animate-left flex py-8"
+                style="will-change: transform;"
+              >
+                {[...marqueeSponsors, ...marqueeSponsors].map(
+                  (sponsor, index) => (
+                    <article
+                      key={`${sponsor.tierKey}-${sponsor.name}-${index}`}
+                      class="group relative mx-6 flex w-[260px] flex-shrink-0 flex-col items-center justify-center transition-all duration-700"
+                    >
+                      {/* Floating Background Glow */}
+                      <div class="absolute -inset-4 rounded-[2.5rem] bg-[#70f3ff]/5 opacity-0 blur-2xl transition-opacity duration-700 group-hover/item:opacity-100" />
 
-                    <div class="relative w-full bg-[#0a0f0a]/40 border border-white/5 backdrop-blur-2xl rounded-[2.25rem] p-6 shadow-2xl transition-all duration-500 group-hover:bg-[#101510]/60 group-hover:border-white/20 hover:-translate-y-3">
-                      {sponsor.isActive && (
-                        <div class="absolute -top-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 rounded-full border border-[#ff4d4f]/30 bg-[#ff4d4f] px-4 py-1.5 text-[0.55rem] font-black tracking-widest text-black uppercase shadow-[0_0_25px_rgba(255,77,79,0.35)]">
-                          <span class="h-1.5 w-1.5 animate-pulse rounded-full bg-black"></span>
-                          Active
+                      <div class="relative w-full rounded-[2.25rem] border border-white/5 bg-[#0a0f0a]/40 p-6 shadow-2xl backdrop-blur-2xl transition-all duration-500 group-hover:border-white/20 group-hover:bg-[#101510]/60 hover:-translate-y-3">
+                        {sponsor.isActive && (
+                          <div class="absolute -top-3 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-full border border-[#ff4d4f]/30 bg-[#ff4d4f] px-4 py-1.5 text-[0.55rem] font-black tracking-widest text-black uppercase shadow-[0_0_25px_rgba(255,77,79,0.35)]">
+                            <span class="h-1.5 w-1.5 animate-pulse rounded-full bg-black"></span>
+                            Active
+                          </div>
+                        )}
+
+                        <div class="relative flex h-24 w-full transform items-center justify-center overflow-hidden rounded-2xl bg-white/95 p-5 shadow-2xl transition-all duration-700 group-hover:scale-[1.08] group-hover:shadow-[0_0_30px_rgba(255,255,255,0.1)]">
+                          <img
+                            src={sponsor.logo}
+                            alt={sponsor.name}
+                            loading="lazy"
+                            class="h-full w-full object-contain mix-blend-multiply"
+                          />
+                          {/* Glassy Overlay on Logo */}
+                          <div class="pointer-events-none absolute inset-0 bg-gradient-to-tr from-black/5 to-transparent" />
                         </div>
-                      )}
 
-                      <div class="relative flex h-24 w-full items-center justify-center overflow-hidden rounded-2xl bg-white/95 p-5 shadow-2xl transform transition-all duration-700 group-hover:scale-[1.08] group-hover:shadow-[0_0_30px_rgba(255,255,255,0.1)]">
-                        <img
-                          src={sponsor.logo}
-                          alt={sponsor.name}
-                          loading="lazy"
-                          class="h-full w-full object-contain mix-blend-multiply"
-                        />
-                        {/* Glassy Overlay on Logo */}
-                        <div class="absolute inset-0 bg-gradient-to-tr from-black/5 to-transparent pointer-events-none" />
+                        <div class="mt-6 text-center">
+                          <p class="text-[0.65rem] font-black tracking-[0.3em] text-white uppercase transition-all duration-500 group-hover:tracking-[0.4em]">
+                            {sponsor.name}
+                          </p>
+                          <div class="mx-auto mt-2 h-0.5 w-0 bg-[#0ea935] transition-all duration-500 group-hover:w-12 group-hover:shadow-[0_0_10px_#0ea935]" />
+                        </div>
                       </div>
 
-                      <div class="mt-6 text-center">
-                        <p class="text-[0.65rem] font-black tracking-[0.3em] text-white uppercase transition-all duration-500 group-hover:tracking-[0.4em]">
-                          {sponsor.name}
-                        </p>
-                        <div class="mx-auto mt-2 h-0.5 w-0 bg-[#0ea935] transition-all duration-500 group-hover:w-12 group-hover:shadow-[0_0_10px_#0ea935]" />
-                      </div>
-                    </div>
-
-                    {/* Side Decorative Numbers */}
-                    <span class="absolute -right-2 top-8 text-[4rem] font-black italic text-white/[0.02] pointer-events-none select-none transition-colors group-hover:text-white/[0.05]">
-                      {String((index % marqueeSponsors.length) + 1).padStart(2, '0')}
-                    </span>
-                  </article>
-                ))}
+                      {/* Side Decorative Numbers */}
+                      <span class="pointer-events-none absolute top-8 -right-2 text-[4rem] font-black text-white/[0.02] italic transition-colors select-none group-hover:text-white/[0.05]">
+                        {String((index % marqueeSponsors.length) + 1).padStart(
+                          2,
+                          "0",
+                        )}
+                      </span>
+                    </article>
+                  ),
+                )}
               </div>
             </div>
           </div>
@@ -1303,59 +1597,87 @@ export default component$(() => {
       </div>
 
       {/* ═══════════════ SECTOR DIVIDER: SPONSORS TO CTA ═══════════════ */}
-      <div class="relative w-full h-px bg-gradient-to-r from-transparent via-[#0ea935]/30 to-transparent mt-12 sm:mt-20">
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-6 py-1 rounded-full border border-[#0ea935]/20 bg-black backdrop-blur-md text-[9px] font-black uppercase tracking-[0.4em] text-[#0ea935] shadow-[0_0_15px_rgba(14,169,53,0.1)]">
+      <div class="relative mt-12 h-px w-full bg-gradient-to-r from-transparent via-[#0ea935]/30 to-transparent sm:mt-20">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#0ea935]/20 bg-black px-6 py-1 text-[9px] font-black tracking-[0.4em] text-[#0ea935] uppercase shadow-[0_0_15px_rgba(14,169,53,0.1)] backdrop-blur-md">
           Strategic Network Hub
         </div>
       </div>
 
       {/* ═══════════════ BROWSE EVENTS ═══════════════ */}
-      <section id="browse-events-section" class="browse-events-section relative min-h-screen py-24 sm:py-32 overflow-hidden bg-black flex flex-col items-center">
+      <section
+        id="browse-events-section"
+        class="browse-events-section relative flex min-h-screen flex-col items-center overflow-hidden bg-black px-6 py-16 sm:px-12 sm:py-24 lg:px-20"
+      >
         {/* Background Decorative Rings */}
         {!mobilePerfMode.value && (
-          <div class="absolute inset-0 z-0 pointer-events-none">
-            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] border border-white/5 rounded-full animate-spin" style="animation-duration: 40s;" />
-            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-white/5 rounded-full animate-spin-reverse" style="animation-duration: 30s;" />
+          <div class="pointer-events-none absolute inset-0 z-0">
+            <div
+              class="absolute top-1/2 left-1/2 h-[800px] w-[800px] -translate-x-1/2 -translate-y-1/2 animate-spin rounded-full border border-white/5"
+              style="animation-duration: 40s;"
+            />
+            <div
+              class="animate-spin-reverse absolute top-1/2 left-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/5"
+              style="animation-duration: 30s;"
+            />
           </div>
         )}
 
-        <div class="relative z-10 w-full max-w-[100rem] mx-auto h-full flex flex-col justify-between flex-1">
+        <div class="relative z-10 mx-auto flex h-full w-full max-w-[100rem] flex-1 flex-col justify-between">
           {/* Eyebrow */}
 
-
           <div class="browse-events-eyebrow mb-16 sm:mb-24">
-            <span class="text-[10px] sm:text-xs font-bold tracking-[0.25em] uppercase text-white/50">
+            <span class="text-[10px] font-bold tracking-[0.25em] text-white/50 uppercase sm:text-xs">
               POWERED BY THETA 2026
             </span>
           </div>
 
           {/* Big Typography */}
-          <div class="flex flex-col mb-auto relative w-full" style="perspective: 1000px;">
-            <h2 class="text-[clamp(5rem,14vw,15rem)] leading-[0.85] font-black tracking-tighter sm:tracking-tight text-white uppercase mix-blend-screen">
-              <span class="browse-events-title-1 block text-left text-transparent bg-clip-text bg-gradient-to-br from-white via-white/90 to-white/40">
+          <div
+            class="relative mb-auto flex w-full flex-col"
+            style="perspective: 1000px;"
+          >
+            <h2 class="text-[clamp(5rem,14vw,15rem)] leading-[0.85] font-black tracking-tighter text-white uppercase mix-blend-screen sm:tracking-tight">
+              <span class="browse-events-title-1 block bg-gradient-to-br from-white via-white/90 to-white/40 bg-clip-text text-left text-transparent">
                 BROWSE<span class="text-[#0ea935] opacity-80">+</span>
               </span>
-              <span class="browse-events-title-2 block text-right sm:text-left sm:ml-[10vw] mt-2 sm:mt-0 text-transparent bg-clip-text bg-gradient-to-br from-white/40 via-white/90 to-white">
+              <span class="browse-events-title-2 mt-2 block bg-gradient-to-br from-white/40 via-white/90 to-white bg-clip-text text-right text-transparent sm:mt-0 sm:ml-[10vw] sm:text-left">
                 <span class="text-[#0ea935] opacity-80">+</span>EVENTS
               </span>
             </h2>
 
             {/* Explore Button */}
-            <div class="browse-events-btn mt-12 sm:mt-16 sm:ml-[10vw] w-fit">
-              <Link href="/events" class="inline-flex items-center justify-center rounded-full border border-white/20 bg-black/40 px-8 py-4 text-xs font-black uppercase tracking-[0.2em] text-white backdrop-blur-md transition-all hover:bg-[#0ea935] hover:text-black hover:border-transparent hover:shadow-[0_0_20px_rgba(14,169,53,0.4)] group">
+            <div class="browse-events-btn mt-12 w-fit sm:mt-16 sm:ml-[10vw]">
+              <Link
+                href="/events"
+                class="group inline-flex items-center justify-center rounded-full border border-white/20 bg-black/40 px-8 py-4 text-xs font-black tracking-[0.2em] text-white uppercase backdrop-blur-md transition-all hover:border-transparent hover:bg-[#0ea935] hover:text-black hover:shadow-[0_0_20px_rgba(14,169,53,0.4)]"
+              >
                 Explore Now
-                <svg class="ml-3 w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                <svg
+                  class="ml-3 h-4 w-4 transition-transform group-hover:translate-x-1"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M14 5l7 7m0 0l-7 7m7-7H3"
+                  ></path>
+                </svg>
               </Link>
             </div>
           </div>
 
           {/* Bottom Row - Paragraph on Right */}
-          <div class="browse-events-desc flex justify-end mt-20 sm:mt-24 w-full">
-            <p class="max-w-[280px] sm:max-w-sm text-right text-xs sm:text-sm leading-[1.8] text-[#8ca38c] font-medium">
-              We transform ideas into fully-realized festival experiences — from intense challenges and showcases to campus-wide showdowns — creating an atmosphere that elevates the entire student collective.
+          <div class="browse-events-desc mt-20 flex w-full justify-end sm:mt-24">
+            <p class="max-w-[280px] text-right text-xs leading-[1.8] font-medium text-[#8ca38c] sm:max-w-sm sm:text-sm">
+              We transform ideas into fully-realized festival experiences — from
+              intense challenges and showcases to campus-wide showdowns —
+              creating an atmosphere that elevates the entire student
+              collective.
             </p>
           </div>
-
         </div>
       </section>
 
@@ -1363,16 +1685,33 @@ export default component$(() => {
       {selectedDay.value && (
         <div class="t-modal-backdrop flex items-center justify-center p-4">
           <div class="absolute inset-0" onClick$={closeDay} />
-          <div class="t-modal w-full max-w-lg relative z-10 bg-[#050a05]/95 backdrop-blur-2xl border border-white/10 rounded-3xl p-8">
-            <div class="flex justify-between items-start mb-8">
-              <div><h3 class="text-3xl text-white font-black">{selectedDay.value.day}</h3><p class="text-[var(--t-muted)] mt-1">{selectedDay.value.date}</p></div>
-              <button onClick$={closeDay} class="text-white/40 hover:text-white transition-colors">✕</button>
+          <div class="t-modal relative z-10 w-full max-w-lg rounded-3xl border border-white/10 bg-[#050a05]/95 p-8 backdrop-blur-2xl">
+            <div class="mb-8 flex items-start justify-between">
+              <div>
+                <h3 class="text-3xl font-black text-white">
+                  {selectedDay.value.day}
+                </h3>
+                <p class="mt-1 text-[var(--t-muted)]">
+                  {selectedDay.value.date}
+                </p>
+              </div>
+              <button
+                onClick$={closeDay}
+                class="text-white/40 transition-colors hover:text-white"
+              >
+                ✕
+              </button>
             </div>
             <div class="space-y-4">
-              {getDayEvents(selectedDay.value.day).map(e => (
-                <div key={e.id} class="p-4 rounded-xl border border-white/5 bg-white/5">
-                  <h4 class="text-white font-bold">{e.name}</h4>
-                  <p class="text-xs text-[var(--t-muted)] mt-1">{e.timing} · {e.location}</p>
+              {getDayEvents(selectedDay.value.day).map((e) => (
+                <div
+                  key={e.id}
+                  class="rounded-xl border border-white/5 bg-white/5 p-4"
+                >
+                  <h4 class="font-bold text-white">{e.name}</h4>
+                  <p class="mt-1 text-xs text-[var(--t-muted)]">
+                    {e.timing} · {e.location}
+                  </p>
                 </div>
               ))}
             </div>
@@ -1380,49 +1719,74 @@ export default component$(() => {
         </div>
       )}
 
-      {selectedTier.value && (() => {
-        const tier = sponsorTiers.find(t => t.key === selectedTier.value);
-        if (!tier) return null;
-        const items = (sponsors.value[tier.key] || []).filter(s => s.isActive);
-        return (
-          <div class="t-modal-backdrop flex items-center justify-center p-4">
-            <div class="absolute inset-0" onClick$={closeTier} />
-            <div
-              class="t-modal w-full max-w-3xl bg-[#050a05]/95 border rounded-3xl p-10 relative overflow-hidden"
-              style={{
-                boxShadow: `0 0 100px ${sponsorTierMeta[tier.key].glow}, inset 0 0 30px ${sponsorTierMeta[tier.key].glow}`,
-                borderColor: `${sponsorTierMeta[tier.key].accent}44`
-              }}
-            >
-              <div class="flex justify-between items-center mb-8 relative z-10">
-                <h3 class="text-3xl font-black uppercase tracking-tighter" style={{ color: sponsorTierMeta[tier.key].accent }}>
-                  {tier.label} Partners
-                </h3>
-                <button onClick$={closeTier} class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white/40 hover:bg-white hover:text-black transition-all">✕</button>
-              </div>
-              <div class="grid grid-cols-2 md:grid-cols-3 gap-6 relative z-10">
-                {items.map((s, i) => (
-                  <div
-                    key={i}
-                    class="t-sponsor-card p-6 flex flex-col items-center justify-center min-h-[140px] rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] transition-all group/item"
-                    style={{ borderColor: `${sponsorTierMeta[tier.key].accent}22` }}
+      {selectedTier.value &&
+        (() => {
+          const tier = sponsorTiers.find((t) => t.key === selectedTier.value);
+          if (!tier) return null;
+          const items = (sponsors.value[tier.key] || []).filter(
+            (s) => s.isActive,
+          );
+          return (
+            <div class="t-modal-backdrop flex items-center justify-center p-4">
+              <div class="absolute inset-0" onClick$={closeTier} />
+              <div
+                class="t-modal relative w-full max-w-3xl overflow-hidden rounded-3xl border bg-[#050a05]/95 p-10"
+                style={{
+                  boxShadow: `0 0 100px ${sponsorTierMeta[tier.key].glow}, inset 0 0 30px ${sponsorTierMeta[tier.key].glow}`,
+                  borderColor: `${sponsorTierMeta[tier.key].accent}44`,
+                }}
+              >
+                <div class="relative z-10 mb-8 flex items-center justify-between">
+                  <h3
+                    class="text-3xl font-black tracking-tighter uppercase"
+                    style={{ color: sponsorTierMeta[tier.key].accent }}
                   >
-                    <div class="flex h-16 w-full items-center justify-center overflow-hidden rounded-xl bg-white/95 p-3 group-hover/item:bg-white transition-colors">
-                      <img src={s.logo} alt={s.name} class="h-full w-full object-contain" />
+                    {tier.label} Partners
+                  </h3>
+                  <button
+                    onClick$={closeTier}
+                    class="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-white/40 transition-all hover:bg-white hover:text-black"
+                  >
+                    ✕
+                  </button>
+                </div>
+                <div class="relative z-10 grid grid-cols-2 gap-6 md:grid-cols-3">
+                  {items.map((s, i) => (
+                    <div
+                      key={i}
+                      class="t-sponsor-card group/item flex min-h-[140px] flex-col items-center justify-center rounded-2xl border border-white/5 bg-white/[0.02] p-6 transition-all hover:bg-white/[0.05]"
+                      style={{
+                        borderColor: `${sponsorTierMeta[tier.key].accent}22`,
+                      }}
+                    >
+                      <div class="flex h-16 w-full items-center justify-center overflow-hidden rounded-xl bg-white/95 p-3 transition-colors group-hover/item:bg-white">
+                        <img
+                          src={s.logo}
+                          alt={s.name}
+                          class="h-full w-full object-contain"
+                        />
+                      </div>
+                      <p class="mt-4 text-center text-[10px] font-black tracking-widest text-white/30 uppercase transition-colors group-hover/item:text-white">
+                        {s.name}
+                      </p>
                     </div>
-                    <p class="mt-4 text-[10px] text-white/30 uppercase font-black tracking-widest group-hover/item:text-white transition-colors text-center">{s.name}</p>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-        );
-      })()}
+          );
+        })()}
     </div>
   );
 });
 
 export const head: DocumentHead = {
   title: "Theta 2026 | National Level Techno-Management Fest",
-  meta: [{ name: "description", content: "Theta 2026 is SASTRA's premier national level techno-management fest. Explore hackathons, robotics, workshops, and more. March 15-17, 2026." }],
+  meta: [
+    {
+      name: "description",
+      content:
+        "Theta 2026 is SASTRA's premier national level techno-management fest. Explore hackathons, robotics, workshops, and more. March 15-17, 2026.",
+    },
+  ],
 };

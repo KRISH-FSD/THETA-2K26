@@ -2,6 +2,7 @@ import { $, component$, useSignal, useVisibleTask$ } from "@builder.io/qwik";
 import { Link, type DocumentHead } from "@builder.io/qwik-city";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { getDevicePerfTier } from "~/utils/perf";
 
 interface Sponsor {
   name: string;
@@ -219,6 +220,11 @@ export default component$(() => {
   });
 
   useVisibleTask$(() => {
+    const enablePremiumMotion =
+      getDevicePerfTier() === "hi" &&
+      window.matchMedia("(pointer: fine)").matches &&
+      !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
     gsap.registerPlugin(ScrollTrigger);
 
     const ctx = gsap.context(() => {
@@ -240,30 +246,32 @@ export default component$(() => {
         );
       });
 
-      gsap.to(".s-orb-a", {
-        x: 40,
-        y: -30,
-        duration: 9,
-        ease: "sine.inOut",
-        repeat: -1,
-        yoyo: true,
-      });
-      gsap.to(".s-orb-b", {
-        x: -36,
-        y: 28,
-        duration: 11,
-        ease: "sine.inOut",
-        repeat: -1,
-        yoyo: true,
-      });
-      gsap.to(".s-orb-c", {
-        x: 28,
-        y: 22,
-        duration: 8,
-        ease: "sine.inOut",
-        repeat: -1,
-        yoyo: true,
-      });
+      if (enablePremiumMotion) {
+        gsap.to(".s-orb-a", {
+          x: 40,
+          y: -30,
+          duration: 9,
+          ease: "sine.inOut",
+          repeat: -1,
+          yoyo: true,
+        });
+        gsap.to(".s-orb-b", {
+          x: -36,
+          y: 28,
+          duration: 11,
+          ease: "sine.inOut",
+          repeat: -1,
+          yoyo: true,
+        });
+        gsap.to(".s-orb-c", {
+          x: 28,
+          y: 22,
+          duration: 8,
+          ease: "sine.inOut",
+          repeat: -1,
+          yoyo: true,
+        });
+      }
 
       gsap.fromTo(
         ".s-spotlight-item",
@@ -284,49 +292,51 @@ export default component$(() => {
     );
     const cleanups: Array<() => void> = [];
 
-    tiltCards.forEach((card) => {
-      let rafId: number;
-      const onMove = (event: MouseEvent) => {
-        const rect = card.getBoundingClientRect();
-        const x = (event.clientX - rect.left) / rect.width - 0.5;
-        const y = (event.clientY - rect.top) / rect.height - 0.5;
-        if (rafId) cancelAnimationFrame(rafId);
-        rafId = requestAnimationFrame(() => {
-          gsap.to(card, {
-            rotateY: x * 12,
-            rotateX: -y * 10,
-            y: -8,
-            duration: 0.6,
-            ease: "power2.out",
-            overwrite: "auto",
+    if (enablePremiumMotion) {
+      tiltCards.forEach((card) => {
+        let rafId: number;
+        const onMove = (event: MouseEvent) => {
+          const rect = card.getBoundingClientRect();
+          const x = (event.clientX - rect.left) / rect.width - 0.5;
+          const y = (event.clientY - rect.top) / rect.height - 0.5;
+          if (rafId) cancelAnimationFrame(rafId);
+          rafId = requestAnimationFrame(() => {
+            gsap.to(card, {
+              rotateY: x * 12,
+              rotateX: -y * 10,
+              y: -8,
+              duration: 0.6,
+              ease: "power2.out",
+              overwrite: "auto",
+            });
           });
-        });
-      };
-      const onLeave = () => {
-        if (rafId) cancelAnimationFrame(rafId);
-        gsap.to(card, {
-          rotateY: 0,
-          rotateX: 0,
-          y: 0,
-          duration: 1.2,
-          ease: "elastic.out(1, 0.3)",
-        });
-      };
-      const onEnter = () => {
-        gsap.set(card, { willChange: "transform" });
-      };
+        };
+        const onLeave = () => {
+          if (rafId) cancelAnimationFrame(rafId);
+          gsap.to(card, {
+            rotateY: 0,
+            rotateX: 0,
+            y: 0,
+            duration: 1.2,
+            ease: "elastic.out(1, 0.3)",
+          });
+        };
+        const onEnter = () => {
+          gsap.set(card, { willChange: "transform" });
+        };
 
-      card.addEventListener("mousemove", onMove);
-      card.addEventListener("mouseleave", onLeave);
-      card.addEventListener("mouseenter", onEnter);
+        card.addEventListener("mousemove", onMove);
+        card.addEventListener("mouseleave", onLeave);
+        card.addEventListener("mouseenter", onEnter);
 
-      cleanups.push(() => {
-        if (rafId) cancelAnimationFrame(rafId);
-        card.removeEventListener("mousemove", onMove);
-        card.removeEventListener("mouseleave", onLeave);
-        card.removeEventListener("mouseenter", onEnter);
+        cleanups.push(() => {
+          if (rafId) cancelAnimationFrame(rafId);
+          card.removeEventListener("mousemove", onMove);
+          card.removeEventListener("mouseleave", onLeave);
+          card.removeEventListener("mouseenter", onEnter);
+        });
       });
-    });
+    }
 
     return () => {
       cleanups.forEach((cleanup) => cleanup());
