@@ -120,7 +120,8 @@ You can [deploy your site to Vercel](https://vercel.com/docs/concepts/deployment
 - [ ] Fix broken event poster references, including `/EVENTSPOSTERS/SPORTS.jpg`.
 - [ ] Fix missing contact/team image assets referenced from `public/data/team.json`, or update the JSON to valid image paths.
 - [x] Remove or re-enable the dead GSAP animation block in `src/routes/contact/index.tsx` instead of leaving unreachable code behind an early `return`.
-- [ ] Chatbot scroll issue: When chatbot is open on mobile, scrolling inside the chat scrolls the page instead of the chat content.
+- [x] Chatbot scroll issue: When chatbot is open on mobile, scrolling inside the chat scrolls the page instead of the chat content.
+- [x] Chatbot scroll issue: When chatbot is open on desktop, scrolling inside the chat scrolls the page instead of the chat content.
 - [ ] Fix `fixMojibake` function in Chatbot - current implementation doesn't properly handle encoding issues.
 - [ ] Add error handling/feedback when JSON data files fail to load (e.g., config.json, events.json).
 - [x] Remove unused theme-context.tsx - the theme system uses `data-theme` attribute on body instead.
