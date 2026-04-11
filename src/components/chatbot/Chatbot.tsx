@@ -86,7 +86,47 @@ export const Chatbot = component$(() => {
   const dataset = useSignal<any>(chatbotData);
   const teamData = useSignal<any>(teamDataJson);
   const messagesEndRef = useSignal<Element>();
-  const activeTheme = useSignal<"green" | "red">("green");
+  const activeTheme = useSignal<"green" | "gold" | "red">("green");
+
+  const themeColors =
+    activeTheme.value === "red"
+      ? {
+          main: "#ff4d4f",
+          soft: "#ff7875",
+          border: "rgba(255, 77, 79, 0.2)",
+          borderStrong: "rgba(255, 77, 79, 0.3)",
+          bubble: "linear-gradient(135deg, #cc0000 0%, #ff4d4f 100%)",
+          bubbleSolid: "linear-gradient(135deg, #ff4d4f, #cc0000)",
+          bubbleStrong: "linear-gradient(135deg, #ff4d4f, #990000)",
+          tint: "rgba(255, 77, 79, 0.15)",
+          shadow: "0 4px 20px rgba(255, 77, 79, 0.05)",
+          focusClass: "border-white/10 focus-within:border-[#ff4d4f] focus-within:bg-[#ff4d4f]/5 focus-within:shadow-[0_0_20px_rgba(255,77,79,0.2)]",
+        }
+      : activeTheme.value === "gold"
+        ? {
+            main: "#f5c842",
+            soft: "#ffd76a",
+            border: "rgba(245, 200, 66, 0.2)",
+            borderStrong: "rgba(245, 200, 66, 0.32)",
+            bubble: "linear-gradient(135deg, #b77900 0%, #f5c842 100%)",
+            bubbleSolid: "linear-gradient(135deg, #f5c842, #b77900)",
+            bubbleStrong: "linear-gradient(135deg, #f5c842, #8a5a00)",
+            tint: "rgba(245, 200, 66, 0.15)",
+            shadow: "0 4px 20px rgba(245, 200, 66, 0.06)",
+            focusClass: "border-white/10 focus-within:border-[#f5c842] focus-within:bg-[#f5c842]/5 focus-within:shadow-[0_0_20px_rgba(245,200,66,0.2)]",
+          }
+        : {
+            main: "#0ea935",
+            soft: "#4ade80",
+            border: "rgba(14, 169, 53, 0.2)",
+            borderStrong: "rgba(14, 169, 53, 0.3)",
+            bubble: "linear-gradient(135deg, #008000 0%, #0ea935 100%)",
+            bubbleSolid: "linear-gradient(135deg, #0ea935, #008000)",
+            bubbleStrong: "linear-gradient(135deg, #0ea935, #005500)",
+            tint: "rgba(14, 169, 53, 0.15)",
+            shadow: "0 4px 20px rgba(14, 169, 53, 0.05)",
+            focusClass: "border-white/10 focus-within:border-[#0ea935] focus-within:bg-[#0ea935]/5 focus-within:shadow-[0_0_20px_rgba(14,169,53,0.2)]",
+          };
 
   useOnWindow(
     "keydown",
@@ -101,13 +141,30 @@ export const Chatbot = component$(() => {
     // Determine theme instantly
     const updateTheme = () => {
       const t = document.body.getAttribute("data-theme");
-      activeTheme.value = t === "red-ben10" ? "red" : "green";
+      activeTheme.value = t === "red-ben10" || t === "spider"
+        ? "red"
+        : t === "onepiece"
+          ? "gold"
+          : "green";
     };
     updateTheme();
+    const onUiThemeChange = (event: Event) => {
+      const detail = (event as CustomEvent<{ theme?: "default" | "spider" | "onepiece" | "red-ben10" | null }>).detail;
+      const t = detail?.theme;
+      if (!t || t === "default") {
+        updateTheme();
+        return;
+      }
+      activeTheme.value = t === "onepiece" ? "gold" : "red";
+    };
     const obs = new MutationObserver(updateTheme);
+    window.addEventListener("theta-ui-theme-change", onUiThemeChange as EventListener);
     obs.observe(document.body, { attributes: true, attributeFilter: ["data-theme"] });
 
-    return () => obs.disconnect();
+    return () => {
+      window.removeEventListener("theta-ui-theme-change", onUiThemeChange as EventListener);
+      obs.disconnect();
+    };
   });
 
   useVisibleTask$(({ track }) => {
@@ -304,7 +361,7 @@ export const Chatbot = component$(() => {
         {/* Modern Header */}
         <div class="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-white/5 backdrop-blur-md relative shrink-0">
           <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-             <div class="absolute -top-[50%] -left-[20%] w-64 h-64 rounded-full opacity-30 blur-[60px]" style={{ backgroundColor: activeTheme.value === "red" ? "#ff4d4f" : "#0ea935" }} />
+             <div class="absolute -top-[50%] -left-[20%] w-64 h-64 rounded-full opacity-30 blur-[60px]" style={{ backgroundColor: themeColors.main }} />
           </div>
           
           <div class="flex items-center gap-4 relative z-10">
@@ -312,15 +369,15 @@ export const Chatbot = component$(() => {
                <img src="/theta-logo.webp" alt="Theta Logo" class="w-8 h-8 object-contain" />
                <span 
                   class="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full border-2 border-black transition-colors duration-500 shadow-[0_0_8px_currentColor]"
-                  style={{ backgroundColor: activeTheme.value === "red" ? "#ff4d4f" : "#0ea935", color: activeTheme.value === "red" ? "#ff4d4f" : "#0ea935" }}
+                  style={{ backgroundColor: themeColors.main, color: themeColors.main }}
                ></span>
             </div>
             <div class="flex flex-col">
                <span class="text-[16px] font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-white/70 tracking-wide drop-shadow-md">Theta AI</span>
-               <span class="text-[11px] font-bold tracking-widest uppercase flex items-center gap-1.5 transition-colors duration-500 opacity-90" style={{ color: activeTheme.value === "red" ? "#ff7875" : "#4ade80" }}>
+               <span class="text-[11px] font-bold tracking-widest uppercase flex items-center gap-1.5 transition-colors duration-500 opacity-90" style={{ color: themeColors.soft }}>
                   <span class="relative flex h-1.5 w-1.5">
-                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ backgroundColor: activeTheme.value === "red" ? "#ff7875" : "#4ade80" }}></span>
-                     <span class="relative inline-flex rounded-full h-1.5 w-1.5" style={{ backgroundColor: activeTheme.value === "red" ? "#ff7875" : "#4ade80" }}></span>
+                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ backgroundColor: themeColors.soft }}></span>
+                     <span class="relative inline-flex rounded-full h-1.5 w-1.5" style={{ backgroundColor: themeColors.soft }}></span>
                   </span>
                   Online
                </span>
@@ -341,7 +398,7 @@ export const Chatbot = component$(() => {
                 {msg.role === 'user' ? (
                   <div 
                      class="px-5 py-3.5 text-[14.5px] leading-relaxed whitespace-pre-line break-words max-w-[85%] rounded-[24px] rounded-br-[4px] shadow-lg text-white font-medium"
-                     style={{ background: activeTheme.value === "red" ? "linear-gradient(135deg, #cc0000 0%, #ff4d4f 100%)" : "linear-gradient(135deg, #008000 0%, #0ea935 100%)" }}
+                     style={{ background: themeColors.bubble }}
                   >
                     {msg.text}
                   </div>
@@ -349,8 +406,8 @@ export const Chatbot = component$(() => {
                   <div 
                      class="px-5 py-4 text-[14.5px] leading-relaxed whitespace-pre-line break-words max-w-[90%] rounded-[24px] rounded-tl-[4px] shadow-md border bg-white/5 backdrop-blur-md text-white/95"
                      style={{ 
-                       borderColor: activeTheme.value === "red" ? "rgba(255, 77, 79, 0.2)" : "rgba(14, 169, 53, 0.2)",
-                       boxShadow: activeTheme.value === "red" ? "0 4px 20px rgba(255, 77, 79, 0.05)" : "0 4px 20px rgba(14, 169, 53, 0.05)"
+                       borderColor: themeColors.border,
+                       boxShadow: themeColors.shadow
                      }}
                   >
                      <div dangerouslySetInnerHTML={mdToHtml(msg.text)} class="prose prose-invert prose-sm max-w-none prose-p:leading-relaxed prose-a:text-blue-400 marker:text-white/50" />
@@ -365,9 +422,9 @@ export const Chatbot = component$(() => {
                            onClick$={() => sendMessage(chip)}
                            class="px-4 py-1.5 rounded-full text-[13px] font-semibold tracking-wide border transition-all duration-300 hover:-translate-y-0.5 active:scale-95 shadow-sm hover:shadow-md whitespace-nowrap"
                            style={{ 
-                             borderColor: activeTheme.value === "red" ? "rgba(255, 77, 79, 0.3)" : "rgba(14, 169, 53, 0.3)",
+                             borderColor: themeColors.borderStrong,
                              color: "white",
-                             backgroundColor: activeTheme.value === "red" ? "rgba(255, 77, 79, 0.15)" : "rgba(14, 169, 53, 0.15)"
+                             backgroundColor: themeColors.tint
                            }}
                          >
                            {chip}
@@ -382,11 +439,11 @@ export const Chatbot = component$(() => {
             <div class="flex flex-col items-start max-w-[85%] origin-bottom transition-all duration-300">
               <div 
                 class="flex gap-2 px-5 py-4 rounded-[24px] rounded-tl-[4px] w-fit border bg-white/5 backdrop-blur-md shadow-md"
-                style={{ borderColor: activeTheme.value === "red" ? "rgba(255, 77, 79, 0.2)" : "rgba(14, 169, 53, 0.2)" }}
+                style={{ borderColor: themeColors.border }}
               >
-                <span class="w-2 h-2 rounded-full opacity-80" style={{ backgroundColor: activeTheme.value === "red" ? "#ff7875" : "#4ade80", animation: "pulse 1.4s infinite ease-in-out both", animationDelay: "-0.32s" }} />
-                <span class="w-2 h-2 rounded-full opacity-80" style={{ backgroundColor: activeTheme.value === "red" ? "#ff7875" : "#4ade80", animation: "pulse 1.4s infinite ease-in-out both", animationDelay: "-0.16s" }} />
-                <span class="w-2 h-2 rounded-full opacity-80" style={{ backgroundColor: activeTheme.value === "red" ? "#ff7875" : "#4ade80", animation: "pulse 1.4s infinite ease-in-out both" }} />
+                <span class="w-2 h-2 rounded-full opacity-80" style={{ backgroundColor: themeColors.soft, animation: "pulse 1.4s infinite ease-in-out both", animationDelay: "-0.32s" }} />
+                <span class="w-2 h-2 rounded-full opacity-80" style={{ backgroundColor: themeColors.soft, animation: "pulse 1.4s infinite ease-in-out both", animationDelay: "-0.16s" }} />
+                <span class="w-2 h-2 rounded-full opacity-80" style={{ backgroundColor: themeColors.soft, animation: "pulse 1.4s infinite ease-in-out both" }} />
               </div>
             </div>
           )}
@@ -397,7 +454,7 @@ export const Chatbot = component$(() => {
         {/* Input Area */}
         <div class="relative p-4 sm:p-5 bg-gradient-to-t from-black via-black/80 to-transparent shrink-0">
            <form
-              class={`relative flex items-center bg-white/5 backdrop-blur-xl p-1.5 rounded-[32px] border transition-all duration-300 shadow-[0_10px_40px_rgba(0,0,0,0.5)] ${activeTheme.value === 'red' ? 'border-white/10 focus-within:border-[#ff4d4f] focus-within:bg-[#ff4d4f]/5 focus-within:shadow-[0_0_20px_rgba(255,77,79,0.2)]' : 'border-white/10 focus-within:border-[#0ea935] focus-within:bg-[#0ea935]/5 focus-within:shadow-[0_0_20px_rgba(14,169,53,0.2)]'}`}
+              class={`relative flex items-center bg-white/5 backdrop-blur-xl p-1.5 rounded-[32px] border transition-all duration-300 shadow-[0_10px_40px_rgba(0,0,0,0.5)] ${themeColors.focusClass}`}
               preventdefault:submit
               onSubmit$={$(() => {
                 void sendMessage(inputValue.value);
@@ -419,7 +476,7 @@ export const Chatbot = component$(() => {
                  type="button"
                  onClick$={() => sendMessage(inputValue.value)}
                  class="absolute right-2 top-2 bottom-2 aspect-square flex items-center justify-center text-white rounded-[24px] transition-all duration-300 disabled:opacity-40 disabled:scale-90 disabled:cursor-not-allowed hover:scale-105 active:scale-95 shadow-md group overflow-hidden"
-                 style={{ background: activeTheme.value === "red" ? "linear-gradient(135deg, #ff4d4f, #cc0000)" : "linear-gradient(135deg, #0ea935, #008000)" }}
+                 style={{ background: themeColors.bubbleSolid }}
                  disabled={!inputValue.value.trim() || isTyping.value}
               >
                  <div class="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -437,7 +494,7 @@ export const Chatbot = component$(() => {
       <button 
         class={`fixed bottom-6 right-6 sm:bottom-8 sm:right-8 w-[64px] h-[64px] rounded-full flex items-center justify-center text-white transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] z-[9900] group shadow-[0_10px_30px_rgba(0,0,0,0.5)] border-2 border-white/10 ${isOpen.value ? 'opacity-0 scale-50 pointer-events-none translate-y-12' : 'opacity-100 scale-100 translate-y-0 hover:-translate-y-2 hover:shadow-[0_15px_40px_rgba(0,0,0,0.6)]'}`}
         style={{ 
-          background: activeTheme.value === "red" ? "linear-gradient(135deg, #ff4d4f, #990000)" : "linear-gradient(135deg, #0ea935, #005500)",
+          background: themeColors.bubbleStrong,
           willChange: 'transform, opacity'
         }}
         onClick$={() => { isOpen.value = true; }}
@@ -447,7 +504,7 @@ export const Chatbot = component$(() => {
 
         <span class="absolute 0 top-0 right-0 flex h-4 w-4">
           <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-          <span class="relative inline-flex rounded-full h-4 w-4 bg-white border-2" style={{ borderColor: activeTheme.value === "red" ? "#ff4d4f" : "#0ea935" }}></span>
+          <span class="relative inline-flex rounded-full h-4 w-4 bg-white border-2" style={{ borderColor: themeColors.main }}></span>
         </span>
       </button>
       
