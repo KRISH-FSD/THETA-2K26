@@ -125,4 +125,6 @@ You can [deploy your site to Vercel](https://vercel.com/docs/concepts/deployment
 - [ ] Add error handling/feedback when JSON data files fail to load (e.g., config.json, events.json).
 - [x] Remove unused theme-context.tsx - the theme system uses `data-theme` attribute on body instead.
 - [ ] Fix hardcoded external URLs (Unsplash images in events page) - consider local copies to prevent broken images.
-- [ ] Add validation for team image paths - several referenced images don't exist in `/public/team/`.
+- [x] Fix scroll lag by integrating Lenis with GSAP ScrollTrigger
+- [x] Fix stats section centering on desktop - removed max-width constraint
+- [x] Add consistent padding to homepage sections
