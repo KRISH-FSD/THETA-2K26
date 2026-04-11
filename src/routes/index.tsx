@@ -503,6 +503,13 @@ export default component$(() => {
   });
 
   useVisibleTask$(() => {
+    if (
+      mobilePerfMode.value ||
+      !window.matchMedia("(pointer: fine)").matches ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      return;
+    }
     const section = document.querySelector<HTMLElement>(".festival-days-shell");
     if (!section) return;
     if (isMobilePerfMode()) {
@@ -553,31 +560,11 @@ export default component$(() => {
       }
     });
 
-    let frameId: number;
-    const onPointerMove = (event: PointerEvent) => {
-      if (frameId) cancelAnimationFrame(frameId);
-      frameId = requestAnimationFrame(() => {
-        const rect = section.getBoundingClientRect();
-        const pointerX = (event.clientX - rect.left) / rect.width - 0.5;
-        const pointerY = (event.clientY - rect.top) / rect.height - 0.5;
-
-        setPointerLeft(Math.floor(pointerX * -18));
-        setPointerRight(Math.floor(pointerX * 18));
-        setPointerUp(Math.floor(pointerY * -14));
-        setPointerDown(Math.floor(pointerY * 14));
-      });
-    };
-
     resetPointer();
-    section.addEventListener("mousemove", onPointerMove as any, { passive: true });
-    section.addEventListener("mouseleave", resetPointer, { passive: true });
 
     return () => {
-      if (frameId) cancelAnimationFrame(frameId);
       scrollTrigger.kill();
       resetPointer();
-      section.removeEventListener("mousemove", onPointerMove as any);
-      section.removeEventListener("mouseleave", resetPointer);
     };
   });
 
@@ -642,38 +629,6 @@ export default component$(() => {
 
   useVisibleTask$(() => {
     if (isMobilePerfMode()) return;
-    const cards = document.querySelectorAll<HTMLElement>("[data-tilt]");
-    const cleanups: any[] = [];
-    cards.forEach(card => {
-      let raf = 0;
-      const move = (e: MouseEvent) => {
-        const r = card.getBoundingClientRect();
-        const x = (e.clientX - r.left) / r.width - 0.5;
-        const y = (e.clientY - r.top) / r.height - 0.5;
-        if (raf) cancelAnimationFrame(raf);
-        raf = requestAnimationFrame(() => {
-          card.style.transform = `perspective(1000px) rotateY(${x * 6}deg) rotateX(${-y * 5}deg) translateY(-3px)`;
-        });
-      };
-      const leave = () => {
-        if (raf) cancelAnimationFrame(raf);
-        card.style.transition = "transform 0.7s cubic-bezier(0.22, 1, 0.36, 1)";
-        card.style.transform = "perspective(1000px) rotateY(0deg) rotateX(0deg) translateY(0)";
-      };
-      const enter = () => { card.style.transition = "transform 0.18s linear"; };
-      card.addEventListener("mousemove", move); card.addEventListener("mouseleave", leave); card.addEventListener("mouseenter", enter);
-      cleanups.push(() => {
-        if (raf) cancelAnimationFrame(raf);
-        card.removeEventListener("mousemove", move);
-        card.removeEventListener("mouseleave", leave);
-        card.removeEventListener("mouseenter", enter);
-      });
-    });
-    return () => cleanups.forEach(c => c());
-  });
-
-  useVisibleTask$(() => {
-    if (isMobilePerfMode()) return;
     // GSAP ScrollTrigger already registered in layout.tsx
     const marks = document.querySelectorAll<HTMLElement>(".t-day-card__mark");
     const overlays = document.querySelectorAll<HTMLElement>(".t-knockout-overlay");
@@ -682,41 +637,6 @@ export default component$(() => {
 
     // Aurora/Mark glow timeline removed. CSS animations handle base movement.
     // Heavy DOM manipulation in a looping timeline causes layout thrashing.
-  });
-
-  useVisibleTask$(() => {
-    if (isMobilePerfMode()) return;
-    const sphere = document.querySelector<HTMLElement>(".theta-stats-core");
-    if (!sphere) return;
-
-    const setSphereRx = gsap.quickSetter(sphere, "--sphere-rx", "deg");
-    const setSphereRy = gsap.quickSetter(sphere, "--sphere-ry", "deg");
-
-    let frameId: number;
-    const onMove = (e: MouseEvent) => {
-      if (frameId) cancelAnimationFrame(frameId);
-      frameId = requestAnimationFrame(() => {
-        const rect = sphere.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / rect.width - 0.5;
-        const y = (e.clientY - rect.top) / rect.height - 0.5;
-        setSphereRx(Math.floor(y * 32));
-        setSphereRy(Math.floor(-x * 38));
-      });
-    };
-
-    const onLeave = () => {
-      if (frameId) cancelAnimationFrame(frameId);
-      setSphereRx(0);
-      setSphereRy(0);
-    };
-
-    sphere.addEventListener("mousemove", onMove);
-    sphere.addEventListener("mouseleave", onLeave);
-
-    return () => {
-      sphere.removeEventListener("mousemove", onMove);
-      sphere.removeEventListener("mouseleave", onLeave);
-    };
   });
 
   useVisibleTask$(({ track }) => {
@@ -764,7 +684,7 @@ export default component$(() => {
       </div>
 
       {/* ═══════════════ DAY CARDS ═══════════════ */}
-      <section class="festival-days-shell py-20 relative overflow-hidden">
+      <section class="festival-days-shell py-20 relative overflow-hidden [content-visibility:auto] [contain-intrinsic-size:1200px]">
         <style>{`
           .festival-title {
             font-family: var(--font-hero-ui), var(--font-body), sans-serif;
@@ -913,8 +833,14 @@ export default component$(() => {
           <div class="festival-days-mesh relative z-10">
             <div class="grid gap-5 sm:gap-6 lg:grid-cols-3">
               {configData.value.days.map((day, index) => (
-                <Link key={day.day} href={`/roadmap/day${index + 1}`} data-tilt onMouseMove$={(e, el) => {
-                  if (mobilePerfMode.value) return;
+                <Link key={day.day} href={`/roadmap/day${index + 1}`} onMouseMove$={(e, el) => {
+                  if (
+                    mobilePerfMode.value ||
+                    !window.matchMedia("(pointer: fine)").matches ||
+                    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+                  ) {
+                    return;
+                  }
                   const r = el.getBoundingClientRect();
                   el.style.setProperty("--mouse-x", `${e.clientX - r.left}px`);
                   el.style.setProperty("--mouse-y", `${e.clientY - r.top}px`);
@@ -1019,7 +945,7 @@ export default component$(() => {
       </div>
 
       {/* ═══════════════ STATS ═══════════════ */}
-      <section id="theta-stats" class="theta-stats-section px-4 py-12 sm:px-6 lg:px-8 lg:py-0 bg-[#0a0514] min-h-screen lg:min-h-0 lg:h-screen w-full flex flex-col lg:flex-row items-center justify-center overflow-hidden">
+      <section id="theta-stats" class="theta-stats-section px-4 py-12 sm:px-6 lg:px-8 lg:py-0 bg-[#0a0514] min-h-screen lg:min-h-0 lg:h-screen w-full flex flex-col lg:flex-row items-center justify-center overflow-hidden [content-visibility:auto] [contain-intrinsic-size:1000px]">
         <div class="theta-stats-bento grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] gap-6 sm:gap-10 max-w-[125rem] mx-auto h-auto lg:h-full lg:max-h-[85vh] items-center w-full">
 
           {/* --- BENTO CARD: VISUAL & TITLE --- */}
