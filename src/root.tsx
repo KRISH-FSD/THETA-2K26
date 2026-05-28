@@ -4,12 +4,17 @@ import {
   useVisibleTask$,
 } from "@builder.io/qwik";
 import { QwikCityProvider, RouterOutlet } from "@builder.io/qwik-city";
+import { inject } from "@vercel/analytics";
 import { RouterHead } from "./components/router-head/router-head";
 
 import "./global.css";
 
 export default component$(() => {
   const showLoader = useSignal(true);
+
+  useVisibleTask$(() => {
+    inject();
+  });
 
   useVisibleTask$(({ cleanup }) => {
     let done = false;
