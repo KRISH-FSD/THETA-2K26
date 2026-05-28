@@ -14,11 +14,6 @@
     }
   },
   "layout": {
-    "underDevelopment": {
-      "ariaLabel": "Show development notice",
-      "title": "Website Under Development",
-      "subtitle": "Changes may occur"
-    },
     "footer": {
       "description": "Theta is a national-level techno-management fest organized by SASTRA Deemed University. Join us for three days of innovation, competition, and excitement.",
       "quickLinksTitle": "Quick Links",
@@ -195,9 +190,9 @@
     "ctaButton": "Talk to Sponsorship Team"
   },
   "seo": {
-    "defaultDescription": "Theta 2026 techno-management fest website.",
-    "homeTitle": "Theta 2026 - Home",
-    "homeDescription": "Theta 2026 is SASTRA's national-level techno-management fest with events, workshops, sponsors, and registrations.",
+    "defaultDescription": "THETA 2K26 (Theta 2026) is SASTRA's national-level techno-management fest with hackathons, robotics, workshops, events and registrations.",
+    "homeTitle": "THETA 2K26 | SASTRA",
+    "homeDescription": "THETA 2K26 (Theta 2026) is SASTRA's national-level techno-management fest with hackathons, robotics, workshops, events and registrations.",
     "eventsTitle": "Events - Theta 2026",
     "eventsDescription": "Browse Theta 2026 events and workshops, filter by category, status, and cluster, and register online.",
     "contactTitle": "Contact - Theta 2026",

@@ -287,6 +287,8 @@ export default component$(() => {
                         <img
                           src={member.image || "/team/default-avatar.svg"}
                           alt={member.name}
+                          loading="lazy"
+                          decoding="async"
                           class="h-full w-full object-cover"
                           onError$={(e) => {
                             (e.target as HTMLImageElement).src =

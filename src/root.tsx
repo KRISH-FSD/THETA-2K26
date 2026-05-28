@@ -1,14 +1,10 @@
 import {
   component$,
-  isDev,
   useSignal,
   useVisibleTask$,
 } from "@builder.io/qwik";
 import { QwikCityProvider, RouterOutlet } from "@builder.io/qwik-city";
 import { RouterHead } from "./components/router-head/router-head";
-import Lenis from "lenis";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { getDevicePerfTier } from "./utils/perf";
 
 import "./global.css";
 
@@ -16,61 +12,36 @@ export default component$(() => {
   const showLoader = useSignal(true);
 
   useVisibleTask$(({ cleanup }) => {
-    const timer = window.setTimeout(() => {
+    let done = false;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      document.documentElement.dataset.siteReady = "true";
       showLoader.value = false;
-    }, 900);
-
-    cleanup(() => window.clearTimeout(timer));
-  });
-
-  useVisibleTask$(() => {
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
-    const perfTier = getDevicePerfTier();
-
-    if (prefersReducedMotion || coarsePointer || perfTier !== "hi") {
-      return;
-    }
-
-    const lenis = new Lenis({
-      duration: 0.9,
-      smoothWheel: true,
-      syncTouch: false,
-    });
-
-    lenis.on("scroll", ScrollTrigger.update);
-
-    ScrollTrigger.scrollerProxy(document.documentElement, {
-      scrollTop(value) {
-        return arguments.length
-          ? lenis.scrollTo(value as number, { immediate: true })
-          : window.scrollY;
-      },
-      getBoundingClientRect() {
-        return {
-          top: 0,
-          left: 0,
-          width: window.innerWidth,
-          height: window.innerHeight,
-        };
-      },
-    });
-
-    let frameId = 0;
-
-    function raf(time: number) {
-      lenis.raf(time);
-      frameId = requestAnimationFrame(raf);
-    }
-
-    frameId = requestAnimationFrame(raf);
-
-    return () => {
-      cancelAnimationFrame(frameId);
-      lenis.destroy();
     };
+
+    const minTimer = window.setTimeout(() => {
+      if (document.readyState === "complete") {
+        finish();
+      }
+    }, 500);
+
+    const maxTimer = window.setTimeout(finish, 1800);
+    const onLoad = () => {
+      window.setTimeout(finish, 180);
+    };
+
+    if (document.readyState === "complete") {
+      onLoad();
+    } else {
+      window.addEventListener("load", onLoad, { once: true });
+    }
+
+    cleanup(() => {
+      window.clearTimeout(minTimer);
+      window.clearTimeout(maxTimer);
+      window.removeEventListener("load", onLoad);
+    });
   });
 
   /**
@@ -84,12 +55,6 @@ export default component$(() => {
     <QwikCityProvider>
       <head>
         <meta charset="utf-8" />
-        {!isDev && (
-          <link
-            rel="manifest"
-            href={`${import.meta.env.BASE_URL}manifest.json`}
-          />
-        )}
         <RouterHead />
       </head>
       <body lang="en">
@@ -101,6 +66,10 @@ export default component$(() => {
                 <img
                   src="/theta-logo.webp"
                   alt="Theta"
+                  data-critical-media
+                  loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
                   class="relative h-20 w-auto object-contain [filter:brightness(0)_invert(1)] sm:h-24"
                 />
               </div>

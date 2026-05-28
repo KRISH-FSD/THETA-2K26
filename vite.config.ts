@@ -2,7 +2,7 @@
  * This is the base config for vite.
  * When building, the adapter config is used which loads this file and extends it.
  */
-import { defineConfig, type UserConfig } from "vite";
+import { defineConfig, normalizePath, type Plugin, type UserConfig } from "vite";
 import { qwikVite } from "@builder.io/qwik/optimizer";
 import { qwikCity } from "@builder.io/qwik-city/vite";
 import tsconfigPaths from "vite-tsconfig-paths";
@@ -24,6 +24,7 @@ export default defineConfig(({ command, mode }): UserConfig => {
     plugins: [
       qwikCity(),
       qwikVite(),
+      windowsDevAbsolutePathFix(),
       tsconfigPaths({ root: "." }),
       tailwindcss(),
     ],
@@ -64,6 +65,46 @@ export default defineConfig(({ command, mode }): UserConfig => {
     },
   };
 });
+
+function windowsDevAbsolutePathFix(): Plugin {
+  const root = normalizePath(process.cwd()).replace(/\/$/, "");
+  const rootLower = root.toLowerCase();
+
+  return {
+    name: "windows-dev-absolute-path-fix",
+    apply: "serve",
+    configureServer(server) {
+      server.middlewares.use((req, _res, next) => {
+        if (!req.url) {
+          next();
+          return;
+        }
+
+        const [pathname, query] = req.url.split("?");
+        let decodedPathname: string;
+        try {
+          decodedPathname = decodeURI(pathname);
+        } catch {
+          next();
+          return;
+        }
+
+        const normalizedPathname = normalizePath(decodedPathname).replace(
+          /^\/(?=[A-Za-z]:\/)/,
+          "",
+        );
+
+        if (normalizedPathname.toLowerCase().startsWith(`${rootLower}/`)) {
+          req.url =
+            normalizedPathname.slice(root.length) + (query ? `?${query}` : "");
+        }
+
+        next();
+      });
+    },
+  };
+}
+
 // *** utils ***
 /**
  * Function to identify duplicate dependencies and throw an error

@@ -196,7 +196,7 @@ const EventCard = component$<EventCardProps>(
     <article class="rm-card" style={`--rm-accent:${meta.color};--rm-accent-rgb:${meta.rgb};`}>
       <div class="rm-card__sheen" />
       <div class="rm-card__media">
-        <img src={ev.img} alt={ev.title} width={1200} height={640} loading="lazy" class="rm-card__image" />
+        <img src={ev.img} alt={ev.title} width={1200} height={640} loading="lazy" decoding="async" class="rm-card__image" />
         <div class="rm-card__media-overlay" />
         <div class="rm-card__chip-row">
           <span class="rm-card__chip rm-card__chip--accent">
@@ -536,7 +536,7 @@ export default component$(function Day1Roadmap() {
 
       <div class="rm-scene-gallery">
         <div class="rm-scene-art rm-scene-art--i1">
-          <img src="/roadmap-day1/i1.webp" alt="Scene 1" />
+          <img src="/roadmap-day1/i1.webp" alt="Scene 1" loading="lazy" decoding="async" />
         </div>
       </div>
 

@@ -72,7 +72,7 @@ export const SponsorsGrid = component$((props: SponsorsGridProps) => {
         <div data-marquee-track class="t-marquee-track flex animate-left py-8">
            {[...marqueeSponsors, ...marqueeSponsors].map((s, i) => (
              <div key={i} class="mx-6 w-32 h-16 bg-white/95 rounded-xl p-3 flex items-center justify-center flex-shrink-0">
-               <img src={s.logo} alt={s.name} class="max-h-full max-w-full object-contain" loading="lazy" />
+               <img src={s.logo} alt={s.name} class="max-h-full max-w-full object-contain" loading="lazy" decoding="async" />
              </div>
            ))}
         </div>
@@ -94,7 +94,7 @@ export const SponsorsGrid = component$((props: SponsorsGridProps) => {
               {(props.sponsors[selectedTier.value] || []).filter((s:any)=>s.isActive).map((s:any, i:number) => (
                 <div key={i} class="p-6 rounded-2xl bg-white/5 border border-white/5 flex flex-col items-center justify-center">
                   <div class="h-12 w-full flex items-center justify-center bg-white p-2 rounded-lg">
-                    <img src={s.logo} alt={s.name} class="h-full w-full object-contain" loading="lazy" />
+                    <img src={s.logo} alt={s.name} class="h-full w-full object-contain" loading="lazy" decoding="async" />
                   </div>
                   <p class="mt-4 text-[9px] font-black uppercase text-white/40">{s.name}</p>
                 </div>

@@ -275,6 +275,8 @@ export default component$(() => {
                   <img
                     src={dev.photo}
                     alt={dev.name}
+                    loading="lazy"
+                    decoding="async"
                     class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 </div>

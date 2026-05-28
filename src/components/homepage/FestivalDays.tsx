@@ -53,7 +53,7 @@ export const FestivalDays = component$((props: FestivalDaysProps) => {
     <section id="festival-days" class="relative py-20 sm:py-32 overflow-hidden bg-black">
       <div class="festival-days-mesh absolute inset-0 z-0">
         {perf.value !== "lo" && <canvas class="festival-days-mesh-web pointer-events-none" />}
-        <img src="/backgrounds/sastra-3.webp" alt="" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-10 w-[600px] pointer-events-none" loading="lazy" />
+        <img src="/backgrounds/sastra-3.webp" alt="" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-10 w-[600px] pointer-events-none" loading="lazy" decoding="async" />
       </div>
 
       <div class="mx-auto max-w-7xl px-4 relative z-10">
@@ -65,7 +65,7 @@ export const FestivalDays = component$((props: FestivalDaysProps) => {
         <div class="grid gap-6 lg:grid-cols-3">
           {props.days.map((day, index) => (
             <div key={day.day} onClick$={() => { selectedDay.value = day; }} class="group relative block overflow-hidden rounded-[2.5rem] border p-8 backdrop-blur-3xl transition-all cursor-pointer hover:scale-[1.02]" style={{ borderColor: `${dayBorderColors[index]}44`, background: dayCardSurfaces[index] }}>
-              <img src={index === 2 ? "/spidy/spider-logo.webp" : (index === 1 ? "/onepeice/one-peice-logo.webp" : "/ben10/ben10-logo.webp")} alt="" class="absolute top-1/2 right-0 w-32 opacity-10" loading="lazy" />
+              <img src={index === 2 ? "/spidy/spider-logo.webp" : (index === 1 ? "/onepeice/one-peice-logo.webp" : "/ben10/ben10-logo.webp")} alt="" class="absolute top-1/2 right-0 w-32 opacity-10" loading="lazy" decoding="async" />
               <div class="relative z-10 flex flex-col items-center text-center">
                 <span class="text-[10px] font-bold tracking-widest opacity-40">{day.date}</span>
                 <h3 class="mt-4 text-4xl font-black" style={{ color: dayAccents[index] }}>{day.day}</h3>

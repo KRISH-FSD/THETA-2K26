@@ -1,22 +1,11 @@
-import {
-  $,
-  component$,
-  Slot,
-  useSignal,
-  useVisibleTask$,
-} from "@builder.io/qwik";
+import { component$, Slot, useSignal, useVisibleTask$ } from "@builder.io/qwik";
 import { Link, useLocation } from "@builder.io/qwik-city";
-import { Header } from "~/components/header/header";
-import { Chatbot } from "~/components/chatbot/Chatbot";
+import { Header } from "../components/header/header";
+import { Chatbot } from "../components/chatbot/Chatbot";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { applyPerfTier, watchPerfTier } from "~/utils/perf";
+import { applyPerfTier, watchPerfTier } from "../utils/perf";
 interface LayoutCopy {
-  underDevelopment: {
-    ariaLabel: string;
-    title: string;
-    subtitle: string;
-  };
   footer: {
     description: string;
     quickLinksTitle: string;
@@ -44,11 +33,6 @@ interface LayoutCopy {
 }
 
 const defaultLayoutCopy: LayoutCopy = {
-  underDevelopment: {
-    ariaLabel: "Show development notice",
-    title: "Website Under Development",
-    subtitle: "Changes may occur",
-  },
   footer: {
     description:
       "Theta is SASTRA's national-level techno-management fest organized by SASTRA Deemed University. Join us for three days of innovation, competition, and excitement.",
@@ -78,30 +62,83 @@ const defaultLayoutCopy: LayoutCopy = {
 
 export default component$(() => {
   const loc = useLocation();
-  const underDev = useSignal(true);
-  const toastOpen = useSignal(false);
   const copy = useSignal<LayoutCopy>(defaultLayoutCopy);
+  const showFooter = useSignal(false);
+  const showChatbot = useSignal(false);
   const isSponsorsRoute = loc.url.pathname.startsWith("/sponsors");
   const isDevelopersRoute = loc.url.pathname.startsWith("/developers");
   const isEventsRoute = loc.url.pathname.startsWith("/events");
   const isDay2 = loc.url.pathname.includes("/roadmap/day2");
   const footerLogo = isDay2 ? "/onepeice/one-peice-logo.webp" : "/theta-logo.webp";
 
-  const showDev = $(() => {
-    toastOpen.value = !toastOpen.value;
-    setTimeout(() => {
-      toastOpen.value = false;
-    }, 3000);
-  });
-
   useVisibleTask$(() => {
-    underDev.value = import.meta.env.PUBLIC_UNDER_DEV !== "false";
     // Apply 3-tier perf tier to <html> (data-perf-tier="lo|mid|hi")
     // and data-mobile-perf for backwards-compat with existing CSS guards
     applyPerfTier();
     const stopWatch = watchPerfTier();
     gsap.registerPlugin(ScrollTrigger);
     return () => stopWatch();
+  });
+
+  useVisibleTask$(({ cleanup }) => {
+    const makeMediaLazy = () => {
+      document
+        .querySelectorAll<HTMLImageElement>("img:not([data-critical-media])")
+        .forEach((img) => {
+          img.loading ||= "lazy";
+          img.decoding ||= "async";
+        });
+
+      document.querySelectorAll<HTMLIFrameElement>("iframe").forEach((frame) => {
+        frame.loading ||= "lazy";
+      });
+    };
+
+    makeMediaLazy();
+    const observer = new MutationObserver(makeMediaLazy);
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["src"],
+    });
+
+    const idleId = window.setTimeout(() => {
+      showChatbot.value = true;
+    }, 900);
+
+    cleanup(() => {
+      observer.disconnect();
+      window.clearTimeout(idleId);
+    });
+  });
+
+  useVisibleTask$(({ cleanup, track }) => {
+    track(() => loc.url.pathname);
+    showFooter.value = isDevelopersRoute || isEventsRoute;
+
+    if (showFooter.value) {
+      return;
+    }
+
+    const sentinel = document.querySelector<HTMLElement>("[data-footer-lazy]");
+    if (!sentinel || !("IntersectionObserver" in window)) {
+      showFooter.value = true;
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          showFooter.value = true;
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "900px 0px" },
+    );
+
+    observer.observe(sentinel);
+    cleanup(() => observer.disconnect());
   });
 
   useVisibleTask$(async () => {
@@ -113,10 +150,6 @@ export default component$(() => {
 
       if (data.layout) {
         copy.value = {
-          underDevelopment: {
-            ...defaultLayoutCopy.underDevelopment,
-            ...(data.layout.underDevelopment || {}),
-          },
           footer: {
             ...defaultLayoutCopy.footer,
             ...(data.layout.footer || {}),
@@ -175,36 +208,9 @@ export default component$(() => {
           <Slot />
         </main>
 
-        {underDev.value && (
-          <div class="fixed bottom-6 left-6 z-50">
-            <button
-              onClick$={showDev}
-              class="flex h-10 w-10 items-center justify-center rounded-full backdrop-blur-md transition-all hover:scale-110"
-              style={{
-                backgroundColor: "rgba(var(--t-brand-rgb), 0.1)",
-                color: "var(--t-brand-accent)",
-                boxShadow: "0 0 15px rgba(var(--t-brand-rgb), 0.3)",
-              }}
-              aria-label={copy.value.underDevelopment.ariaLabel}
-            >
-              !
-            </button>
-            {toastOpen.value && (
-              <div class="absolute bottom-12 left-0 w-52 rounded-xl border bg-[#0a0a0a]/90 p-4 text-xs backdrop-blur-md"
-                   style={{ borderColor: "rgba(var(--t-brand-rgb), 0.3)", boxShadow: "0 0 20px rgba(var(--t-brand-rgb), 0.2)" }}>
-                <p class="font-bold" style={{ color: "var(--t-brand-accent)" }}>
-                  {copy.value.underDevelopment.title}
-                </p>
-                <p class="mt-1 text-[#8ca38c]">
-                  {copy.value.underDevelopment.subtitle}
-                </p>
-              </div>
-            )}
-          </div>
-        )}
-
         {/* ── Footer: Modern Redesign ── */}
         {!isDevelopersRoute && !isEventsRoute && (
+          showFooter.value ? (
           <footer class="footer-modern mt-12 border-t border-white/10 bg-[#0a0a0a] pt-16 pb-32 md:pb-8 relative z-20">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
               <div class="grid gap-12 md:gap-8 grid-cols-1 md:grid-cols-4 lg:grid-cols-5">
@@ -216,12 +222,16 @@ export default component$(() => {
                       alt="Theta"
                       width={isDay2 ? 180 : 140}
                       height={isDay2 ? 80 : 70}
+                      loading="lazy"
+                      decoding="async"
                       class={["h-12 w-auto opacity-90 transition-all duration-300 hover:opacity-100", !isDay2 ? "[filter:brightness(0)_invert(1)]" : ""]}
                     />
                     <div class="h-8 w-px bg-white/10"></div>
                     <img
                       src="/sastra.webp"
                       alt="SASTRA Logo"
+                      loading="lazy"
+                      decoding="async"
                       class="h-10 w-auto opacity-80 hover:opacity-100 transition-opacity rounded-md"
                     />
                   </div>
@@ -298,9 +308,16 @@ export default component$(() => {
               </div>
             </div>
           </footer>
+          ) : (
+            <div
+              data-footer-lazy
+              class="site-lazy-band"
+              aria-hidden="true"
+            />
+          )
         )}
       </div>
-      <Chatbot />
+      {showChatbot.value && !isEventsRoute && <Chatbot />}
     </div>
   );
 });

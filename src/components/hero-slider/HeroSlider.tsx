@@ -3,7 +3,6 @@ import {
   useSignal,
   useVisibleTask$,
   $,
-  useStore,
 } from "@builder.io/qwik";
 import { Link } from "@builder.io/qwik-city";
 import gsap from "gsap";
@@ -21,6 +20,7 @@ export const heroSlides = [
     accentRgb: "56, 189, 248",
     bgImage: "/day1-bg.webp",
     bgVideo: "/homepage/v1.mp4",
+    mobileBgVideo: "/homepage/v1.mp4",
     thumb: "/day1-bg.webp",
   },
   /* 
@@ -46,44 +46,13 @@ export const heroSlides = [
     accentRgb: "255,51,51",
     bgImage: "/homepage/i3.webp",
     mobileBgImage: "/homepage/i3-mobile.webp",
+    mobileBgVideo: "",
     thumb: "/homepage/i3.webp",
   },
 ];
 
 /* ─── Countdown Component ─── */
-const HeroCountdown = component$((props: { targetDate: string }) => {
-  const timeLeft = useStore({
-    days: "00",
-    hours: "00",
-    minutes: "00",
-    seconds: "00",
-  });
-
-  useVisibleTask$(() => {
-    const target = new Date(props.targetDate).getTime();
-    const update = () => {
-      const diff = target - Date.now();
-      if (diff <= 0) {
-        timeLeft.days = "00";
-        timeLeft.hours = "00";
-        timeLeft.minutes = "00";
-        timeLeft.seconds = "00";
-        return;
-      }
-      const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      const m = Math.floor((diff / (1000 * 60)) % 60);
-      const s = Math.floor((diff / 1000) % 60);
-      timeLeft.days = d.toString().padStart(2, "0");
-      timeLeft.hours = h.toString().padStart(2, "0");
-      timeLeft.minutes = m.toString().padStart(2, "0");
-      timeLeft.seconds = s.toString().padStart(2, "0");
-    };
-    update();
-    const timer = setInterval(update, 1000);
-    return () => clearInterval(timer);
-  });
-
+const HeroCountdown = component$(() => {
   return (
     <div class="hs-countdown-wrap">
       <div class="hs-countdown-card">
@@ -95,24 +64,12 @@ const HeroCountdown = component$((props: { targetDate: string }) => {
               alt="Ben 10"
               class="hs-omnitrix-icon"
               loading="lazy"
+              decoding="async"
             />
           </div>
 
           <div class="hs-countdown-numbers">
-            {[
-              { val: timeLeft.days, label: "DD" },
-              { val: timeLeft.hours, label: "HH" },
-              { val: timeLeft.minutes, label: "MM" },
-              { val: timeLeft.seconds, label: "SS" },
-            ].map((unit, i) => (
-              <div key={i} class="hs-countdown-unit-wrap">
-                <div class="hs-countdown-unit">
-                  <span class="hs-countdown-value">{unit.val}</span>
-                  <span class="hs-countdown-label">{unit.label}</span>
-                </div>
-                {i < 3 && <div class="hs-countdown-sep">:</div>}
-              </div>
-            ))}
+            <span class="hs-countdown-complete">MISSION COMPLETE!</span>
           </div>
         </div>
       </div>
@@ -177,6 +134,9 @@ export const HeroSlider = component$(() => {
     const syncViewport = () => {
       isDesktop.value = mediaQuery.matches;
       perfTier.value = getDevicePerfTier();
+      if (!mediaQuery.matches && active.value !== 0) {
+        active.value = 0;
+      }
     };
 
     syncViewport();
@@ -219,13 +179,15 @@ export const HeroSlider = component$(() => {
     track(() => isHeroInView.value);
 
     const activeSlide = heroSlides[active.value];
+    const shouldUseVideo =
+      !!activeSlide.bgVideo && (isDesktop.value || !!activeSlide.mobileBgVideo);
 
     if (!isHeroInView.value) {
       return;
     }
 
     // Video handles its own progress in the next task block
-    if (activeSlide.bgVideo && isDesktop.value) {
+    if (shouldUseVideo) {
       return;
     }
 
@@ -259,7 +221,10 @@ export const HeroSlider = component$(() => {
     const activeSlide = heroSlides[active.value];
     const currentVideo = videoRef.value;
     const shouldTrackVideo =
-      !!currentVideo && !!activeSlide.bgVideo && isDesktop.value && isHeroInView.value;
+      !!currentVideo &&
+      !!activeSlide.bgVideo &&
+      (isDesktop.value || !!activeSlide.mobileBgVideo) &&
+      isHeroInView.value;
 
     isVideoLoading.value = shouldTrackVideo;
 
@@ -293,7 +258,7 @@ export const HeroSlider = component$(() => {
     const currentVideo = videoRef.value;
     const activeSlide = heroSlides[active.value];
 
-    if (!currentVideo || !activeSlide.bgVideo || !isDesktop.value) {
+    if (!currentVideo || !activeSlide.bgVideo || (!isDesktop.value && !activeSlide.mobileBgVideo)) {
       return;
     }
 
@@ -318,6 +283,11 @@ export const HeroSlider = component$(() => {
     };
 
     const handleEnded = () => {
+      if (!isDesktop.value) {
+        currentVideo.currentTime = 0;
+        void currentVideo.play().catch(() => { });
+        return;
+      }
       const nextIdx = (active.value + 1) % heroSlides.length;
       void goTo(nextIdx);
     };
@@ -335,50 +305,61 @@ export const HeroSlider = component$(() => {
     // Perf Fix 2.3: Pause/Play based on visibility
     const handleVisibility = () => {
       if (document.hidden) currentVideo.pause();
-      else if (isHeroInView.value && isDesktop.value) currentVideo.play().catch(() => { });
+      else if (isHeroInView.value) currentVideo.play().catch(() => { });
     };
     document.addEventListener("visibilitychange", handleVisibility);
     cleanup(() => document.removeEventListener("visibilitychange", handleVisibility));
   });
 
   const slide = heroSlides[active.value];
+  const useHeroVideo = (s: (typeof heroSlides)[number]) =>
+    !!s.bgVideo &&
+    isHeroInView.value &&
+    active.value === heroSlides.findIndex((item) => item.id === s.id) &&
+    (isDesktop.value ? perfTier.value === "hi" : !!s.mobileBgVideo);
+
   return (
     <section id="hero-slider" ref={heroRef} class="hs-root relative overflow-hidden"
       style={`--hs-accent:${slide.accentColor};--hs-accent-rgb:${slide.accentRgb};`}>
 
       {/* Backgrounds - Map all for crossfade */}
       {heroSlides.map((s, i) => (
-        <div
-          key={s.id}
-          class={["hs-bg", active.value === i ? "hs-bg--active" : "hs-bg--inactive"]}
-          style={{
-            zIndex: active.value === i ? 2 : 1,
-            opacity: active.value === i ? 1 : 0,
-            transition: "none",
-            transform: "none"
-          }}
-        >
-          {s.bgVideo && isDesktop.value && perfTier.value === "hi" ? (
-            isHeroInView.value && active.value === i ? (
+        (() => {
+          const isActive = active.value === i;
+          const isNext = (active.value + 1) % heroSlides.length === i;
+          const shouldRenderMedia = isActive || (isNext && isHeroInView.value);
+
+          return (
+            <div
+              key={s.id}
+              class={["hs-bg", isActive ? "hs-bg--active" : "hs-bg--inactive"]}
+              style={{
+                zIndex: isActive ? 2 : 1,
+                opacity: isActive ? 1 : 0,
+                transition: "none",
+                transform: "none"
+              }}
+            >
+              {shouldRenderMedia && (useHeroVideo(s) ? (
               <video
                 ref={videoRef}
                 class="absolute inset-0 h-full w-full object-cover"
                 data-hero-video
-                src={s.bgVideo}
+                src={!isDesktop.value && s.mobileBgVideo ? s.mobileBgVideo : s.bgVideo}
                 autoplay
                 muted
                 playsInline
-                preload="none"
-                poster={s.bgImage}
+                loop={!isDesktop.value}
+                preload={isDesktop.value ? "none" : "metadata"}
+                poster={(!isDesktop.value && (s as any).mobileBgImage) ? (s as any).mobileBgImage : s.bgImage}
                 disablePictureInPicture
-                style="will-change: transform;"
+                style="will-change: auto;"
               />
-            ) : (
+          ) : s.bgVideo && isDesktop.value && perfTier.value === "hi" ? (
               <div
                 class="absolute inset-0 h-full w-full bg-cover bg-center"
                 style={{ backgroundImage: `url(${s.bgImage})`, willChange: "opacity" }}
               />
-            )
           ) : (
             <div
               class="absolute inset-0 h-full w-full bg-cover"
@@ -388,79 +369,46 @@ export const HeroSlider = component$(() => {
                 willChange: "opacity"
               }}
             />
-          )}
-          {/* Dynamic Overlay: Day 1 & 3 get light bottom darkness only to showcase visuals, Day 2 gets cinematic darkness for navigation visibility */}
-          <div class="hs-overlay" style={{
-            background: (s.id === 0 || s.id === 2)
-              ? "linear-gradient(to top, rgba(5,3,15,0.85) 0%, rgba(5,3,15,0.4) 20%, transparent 50%)"
-              : "linear-gradient(108deg, rgba(5,3,15,0.65) 0%, rgba(5,3,15,0.45) 45%, rgba(5,3,15,0.1) 100%), linear-gradient(to top, rgba(5,3,15,1) 0%, rgba(5,3,15,0.44) 32%, transparent 100%)"
-          }} />
-          <div class="hs-tint" style={{ background: `radial-gradient(ellipse 70% 60% at 80% 40%, rgba(${s.accentRgb},0.08), transparent 70%)` }} />
-          {i === 0 && isDesktop.value && isVideoLoading.value && active.value === 0 && (
-            <div class="hs-video-loader">
-              <div
-                class="hs-video-loader__poster"
-                style={{ backgroundImage: `url(${s.bgImage})` }}
-              />
-              <div class="hs-video-loader__veil" />
-              <div class="hs-video-loader__content">
-                <span class="hs-video-loader__label">Loading Day 1 video...</span>
-              </div>
+          ))}
+              {/* Dynamic Overlay: Day 1 & 3 get light bottom darkness only to showcase visuals, Day 2 gets cinematic darkness for navigation visibility */}
+              {shouldRenderMedia && (
+                <>
+                  <div class="hs-overlay" style={{
+                    background: (s.id === 0 || s.id === 2)
+                      ? "linear-gradient(to top, rgba(5,3,15,0.85) 0%, rgba(5,3,15,0.4) 20%, transparent 50%)"
+                      : "linear-gradient(108deg, rgba(5,3,15,0.65) 0%, rgba(5,3,15,0.45) 45%, rgba(5,3,15,0.1) 100%), linear-gradient(to top, rgba(5,3,15,1) 0%, rgba(5,3,15,0.44) 32%, transparent 100%)"
+                  }} />
+                  <div class="hs-tint" style={{ background: `radial-gradient(ellipse 70% 60% at 80% 40%, rgba(${s.accentRgb},0.08), transparent 70%)` }} />
+                </>
+              )}
+              {i === 0 && isDesktop.value && isVideoLoading.value && active.value === 0 && (
+                <div class="hs-video-loader">
+                  <div
+                    class="hs-video-loader__poster"
+                    style={{ backgroundImage: `url(${s.bgImage})` }}
+                  />
+                  <div class="hs-video-loader__veil" />
+                  <div class="hs-video-loader__content">
+                    <span class="hs-video-loader__label">Loading Day 1 video...</span>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
-        </div>
+          );
+        })()
       ))}
 
       <div class="hs-grain" />
 
-      {/* Content: Hidden for Day 1 on desktop and Day 3 alone to favor visuals */}
-      {!(slide.id === 0 && isDesktop.value) && slide.id !== 2 && (
-        <div class="hs-content px-4">
-          <div class="hs-badge mb-6">
-            <span class="hs-badge-text text-[0.65rem] md:text-[0.75rem] font-black tracking-widest uppercase py-2 px-6 rounded-full border border-white/20 bg-white/5 backdrop-blur-md">
-              {slide.subtitle}
-            </span>
-          </div>
-          <h1 class="hs-title font-black uppercase text-center t-gradient-blue text-4xl sm:text-6xl md:text-7xl lg:text-8xl leading-none"
-            style="text-shadow: 0 0 50px rgba(0,0,0,0.9), 0 15px 30px rgba(0,0,0,0.6);">
-            {slide.title}
-          </h1>
-          <p class="hs-desc text-center mt-6 text-sm sm:text-base md:text-lg text-white/90 max-w-2xl mx-auto font-medium"
-            style="text-shadow: 0 0 25px rgba(0,0,0,1);">
-            {slide.description}
-          </p>
-          <div class="hs-actions mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <div class="hs-actions__row">
-              <a href={`/roadmap/day${slide.id + 1}`}
-                class="t-button-neon hs-cta--primary group flex items-center gap-3 px-8 py-4 rounded-full border border-white/30 bg-black text-white hover:scale-105 transition-all shadow-[0_0_30px_rgba(0,0,0,0.5)]">
-                VIEW ROADMAP
-                <svg class="w-5 h-5 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-              </a>
-            </div>
-            <div class="hs-actions__row flex items-center gap-4">
-              <a href="/events"
-                class="t-button-neon hs-cta--secondary group flex items-center gap-3 px-8 py-4 rounded-full border border-white/20 bg-black/40 backdrop-blur-md text-white hover:bg-white hover:text-black transition-all">
-                EXPLORE ALL
-                <svg class="w-5 h-5 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-              </a>
-              <Link href="/contact"
-                class="hidden sm:inline-flex px-8 py-4 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-[0.65rem] font-black uppercase tracking-widest text-white/70 hover:text-white hover:border-white/30 transition-all">
-                CONTACT TEAM
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
-
       <div class="hs-hero-countdown">
-        <HeroCountdown targetDate="2026-04-11T09:00:00" />
+        <HeroCountdown />
       </div>
 
       {isDesktop.value && (
         <div class="hs-video-branding" aria-label="Theta and SASTRA logos">
-          <img src="/theta-logo.webp" alt="Theta" class="hs-video-branding__logo hs-video-branding__logo--theta" loading="lazy" />
+          <img src="/theta-logo.webp" alt="Theta" class="hs-video-branding__logo hs-video-branding__logo--theta" loading="lazy" decoding="async" />
           <div class="hs-video-branding__divider" />
-          <img src="/sastra.webp" alt="SASTRA" class="hs-video-branding__logo hs-video-branding__logo--sastra" loading="lazy" />
+          <img src="/sastra.webp" alt="SASTRA" class="hs-video-branding__logo hs-video-branding__logo--sastra" loading="lazy" decoding="async" />
         </div>
       )}
 
@@ -481,7 +429,7 @@ export const HeroSlider = component$(() => {
             class={`hs-thumb ${active.value === i ? "hs-thumb--active" : ""}`}
             style={active.value === i ? { borderColor: s.accentColor, boxShadow: `0 0 0 2px ${s.accentColor}44, 0 8px 24px rgba(0,0,0,0.5)` } : {}}
             onClick$={() => goTo(i)}>
-            <img src={s.thumb} alt={s.title} class="hs-thumb-img" loading="lazy" />
+            <img src={s.thumb} alt={s.title} class="hs-thumb-img" loading="lazy" decoding="async" />
             <div class="hs-thumb-overlay" style={active.value === i ? { background: `linear-gradient(to top, rgba(${s.accentRgb},0.55), transparent)` } : {}} />
             <div class={["hs-thumb-line-bg", active.value === i ? "opacity-100" : "opacity-0"]} />
             {active.value === i && (

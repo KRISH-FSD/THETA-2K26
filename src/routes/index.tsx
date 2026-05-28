@@ -1,7 +1,5 @@
 import { $, component$, useSignal, useVisibleTask$ } from "@builder.io/qwik";
 import { Link, type DocumentHead } from "@builder.io/qwik-city";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { HeroSlider } from "../components/hero-slider/HeroSlider";
 import { getDevicePerfTier } from "../utils/perf";
 
@@ -227,6 +225,17 @@ const defaultSponsors: SponsorsConfig = {
   media: [],
 };
 
+const HomeLazyPlaceholder = component$(
+  (props: { id: string; minHeight?: string }) => (
+    <div
+      data-home-lazy={props.id}
+      class="home-lazy-placeholder flex items-center justify-center"
+      style={`min-height:${props.minHeight || "70vh"}`}
+      aria-hidden="true"
+    />
+  ),
+);
+
 interface HomeDataPayload {
   config: ConfigData;
   sponsors: SponsorsConfig;
@@ -449,6 +458,11 @@ export default component$(() => {
   );
   const sphereRotation = useSignal({ x: 0, y: 0 });
   const mobilePerfMode = useSignal(false);
+  const showFestivalDays = useSignal(false);
+  const showStats = useSignal(false);
+  const showSponsors = useSignal(false);
+  const showBrowseEvents = useSignal(false);
+  const homeDataRequested = useSignal(false);
 
   useVisibleTask$(() => {
     const syncPerfMode = () => {
@@ -468,6 +482,39 @@ export default component$(() => {
       window.removeEventListener("orientationchange", syncPerfMode);
       delete document.documentElement.dataset.mobilePerf;
     };
+  });
+
+  useVisibleTask$(({ cleanup }) => {
+    const revealSection = (id: string) => {
+      if (id === "festival-days") showFestivalDays.value = true;
+      if (id === "stats") showStats.value = true;
+      if (id === "sponsors") showSponsors.value = true;
+      if (id === "browse-events") showBrowseEvents.value = true;
+    };
+
+    const placeholders = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-home-lazy]"),
+    );
+
+    if (!("IntersectionObserver" in window)) {
+      placeholders.forEach((el) => revealSection(el.dataset.homeLazy || ""));
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const target = entry.target as HTMLElement;
+          revealSection(target.dataset.homeLazy || "");
+          observer.unobserve(target);
+        });
+      },
+      { rootMargin: "320px 0px" },
+    );
+
+    placeholders.forEach((el) => observer.observe(el));
+    cleanup(() => observer.disconnect());
   });
 
   /* ── Global Interactive Background Canvas ── */
@@ -628,109 +675,22 @@ export default component$(() => {
     */
   });
 
-  useVisibleTask$(() => {
-    if (
-      mobilePerfMode.value ||
-      !window.matchMedia("(pointer: fine)").matches ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) {
-      return;
-    }
-    const section = document.querySelector<HTMLElement>(".festival-days-shell");
-    if (!section) return;
-    if (isMobilePerfMode()) {
-      section.style.setProperty("--festival-pointer-left", "0px");
-      section.style.setProperty("--festival-pointer-right", "0px");
-      section.style.setProperty("--festival-pointer-up", "0px");
-      section.style.setProperty("--festival-pointer-down", "0px");
-      section.style.setProperty("--festival-scroll-up", "0px");
-      section.style.setProperty("--festival-scroll-down", "0px");
-      section.style.setProperty("--festival-scroll-left", "0px");
-      section.style.setProperty("--festival-scroll-right", "0px");
-      section.style.setProperty("--festival-scroll-soft", "0px");
-      return;
-    }
-
-    const setScrollUp = gsap.quickSetter(section, "--festival-scroll-up", "px");
-    const setScrollDown = gsap.quickSetter(
-      section,
-      "--festival-scroll-down",
-      "px",
-    );
-    const setScrollLeft = gsap.quickSetter(
-      section,
-      "--festival-scroll-left",
-      "px",
-    );
-    const setScrollRight = gsap.quickSetter(
-      section,
-      "--festival-scroll-right",
-      "px",
-    );
-    const setScrollSoft = gsap.quickSetter(
-      section,
-      "--festival-scroll-soft",
-      "px",
-    );
-
-    const setPointerLeft = gsap.quickSetter(
-      section,
-      "--festival-pointer-left",
-      "px",
-    );
-    const setPointerRight = gsap.quickSetter(
-      section,
-      "--festival-pointer-right",
-      "px",
-    );
-    const setPointerUp = gsap.quickSetter(
-      section,
-      "--festival-pointer-up",
-      "px",
-    );
-    const setPointerDown = gsap.quickSetter(
-      section,
-      "--festival-pointer-down",
-      "px",
-    );
-
-    const resetPointer = () => {
-      setPointerLeft(0);
-      setPointerRight(0);
-      setPointerUp(0);
-      setPointerDown(0);
-    };
-
-    gsap.registerPlugin(ScrollTrigger);
-
-    const scrollTrigger = ScrollTrigger.create({
-      trigger: section,
-      start: "top bottom",
-      end: "bottom top",
-      onUpdate: (self) => {
-        const progress = self.progress;
-        const verticalShift = Math.round((0.5 - progress) * 44);
-        const horizontalShift = Math.round((progress - 0.5) * 34);
-        const softShift = Math.round((progress - 0.5) * 18);
-
-        setScrollUp(verticalShift);
-        setScrollDown(-verticalShift);
-        setScrollLeft(horizontalShift);
-        setScrollRight(-horizontalShift);
-        setScrollSoft(softShift);
-      },
-    });
-
-    resetPointer();
-
-    return () => {
-      scrollTrigger.kill();
-      resetPointer();
-    };
-  });
-
   /* ── Fetch Data ── */
-  useVisibleTask$(async () => {
+  useVisibleTask$(async ({ track }) => {
+    track(() => showFestivalDays.value);
+    track(() => showStats.value);
+    track(() => showSponsors.value);
+    track(() => showBrowseEvents.value);
+
+    const needsHomeData =
+      showFestivalDays.value ||
+      showStats.value ||
+      showSponsors.value ||
+      showBrowseEvents.value;
+
+    if (!needsHomeData || homeDataRequested.value) return;
+    homeDataRequested.value = true;
+
     try {
       const payload = await loadHomeData();
       configData.value = payload.config;
@@ -764,6 +724,9 @@ export default component$(() => {
   });
 
   useVisibleTask$(({ track }) => {
+    track(() => showStats.value);
+    if (!showStats.value) return;
+
     track(() => configData.value.stats);
     const targets = {
       events: parseStatNumber(configData.value.stats.events),
@@ -775,40 +738,56 @@ export default component$(() => {
       return;
     }
 
-    // GSAP ScrollTrigger already registered in layout.tsx
-
-    const section = document.getElementById("theta-stats");
-    if (!section) return;
-
-    // Removed heavy GSAP timeline for theta-stats to eliminate lag spikes on scroll.
-    // The section will render statically for smoother performance.
-
     counterDisplay.value = targets;
   });
 
-  useVisibleTask$(() => {
-    if (isMobilePerfMode()) return;
-    // GSAP ScrollTrigger already registered in layout.tsx
+  useVisibleTask$(({ track, cleanup }) => {
+    track(() => showSponsors.value);
+    track(() => mobilePerfMode.value);
 
-    const section = document.getElementById("home-cta");
-    if (!section) return;
-
-    // Removed heavy GSAP timeline for `home-cta` to eliminate lag spikes on scroll.
-    // The section will render statically for smoother performance.
-  });
-
-  useVisibleTask$(() => {
-    if (isMobilePerfMode()) return;
-    // GSAP ScrollTrigger already registered in layout.tsx
-    const marks = document.querySelectorAll<HTMLElement>(".t-day-card__mark");
-    const overlays = document.querySelectorAll<HTMLElement>(
-      ".t-knockout-overlay",
+    const spectrum = document.querySelector<HTMLElement>(
+      "[data-partner-spectrum]",
     );
-    const glowTargets = document.querySelectorAll<HTMLElement>(".t-glow-text");
-    if (marks.length === 0) return;
+    if (!showSponsors.value || !spectrum) {
+      return;
+    }
 
-    // Aurora/Mark glow timeline removed. CSS animations handle base movement.
-    // Heavy DOM manipulation in a looping timeline causes layout thrashing.
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let inView = false;
+
+    const sync = () => {
+      const canMove =
+        inView &&
+        !document.hidden &&
+        !mobilePerfMode.value &&
+        !reduceMotion.matches;
+      spectrum.dataset.partnerMoving = canMove ? "true" : "false";
+    };
+
+    if (!("IntersectionObserver" in window)) {
+      inView = true;
+      sync();
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        inView = Boolean(entry?.isIntersecting);
+        sync();
+      },
+      { threshold: 0.25 },
+    );
+
+    observer.observe(spectrum);
+    document.addEventListener("visibilitychange", sync);
+    reduceMotion.addEventListener("change", sync);
+
+    cleanup(() => {
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", sync);
+      reduceMotion.removeEventListener("change", sync);
+      spectrum.dataset.partnerMoving = "false";
+    });
   });
 
   useVisibleTask$(({ track }) => {
@@ -850,43 +829,43 @@ export default component$(() => {
       tierKey: tier.key,
     })),
   );
+  const spectrumSponsors = [...marqueeSponsors, ...marqueeSponsors];
 
   return (
     <div
-      class="relative overflow-x-hidden"
+      class="home-page-shell relative overflow-x-hidden"
       style="font-family: var(--font-body);"
     >
       <HeroSlider />
 
       {/* ── Global Interactive Background (Entire Page) ── */}
-      {!mobilePerfMode.value && (
-        <div class="home-neural-grid pointer-events-none fixed inset-0 z-0 bg-[radial-gradient(circle_at_center,rgba(0,255,85,0.03)_0%,transparent_70%)] opacity-0">
-          <div class="absolute inset-0 bg-[url('/grid.svg')] [mask-image:radial-gradient(ellipse_at_center,black,transparent)] bg-[size:100px_100px] opacity-[0.07]" />
-        </div>
-      )}
-
       {/* ═══════════════ SECTOR DIVIDER: HERO TO ROADMAP ═══════════════ */}
-      <div class="relative my-10 h-px w-full bg-gradient-to-r from-transparent via-[#00ff55]/20 to-transparent sm:my-16">
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#00ff55]/10 bg-black/80 px-5 py-1 text-[8px] font-black tracking-[0.4em] text-[#00ff55] uppercase shadow-[0_0_15px_rgba(0,255,85,0.1)] backdrop-blur-xl">
+      <div class="home-section-divider relative my-0 h-px w-full bg-gradient-to-r from-transparent via-[#00ff55]/20 to-transparent sm:my-12">
+        <div class="home-section-divider__label absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#00ff55]/10 bg-black/80 px-5 py-1 text-[8px] font-black tracking-[0.4em] text-[#00ff55] uppercase shadow-[0_0_15px_rgba(0,255,85,0.1)] backdrop-blur-xl">
           Mission Sequence Initialized
         </div>
       </div>
 
       {/* ═══════════════ DAY CARDS ═══════════════ */}
-      <section class="festival-days-shell relative overflow-hidden px-6 py-16 [contain-intrinsic-size:1200px] [content-visibility:auto] sm:px-12 lg:px-20">
+      {showFestivalDays.value ? (
+      <>
+      <section class="festival-days-shell relative overflow-hidden px-5 py-9 [contain-intrinsic-size:1200px] [content-visibility:auto] sm:px-12 sm:py-16 lg:px-20">
         <style>{`
           .festival-title {
-            font-family: var(--font-hero-ui), var(--font-body), sans-serif;
-            font-style: italic;
-            font-weight: 800;
-            letter-spacing: -0.01em;
-            text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.9);
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+            font-family: var(--font-body), sans-serif;
+            font-style: normal;
+            font-weight: 700;
+            letter-spacing: 0;
+            text-transform: none;
+            color: rgba(244, 247, 244, 0.9);
+            text-shadow:
+              0 1px 0 rgba(255, 255, 255, 0.08),
+              0 14px 36px rgba(0, 0, 0, 0.42);
           }
           .festival-title__line {
             display: inline-block;
-            white-space: nowrap;
+            max-width: min(40rem, 100%);
+            text-wrap: balance;
           }
           .festival-title__base {
             color: inherit;
@@ -894,34 +873,50 @@ export default component$(() => {
           }
           .festival-title__accent {
             display: inline-block;
-            padding: 0 0.04em;
-            font-weight: inherit;
-            background-size: 100% 100%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            filter: drop-shadow(0 0 14px rgba(255, 255, 255, 0.08));
+            position: relative;
+            padding: 0 0.08em;
+            font-family: var(--font-cursive), "Segoe Script", cursive;
+            font-size: 1.34em;
+            font-weight: 700;
+            line-height: 0.86;
+            text-transform: none;
+            background: none;
+            -webkit-text-fill-color: currentColor;
+            filter: none;
           }
           .festival-title__accent--light {
-            background-image: linear-gradient(135deg, #b8ff7a 0%, #32ff88 45%, #00d26a 100%);
+            color: #2cff75;
+            text-shadow: 0 0 18px rgba(44, 255, 117, 0.22);
           }
           .festival-title__accent--night {
-            background-image: linear-gradient(135deg, #ff8a8a 0%, #ff3d6e 45%, #ff1847 100%);
+            color: #ff3f5f;
+            text-shadow: 0 0 18px rgba(255, 63, 95, 0.22);
           }
           .festival-title__accent::after {
-            content: none;
+            content: "";
+            position: absolute;
+            right: 0.08em;
+            bottom: -0.12em;
+            left: 0.08em;
+            height: 0.08em;
+            border-radius: 999px;
+            background: currentColor;
+            opacity: 0.24;
+            transform: skewX(-14deg);
           }
           @media (max-width: 640px) {
             .festival-title {
-              letter-spacing: 0.2em;
+              letter-spacing: 0;
             }
             .festival-title__line {
+              display: block;
               white-space: normal;
+              max-width: 19rem;
+              margin-inline: auto;
             }
           }
           .t-day-card {
             isolation: isolate;
-            will-change: transform, opacity;
           }
           .t-day-card::before {
             content: "";
@@ -939,7 +934,6 @@ export default component$(() => {
             transition: opacity 0.7s ease, transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
             z-index: 0;
             pointer-events: none;
-            will-change: transform, opacity;
           }
           .t-day-card:hover::after {
             opacity: 1;
@@ -962,40 +956,22 @@ export default component$(() => {
           }
           .t-day-card__mark {
             transform: translateY(-50%) translateZ(0) !important;
-            transition: opacity 0.7s ease, filter 0.7s ease !important;
-            will-change: opacity, transform;
+            transition: opacity 0.35s ease, filter 0.35s ease !important;
           }
           .t-day-card:hover .t-day-card__mark {
             transform: translateY(-50%) translateZ(0) !important;
           }
-          @keyframes float {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            33% { transform: translate(15px, -20px) rotate(2deg); }
-            66% { transform: translate(-10px, 15px) rotate(-1deg); }
-            100% { transform: translate(0, 0) rotate(0deg); }
-          }
-          @keyframes float-reverse {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            33% { transform: translate(-20px, 25px) rotate(-3deg); }
-            66% { transform: translate(15px, -15px) rotate(2deg); }
-            100% { transform: translate(0, 0) rotate(0deg); }
-          }
-          .animate-float { animation: float 10s ease-in-out infinite; }
-          .animate-float-reverse { animation: float-reverse 15s ease-in-out infinite; }
-          @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         `}</style>
 
         {/* Global Mesh Background for this section */}
         <div class="festival-days-mesh absolute inset-0 z-0">
-          {!mobilePerfMode.value && (
-            <canvas class="festival-days-mesh-web pointer-events-none" />
-          )}
           <div class="festival-days-logo-glow" aria-hidden="true">
             <img
               src="/backgrounds/sastra-3.webp"
               alt=""
               class="festival-days-logo-mark"
               loading="lazy"
+              decoding="async"
             />
           </div>
         </div>
@@ -1007,14 +983,14 @@ export default component$(() => {
           <div class="festival-days-vignette" />
         </div>
 
-        <div class="festival-days-shell__inner relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div class="festival-header-wrap relative z-20 mb-14 text-center sm:mb-16">
-            <div class="mb-4 overflow-hidden">
+        <div class="festival-days-shell__inner relative z-10 mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+          <div class="festival-header-wrap relative z-20 mb-8 text-center sm:mb-16">
+            <div class="mb-3 overflow-hidden sm:mb-4">
               <span class="t-badge reveal-slide-up mx-auto block w-fit">
                 Mission Day Selection
               </span>
             </div>
-            <h2 class="festival-title relative mt-2 text-[clamp(1.5rem,3.2vw,2.2rem)] leading-[1.1]">
+            <h2 class="festival-title relative mt-2 text-[clamp(1.2rem,2.35vw,1.9rem)] leading-[1.16]">
               <span class="festival-title__line">
                 <span class="festival-title__base">Shine in the </span>
                 <span class="festival-title__accent festival-title__accent--light">
@@ -1026,8 +1002,8 @@ export default component$(() => {
                 </span>
               </span>
             </h2>
-            <div class="mt-6 overflow-hidden">
-              <p class="block text-sm font-bold tracking-[0.38em] text-[var(--t-muted)] uppercase italic sm:text-[0.95rem]">
+            <div class="mt-4 overflow-hidden sm:mt-6">
+              <p class="festival-subtitle block text-xs font-bold tracking-[0.28em] text-[var(--t-muted)] uppercase italic sm:text-[0.95rem] sm:tracking-[0.38em]">
                 Track live transmission frequencies
               </p>
             </div>
@@ -1081,6 +1057,7 @@ export default component$(() => {
                     aria-hidden="true"
                     class="t-day-card__mark absolute top-1/2"
                     loading="lazy"
+                    decoding="async"
                     style={{
                       width:
                         index === 0
@@ -1207,6 +1184,11 @@ export default component$(() => {
       </section>
 
       {/* ═══════════════ SECTOR DIVIDER: ROADMAP TO STATS ═══════════════ */}
+      </>
+      ) : (
+        <HomeLazyPlaceholder id="festival-days" minHeight="90vh" />
+      )}
+
       <div class="relative my-10 h-px w-full bg-gradient-to-r from-transparent via-[#70f3ff]/30 to-transparent sm:my-16">
         <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#70f3ff]/20 bg-black px-6 py-1 text-[9px] font-black tracking-[0.4em] text-[#70f3ff] uppercase shadow-[0_0_15px_rgba(112,243,255,0.1)] backdrop-blur-md">
           Quantum Telemetry Active
@@ -1214,6 +1196,8 @@ export default component$(() => {
       </div>
 
       {/* ═══════════════ STATS ═══════════════ */}
+      {showStats.value ? (
+      <>
       <section
         id="theta-stats"
         class="theta-stats-section flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-[#0a0514] px-6 py-16 [contain-intrinsic-size:1000px] [content-visibility:auto] sm:px-12 lg:h-screen lg:min-h-0 lg:flex-row lg:px-20 lg:py-0"
@@ -1227,6 +1211,7 @@ export default component$(() => {
               class="theta-bento-card__watermark opacity-[0.03]"
               aria-hidden="true"
               loading="lazy"
+              decoding="async"
             />
 
             <div class="theta-stats-copy relative z-10">
@@ -1298,6 +1283,7 @@ export default component$(() => {
                 src="/theta-logo.webp"
                 alt="Theta Logo"
                 loading="lazy"
+                decoding="async"
                 class="h-20 w-auto object-contain opacity-60 brightness-0 invert sm:h-28"
               />
               <div class="h-8 w-[1px] bg-white/10 sm:h-12" aria-hidden="true" />
@@ -1305,6 +1291,7 @@ export default component$(() => {
                 src="/sponsors/general/sastra-university-logo.jpg"
                 alt="SASTRA University"
                 loading="lazy"
+                decoding="async"
                 class="h-8 w-auto rounded-md object-contain opacity-60 sm:h-12"
               />
             </div>
@@ -1355,6 +1342,11 @@ export default component$(() => {
       </section>
 
       {/* ═══════════════ SECTOR DIVIDER: STATS TO SPONSORS ═══════════════ */}
+      </>
+      ) : (
+        <HomeLazyPlaceholder id="stats" minHeight="80vh" />
+      )}
+
       <div class="relative my-10 h-px w-full bg-gradient-to-r from-transparent via-[#0ea935]/30 to-transparent sm:my-16">
         <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#0ea935]/20 bg-black px-6 py-1 text-[9px] font-black tracking-[0.4em] text-[#0ea935] uppercase shadow-[0_0_15px_rgba(14,169,53,0.1)] backdrop-blur-md">
           Partner Ecosystem Signal
@@ -1362,33 +1354,9 @@ export default component$(() => {
       </div>
 
       {/* ═══════════════ SPONSORS ═══════════════ */}
+      {showSponsors.value ? (
+      <>
       <div class="relative w-full overflow-hidden bg-transparent">
-        {/* Focused Background Elements */}
-        <div class="pointer-events-none absolute inset-0 z-0 select-none">
-          {/* Glowing Ben 10 Watch Watermark */}
-          <div class="absolute top-1/2 left-1/2 flex h-[300px] w-[300px] -translate-x-1/2 -translate-y-1/2 items-center justify-center opacity-[0.04] brightness-[2] grayscale invert md:h-[800px] md:w-[800px]">
-            <div class="absolute inset-0 bg-[#0ea935] opacity-[0.1] blur-[100px]" />
-            <img
-              src="/ben10/ben10-logo.webp"
-              alt=""
-              loading="lazy"
-              class={`h-full w-full object-contain ${mobilePerfMode.value ? "" : "animate-pulse drop-shadow-[0_0_80px_rgba(14,169,53,0.3)] filter"}`}
-              style="animation-duration: 6s;"
-            />
-          </div>
-
-          {!mobilePerfMode.value && (
-            <>
-              {/* Vivid Red Bubble - Top Left (Diamond Focus) */}
-              <div class="absolute top-[-5%] left-[-10%] h-[550px] w-[550px] rounded-full border border-[#ff4d4f]/30 bg-gradient-to-br from-[#ff4d4f]/25 to-transparent opacity-70 backdrop-blur-[50px]" />
-
-              {/* Glowing Tech Accent - Center Left */}
-              <div class="absolute top-[45%] left-[5%] h-10 w-10 rounded-lg border-2 border-[#0ea935]/60 opacity-60 blur-[1px]" />
-              <div class="absolute top-[47%] left-[6.5%] h-4 w-4 rounded-full bg-[#0ea935] opacity-80 shadow-[0_0_20px_#0ea935]" />
-            </>
-          )}
-        </div>
-
         <section
           id="sponsors-grid"
           class="relative z-10 mx-auto max-w-7xl bg-transparent px-6 py-16 sm:px-12 lg:px-20"
@@ -1482,6 +1450,7 @@ export default component$(() => {
                               alt=""
                               class="h-full w-full object-contain"
                               loading="lazy"
+                              decoding="async"
                             />
                           </div>
                         ))}
@@ -1534,38 +1503,35 @@ export default component$(() => {
               </h3>
             </div>
 
-            <div class="t-marquee-wrap-full relative overflow-hidden select-none">
-              {/* Cinema Gradient Masks - Subtle Fades */}
-              <div class="pointer-events-none absolute inset-y-0 left-0 z-20 w-24 bg-gradient-to-r from-black via-black/40 to-transparent" />
-              <div class="pointer-events-none absolute inset-y-0 right-0 z-20 w-24 bg-gradient-to-l from-black via-black/40 to-transparent" />
-
+            <div
+              data-partner-spectrum
+              data-partner-moving="false"
+              class="t-marquee-wrap-full partner-spectrum-smart relative overflow-hidden select-none"
+            >
               <div
                 data-marquee-track
-                class="t-marquee-track animate-left flex py-8"
-                style="will-change: transform;"
+                class="t-marquee-track partner-spectrum-track partner-spectrum-track--moving flex flex-nowrap gap-6 py-8"
               >
-                {[...marqueeSponsors, ...marqueeSponsors].map(
+                {spectrumSponsors.map(
                   (sponsor, index) => (
                     <article
                       key={`${sponsor.tierKey}-${sponsor.name}-${index}`}
-                      class="group relative mx-6 flex w-[260px] flex-shrink-0 flex-col items-center justify-center transition-all duration-700"
+                      class="group relative flex w-[260px] flex-shrink-0 flex-col items-center justify-center"
                     >
-                      {/* Floating Background Glow */}
-                      <div class="absolute -inset-4 rounded-[2.5rem] bg-[#70f3ff]/5 opacity-0 blur-2xl transition-opacity duration-700 group-hover/item:opacity-100" />
-
-                      <div class="relative w-full rounded-[2.25rem] border border-white/5 bg-[#0a0f0a]/40 p-6 shadow-2xl backdrop-blur-2xl transition-all duration-500 group-hover:border-white/20 group-hover:bg-[#101510]/60 hover:-translate-y-3">
+                      <div class="relative w-full rounded-[2.25rem] border border-white/5 bg-[#0a0f0a]/40 p-6 shadow-2xl transition-colors duration-200 group-hover:border-white/20 group-hover:bg-[#101510]/60">
                         {sponsor.isActive && (
                           <div class="absolute -top-3 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-full border border-[#ff4d4f]/30 bg-[#ff4d4f] px-4 py-1.5 text-[0.55rem] font-black tracking-widest text-black uppercase shadow-[0_0_25px_rgba(255,77,79,0.35)]">
-                            <span class="h-1.5 w-1.5 animate-pulse rounded-full bg-black"></span>
+                            <span class="h-1.5 w-1.5 rounded-full bg-black"></span>
                             Active
                           </div>
                         )}
 
-                        <div class="relative flex h-24 w-full transform items-center justify-center overflow-hidden rounded-2xl bg-white/95 p-5 shadow-2xl transition-all duration-700 group-hover:scale-[1.08] group-hover:shadow-[0_0_30px_rgba(255,255,255,0.1)]">
+                        <div class="relative flex h-24 w-full items-center justify-center overflow-hidden rounded-2xl bg-white/95 p-5 shadow-2xl">
                           <img
                             src={sponsor.logo}
                             alt={sponsor.name}
                             loading="lazy"
+                            decoding="async"
                             class="h-full w-full object-contain mix-blend-multiply"
                           />
                           {/* Glassy Overlay on Logo */}
@@ -1573,15 +1539,15 @@ export default component$(() => {
                         </div>
 
                         <div class="mt-6 text-center">
-                          <p class="text-[0.65rem] font-black tracking-[0.3em] text-white uppercase transition-all duration-500 group-hover:tracking-[0.4em]">
+                          <p class="text-[0.65rem] font-black tracking-[0.3em] text-white uppercase">
                             {sponsor.name}
                           </p>
-                          <div class="mx-auto mt-2 h-0.5 w-0 bg-[#0ea935] transition-all duration-500 group-hover:w-12 group-hover:shadow-[0_0_10px_#0ea935]" />
+                          <div class="mx-auto mt-2 h-0.5 w-12 bg-[#0ea935]" />
                         </div>
                       </div>
 
                       {/* Side Decorative Numbers */}
-                      <span class="pointer-events-none absolute top-8 -right-2 text-[4rem] font-black text-white/[0.02] italic transition-colors select-none group-hover:text-white/[0.05]">
+                      <span class="pointer-events-none absolute top-8 -right-2 text-[4rem] font-black text-white/[0.02] italic select-none">
                         {String((index % marqueeSponsors.length) + 1).padStart(
                           2,
                           "0",
@@ -1597,31 +1563,28 @@ export default component$(() => {
       </div>
 
       {/* ═══════════════ SECTOR DIVIDER: SPONSORS TO CTA ═══════════════ */}
+      </>
+      ) : (
+        <HomeLazyPlaceholder id="sponsors" minHeight="90vh" />
+      )}
+
       <div class="relative mt-12 h-px w-full bg-gradient-to-r from-transparent via-[#0ea935]/30 to-transparent sm:mt-20">
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#0ea935]/20 bg-black px-6 py-1 text-[9px] font-black tracking-[0.4em] text-[#0ea935] uppercase shadow-[0_0_15px_rgba(14,169,53,0.1)] backdrop-blur-md">
-          Strategic Network Hub
-        </div>
       </div>
 
       {/* ═══════════════ BROWSE EVENTS ═══════════════ */}
+      {showBrowseEvents.value ? (
+      <>
       <section
         id="browse-events-section"
-        class="browse-events-section relative flex min-h-screen flex-col items-center overflow-hidden bg-black px-6 py-16 sm:px-12 sm:py-24 lg:px-20"
+        class="browse-events-section relative flex min-h-screen flex-col items-center overflow-hidden px-6 py-16 sm:px-12 sm:py-24 lg:px-20"
       >
-        {/* Background Decorative Rings */}
-        {!mobilePerfMode.value && (
-          <div class="pointer-events-none absolute inset-0 z-0">
-            <div
-              class="absolute top-1/2 left-1/2 h-[800px] w-[800px] -translate-x-1/2 -translate-y-1/2 animate-spin rounded-full border border-white/5"
-              style="animation-duration: 40s;"
-            />
-            <div
-              class="animate-spin-reverse absolute top-1/2 left-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/5"
-              style="animation-duration: 30s;"
-            />
-          </div>
-        )}
-
+        <img
+          src="/backgrounds/sastra-2%20copy.webp"
+          alt=""
+          loading="lazy"
+          decoding="async"
+          class="browse-events-bg-image pointer-events-none absolute inset-0 h-full w-full object-cover"
+        />
         <div class="relative z-10 mx-auto flex h-full w-full max-w-[100rem] flex-1 flex-col justify-between">
           {/* Eyebrow */}
 
@@ -1652,19 +1615,13 @@ export default component$(() => {
                 class="group inline-flex items-center justify-center rounded-full border border-white/20 bg-black/40 px-8 py-4 text-xs font-black tracking-[0.2em] text-white uppercase backdrop-blur-md transition-all hover:border-transparent hover:bg-[#0ea935] hover:text-black hover:shadow-[0_0_20px_rgba(14,169,53,0.4)]"
               >
                 Explore Now
-                <svg
-                  class="ml-3 h-4 w-4 transition-transform group-hover:translate-x-1"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M14 5l7 7m0 0l-7 7m7-7H3"
-                  ></path>
-                </svg>
+                <img
+                  src="/ben10/ben10-logo.webp"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                  class="browse-events-btn__icon ml-3 h-5 w-5 object-contain"
+                />
               </Link>
             </div>
           </div>
@@ -1682,6 +1639,11 @@ export default component$(() => {
       </section>
 
       {/* ═══════════════ MODALS ═══════════════ */}
+      </>
+      ) : (
+        <HomeLazyPlaceholder id="browse-events" minHeight="80vh" />
+      )}
+
       {selectedDay.value && (
         <div class="t-modal-backdrop flex items-center justify-center p-4">
           <div class="absolute inset-0" onClick$={closeDay} />
@@ -1764,6 +1726,8 @@ export default component$(() => {
                           src={s.logo}
                           alt={s.name}
                           class="h-full w-full object-contain"
+                          loading="lazy"
+                          decoding="async"
                         />
                       </div>
                       <p class="mt-4 text-center text-[10px] font-black tracking-widest text-white/30 uppercase transition-colors group-hover/item:text-white">
@@ -1781,12 +1745,50 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: "Theta 2026 | National Level Techno-Management Fest",
+  title: "THETA 2K26 | SASTRA",
   meta: [
     {
       name: "description",
       content:
-        "Theta 2026 is SASTRA's premier national level techno-management fest. Explore hackathons, robotics, workshops, and more. March 15-17, 2026.",
+        "THETA 2K26 (Theta 2026) is SASTRA's national-level techno-management fest with hackathons, robotics, workshops, events and registrations.",
+    },
+    {
+      property: "og:title",
+      content: "THETA 2K26 | SASTRA",
+    },
+    {
+      property: "og:description",
+      content:
+        "THETA 2K26 (Theta 2026) is SASTRA's national-level techno-management fest with hackathons, robotics, workshops, events and registrations.",
+    },
+    {
+      property: "og:type",
+      content: "website",
+    },
+    {
+      property: "og:url",
+      content: "https://www.thetasrc.in/",
+    },
+    {
+      property: "og:image",
+      content: "https://www.thetasrc.in/og-image.png",
+    },
+    {
+      name: "twitter:card",
+      content: "summary_large_image",
+    },
+    {
+      name: "twitter:title",
+      content: "THETA 2K26 | SASTRA",
+    },
+    {
+      name: "twitter:description",
+      content:
+        "THETA 2K26 (Theta 2026) is SASTRA's national-level techno-management fest with hackathons, robotics, workshops, events and registrations.",
+    },
+    {
+      name: "twitter:image",
+      content: "https://www.thetasrc.in/og-image.png",
     },
   ],
 };

@@ -89,11 +89,18 @@ export const Header = component$(() => {
   const specialLogoAlt = resolvedTheme === "spider" ? "Spider-Man"
     : resolvedTheme === "onepiece" ? "One Piece"
       : "Theme Logo";
+  const navMuted = resolvedTheme === "spider" ? "rgba(255,180,180,0.68)"
+    : resolvedTheme === "onepiece" ? "rgba(255,220,150,0.72)"
+      : resolvedTheme === "red-ben10" ? "#a38c8c"
+        : "#8ca38c";
 
   const navLinkActive = (href: string) =>
     isActive(href)
       ? `px-2 text-[0.65rem] font-bold tracking-widest uppercase transition-colors lg:text-xs t-spider-nav-active t-spider-nav-hover`
-      : `px-2 text-[0.65rem] font-bold tracking-widest uppercase transition-colors lg:text-xs ${resolvedTheme === 'red-ben10' ? 'text-[#a38c8c]' : 'text-[#8ca38c]'} t-spider-nav-hover`;
+      : `px-2 text-[0.65rem] font-bold tracking-widest uppercase transition-colors lg:text-xs t-spider-nav-hover`;
+
+  const navLinkStyle = (href: string) =>
+    `color:${isActive(href) ? accent : navMuted};`;
 
   const mobilePrimaryLinkClass = (href: string) =>
     [
@@ -123,6 +130,10 @@ export const Header = component$(() => {
             <img
               src="/theta-logo.webp"
               alt="Theta"
+              data-critical-media
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
               class="h-18 w-auto object-contain opacity-95 [filter:brightness(0)_invert(1)] transition-opacity hover:opacity-100 sm:h-20 md:h-20"
             />
           </Link>
@@ -130,8 +141,8 @@ export const Header = component$(() => {
 
         {/* Center: Pill Navigation (Desktop) */}
         <nav class="pointer-events-auto absolute top-1/2 left-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-2 rounded-[2.5rem] border border-[rgba(255,255,255,0.15)] bg-[rgba(10,10,10,0.5)] px-4 py-1.5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_12px_40px_rgba(0,0,0,0.6)] backdrop-blur-2xl transition-transform hover:scale-[1.02] md:flex lg:gap-6 lg:px-6">
-          <Link href="/events" class={navLinkActive("/events")}>Events</Link>
-          <Link href="/sponsors" class={navLinkActive("/sponsors")}>Sponsors</Link>
+          <Link href="/events" class={navLinkActive("/events")} style={navLinkStyle("/events")}>Events</Link>
+          <Link href="/sponsors" class={navLinkActive("/sponsors")} style={navLinkStyle("/sponsors")}>Sponsors</Link>
 
           {/* Center logo button */}
           <Link href="/" class="t-ben10-link group relative mx-1 flex shrink-0 items-center justify-center lg:mx-2">
@@ -148,6 +159,9 @@ export const Header = component$(() => {
                   <img
                     src="/ben10/ben10-logo.webp"
                     alt="Ben 10 Logo"
+                    data-critical-media
+                    loading="eager"
+                    decoding="async"
                     class="t-ben10-icon h-7 lg:h-10 scale-100 opacity-100 absolute top-1/2 left-1/2 w-auto -translate-x-1/2 -translate-y-1/2 object-contain transition-all duration-500"
                     style="transition:opacity 0.32s ease,transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);"
                   />
@@ -156,6 +170,9 @@ export const Header = component$(() => {
                 <img
                   src={specialLogoSrc}
                   alt={specialLogoAlt}
+                  data-critical-media
+                  loading="eager"
+                  decoding="async"
                   class="t-ben10-icon w-auto object-contain transition-all duration-500 h-7 lg:h-10"
                   style="transition:opacity 0.32s ease,transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);"
                 />
@@ -163,8 +180,8 @@ export const Header = component$(() => {
             </div>
           </Link>
 
-          <Link href="/roadmap/day1" class={navLinkActive("/roadmap")}>Roadmap</Link>
-          <Link href="/contact" class={navLinkActive("/contact")}>Contacts</Link>
+          <Link href="/roadmap/day1" class={navLinkActive("/roadmap")} style={navLinkStyle("/roadmap")}>Roadmap</Link>
+          <Link href="/contact" class={navLinkActive("/contact")} style={navLinkStyle("/contact")}>Contacts</Link>
         </nav>
 
         {/* Mobile: compact Ben 10 navbar */}
@@ -191,6 +208,9 @@ export const Header = component$(() => {
                   <img
                     src="/ben10/ben10-logo.webp"
                     alt="Ben 10 Logo"
+                    data-critical-media
+                    loading="eager"
+                    decoding="async"
                     class="t-ben10-icon h-7 scale-100 opacity-100 absolute top-1/2 left-1/2 w-auto -translate-x-1/2 -translate-y-1/2 object-contain transition-all duration-500"
                     style="transition:opacity 0.32s ease,transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);"
                   />
@@ -199,6 +219,9 @@ export const Header = component$(() => {
                 <img
                   src={specialLogoSrc}
                   alt={specialLogoAlt}
+                  data-critical-media
+                  loading="eager"
+                  decoding="async"
                   class="t-ben10-icon w-auto object-contain transition-all duration-500 h-7"
                   style="transition:opacity 0.32s ease,transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);"
                 />

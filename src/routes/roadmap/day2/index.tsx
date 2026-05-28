@@ -243,7 +243,7 @@ const EventCard = component$<EventCardProps>(({ ev, meta, canRegister, isActive 
   <article class="rm-card" style={`--rm-accent:${meta.color};--rm-accent-rgb:${meta.rgb};`}>
     <div class="rm-card__sheen" />
     <div class="rm-card__media">
-      <img src={ev.img} alt={ev.title} width={1200} height={640} loading="lazy" class="rm-card__image" />
+      <img src={ev.img} alt={ev.title} width={1200} height={640} loading="lazy" decoding="async" class="rm-card__image" />
       <div class="rm-card__media-overlay" />
       <div class="rm-card__chip-row">
         <span class="rm-card__chip rm-card__chip--accent"><span class="rm-card__chip-dot" />{meta.label}</span>
@@ -341,7 +341,7 @@ export default component$(function Day2Roadmap() {
         }
       `}</style>
 
-      <div class="rm-scene-gallery"><div class="rm-scene-art"><img src="/roadmap-day2/i1.webp" alt="Day 2 background" /></div></div>
+      <div class="rm-scene-gallery"><div class="rm-scene-art"><img src="/roadmap-day2/i1.webp" alt="Day 2 background" loading="lazy" decoding="async" /></div></div>
       <div class="rm-page__aurora rm-page__aurora--left" />
       <div class="rm-page__aurora rm-page__aurora--right" />
 
