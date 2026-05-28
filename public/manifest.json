@@ -1,12 +1,12 @@
 {
   "$schema": "https://json.schemastore.org/web-manifest-combined.json",
-  "name": "THETA 2K26 | SASTRA",
+  "name": "THETA 2K26 | Official SASTRA Techno-Management Fest Website",
   "short_name": "THETA 2K26",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#050505",
   "theme_color": "#050505",
-  "description": "THETA 2K26 (Theta 2026) is SASTRA's national-level techno-management fest.",
+  "description": "THETA 2K26 is the official SASTRA techno-management fest website for events, workshops, robotics, hackathons, sponsors, schedule, contacts and registrations.",
   "icons": [
     {
       "src": "/icon-192.png",

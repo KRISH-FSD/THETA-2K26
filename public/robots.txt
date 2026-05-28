@@ -2,3 +2,4 @@ User-agent: *
 Allow: /
 
 Sitemap: https://www.thetasrc.in/sitemap.xml
+Host: https://www.thetasrc.in

@@ -1745,21 +1745,26 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: "THETA 2K26 | SASTRA",
+  title: "THETA 2K26 | Official SASTRA Techno-Management Fest Website",
   meta: [
     {
       name: "description",
       content:
-        "THETA 2K26 (Theta 2026) is SASTRA's national-level techno-management fest with hackathons, robotics, workshops, events and registrations.",
+        "THETA 2K26 is the official SASTRA techno-management fest website for events, workshops, robotics, hackathons, sponsors, schedule, contacts and registrations.",
+    },
+    {
+      name: "keywords",
+      content:
+        "theta 2k26, theta 2026, theta official website, theta website, theta sastra website, theta sastra, thetasrc, thetasrc.in, sastra theta, sastra theta 2026, sastra techno management fest, sastra technical fest, theta events, theta 2k26 events, theta event registration, theta schedule, theta roadmap, theta sponsors, theta hackathon, theta robotics, theta workshops, kuruksastra, kuruksastra website, kuruksastra official website, kuruksastra 2k26, kuruksastra 2026, theta 2k27, kuruksastra 2k27",
     },
     {
       property: "og:title",
-      content: "THETA 2K26 | SASTRA",
+      content: "THETA 2K26 | Official SASTRA Techno-Management Fest Website",
     },
     {
       property: "og:description",
       content:
-        "THETA 2K26 (Theta 2026) is SASTRA's national-level techno-management fest with hackathons, robotics, workshops, events and registrations.",
+        "THETA 2K26 is the official SASTRA techno-management fest website for events, workshops, robotics, hackathons, sponsors, schedule, contacts and registrations.",
     },
     {
       property: "og:type",
@@ -1774,17 +1779,29 @@ export const head: DocumentHead = {
       content: "https://www.thetasrc.in/og-image.png",
     },
     {
+      property: "og:image:width",
+      content: "1200",
+    },
+    {
+      property: "og:image:height",
+      content: "630",
+    },
+    {
+      property: "og:image:alt",
+      content: "THETA 2K26 official SASTRA techno-management fest",
+    },
+    {
       name: "twitter:card",
       content: "summary_large_image",
     },
     {
       name: "twitter:title",
-      content: "THETA 2K26 | SASTRA",
+      content: "THETA 2K26 | Official SASTRA Techno-Management Fest Website",
     },
     {
       name: "twitter:description",
       content:
-        "THETA 2K26 (Theta 2026) is SASTRA's national-level techno-management fest with hackathons, robotics, workshops, events and registrations.",
+        "THETA 2K26 is the official SASTRA techno-management fest website for events, workshops, robotics, hackathons, sponsors, schedule, contacts and registrations.",
     },
     {
       name: "twitter:image",

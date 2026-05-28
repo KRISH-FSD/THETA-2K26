@@ -888,6 +888,34 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: "Events | Theta 2026",
-  meta: [{ name: "description", content: "Interactive event schedule for Theta 2026." }],
+  title: "THETA 2K26 Events | SASTRA Theta 2026 Registrations",
+  meta: [
+    {
+      name: "description",
+      content:
+        "Browse THETA 2K26 events, workshops, hackathons, robotics competitions, schedules, venues and registration details from SASTRA's techno-management fest.",
+    },
+    {
+      name: "keywords",
+      content:
+        "theta 2k26 events, theta 2026 events, theta event registration, theta registrations, theta schedule, theta roadmap, theta hackathon, theta robotics, theta workshops, sastra theta events, sastra techno management events",
+    },
+    {
+      property: "og:title",
+      content: "THETA 2K26 Events | SASTRA Theta 2026",
+    },
+    {
+      property: "og:description",
+      content:
+        "Explore THETA 2K26 events, schedules, venues and registrations from SASTRA's official techno-management fest website.",
+    },
+    {
+      property: "og:url",
+      content: "https://www.thetasrc.in/events",
+    },
+    {
+      property: "og:image",
+      content: "https://www.thetasrc.in/og-image.png",
+    },
+  ],
 };

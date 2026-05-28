@@ -376,12 +376,34 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: "Contact | Theta 2026",
+  title: "Contact THETA 2K26 | SASTRA Theta 2026",
   meta: [
     {
       name: "description",
       content:
-        "Initialize communication with the Theta 2026 High Command. Contact our coordinators and technical operatives.",
+        "Contact the THETA 2K26 organizing team, coordinators, sponsorship team and WebTek support for SASTRA Theta 2026 queries.",
+    },
+    {
+      name: "keywords",
+      content:
+        "theta contact, theta 2k26 contact, theta 2026 contact, theta sastra contact, theta organizers, theta coordinators, theta sponsorship contact, sastra theta contact",
+    },
+    {
+      property: "og:title",
+      content: "Contact THETA 2K26 | SASTRA Theta 2026",
+    },
+    {
+      property: "og:description",
+      content:
+        "Reach the THETA 2K26 organizing team, coordinators, sponsorship team and WebTek support.",
+    },
+    {
+      property: "og:url",
+      content: "https://www.thetasrc.in/contact",
+    },
+    {
+      property: "og:image",
+      content: "https://www.thetasrc.in/og-image.png",
     },
   ],
 };

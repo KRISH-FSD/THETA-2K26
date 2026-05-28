@@ -93,6 +93,10 @@ export const Header = component$(() => {
     : resolvedTheme === "onepiece" ? "rgba(255,220,150,0.72)"
       : resolvedTheme === "red-ben10" ? "#a38c8c"
         : "#8ca38c";
+  const ben10LogoSrc = resolvedTheme === "red-ben10"
+    ? "/red-ben10/red-ben10.webp"
+    : "/ben10/ben10-logo.webp";
+  const ben10LogoAlt = resolvedTheme === "red-ben10" ? "Red Ben 10 Logo" : "Ben 10 Logo";
 
   const navLinkActive = (href: string) =>
     isActive(href)
@@ -157,8 +161,8 @@ export const Header = component$(() => {
               {usesBen10Pair ? (
                 <>
                   <img
-                    src="/ben10/ben10-logo.webp"
-                    alt="Ben 10 Logo"
+                    src={ben10LogoSrc}
+                    alt={ben10LogoAlt}
                     data-critical-media
                     loading="eager"
                     decoding="async"
@@ -206,8 +210,8 @@ export const Header = component$(() => {
               {usesBen10Pair ? (
                 <>
                   <img
-                    src="/ben10/ben10-logo.webp"
-                    alt="Ben 10 Logo"
+                    src={ben10LogoSrc}
+                    alt={ben10LogoAlt}
                     data-critical-media
                     loading="eager"
                     decoding="async"

@@ -749,12 +749,34 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: "Sponsors | Theta 2026",
+  title: "THETA 2K26 Sponsors | SASTRA Theta 2026",
   meta: [
     {
       name: "description",
       content:
-        "Explore the Theta 2026 sponsor hall and discover the brands powering the fest across platinum, gold, silver, and media tiers.",
+        "Explore THETA 2K26 sponsors and partner brands powering SASTRA Theta 2026 across diamond, platinum, gold, silver and media tiers.",
+    },
+    {
+      name: "keywords",
+      content:
+        "theta sponsors, theta 2k26 sponsors, theta 2026 sponsors, theta sponsor hall, theta sponsorship, sastra theta sponsors, sastra fest sponsors, theta partner brands",
+    },
+    {
+      property: "og:title",
+      content: "THETA 2K26 Sponsors | SASTRA Theta 2026",
+    },
+    {
+      property: "og:description",
+      content:
+        "Discover the sponsor hall and partner brands supporting THETA 2K26, SASTRA's techno-management fest.",
+    },
+    {
+      property: "og:url",
+      content: "https://www.thetasrc.in/sponsors",
+    },
+    {
+      property: "og:image",
+      content: "https://www.thetasrc.in/og-image.png",
     },
   ],
 };
