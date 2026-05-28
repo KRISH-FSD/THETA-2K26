@@ -5,14 +5,14 @@ import { gsap } from "gsap";
 interface QuantumDeveloper {
   name: string;
   role: string;
-  description: string;
+  description?: string;
   id: string;
   skills: string[];
   status: "active" | "away" | "offline";
-  photo: string;
-  links: {
-    github: string;
-    linkedin: string;
+  photo?: string;
+  links?: {
+    github?: string;
+    linkedin?: string;
     twitter?: string;
   };
   accent: string;
@@ -75,35 +75,12 @@ const developers: QuantumDeveloper[] = [
   {
     name: "LINGESH REDDY",
     role: "Component Lead",
-    description:
-      "I'm a Component Lead who focuses on scalable & modular system design.",
     id: "04",
     skills: ["React", "Qwik", "Systems"],
     status: "active",
-    photo: "/dev/lingesh.webp",
-    links: {
-      github: "https://github.com/lingesh-dev",
-      linkedin:
-        "https://www.linkedin.com/in/lingeswara-reddy-diguvapati-965a032ba/",
-    },
+    photo: "/team/default-avatar.svg",
     accent: "#b3ff57",
     stats: { rating: "4.7", earned: "$15k+", rate: "$40/hr" },
-  },
-  {
-    name: "KOUSHIK REDDY",
-    role: "Platform Engineer",
-    description:
-      "I'm a Platform Engineer who focuses on performance & build velocity.",
-    id: "05",
-    skills: ["DevOps", "Vercel", "Performance"],
-    status: "active",
-    photo: "/team/default-avatar.svg",
-    links: {
-      github: "https://github.com/kowhik-dev",
-      linkedin: "https://linkedin.com/in/kowhik-ship",
-    },
-    accent: "#8d7dff",
-    stats: { rating: "4.9", earned: "$20k+", rate: "$55/hr" },
   },
 ];
 
@@ -270,16 +247,17 @@ export default component$(() => {
                 key={dev.id}
                 class="quantum-card group relative mx-auto flex h-full w-full max-w-sm flex-col rounded-[1.75rem] bg-white p-2 shadow-[0_10px_30px_rgba(0,0,0,0.1)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(0,0,0,0.14)] sm:max-w-full"
               >
-                {/* Image Block */}
-                <div class="relative aspect-square overflow-hidden rounded-[1.25rem] bg-gray-100">
-                  <img
-                    src={dev.photo}
-                    alt={dev.name}
-                    loading="lazy"
-                    decoding="async"
-                    class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                </div>
+                {dev.photo && (
+                  <div class="relative aspect-square overflow-hidden rounded-[1.25rem] bg-gray-100">
+                    <img
+                      src={dev.photo}
+                      alt={dev.name}
+                      loading="lazy"
+                      decoding="async"
+                      class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  </div>
+                )}
 
                 {/* Content Block */}
                 <div class="flex flex-1 flex-col px-1 pt-4">
@@ -304,46 +282,53 @@ export default component$(() => {
                         </svg>
                       </span>
                     </div>
-                    <p class="mt-1 line-clamp-2 text-[9px] leading-relaxed font-medium text-gray-400">
-                      {dev.description}
-                    </p>
+                    {dev.description && (
+                      <p class="mt-1 line-clamp-2 text-[9px] leading-relaxed font-medium text-gray-400">
+                        {dev.description}
+                      </p>
+                    )}
                   </div>
 
-                  {/* Social Links */}
-                  <div class="mb-5 flex items-center justify-center gap-3 border-t border-gray-100 pt-4">
-                    <a
-                      href={dev.links.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`${dev.name} GitHub`}
-                      class="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-900 transition-all duration-300 hover:-translate-y-1 hover:border-black hover:bg-black hover:text-white"
-                    >
-                      <svg
-                        class="h-4 w-4"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        aria-hidden="true"
-                      >
-                        <path d="M12 2C6.477 2 2 6.589 2 12.248c0 4.526 2.865 8.367 6.839 9.722.5.095.683-.221.683-.492 0-.243-.009-.888-.014-1.742-2.782.617-3.37-1.368-3.37-1.368-.455-1.183-1.11-1.498-1.11-1.498-.908-.636.069-.623.069-.623 1.004.072 1.532 1.054 1.532 1.054.892 1.565 2.341 1.113 2.91.851.091-.664.349-1.114.635-1.37-2.221-.26-4.555-1.14-4.555-5.073 0-1.12.39-2.036 1.03-2.754-.103-.26-.447-1.307.098-2.724 0 0 .84-.277 2.75 1.052A9.303 9.303 0 0112 6.83a9.27 9.27 0 012.504.35c1.909-1.329 2.748-1.052 2.748-1.052.546 1.417.202 2.464.1 2.724.64.718 1.028 1.634 1.028 2.754 0 3.943-2.337 4.81-4.566 5.066.359.318.679.945.679 1.904 0 1.375-.012 2.484-.012 2.822 0 .273.18.592.688.491C19.138 20.61 22 16.772 22 12.248 22 6.589 17.523 2 12 2z" />
-                      </svg>
-                    </a>
-                    <a
-                      href={dev.links.linkedin}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`${dev.name} LinkedIn`}
-                      class="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-[#0a66c2] transition-all duration-300 hover:-translate-y-1 hover:border-[#0a66c2] hover:bg-[#0a66c2] hover:text-white"
-                    >
-                      <svg
-                        class="h-4 w-4"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        aria-hidden="true"
-                      >
-                        <path d="M6.94 8.5H3.56V20h3.38V8.5zM5.25 3A1.96 1.96 0 003.3 4.96c0 1.08.87 1.96 1.95 1.96h.02a1.96 1.96 0 100-3.92H5.25zM20.7 12.58c0-3.08-1.64-4.51-3.83-4.51-1.77 0-2.56.98-3 1.67V8.5h-3.38c.04.82 0 11.5 0 11.5h3.38v-6.42c0-.34.02-.68.13-.92.27-.68.9-1.39 1.95-1.39 1.37 0 1.92 1.05 1.92 2.58V20H21v-7.42z" />
-                      </svg>
-                    </a>
-                  </div>
+                  {(dev.links?.github || dev.links?.linkedin) && (
+                    <div class="mb-5 flex items-center justify-center gap-3 border-t border-gray-100 pt-4">
+                      {dev.links.github && (
+                        <a
+                          href={dev.links.github}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`${dev.name} GitHub`}
+                          class="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-900 transition-all duration-300 hover:-translate-y-1 hover:border-black hover:bg-black hover:text-white"
+                        >
+                          <svg
+                            class="h-4 w-4"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            aria-hidden="true"
+                          >
+                            <path d="M12 2C6.477 2 2 6.589 2 12.248c0 4.526 2.865 8.367 6.839 9.722.5.095.683-.221.683-.492 0-.243-.009-.888-.014-1.742-2.782.617-3.37-1.368-3.37-1.368-.455-1.183-1.11-1.498-1.11-1.498-.908-.636.069-.623.069-.623 1.004.072 1.532 1.054 1.532 1.054.892 1.565 2.341 1.113 2.91.851.091-.664.349-1.114.635-1.37-2.221-.26-4.555-1.14-4.555-5.073 0-1.12.39-2.036 1.03-2.754-.103-.26-.447-1.307.098-2.724 0 0 .84-.277 2.75 1.052A9.303 9.303 0 0112 6.83a9.27 9.27 0 012.504.35c1.909-1.329 2.748-1.052 2.748-1.052.546 1.417.202 2.464.1 2.724.64.718 1.028 1.634 1.028 2.754 0 3.943-2.337 4.81-4.566 5.066.359.318.679.945.679 1.904 0 1.375-.012 2.484-.012 2.822 0 .273.18.592.688.491C19.138 20.61 22 16.772 22 12.248 22 6.589 17.523 2 12 2z" />
+                          </svg>
+                        </a>
+                      )}
+                      {dev.links.linkedin && (
+                        <a
+                          href={dev.links.linkedin}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`${dev.name} LinkedIn`}
+                          class="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-[#0a66c2] transition-all duration-300 hover:-translate-y-1 hover:border-[#0a66c2] hover:bg-[#0a66c2] hover:text-white"
+                        >
+                          <svg
+                            class="h-4 w-4"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            aria-hidden="true"
+                          >
+                            <path d="M6.94 8.5H3.56V20h3.38V8.5zM5.25 3A1.96 1.96 0 003.3 4.96c0 1.08.87 1.96 1.95 1.96h.02a1.96 1.96 0 100-3.92H5.25zM20.7 12.58c0-3.08-1.64-4.51-3.83-4.51-1.77 0-2.56.98-3 1.67V8.5h-3.38c.04.82 0 11.5 0 11.5h3.38v-6.42c0-.34.02-.68.13-.92.27-.68.9-1.39 1.95-1.39 1.37 0 1.92 1.05 1.92 2.58V20H21v-7.42z" />
+                          </svg>
+                        </a>
+                      )}
+                    </div>
+                  )}
 
                   {/* Action Button */}
                   <a
